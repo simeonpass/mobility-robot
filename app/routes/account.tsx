@@ -4,9 +4,20 @@ import {
   NavLink,
   Outlet,
   useLoaderData,
+  type HeadersFunction,
 } from 'react-router';
 import type {Route} from './+types/account';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
+import {NOINDEX_HEADERS, noindexMeta} from '~/lib/seo';
+
+export const meta: Route.MetaFunction = () =>
+  noindexMeta({
+    title: 'My Account',
+    description: 'Manage your XSTO UK account.',
+    path: '/account',
+  });
+
+export const headers: HeadersFunction = () => NOINDEX_HEADERS;
 
 export function shouldRevalidate() {
   return true;

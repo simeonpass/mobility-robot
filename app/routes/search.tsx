@@ -13,9 +13,15 @@ import type {
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Search`}];
-};
+import {buildMeta} from '~/lib/seo';
+
+export const meta: Route.MetaFunction = () =>
+  buildMeta({
+    title: 'Search',
+    description: 'Search XSTO wheelchairs, accessories and support articles.',
+    path: '/search',
+    robots: 'noindex, follow',
+  });
 
 export async function loader({request, context}: Route.LoaderArgs) {
   const url = new URL(request.url);

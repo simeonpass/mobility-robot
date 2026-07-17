@@ -4,10 +4,15 @@ import {getPaginationVariables, Image, Money} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
+import {buildMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Products`}];
-};
+export const meta: Route.MetaFunction = () =>
+  buildMeta({
+    title: 'Shop All XSTO Wheelchairs',
+    description:
+      'Browse the full XSTO range — M4, M4 Pro, M4B, X12 and X12 Pro. Official UK distributor with free delivery.',
+    path: '/collections/all',
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

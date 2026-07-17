@@ -5,9 +5,21 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import type {ProductItemFragment} from 'storefrontapi.generated';
+import {JsonLd, PageShell} from '~/components/content/PageShell';
+import {buildMeta, itemListJsonLd, breadcrumbJsonLd} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  const collection = data?.collection;
+  const title = collection?.title || 'Collection';
+  const description =
+    collection?.description ||
+    `Shop ${collection?.title ?? 'XSTO products'} from the official UK distributor.`;
+
+  return buildMeta({
+    title,
+    description,
+    path: `/collections/${collection?.handle ?? ''}`,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -68,9 +80,24 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 export default function Collection() {
   const {collection} = useLoaderData<typeof loader>();
 
+  const breadcrumbItems = [
+    {name: 'Home', path: '/'},
+    {name: 'Collections', path: '/collections/all'},
+    {name: collection.title},
+  ];
+
+  const listSchema = itemListJsonLd({
+    name: collection.title,
+    items: collection.products.nodes.map((product) => ({
+      name: product.title,
+      url: `/products/${product.handle}`,
+    })),
+  });
+
   return (
-    <div className="collection">
-      <h1>{collection.title}</h1>
+    <div className="collection xsto-container py-8 md:py-12">
+      <JsonLd data={[breadcrumbJsonLd(breadcrumbItems), listSchema]} />
+      <h1 className="text-3xl font-bold text-foreground md:text-4xl">{collection.title}</h1>
       <p className="collection-description">{collection.description}</p>
       <PaginatedResourceSection<ProductItemFragment>
         connection={collection.products}
