@@ -1,7 +1,15 @@
 import {lineHasVatRelief} from '~/lib/cart-utils';
-import {roundMoney, vatPortionFromGross} from '~/lib/vat-math';
+import {
+  getLineAmountDueToday,
+  isDepositCartLine,
+  type CartLineSellingPlanSource,
+} from '~/lib/selling-plans';
+import {exVatFromGross, roundMoney, vatPortionFromGross} from '~/lib/vat-math';
 
-type MoneyLike = {amount?: string | null} | null | undefined;
+type MoneyLike = {
+  amount?: string | null;
+  currencyCode?: string | null;
+} | null | undefined;
 
 export type VatReliefCartLine = {
   quantity?: number;
@@ -11,6 +19,7 @@ export type VatReliefCartLine = {
   } | null;
   merchandise?: {price?: MoneyLike} | null;
   attributes?: Array<{key: string; value?: string | null}> | null;
+  sellingPlanAllocation?: CartLineSellingPlanSource['sellingPlanAllocation'];
 };
 
 export type VatReliefCart = {
@@ -28,11 +37,19 @@ export type CartTotals = {
   total: number;
   vatReliefApplied: boolean;
   hasVatRelief: boolean;
+  /** True when any line has a deposit / pre-order selling plan. */
+  hasDeposit: boolean;
 };
 
 export function cartHasVatReliefLines(cart: VatReliefCart): boolean {
   return (cart?.lines?.nodes ?? []).some((line) =>
     lineHasVatRelief(line.attributes),
+  );
+}
+
+export function cartHasDepositLines(cart: VatReliefCart): boolean {
+  return (cart?.lines?.nodes ?? []).some((line) =>
+    isDepositCartLine(line as CartLineSellingPlanSource),
   );
 }
 
@@ -123,9 +140,48 @@ export function isVatReliefDiscountApplied(cart: VatReliefCart): boolean {
   return false;
 }
 
+/**
+ * Pay-now totals. Deposit lines use Shopify `checkoutChargeAmount` (cart `cost`
+ * stays at full catalog for PRE_ORDER plans).
+ */
+function getDepositCartTotals(cart: VatReliefCart): CartTotals {
+  const lines = cart?.lines?.nodes ?? [];
+  let subtotalIncVat = 0;
+  let vatRemoved = 0;
+  let total = 0;
+  let hasVatRelief = false;
+
+  for (const line of lines) {
+    const dueGross = getLineAmountDueToday(line as CartLineSellingPlanSource);
+    subtotalIncVat += dueGross;
+    if (lineHasVatRelief(line.attributes)) {
+      hasVatRelief = true;
+      const vat = vatPortionFromGross(dueGross);
+      vatRemoved += vat;
+      total += roundMoney(exVatFromGross(String(dueGross)));
+    } else {
+      total += dueGross;
+    }
+  }
+
+  return {
+    subtotalIncVat: roundMoney(subtotalIncVat),
+    vatRemoved: roundMoney(vatRemoved),
+    total: roundMoney(total),
+    vatReliefApplied: false,
+    hasVatRelief,
+    hasDeposit: true,
+  };
+}
+
 export function getCartTotals(cart: VatReliefCart): CartTotals | null {
   const lines = cart?.lines?.nodes ?? [];
   if (!lines.length) return null;
+
+  const hasDeposit = cartHasDepositLines(cart);
+  if (hasDeposit) {
+    return getDepositCartTotals(cart);
+  }
 
   const hasVatRelief = cartHasVatReliefLines(cart);
   const {vatRemoved, netTotal} = getVatReliefLineTotals(cart);
@@ -140,6 +196,7 @@ export function getCartTotals(cart: VatReliefCart): CartTotals | null {
       total: apiTotal || subtotalIncVat,
       vatReliefApplied: false,
       hasVatRelief: false,
+      hasDeposit: false,
     };
   }
 
@@ -153,6 +210,7 @@ export function getCartTotals(cart: VatReliefCart): CartTotals | null {
     total,
     vatReliefApplied,
     hasVatRelief,
+    hasDeposit: false,
   };
 }
 

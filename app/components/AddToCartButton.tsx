@@ -42,8 +42,22 @@ export function AddToCartButton({
     onClick?.();
   };
 
+  // Remount when merchandise / selling plan changes so the hidden CartForm
+  // payload cannot linger on a stale full-pay line after choosing deposit.
+  const formKey = lines
+    .map(
+      (line) =>
+        `${line.merchandiseId}:${line.sellingPlanId ?? ''}:${line.quantity ?? 1}`,
+    )
+    .join('|');
+
   return (
-    <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
+    <CartForm
+      key={formKey || 'empty'}
+      route="/cart"
+      inputs={{lines}}
+      action={CartForm.ACTIONS.LinesAdd}
+    >
       {(fetcher) => (
         <>
           <input

@@ -52,6 +52,7 @@ describe('vat-relief cart totals', () => {
       total: 3329.17,
       vatReliefApplied: false,
       hasVatRelief: true,
+      hasDeposit: false,
     });
   });
 
@@ -69,6 +70,7 @@ describe('vat-relief cart totals', () => {
       total: 3329.17,
       vatReliefApplied: true,
       hasVatRelief: true,
+      hasDeposit: false,
     });
   });
 
@@ -87,6 +89,50 @@ describe('vat-relief cart totals', () => {
       total: 3329.17,
       vatReliefApplied: true,
       hasVatRelief: true,
+      hasDeposit: false,
+    });
+  });
+
+  it('uses deposit checkout charge as pay-now total (not full catalog)', () => {
+    const cart = {
+      lines: {
+        nodes: [
+          {
+            quantity: 1,
+            attributes: [],
+            merchandise: {price: {amount: '15995.0'}},
+            cost: {
+              totalAmount: {amount: '15995.0'},
+              amountPerQuantity: {amount: '15995.0'},
+            },
+            sellingPlanAllocation: {
+              checkoutChargeAmount: {amount: '1599.5', currencyCode: 'GBP'},
+              remainingBalanceChargeAmount: {
+                amount: '14395.5',
+                currencyCode: 'GBP',
+              },
+              sellingPlan: {
+                id: 'gid://shopify/SellingPlan/1',
+                name: 'Pay 10% deposit',
+              },
+            },
+          },
+        ],
+      },
+      cost: {
+        subtotalAmount: {amount: '15995.0', currencyCode: 'GBP'},
+        totalAmount: {amount: '15995.0', currencyCode: 'GBP'},
+      },
+      discountAllocations: [],
+    };
+
+    expect(getCartTotals(cart)).toEqual({
+      subtotalIncVat: 1599.5,
+      vatRemoved: 0,
+      total: 1599.5,
+      vatReliefApplied: false,
+      hasVatRelief: false,
+      hasDeposit: true,
     });
   });
 });

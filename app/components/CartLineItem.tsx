@@ -9,6 +9,10 @@ import {toGa4Item, trackRemoveFromCart} from '~/lib/analytics';
 import {isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
 import {toCartAttributeInputs} from '~/lib/vat-relief-attributes';
 import {getLineCatalogGross} from '~/lib/vat-relief';
+import {
+  getLineAmountDueToday,
+  resolveLineSellingPlanAllocation,
+} from '~/lib/selling-plans';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
@@ -23,8 +27,8 @@ export function CartLineItem({
   line: CartLine;
   childrenMap: LineItemChildrenMap;
 }) {
-  const {id, merchandise, quantity, attributes, cost, sellingPlanAllocation} =
-    line;
+  const {id, merchandise, quantity, attributes, cost} = line;
+  const sellingPlanAllocation = resolveLineSellingPlanAllocation(line);
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
@@ -35,12 +39,14 @@ export function CartLineItem({
   const {openCartModal} = useVatRelief();
   const vatEligible = !accessory;
   const isAside = layout === 'aside';
-  const unitPrice = merchandise.price;
   const isDepositLine = Boolean(sellingPlanAllocation?.sellingPlan?.id);
   const depositPlanName = sellingPlanAllocation?.sellingPlan?.name;
+  const dueTodayAmount = getLineAmountDueToday(line);
   const lineTotalMoney = {
     amount: String(
-      getLineCatalogGross({quantity, merchandise, cost, attributes}),
+      isDepositLine
+        ? dueTodayAmount
+        : getLineCatalogGross({quantity, merchandise, cost, attributes}),
     ),
     currencyCode: merchandise.price.currencyCode,
   };
@@ -95,13 +101,15 @@ export function CartLineItem({
                 {title !== product.title && title !== 'Default Title' ? (
                   <p className="mt-0.5 text-xs text-muted-foreground">{title}</p>
                 ) : null}
-                <div className="mt-0.5 text-xs text-muted-foreground">
-                  <Money data={unitPrice} /> each
-                </div>
+                {!isDepositLine ? (
+                  <div className="mt-0.5 text-xs text-muted-foreground">
+                    <Money data={merchandise.price} /> each
+                  </div>
+                ) : null}
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Total
+                  {isDepositLine ? 'Due today' : 'Total'}
                 </p>
                 <div className="mt-0.5 text-base font-semibold text-foreground">
                   <Money data={lineTotalMoney} />
@@ -136,15 +144,38 @@ export function CartLineItem({
 
             {isDepositLine ? (
               <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground">
-                Deposit today
-                {sellingPlanAllocation?.checkoutChargeAmount ? (
+                Deposit due today
+                {sellingPlanAllocation?.checkoutChargeAmount?.amount ? (
                   <>
                     {' '}
                     (
-                    <Money data={sellingPlanAllocation.checkoutChargeAmount} />)
+                    <Money
+                      data={{
+                        amount:
+                          sellingPlanAllocation.checkoutChargeAmount.amount,
+                        currencyCode: merchandise.price.currencyCode,
+                      }}
+                    />
+                    )
                   </>
                 ) : null}
-                . Balance due before dispatch.
+                . Balance due before dispatch
+                {sellingPlanAllocation?.remainingBalanceChargeAmount?.amount ? (
+                  <>
+                    {' '}
+                    (
+                    <Money
+                      data={{
+                        amount:
+                          sellingPlanAllocation.remainingBalanceChargeAmount
+                            .amount,
+                        currencyCode: merchandise.price.currencyCode,
+                      }}
+                    />
+                    )
+                  </>
+                ) : null}
+                .
               </p>
             ) : null}
 
@@ -153,9 +184,13 @@ export function CartLineItem({
                 className="mt-2 text-xs font-medium text-foreground underline-offset-2 hover:underline"
                 onClick={() =>
                   openCartModal({
-                    lines: [{id, quantity, attributes, productTitle: product.title}],
+                    lines: [
+                      {id, quantity, attributes, productTitle: product.title},
+                    ],
                     price: merchandise.price,
-                    title: vatRelief ? 'Edit VAT declaration' : 'Claim HMRC VAT relief',
+                    title: vatRelief
+                      ? 'Edit VAT declaration'
+                      : 'Claim HMRC VAT relief',
                     subtitle: product.title,
                     initialEnabled: vatRelief,
                   })

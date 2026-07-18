@@ -27,6 +27,7 @@ import {
 import {
   buildPurchaseOptions,
   isDepositPurchaseOption,
+  withOptimisticSellingPlanAllocation,
   type SellingPlanAllocationNode,
 } from '~/lib/selling-plans';
 import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
@@ -158,7 +159,10 @@ export function ProductPurchasePanel({
         {
           merchandiseId: selectedVariant.id,
           quantity: 1,
-          selectedVariant,
+          selectedVariant: withOptimisticSellingPlanAllocation(
+            selectedVariant,
+            selectedSellingPlanId,
+          ),
           attributes: cartAttributes,
           ...(selectedSellingPlanId
             ? {sellingPlanId: selectedSellingPlanId}

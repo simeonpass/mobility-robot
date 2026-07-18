@@ -1,8 +1,14 @@
-import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
 import {formatProductPrice} from '~/lib/product-pricing';
-import {exVatFromGross} from '~/lib/vat-math';
+import {exVatFromGross, roundMoney} from '~/lib/vat-math';
 
-type MoneyLike = Pick<MoneyV2, 'amount' | 'currencyCode'>;
+type MoneyLike = {
+  amount: string;
+  currencyCode?: string;
+};
+
+/** Stashed on selectedVariant → optimistic merchandise so cart UI can show deposit before the cart query returns. */
+export const OPTIMISTIC_SELLING_PLAN_ALLOCATION_KEY =
+  'optimisticSellingPlanAllocation' as const;
 
 export type SellingPlanAllocationNode = {
   checkoutChargeAmount?: MoneyLike | null;
@@ -15,8 +21,32 @@ export type SellingPlanAllocationNode = {
     id: string;
     name: string;
     description?: string | null;
-    options?: Array<{name: string; value: string}> | null;
+    options?: Array<{
+      name?: string | null;
+      value?: string | null;
+    }> | null;
   };
+};
+
+export type CartLineSellingPlanSource = {
+  sellingPlanAllocation?: {
+    checkoutChargeAmount?: MoneyLike | null;
+    remainingBalanceChargeAmount?: MoneyLike | null;
+    sellingPlan?: {
+      id?: string | null;
+      name?: string | null;
+      description?: string | null;
+    } | null;
+  } | null;
+  merchandise?: {
+    price?: MoneyLike | null;
+    [OPTIMISTIC_SELLING_PLAN_ALLOCATION_KEY]?: SellingPlanAllocationNode | null;
+  } | null;
+  cost?: {
+    totalAmount?: MoneyLike | null;
+    amountPerQuantity?: MoneyLike | null;
+  } | null;
+  quantity?: number | null;
 };
 
 export type PurchaseOption =
@@ -117,7 +147,7 @@ function formatChargeDisplay(
   const amount = vatReliefEnabled
     ? exVatFromGross(money.amount)
     : Number(money.amount);
-  return formatProductPrice(amount, money.currencyCode, {
+  return formatProductPrice(amount, money.currencyCode ?? 'GBP', {
     fractionDigits: 2,
   });
 }
@@ -126,4 +156,94 @@ export function isDepositPurchaseOption(
   option: PurchaseOption,
 ): option is Extract<PurchaseOption, {kind: 'deposit'}> {
   return option.kind === 'deposit';
+}
+
+/**
+ * Resolve selling-plan allocation from a cart line, including optimistic ATC
+ * merchandise where Hydrogen has not yet returned `sellingPlanAllocation`.
+ */
+export function resolveLineSellingPlanAllocation(
+  line: CartLineSellingPlanSource | null | undefined,
+): SellingPlanAllocationNode | null {
+  if (!line) return null;
+  const live = line.sellingPlanAllocation;
+  if (live?.sellingPlan?.id) {
+    return {
+      checkoutChargeAmount: live.checkoutChargeAmount ?? null,
+      remainingBalanceChargeAmount: live.remainingBalanceChargeAmount ?? null,
+      sellingPlan: {
+        id: live.sellingPlan.id,
+        name: live.sellingPlan.name ?? 'Deposit',
+        description: live.sellingPlan.description ?? null,
+      },
+    };
+  }
+  const optimistic =
+    line.merchandise?.[OPTIMISTIC_SELLING_PLAN_ALLOCATION_KEY] ?? null;
+  return optimistic?.sellingPlan?.id ? optimistic : null;
+}
+
+export function isDepositCartLine(
+  line: CartLineSellingPlanSource | null | undefined,
+): boolean {
+  return Boolean(resolveLineSellingPlanAllocation(line)?.sellingPlan?.id);
+}
+
+/**
+ * Amount due at checkout for this line. Deposit / pre-order plans use
+ * `checkoutChargeAmount` (Shopify cart `cost` stays at full catalog price).
+ */
+export function getLineAmountDueToday(
+  line: CartLineSellingPlanSource,
+): number {
+  const allocation = resolveLineSellingPlanAllocation(line);
+  const charge = allocation?.checkoutChargeAmount?.amount;
+  if (charge != null && charge !== '') {
+    return roundMoney(Number(charge));
+  }
+  const quantity = line.quantity ?? 1;
+  const unit = Number(
+    line.merchandise?.price?.amount ??
+      line.cost?.amountPerQuantity?.amount ??
+      0,
+  );
+  if (unit > 0) return roundMoney(unit * quantity);
+  return roundMoney(Number(line.cost?.totalAmount?.amount ?? 0));
+}
+
+export function sumCartAmountDueToday(
+  lines: CartLineSellingPlanSource[] | null | undefined,
+): number {
+  return roundMoney(
+    (lines ?? []).reduce((sum, line) => sum + getLineAmountDueToday(line), 0),
+  );
+}
+
+/**
+ * Attach allocation onto selectedVariant so Hydrogen optimistic cart
+ * (merchandise = selectedVariant) can show deposit before the server responds.
+ */
+export function withOptimisticSellingPlanAllocation<T>(
+  variant: T,
+  sellingPlanId: string | null | undefined,
+): T {
+  if (!variant || !sellingPlanId || typeof variant !== 'object') return variant;
+  const nodes = (
+    variant as {
+      sellingPlanAllocations?: {nodes?: SellingPlanAllocationNode[] | null};
+    }
+  ).sellingPlanAllocations?.nodes;
+  const allocation = nodes?.find(
+    (node) => node.sellingPlan.id === sellingPlanId,
+  );
+  if (!allocation) return variant;
+  return {
+    ...variant,
+    [OPTIMISTIC_SELLING_PLAN_ALLOCATION_KEY]: {
+      checkoutChargeAmount: allocation.checkoutChargeAmount ?? null,
+      remainingBalanceChargeAmount:
+        allocation.remainingBalanceChargeAmount ?? null,
+      sellingPlan: allocation.sellingPlan,
+    },
+  };
 }

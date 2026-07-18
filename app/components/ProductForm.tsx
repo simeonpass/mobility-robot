@@ -11,6 +11,7 @@ import type {
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
 import {isAccessoryProduct} from '~/lib/cart-utils';
+import {withOptimisticSellingPlanAllocation} from '~/lib/selling-plans';
 import type {ProductFragment} from 'storefrontapi.generated';
 
 export function ProductForm({
@@ -50,7 +51,10 @@ export function ProductForm({
         {
           merchandiseId: selectedVariant.id,
           quantity: 1,
-          selectedVariant,
+          selectedVariant: withOptimisticSellingPlanAllocation(
+            selectedVariant,
+            sellingPlanId,
+          ),
           attributes: cartAttributes,
           ...(sellingPlanId ? {sellingPlanId} : {}),
         },

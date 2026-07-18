@@ -84,7 +84,11 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     <div className="space-y-1.5 text-sm">
       <div className="flex justify-between">
         <span className="text-muted-foreground">
-          {totals.hasVatRelief ? 'Subtotal (inc. VAT)' : 'Subtotal'}
+          {totals.hasDeposit
+            ? 'Due today'
+            : totals.hasVatRelief
+              ? 'Subtotal (inc. VAT)'
+              : 'Subtotal'}
         </span>
         <span className="font-medium text-foreground">
           {formatProductPrice(totals.subtotalIncVat, currencyCode, {
@@ -92,6 +96,12 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           })}
         </span>
       </div>
+
+      {totals.hasDeposit ? (
+        <p className="text-xs text-muted-foreground">
+          Remaining balance is due before dispatch.
+        </p>
+      ) : null}
 
       {totals.hasVatRelief && totals.vatRemoved > 0 ? (
         <div className="flex justify-between text-foreground">
@@ -168,9 +178,11 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
         <div className="mt-3 flex justify-between border-t border-border pt-3">
           <span className="text-base font-semibold text-foreground">
-            {totals?.hasVatRelief && !totals.vatReliefApplied
-              ? 'Estimated total'
-              : 'Total'}
+            {totals?.hasDeposit
+              ? 'Due today'
+              : totals?.hasVatRelief && !totals.vatReliefApplied
+                ? 'Estimated total'
+                : 'Total'}
           </span>
           <span className="text-base font-semibold text-foreground">
             {totals
@@ -248,9 +260,11 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
         <div className="flex justify-between border-t border-border pt-4">
           <span className="text-lg font-semibold text-foreground">
-            {totals?.hasVatRelief && !totals?.vatReliefApplied
-              ? 'Estimated total'
-              : 'Total'}
+            {totals?.hasDeposit
+              ? 'Due today'
+              : totals?.hasVatRelief && !totals?.vatReliefApplied
+                ? 'Estimated total'
+                : 'Total'}
           </span>
           <span className="text-lg font-semibold text-foreground">
             {totals
