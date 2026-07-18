@@ -18,6 +18,7 @@ import {PageLayout} from './components/PageLayout';
 import {applyReferralDiscount} from '~/lib/referral-discount';
 import {legacyRedirect} from '~/lib/redirects';
 import {ConsentProvider} from '~/components/ConsentBanner';
+import {VatReliefProvider} from '~/components/vat-relief/VatReliefProvider';
 import {Ga4Tracker} from '~/components/Ga4Tracker';
 import {ShopChat} from '~/components/ShopChat';
 import {JsonLd} from '~/components/content/PageShell';
@@ -159,11 +160,13 @@ export default function App() {
       consent={data.consent}
     >
       <ConsentProvider ga4Id={data.ga4Id}>
-        <Ga4Tracker ga4Id={data.ga4Id} />
-        <ShopChat shopId={data.shopId} />
-        <PageLayout {...data}>
-          <Outlet />
-        </PageLayout>
+        <VatReliefProvider>
+          <Ga4Tracker ga4Id={data.ga4Id} />
+          <ShopChat shopId={data.shopId} />
+          <PageLayout {...data}>
+            <Outlet />
+          </PageLayout>
+        </VatReliefProvider>
       </ConsentProvider>
     </Analytics.Provider>
   );

@@ -1,13 +1,18 @@
 import {useMemo, useState} from 'react';
 import {Link} from 'react-router';
-import {BadgePercent, Check} from 'lucide-react';
-import type {MappedProductOptions} from '@shopify/hydrogen';
+import {BadgePercent, Check, Pencil} from 'lucide-react';
+import type {MappedProductOptions, OptimisticCartLineInput} from '@shopify/hydrogen';
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
 import type {ProductFragment} from 'storefrontapi.generated';
 import {ProductForm} from '~/components/ProductForm';
+import {
+  ProductAccessoryAddons,
+  type AddonProduct,
+} from '~/components/product/ProductAccessoryAddons';
 import {ProductCheckoutTrust} from '~/components/product/ProductCheckoutTrust';
 import {ProductDeliveryEta} from '~/components/product/ProductDeliveryEta';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
+import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import {getDeliveryInfo} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
@@ -16,13 +21,7 @@ import {
   getKlarnaInstallmentDisplay,
   getVatSavingsDisplay,
 } from '~/lib/product-pricing';
-
-export type VatDeclaration = {
-  email: string;
-  name: string;
-  address: string;
-  condition: string;
-};
+import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
 
 type ProductPurchasePanelProps = {
   productHandle: string;
@@ -31,13 +30,7 @@ type ProductPurchasePanelProps = {
   tagline?: string;
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
   productOptions: MappedProductOptions[];
-};
-
-const EMPTY_DECLARATION: VatDeclaration = {
-  email: '',
-  name: '',
-  address: '',
-  condition: '',
+  accessoryAddons?: AddonProduct[];
 };
 
 export function ProductPurchasePanel({
@@ -47,9 +40,18 @@ export function ProductPurchasePanel({
   tagline,
   selectedVariant,
   productOptions,
+  accessoryAddons = [],
 }: ProductPurchasePanelProps) {
-  const [vatReliefEnabled, setVatReliefEnabled] = useState(false);
-  const [declaration, setDeclaration] = useState<VatDeclaration>(EMPTY_DECLARATION);
+  const {
+    declaration,
+    productVatReliefEnabled,
+    setProductVatRelief,
+    openProductModal,
+  } = useVatRelief();
+
+  const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const price = selectedVariant?.price;
   const compareAtPrice = selectedVariant?.compareAtPrice;
@@ -65,26 +67,51 @@ export function ProductPurchasePanel({
       })
     : null;
 
-  const vatFormComplete =
-    declaration.email.trim().length > 0 &&
-    declaration.name.trim().length > 0 &&
-    declaration.address.trim().length > 0 &&
-    declaration.condition.trim().length > 0;
+  const vatFormComplete = isVatDeclarationComplete(declaration);
 
   const canAddToCart =
     Boolean(selectedVariant?.availableForSale) &&
-    (!vatReliefEnabled || vatFormComplete);
+    (!productVatReliefEnabled || vatFormComplete);
 
   const cartAttributes = useMemo(
-    () => (vatReliefEnabled ? buildVatCartAttributes(declaration) : []),
-    [declaration, vatReliefEnabled],
+    () =>
+      productVatReliefEnabled ? buildVatCartAttributes(declaration) : [],
+    [declaration, productVatReliefEnabled],
   );
 
-  const addToCartLabel = vatReliefEnabled && exVatDisplay
+  const addonLines = useMemo(() => {
+    const lines: OptimisticCartLineInput[] = [];
+    for (const product of accessoryAddons) {
+      const variant = product.selectedOrFirstAvailableVariant;
+      if (!variant?.id || !selectedAddonIds.has(variant.id)) continue;
+      lines.push({
+        merchandiseId: variant.id,
+        quantity: 1,
+        selectedVariant: variant,
+      });
+    }
+    return lines;
+  }, [accessoryAddons, selectedAddonIds]);
+
+  const addonCount = addonLines.length;
+  const baseLabel = productVatReliefEnabled && exVatDisplay
     ? `Add to cart — ${exVatDisplay}`
     : incVatDisplay
       ? `Add to cart — ${incVatDisplay}`
       : 'Add to cart';
+  const addToCartLabel =
+    addonCount > 0
+      ? `${baseLabel} + ${addonCount} add-on${addonCount === 1 ? '' : 's'}`
+      : baseLabel;
+
+  const toggleAddon = (variantId: string) => {
+    setSelectedAddonIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(variantId)) next.delete(variantId);
+      else next.add(variantId);
+      return next;
+    });
+  };
 
   return (
     <div className="product-buy-box lg:sticky lg:top-24 lg:max-w-[440px] lg:justify-self-end">
@@ -107,24 +134,40 @@ export function ProductPurchasePanel({
           compareAtPrice={compareAtPrice}
           exVatDisplay={exVatDisplay}
           incVatDisplay={incVatDisplay}
-          vatReliefEnabled={vatReliefEnabled}
+          vatReliefEnabled={productVatReliefEnabled}
           vatSavings={vatSavings}
         />
       </section>
 
-      <VatReliefSection
-        declaration={declaration}
-        enabled={vatReliefEnabled}
+      <VatReliefCard
+        enabled={productVatReliefEnabled}
         exVatDisplay={exVatDisplay}
-        onDeclarationChange={setDeclaration}
-        onEnabledChange={setVatReliefEnabled}
+        onOpen={() =>
+          openProductModal({
+            price: price ?? undefined,
+            initialEnabled: productVatReliefEnabled,
+            initialDeclaration: declaration,
+            onComplete: setProductVatRelief,
+          })
+        }
+        vatFormComplete={vatFormComplete}
         vatSavings={vatSavings}
       />
 
       <div className="mt-6 space-y-4">
+        {accessoryAddons.length ? (
+          <ProductAccessoryAddons
+            chairLabel={displayName ?? title}
+            onToggle={toggleAddon}
+            products={accessoryAddons}
+            selectedIds={selectedAddonIds}
+          />
+        ) : null}
+
         <ProductForm
           addToCartClassName="btn-atc w-full"
           addToCartLabel={addToCartLabel}
+          addonLines={addonLines}
           cartAttributes={cartAttributes}
           disabled={!canAddToCart}
           productHandle={productHandle}
@@ -132,7 +175,7 @@ export function ProductPurchasePanel({
           selectedVariant={selectedVariant}
           soldOutLabel={
             selectedVariant?.availableForSale
-              ? vatReliefEnabled && !vatFormComplete
+              ? productVatReliefEnabled && !vatFormComplete
                 ? 'Complete VAT declaration'
                 : 'Sold out'
               : 'Sold out'
@@ -239,178 +282,90 @@ function ProductPriceDisplay({
   );
 }
 
-function VatReliefSection({
+function VatReliefCard({
   enabled,
-  onEnabledChange,
-  declaration,
-  onDeclarationChange,
+  vatFormComplete,
   exVatDisplay,
   vatSavings,
+  onOpen,
 }: {
   enabled: boolean;
-  onEnabledChange: (enabled: boolean) => void;
-  declaration: VatDeclaration;
-  onDeclarationChange: (declaration: VatDeclaration) => void;
+  vatFormComplete: boolean;
   exVatDisplay: string | null;
   vatSavings: string | null;
+  onOpen: () => void;
 }) {
   return (
     <section
       aria-labelledby="vat-relief-heading"
       className="rounded-xl border border-border bg-secondary/30 p-4"
     >
-      <label className="flex cursor-pointer items-start gap-3">
-        <input
-          checked={enabled}
-          className="mt-1 size-4 rounded border-border"
-          id="vat-relief-toggle"
-          onChange={(event) => onEnabledChange(event.target.checked)}
-          type="checkbox"
-        />
-        <span className="min-w-0">
-          <span
-            className="flex items-center gap-2 text-sm font-semibold text-foreground"
+      <div className="flex items-start gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-background">
+          <BadgePercent aria-hidden className="size-4 text-foreground" strokeWidth={1.5} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2
+            className="text-sm font-semibold text-foreground"
             id="vat-relief-heading"
           >
-            <BadgePercent aria-hidden className="size-4 text-vat-price" strokeWidth={1.5} />
-            I&apos;m eligible for HMRC VAT relief
-          </span>
-          <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
-            For chronically sick or disabled people buying for personal use.
-            {exVatDisplay && vatSavings ? (
+            HMRC VAT relief
+          </h2>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            {enabled && vatFormComplete ? (
               <>
-                {' '}
-                Pay{' '}
-                <strong className="font-semibold tabular-nums text-vat-price">
-                  {exVatDisplay}
-                </strong>{' '}
-                instead of the inc-VAT price — save{' '}
-                <strong className="font-semibold tabular-nums text-vat-price">
-                  {vatSavings}
-                </strong>
+                Declaration saved
+                {exVatDisplay && vatSavings ? (
+                  <>
+                    {' '}
+                    — pay{' '}
+                    <strong className="font-semibold tabular-nums text-foreground">
+                      {exVatDisplay}
+                    </strong>{' '}
+                    (save {vatSavings})
+                  </>
+                ) : null}
+              </>
+            ) : (
+              <>
+                Chronically sick or disabled? You may pay the ex-VAT price
+                {vatSavings ? (
+                  <>
+                    {' '}
+                    and save{' '}
+                    <strong className="font-semibold tabular-nums text-foreground">
+                      {vatSavings}
+                    </strong>
+                  </>
+                ) : null}
                 .
               </>
-            ) : null}
-          </span>
-        </span>
-      </label>
-
-      {enabled ? (
-        <div className="mt-4 space-y-3 border-t border-border/70 pt-4">
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            Complete this HMRC declaration. The exact VAT amount is removed at
-            checkout — no discount code needed.
+            )}
           </p>
 
-          <VatField
-            autoComplete="name"
-            id="vat-name"
-            label="Full name"
-            onChange={(value) =>
-              onDeclarationChange({...declaration, name: value})
-            }
-            value={declaration.name}
-          />
-          <VatField
-            autoComplete="email"
-            id="vat-email"
-            label="Email"
-            onChange={(value) =>
-              onDeclarationChange({...declaration, email: value})
-            }
-            type="email"
-            value={declaration.email}
-          />
-          <VatTextArea
-            id="vat-address"
-            label="Address"
-            onChange={(value) =>
-              onDeclarationChange({...declaration, address: value})
-            }
-            value={declaration.address}
-          />
-          <VatField
-            id="vat-condition"
-            label="Nature of condition"
-            onChange={(value) =>
-              onDeclarationChange({...declaration, condition: value})
-            }
-            placeholder="e.g. long-term mobility impairment"
-            value={declaration.condition}
-          />
+          {enabled && vatFormComplete ? (
+            <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
+              <Check aria-hidden className="size-3.5" />
+              Ready to apply at checkout
+            </p>
+          ) : null}
 
-          <p className="flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
-            <Check aria-hidden className="mt-0.5 size-3.5 shrink-0 text-vat-price" />
-            I declare that I am chronically sick or disabled, that this product
-            is for my personal use, and that I am eligible under HMRC Notice
-            701/7.
-          </p>
+          <button
+            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:border-foreground/30"
+            onClick={onOpen}
+            type="button"
+          >
+            {enabled ? (
+              <>
+                <Pencil aria-hidden className="size-3.5" />
+                {vatFormComplete ? 'Edit declaration' : 'Complete declaration'}
+              </>
+            ) : (
+              'Check eligibility & claim relief'
+            )}
+          </button>
         </div>
-      ) : null}
+      </div>
     </section>
-  );
-}
-
-function VatField({
-  id,
-  label,
-  value,
-  onChange,
-  type = 'text',
-  autoComplete,
-  placeholder,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  type?: string;
-  autoComplete?: string;
-  placeholder?: string;
-}) {
-  return (
-    <div>
-      <label className="mb-1 block text-xs font-medium text-foreground" htmlFor={id}>
-        {label}
-      </label>
-      <input
-        autoComplete={autoComplete}
-        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-        id={id}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        required
-        type={type}
-        value={value}
-      />
-    </div>
-  );
-}
-
-function VatTextArea({
-  id,
-  label,
-  value,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1 block text-xs font-medium text-foreground" htmlFor={id}>
-        {label}
-      </label>
-      <textarea
-        autoComplete="street-address"
-        className="min-h-[72px] w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-        id={id}
-        onChange={(event) => onChange(event.target.value)}
-        required
-        value={value}
-      />
-    </div>
   );
 }

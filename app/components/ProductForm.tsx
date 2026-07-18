@@ -1,5 +1,8 @@
 import {Link, useNavigate} from 'react-router';
-import {type MappedProductOptions} from '@shopify/hydrogen';
+import {
+  type MappedProductOptions,
+  type OptimisticCartLineInput,
+} from '@shopify/hydrogen';
 import type {
   AttributeInput,
   Maybe,
@@ -15,6 +18,7 @@ export function ProductForm({
   productOptions,
   selectedVariant,
   cartAttributes = [],
+  addonLines = [],
   disabled,
   soldOutLabel = 'Sold out',
   addToCartLabel = 'Add to cart',
@@ -24,6 +28,7 @@ export function ProductForm({
   productOptions: MappedProductOptions[];
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
   cartAttributes?: AttributeInput[];
+  addonLines?: OptimisticCartLineInput[];
   disabled?: boolean;
   soldOutLabel?: string;
   addToCartLabel?: string;
@@ -36,6 +41,21 @@ export function ProductForm({
   const addDisabled =
     disabled ??
     (!selectedVariant || !selectedVariant.availableForSale);
+
+  const lines: OptimisticCartLineInput[] = selectedVariant
+    ? [
+        {
+          merchandiseId: selectedVariant.id,
+          quantity: 1,
+          selectedVariant,
+          attributes: cartAttributes,
+        },
+        ...addonLines.map((line) => ({
+          ...line,
+          parent: line.parent ?? {merchandiseId: selectedVariant.id},
+        })),
+      ]
+    : [];
 
   return (
     <div className="space-y-6">
@@ -115,18 +135,7 @@ export function ProductForm({
             open('cart');
           }
         }}
-        lines={
-          selectedVariant
-            ? [
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                  selectedVariant,
-                  attributes: cartAttributes,
-                },
-              ]
-            : []
-        }
+        lines={lines}
       >
         {!selectedVariant?.availableForSale
           ? soldOutLabel

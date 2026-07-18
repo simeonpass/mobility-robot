@@ -5,10 +5,11 @@ import {useId} from 'react';
 import {Link} from 'react-router';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackBeginCheckout} from '~/lib/analytics';
-import {withOnlineStoreChannel} from '~/lib/cart-utils';
+import {withOnlineStoreChannel, isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
 import {getDeliveryInfo} from '~/lib/product-delivery';
 import {formatProductPrice} from '~/lib/product-pricing';
 import {getCartTotals} from '~/lib/vat-relief';
+import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -33,10 +34,55 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     quantityAvailable: 1,
   });
 
+  const {openCartModal} = useVatRelief();
+  const cartLines = cart?.lines?.nodes ?? [];
+  const vatEligibleLines = cartLines.filter(
+    (line) =>
+      !isAccessoryProduct(line.merchandise.product.handle) &&
+      !('parentRelationship' in line && line.parentRelationship?.parent),
+  );
+  const linesWithoutVatRelief = vatEligibleLines.filter(
+    (line) => !lineHasVatRelief(line.attributes),
+  );
+  const showCartVatPrompt = linesWithoutVatRelief.length > 0;
+
   const applicableCodes =
     cart?.discountCodes
       ?.filter((discount) => discount.applicable)
       .map(({code}) => code) ?? [];
+
+  const openBulkVatModal = () => {
+    openCartModal({
+      lines: linesWithoutVatRelief.map((line) => ({
+        id: line.id,
+        quantity: line.quantity,
+        attributes: line.attributes,
+        productTitle: line.merchandise.product.title,
+      })),
+      title: 'Claim HMRC VAT relief',
+      subtitle:
+        linesWithoutVatRelief.length === 1
+          ? linesWithoutVatRelief[0]?.merchandise.product.title
+          : `${linesWithoutVatRelief.length} eligible items in your cart`,
+      initialEnabled: true,
+    });
+  };
+
+  const vatReliefPrompt = showCartVatPrompt ? (
+    <button
+      className="mb-3 w-full rounded-lg border border-border bg-secondary/40 px-3 py-2.5 text-left text-sm transition-colors hover:border-foreground/20"
+      onClick={openBulkVatModal}
+      type="button"
+    >
+      <span className="block font-medium text-foreground">
+        Claim HMRC VAT relief
+      </span>
+      <span className="mt-0.5 block text-xs text-muted-foreground">
+        Eligible on {linesWithoutVatRelief.length}{' '}
+        {linesWithoutVatRelief.length === 1 ? 'item' : 'items'} — save 20% VAT
+      </span>
+    </button>
+  ) : null;
 
   const totalsSection = totals ? (
     <div className="space-y-1.5 text-sm">
@@ -79,7 +125,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   const checkoutSection = checkoutUrl ? (
     <a
-      className="btn-atc w-full"
+      className="btn-checkout w-full flex-col gap-0.5 py-3.5 !text-white no-underline hover:!text-white"
       href={checkoutUrl}
       onClick={() => {
         if (!analyticsAllowed || !cart?.lines?.nodes?.length || !totals) return;
@@ -94,9 +140,11 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         trackBeginCheckout(items, totals.total, currencyCode);
       }}
     >
-      Proceed to checkout
+      <span className="text-white">Proceed to checkout</span>
       {totals ? (
-        <> — {formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})}</>
+        <span className="text-sm font-semibold text-white/95">
+          {formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})}
+        </span>
       ) : null}
     </a>
   ) : null;
@@ -110,6 +158,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         <h3 className="sr-only" id={summaryId}>
           Cart totals
         </h3>
+
+        {vatReliefPrompt}
 
         {totals?.hasVatRelief ? (
           <p className="mb-2 text-xs text-muted-foreground">
@@ -179,8 +229,17 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <div className="rounded-lg border border-border bg-secondary/30 p-3">
             <p className="text-sm font-medium text-foreground">VAT relief available</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Tick &quot;I&apos;m eligible for HMRC VAT relief&quot; on the product page.
+              Claim HMRC VAT relief on eligible mobility products in your cart.
             </p>
+            {showCartVatPrompt ? (
+              <button
+                className="mt-2 text-sm font-medium text-foreground underline-offset-2 hover:underline"
+                onClick={openBulkVatModal}
+                type="button"
+              >
+                Open VAT relief declaration
+              </button>
+            ) : null}
           </div>
         )}
 

@@ -37,7 +37,7 @@ export function TrustBar() {
             >
               <Icon
                 aria-hidden
-                className="size-5 shrink-0 text-foreground"
+                className="size-5 shrink-0 text-primary"
                 strokeWidth={1.25}
               />
               <div>

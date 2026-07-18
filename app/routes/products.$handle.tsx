@@ -15,6 +15,11 @@ import {ProductSpecTabs} from '~/components/product/ProductSpecTabs';
 import {ProductVideoHero} from '~/components/product/ProductVideoHero';
 import {RelatedProducts} from '~/components/product/RelatedProducts';
 import {
+  ACCESSORIES_COLLECTION_HANDLE,
+  isAccessoryCompatibleWithChair,
+} from '~/lib/accessories';
+import {isAccessoryProduct} from '~/lib/cart-utils';
+import {
   collectGalleryMedia,
   normalizeYoutubeEmbed,
 } from '~/lib/product-gallery';
@@ -51,9 +56,12 @@ export const meta: Route.MetaFunction = ({data}) => {
 
 export async function loader(args: Route.LoaderArgs) {
   const criticalData = await loadCriticalData(args);
-  const relatedProducts = await loadRelatedProducts(args);
+  const [relatedProducts, accessoryAddons] = await Promise.all([
+    loadRelatedProducts(args),
+    loadAccessoryAddons(args, criticalData.product.handle),
+  ]);
 
-  return {...criticalData, relatedProducts};
+  return {...criticalData, relatedProducts, accessoryAddons};
 }
 
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
@@ -94,8 +102,40 @@ async function loadRelatedProducts({context}: Route.LoaderArgs) {
   return nodes;
 }
 
+async function loadAccessoryAddons(
+  {context}: Route.LoaderArgs,
+  productHandle: string,
+) {
+  if (isAccessoryProduct(productHandle)) return [];
+
+  const {storefront} = context;
+  const data = await storefront.query(ACCESSORY_ADDONS_QUERY, {
+    variables: {handle: ACCESSORIES_COLLECTION_HANDLE},
+  });
+
+  const nodes = data?.collection?.products?.nodes ?? [];
+  return nodes
+    .filter(
+      (product: (typeof nodes)[number]) =>
+        isAccessoryCompatibleWithChair(
+          {
+            handle: product.handle,
+            title: product.title,
+            tags: product.tags,
+          },
+          productHandle,
+        ),
+    )
+    .filter(
+      (product: (typeof nodes)[number]) =>
+        product.selectedOrFirstAvailableVariant?.availableForSale,
+    )
+    .slice(0, 8);
+}
+
 export default function Product() {
-  const {product, relatedProducts} = useLoaderData<typeof loader>();
+  const {product, relatedProducts, accessoryAddons} =
+    useLoaderData<typeof loader>();
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
@@ -164,6 +204,7 @@ export default function Product() {
 
           <div className="product-main min-w-0">
             <ProductPurchasePanel
+              accessoryAddons={accessoryAddons}
               displayName={staticContent?.displayName}
               productHandle={product.handle}
               productOptions={productOptions}
@@ -396,6 +437,54 @@ const RELATED_PRODUCTS_QUERY = `#graphql
     }
     x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") {
       ...HomeProduct
+    }
+  }
+` as const;
+
+const ACCESSORY_ADDONS_QUERY = `#graphql
+  query AccessoryAddons(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      products(first: 50, sortKey: BEST_SELLING) {
+        nodes {
+          id
+          handle
+          title
+          tags
+          featuredImage {
+            id
+            url
+            altText
+            width
+            height
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          selectedOrFirstAvailableVariant {
+            id
+            availableForSale
+            price {
+              amount
+              currencyCode
+            }
+            image {
+              url
+              altText
+            }
+            product {
+              title
+              handle
+            }
+          }
+        }
+      }
     }
   }
 ` as const;

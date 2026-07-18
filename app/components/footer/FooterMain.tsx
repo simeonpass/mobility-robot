@@ -11,7 +11,7 @@ import {SafetyDisclaimer} from '~/components/footer/SafetyDisclaimer';
 
 export function FooterMain() {
   return (
-    <div className="bg-foreground py-6 text-background md:py-8">
+    <div className="bg-navy-soft py-8 text-white md:py-10">
       <div className="xsto-container">
         <div className="mb-4 grid grid-cols-2 gap-x-6 gap-y-5 md:mb-6 md:grid-cols-3 md:gap-x-10 md:gap-y-6">
           <div className="col-span-2 space-y-4 md:col-span-1">
@@ -23,13 +23,13 @@ export function FooterMain() {
               src={xstoWordmark}
               width={220}
             />
-            <p className="text-sm leading-relaxed text-background/70">
+            <p className="text-sm leading-relaxed text-white/75">
               Official UK Distributor of XSTO self-balancing power wheelchairs.
             </p>
-            <address className="space-y-1 not-italic text-sm text-background/70">
+            <address className="space-y-1 not-italic text-sm text-white/75">
               <p>
                 <a
-                  className="transition-colors hover:text-background"
+                  className="transition-colors hover:text-white"
                   href={COMPANY.phoneHref}
                 >
                   {COMPANY.phone}
@@ -37,7 +37,7 @@ export function FooterMain() {
               </p>
               <p>
                 <a
-                  className="transition-colors hover:text-background"
+                  className="transition-colors hover:text-white"
                   href={`mailto:${COMPANY.email}`}
                 >
                   {COMPANY.email}
@@ -87,14 +87,14 @@ function FooterLinkColumn({
 }) {
   return (
     <div>
-      <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-background">
+      <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
         {title}
       </p>
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.url}>
             <NavLink
-              className="text-sm text-background/70 transition-colors hover:text-background"
+              className="text-sm text-white/75 transition-colors hover:text-white"
               prefetch="intent"
               to={link.url}
             >
@@ -119,7 +119,7 @@ function SocialLink({
   return (
     <a
       aria-label={label}
-      className="inline-flex size-8 items-center justify-center rounded-full border border-background/20 text-background/70 transition-colors hover:border-background/40 hover:text-background"
+      className="inline-flex size-8 items-center justify-center rounded-full border border-white/20 text-white/75 transition-colors hover:border-white/40 hover:text-white"
       href={href}
       rel="noopener noreferrer"
       target="_blank"

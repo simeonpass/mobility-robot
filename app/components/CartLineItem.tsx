@@ -7,7 +7,9 @@ import {useAside} from './Aside';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackRemoveFromCart} from '~/lib/analytics';
 import {isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
+import {toCartAttributeInputs} from '~/lib/vat-relief-attributes';
 import {getLineCatalogGross} from '~/lib/vat-relief';
+import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 export type CartLine = OptimisticCartLine<CartApiQueryFragment>;
@@ -29,6 +31,8 @@ export function CartLineItem({
   const lineItemChildren = childrenMap[id];
   const vatRelief = lineHasVatRelief(attributes);
   const accessory = isAccessoryProduct(product.handle);
+  const {openCartModal} = useVatRelief();
+  const vatEligible = !accessory;
   const isAside = layout === 'aside';
   const unitPrice = merchandise.price;
   const lineTotalMoney = {
@@ -120,6 +124,24 @@ export function CartLineItem({
               )}
             </div>
 
+            {vatEligible ? (
+              <button
+                className="mt-2 text-xs font-medium text-foreground underline-offset-2 hover:underline"
+                onClick={() =>
+                  openCartModal({
+                    lines: [{id, quantity, attributes, productTitle: product.title}],
+                    price: merchandise.price,
+                    title: vatRelief ? 'Edit VAT declaration' : 'Claim HMRC VAT relief',
+                    subtitle: product.title,
+                    initialEnabled: vatRelief,
+                  })
+                }
+                type="button"
+              >
+                {vatRelief ? 'Edit VAT declaration' : 'Claim VAT relief'}
+              </button>
+            ) : null}
+
             <CartLineQuantity
               compact={isAside}
               line={line}
@@ -166,7 +188,7 @@ function CartLineQuantity({
   compact?: boolean;
 }) {
   if (!line || typeof line?.quantity === 'undefined') return null;
-  const {id: lineId, quantity, isOptimistic} = line;
+  const {id: lineId, quantity, isOptimistic, attributes} = line;
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
@@ -178,7 +200,11 @@ function CartLineQuantity({
       ].join(' ')}
     >
       <div className="flex items-center gap-1.5">
-        <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+        <CartLineUpdateButton
+          attributes={attributes}
+          lineId={lineId}
+          quantity={prevQuantity}
+        >
           <button
             aria-label="Decrease quantity"
             className={[
@@ -194,7 +220,11 @@ function CartLineQuantity({
         <span className="min-w-6 text-center text-sm font-semibold">
           {quantity}
         </span>
-        <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+        <CartLineUpdateButton
+          attributes={attributes}
+          lineId={lineId}
+          quantity={nextQuantity}
+        >
           <button
             aria-label="Increase quantity"
             className={[
@@ -247,12 +277,23 @@ function CartLineRemoveButton({
 
 function CartLineUpdateButton({
   children,
-  lines,
+  lineId,
+  quantity,
+  attributes,
 }: {
   children: React.ReactNode;
-  lines: CartLineUpdateInput[];
+  lineId: string;
+  quantity: number;
+  attributes?: CartLine['attributes'];
 }) {
-  const lineIds = lines.map((line) => line.id);
+  const lines: CartLineUpdateInput[] = [
+    {
+      id: lineId,
+      quantity,
+      attributes: toCartAttributeInputs(attributes),
+    },
+  ];
+  const lineIds = [lineId];
 
   return (
     <CartForm

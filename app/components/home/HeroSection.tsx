@@ -26,73 +26,58 @@ export function HeroSection() {
         <HeroYoutubeBackground />
       </div>
 
-      {/* Top blend — keeps announcement bar + header legible over bright video */}
+      {/* Soft wash — hides burned-in video titles so they don’t fight hero copy */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-40 bg-gradient-to-b from-navy via-navy/70 to-transparent md:h-48"
+        className="pointer-events-none absolute inset-0 z-[1] bg-navy/45"
       />
-
-      {/* Centre vignette — light touch so video stays visible */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(15,23,42,0.45)_100%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-36 bg-gradient-to-b from-navy/80 to-transparent md:h-44"
       />
-
-      {/* Bottom weight for copy + CTAs */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-navy via-navy/50 to-transparent md:from-navy/90 md:via-navy/35"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[50%] bg-gradient-to-t from-navy/85 via-navy/35 to-transparent"
       />
 
       <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-4 pb-16 pt-28 text-center md:pb-20 md:pt-32">
         <motion.p
-          className="font-serif mb-4 text-[2rem] italic leading-none text-primary-foreground md:text-5xl lg:text-6xl"
+          className="font-serif mb-5 text-[2.25rem] italic leading-none text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] md:mb-6 md:text-6xl lg:text-7xl"
           {...fadeUp(0.15, reducedMotion ?? false)}
         >
           World&apos;s First
         </motion.p>
 
         <motion.h1
-          className="font-display mb-6 max-w-4xl text-lg font-semibold uppercase tracking-[0.2em] text-primary-foreground md:text-3xl lg:text-[2.125rem] lg:tracking-[0.22em]"
+          className="mb-6 max-w-4xl text-[1.625rem] font-bold uppercase leading-tight tracking-[0.12em] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-3xl md:text-[2.75rem] md:tracking-[0.16em] lg:text-5xl lg:tracking-[0.18em]"
           {...fadeUp(0.3, reducedMotion ?? false)}
         >
           Self-Balancing Mobility Robot
         </motion.h1>
 
         <motion.p
-          className="mb-4 max-w-2xl text-base leading-relaxed text-primary-foreground/90 md:text-lg md:leading-relaxed lg:max-w-3xl lg:text-xl"
+          className="mb-10 max-w-xl text-lg font-medium leading-relaxed text-white/95 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)] md:text-xl"
           {...fadeUp(0.42, reducedMotion ?? false)}
         >
-          XSTO is more than a powered wheelchair — it&apos;s a self-balancing
-          mobility robot that climbs slopes, handles kerbs and uneven ground,
-          and folds small enough for everyday travel.
-        </motion.p>
-
-        <motion.p
-          className="mb-10 max-w-xl text-sm leading-relaxed text-primary-foreground/75 md:text-base"
-          {...fadeUp(0.5, reducedMotion ?? false)}
-        >
-          From the award-winning M4 to the all-terrain X12 stair-climber — free UK
-          delivery, full warranty and VAT relief from Bentech Medical Ltd, official
-          UK distributor.
+          Free UK delivery · Full warranty · VAT relief eligible
         </motion.p>
 
         <motion.div
           className="flex flex-col items-center gap-4"
-          {...fadeUp(0.62, reducedMotion ?? false)}
+          {...fadeUp(0.55, reducedMotion ?? false)}
         >
           <Link
-            className="hero-cta-primary inline-flex min-w-[220px] items-center justify-center border-2 border-primary-foreground px-12 py-3.5 text-sm font-semibold uppercase tracking-[0.24em] text-primary-foreground transition-all hover:bg-primary-foreground hover:text-navy hover:shadow-luxe"
+            className="hero-cta-primary btn-accent inline-flex min-w-[240px] items-center justify-center px-12 py-4 text-base font-semibold uppercase tracking-[0.2em] text-white no-underline shadow-gold-glow transition-all hover:brightness-105 hover:text-white hover:no-underline md:min-w-[260px] md:text-[0.9375rem]"
             to={m4Url}
           >
             Buy Now
           </Link>
 
           <Link
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-primary-foreground/90 transition-colors hover:text-primary-foreground hover:underline"
+            className="inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-white/95 transition-colors hover:text-white hover:underline md:text-base"
             to="/vat-relief"
           >
-            <BadgePercent aria-hidden className="size-3.5 shrink-0" strokeWidth={1.25} />
+            <BadgePercent aria-hidden className="size-4 shrink-0 md:size-5" strokeWidth={1.25} />
             Save 20% — VAT Relief
           </Link>
         </motion.div>

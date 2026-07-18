@@ -41,6 +41,7 @@
   --color-vat-price: hsl(var(--vat-price));
   --color-navy: hsl(var(--navy));
   --color-navy-light: hsl(var(--navy-light));
+  --color-navy-soft: hsl(var(--navy-soft));
   --color-slate: hsl(var(--slate));
   --color-slate-light: hsl(var(--slate-light));
   --color-xsto-blue: hsl(var(--xsto-blue));
@@ -108,7 +109,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 222 47% 11%;
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 14% 96%;
@@ -117,7 +118,7 @@
     --muted: 220 14% 92%;
     --muted-foreground: 220 9% 46%;
 
-    --accent: 222 47% 11%;
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -141,7 +142,8 @@
     --vat-price: 160 84% 39%;
 
     --navy: 222 47% 11%;
-    --navy-light: 222 40% 20%;
+    --navy-light: 222 35% 22%;
+    --navy-soft: 222 25% 28%;
 
     --slate: 220 9% 46%;
     --slate-light: 220 9% 56%;
@@ -372,7 +374,40 @@
   }
 
   .btn-atc {
-    @apply inline-flex h-14 items-center justify-center rounded-md bg-navy px-6 text-[0.9375rem] font-medium tracking-[-0.01em] text-primary-foreground transition-colors hover:bg-navy-light;
+    @apply inline-flex h-14 items-center justify-center rounded-lg bg-navy px-6 text-[0.9375rem] font-semibold tracking-[-0.01em] text-white no-underline shadow-medium transition-all hover:bg-navy-light hover:shadow-strong;
+  }
+
+  .btn-checkout {
+    @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-sm font-semibold text-white no-underline shadow-gold transition-all hover:brightness-105 hover:text-white disabled:cursor-not-allowed disabled:opacity-60;
+    background-image: linear-gradient(
+      135deg,
+      hsl(221 83% 48%) 0%,
+      hsl(217 91% 58%) 100%
+    );
+    color: #ffffff;
+  }
+
+  .btn-atc,
+  .btn-checkout,
+  .btn-accent,
+  .btn-primary {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .btn-atc:hover,
+  .btn-checkout:hover,
+  .btn-accent:hover,
+  .btn-primary:hover {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .btn-atc *,
+  .btn-checkout *,
+  .btn-accent *,
+  .btn-primary * {
+    color: inherit;
   }
 
   .btn-ghost-light {
@@ -411,9 +446,9 @@
 
   .site-header--home {
     @apply fixed left-0 right-0 top-[var(--announcement-bar-height,2.5rem)];
-    background: hsl(0 0% 100% / calc(0.82 + var(--header-scroll-blend, 0) * 0.18));
-    border-bottom: 1px solid hsl(var(--border) / calc(0.45 + var(--header-scroll-blend, 0) * 0.55));
-    box-shadow: 0 8px 32px hsl(var(--navy) / calc(var(--header-scroll-blend, 0) * 0.1));
+    background: hsl(0 0% 100% / calc(0.9 + var(--header-scroll-blend, 0) * 0.1));
+    border-bottom: 1px solid hsl(var(--border) / calc(0.55 + var(--header-scroll-blend, 0) * 0.45));
+    box-shadow: 0 4px 24px hsl(var(--navy) / calc(var(--header-scroll-blend, 0) * 0.08));
     backdrop-filter: blur(calc(10px + var(--header-scroll-blend, 0) * 6px));
     -webkit-backdrop-filter: blur(calc(10px + var(--header-scroll-blend, 0) * 6px));
     transition:
@@ -452,7 +487,7 @@
   }
 
   .site-header-cart-count {
-    @apply inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-navy px-1.5 py-0.5 text-[0.6875rem] font-semibold leading-none text-white;
+    @apply inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-gold px-1.5 py-0.5 text-[0.6875rem] font-semibold leading-none text-white;
   }
 
   .hero-youtube-embed {
@@ -463,12 +498,15 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: max(100vw, 177.78vh);
-    height: max(56.25vw, 100vh);
+    /* Scale past cover so edge title cards / lower-thirds are cropped out */
+    width: max(115vw, 204vh);
+    height: max(64.7vw, 115vh);
     min-width: 100%;
     min-height: 100%;
     transform: translate(-50%, -50%);
     border: 0;
+    /* Soft blur washes burned-in captions without killing the product motion */
+    filter: brightness(0.92) contrast(1.05) blur(2.5px);
   }
 
   .hero-video-poster {
@@ -575,7 +613,7 @@ img {
     padding: 0.1em 0.3em;
   }
 
-  a {
+  a:not([class*='btn-']) {
     text-decoration: underline;
     text-underline-offset: 6px;
   }
@@ -1207,4 +1245,38 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+/*
+ * CTA buttons — unlayered so they beat reset.css link inheritance in cart drawer etc.
+ */
+a.btn-checkout,
+a.btn-atc,
+a.btn-accent,
+a.btn-primary,
+button.btn-checkout,
+button.btn-atc {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+a.btn-checkout,
+button.btn-checkout {
+  background-image: linear-gradient(
+    135deg,
+    hsl(221 83% 48%) 0%,
+    hsl(217 91% 58%) 100%
+  ) !important;
+  box-shadow: 0 4px 16px -2px hsl(221 83% 53% / 0.45);
+}
+
+a.btn-checkout:hover,
+button.btn-checkout:hover {
+  color: #ffffff !important;
+  filter: brightness(1.06);
+}
+
+a.btn-checkout span,
+button.btn-checkout span {
+  color: #ffffff !important;
 }
