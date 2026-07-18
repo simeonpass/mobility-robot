@@ -727,9 +727,14 @@ aside li {
   margin: 0;
   flex: 1;
   min-height: 0;
+  height: calc(100vh - 0px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.overlay--cart aside main > section {
+  min-height: 0;
 }
 
 button.reset {

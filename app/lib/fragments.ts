@@ -171,6 +171,9 @@ export const CART_QUERY_FRAGMENT = `#graphql
       ... on CartCodeDiscountAllocation {
         code
       }
+      ... on CartAutomaticDiscountAllocation {
+        title
+      }
     }
     discountCodes {
       code

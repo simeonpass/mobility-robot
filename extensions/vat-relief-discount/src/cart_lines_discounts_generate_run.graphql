@@ -1,10 +1,10 @@
-query RunInput {
+query Input {
   cart {
     lines {
       id
       quantity
       cost {
-        totalAmount {
+        subtotalAmount {
           amount
         }
       }
@@ -12,5 +12,8 @@ query RunInput {
         value
       }
     }
+  }
+  discount {
+    discountClasses
   }
 }

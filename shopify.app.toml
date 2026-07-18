@@ -3,7 +3,7 @@
 # Deploy the function:        shopify app deploy
 
 name = "XSTO VAT Relief"
-client_id = "00000000000000000000000000000001"
+client_id = "d0589c6e7756aea84becc989391f687d"
 application_url = "https://xsto.co.uk"
 embedded = false
 

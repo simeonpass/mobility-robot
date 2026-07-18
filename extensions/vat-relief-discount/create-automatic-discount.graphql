@@ -1,0 +1,20 @@
+mutation CreateVatReliefDiscount {
+  discountAutomaticAppCreate(
+    automaticAppDiscount: {
+      title: "VAT Relief (exact)"
+      functionHandle: "vat-relief-discount"
+      discountClasses: [PRODUCT]
+      startsAt: "2026-07-18T00:00:00"
+    }
+  ) {
+    automaticAppDiscount {
+      discountId
+      title
+      status
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

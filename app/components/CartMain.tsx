@@ -48,9 +48,9 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
     return (
       <section
         aria-label="Cart drawer"
-        className="flex h-full min-h-0 flex-col"
+        className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]"
       >
-        <div className="flex items-center gap-3 border-b border-border px-6 py-4">
+        <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <div className="flex size-10 items-center justify-center rounded-full bg-gold/10">
             <CartIcon />
           </div>
@@ -76,8 +76,8 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
           <CartEmpty onContinue={close} variant="drawer" />
         ) : (
           <>
-            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-              <ul className="space-y-4" aria-label="Cart line items">
+            <div className="overflow-y-auto overscroll-contain px-4 py-3">
+              <ul className="space-y-2" aria-label="Cart line items">
                 {lines.map((line) => {
                   if (
                     'parentRelationship' in line &&
