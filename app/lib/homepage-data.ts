@@ -50,7 +50,7 @@ export const HOMEPAGE_PRODUCT_BADGES: Record<
   },
 };
 
-/** M4B launch film — Shopify CDN MP4 used by the homepage hero. */
+/** M4B launch film — Shopify CDN MP4 used by the experience-range M4B card. */
 export const HERO_VIDEO_URL =
   'https://cdn.shopify.com/videos/c/o/v/24482dbe89234283a018301fa020db98.mp4';
 
@@ -81,7 +81,7 @@ export const HOMEPAGE_VIDEO_ITEMS: readonly HomepageVideoItem[] = [
   },
   {
     id: 'm4b',
-    // Same Shopify CDN MP4 as the homepage hero (no dedicated M4B YouTube yet).
+    // Shopify CDN MP4 (no dedicated M4B YouTube yet).
     videoUrl: HERO_VIDEO_URL,
     title: 'XSTO M4B — New Front Wheels',
     description:
@@ -294,8 +294,12 @@ export function getHomepageProductSlot(
   return undefined;
 }
 
-/** @deprecated Prefer HERO_VIDEO_URL (M4B launch film). Kept for any legacy embeds. */
-export const HOMEPAGE_HERO_YOUTUBE_ID = 'ihXdzLuNz2s';
+/** Homepage hero YouTube video — X12 stair-climbing / all-terrain film. */
+export const HOMEPAGE_HERO_YOUTUBE_ID = '4KFMBL5jX20';
+
+export function heroYoutubePosterUrl(videoId = HOMEPAGE_HERO_YOUTUBE_ID): string {
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
 
 export function buildHeroYoutubeEmbedUrl(videoId: string): string {
   const params = new URLSearchParams({

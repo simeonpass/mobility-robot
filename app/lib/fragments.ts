@@ -22,10 +22,24 @@ export const CART_QUERY_FRAGMENT = `#graphql
         ...Money
       }
     }
+    sellingPlanAllocation {
+      checkoutChargeAmount {
+        ...Money
+      }
+      remainingBalanceChargeAmount {
+        ...Money
+      }
+      sellingPlan {
+        id
+        name
+        description
+      }
+    }
     merchandise {
       ... on ProductVariant {
         id
         availableForSale
+        quantityAvailable
         compareAtPrice {
           ...Money
         }
@@ -78,10 +92,24 @@ export const CART_QUERY_FRAGMENT = `#graphql
         ...Money
       }
     }
+    sellingPlanAllocation {
+      checkoutChargeAmount {
+        ...Money
+      }
+      remainingBalanceChargeAmount {
+        ...Money
+      }
+      sellingPlan {
+        id
+        name
+        description
+      }
+    }
     merchandise {
       ... on ProductVariant {
         id
         availableForSale
+        quantityAvailable
         compareAtPrice {
           ...Money
         }

@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Link} from 'react-router';
 import {BadgePercent, Check, Pencil} from 'lucide-react';
 import type {MappedProductOptions, OptimisticCartLineInput} from '@shopify/hydrogen';
@@ -13,6 +13,7 @@ import {
 } from '~/components/product/ProductAccessoryAddons';
 import {ProductCheckoutTrust} from '~/components/product/ProductCheckoutTrust';
 import {ProductDeliveryEta} from '~/components/product/ProductDeliveryEta';
+import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import {getDeliveryInfo} from '~/lib/product-delivery';
@@ -23,6 +24,11 @@ import {
   getKlarnaInstallmentDisplay,
   getVatSavingsDisplay,
 } from '~/lib/product-pricing';
+import {
+  buildPurchaseOptions,
+  isDepositPurchaseOption,
+  type SellingPlanAllocationNode,
+} from '~/lib/selling-plans';
 import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
 
 type ProductPurchasePanelProps = {
@@ -55,6 +61,9 @@ export function ProductPurchasePanel({
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(
     () => new Set(),
   );
+  const [paymentChoice, setPaymentChoice] = useState<'full' | 'deposit'>(
+    'full',
+  );
 
   const price = selectedVariant?.price;
   const compareAtPrice = selectedVariant?.compareAtPrice;
@@ -67,8 +76,31 @@ export function ProductPurchasePanel({
     ? getDeliveryInfo({
         availableForSale: selectedVariant.availableForSale,
         quantityAvailable: selectedVariant.quantityAvailable,
+        handle: productHandle,
       })
     : null;
+
+  const purchaseOptions = useMemo(
+    () =>
+      buildPurchaseOptions({
+        allocations: selectedVariant?.sellingPlanAllocations
+          ?.nodes as SellingPlanAllocationNode[] | undefined,
+        vatReliefEnabled: productVatReliefEnabled,
+      }),
+    [productVatReliefEnabled, selectedVariant],
+  );
+
+  const depositOption = purchaseOptions.find(isDepositPurchaseOption) ?? null;
+  const hasDepositOption = Boolean(depositOption);
+
+  useEffect(() => {
+    if (!hasDepositOption && paymentChoice === 'deposit') {
+      setPaymentChoice('full');
+    }
+  }, [hasDepositOption, paymentChoice]);
+
+  const selectedSellingPlanId =
+    paymentChoice === 'deposit' ? depositOption?.sellingPlanId : null;
 
   const vatFormComplete = isVatDeclarationComplete(declaration);
 
@@ -97,10 +129,18 @@ export function ProductPurchasePanel({
   }, [accessoryAddons, selectedAddonIds]);
 
   const addonCount = addonLines.length;
-  const baseLabel = productVatReliefEnabled && exVatDisplay
-    ? `Add to cart — ${exVatDisplay}`
-    : incVatDisplay
-      ? `Add to cart — ${incVatDisplay}`
+  const priceForLabel =
+    paymentChoice === 'deposit' && depositOption
+      ? depositOption.depositDisplay
+      : productVatReliefEnabled && exVatDisplay
+        ? exVatDisplay
+        : incVatDisplay;
+  const baseLabel = priceForLabel
+    ? paymentChoice === 'deposit'
+      ? `Reserve with deposit — ${priceForLabel}`
+      : `Add to cart — ${priceForLabel}`
+    : paymentChoice === 'deposit'
+      ? 'Reserve with deposit'
       : 'Add to cart';
   const addToCartLabel =
     addonCount > 0
@@ -120,6 +160,9 @@ export function ProductPurchasePanel({
           quantity: 1,
           selectedVariant,
           attributes: cartAttributes,
+          ...(selectedSellingPlanId
+            ? {sellingPlanId: selectedSellingPlanId}
+            : {}),
         },
         ...addonLines.map((line) => ({
           ...line,
@@ -129,7 +172,17 @@ export function ProductPurchasePanel({
     : [];
 
   const stickyPrice =
-    productVatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
+    paymentChoice === 'deposit' && depositOption
+      ? depositOption.depositDisplay
+      : productVatReliefEnabled && exVatDisplay
+        ? exVatDisplay
+        : incVatDisplay;
+  const stickyPriceHint =
+    paymentChoice === 'deposit'
+      ? '10% deposit due today'
+      : productVatReliefEnabled
+        ? 'VAT relief price'
+        : 'inc. VAT';
 
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
@@ -182,6 +235,20 @@ export function ProductPurchasePanel({
       />
 
       <div className="mt-3 space-y-3 sm:mt-4">
+        {depositOption ? (
+          <ProductPaymentOptions
+            depositAmountLabel={depositOption.depositDisplay}
+            depositPlanName={
+              /deposit/i.test(depositOption.name)
+                ? depositOption.name
+                : 'Pay 10% deposit'
+            }
+            onChange={setPaymentChoice}
+            remainingAmountLabel={depositOption.remainingDisplay}
+            value={paymentChoice}
+          />
+        ) : null}
+
         <ProductForm
           addToCartClassName="btn-atc hidden w-full lg:inline-flex"
           addToCartLabel={addToCartLabel}
@@ -191,6 +258,7 @@ export function ProductPurchasePanel({
           productHandle={productHandle}
           productOptions={productOptions}
           selectedVariant={selectedVariant}
+          sellingPlanId={selectedSellingPlanId}
           soldOutLabel={soldOutLabel}
         />
 
@@ -207,7 +275,11 @@ export function ProductPurchasePanel({
           />
         ) : null}
 
-        <ProductCheckoutTrust klarnaInstallment={klarnaInstallment} />
+        <ProductCheckoutTrust
+          klarnaInstallment={
+            paymentChoice === 'deposit' ? null : klarnaInstallment
+          }
+        />
       </div>
 
       <p className="mt-4 text-center text-[0.6875rem] text-slate">
@@ -236,7 +308,7 @@ export function ProductPurchasePanel({
                 {stickyPrice}
               </p>
               <p className="mt-0.5 truncate text-[0.65rem] text-slate">
-                {productVatReliefEnabled ? 'VAT relief price' : 'inc. VAT'}
+                {stickyPriceHint}
               </p>
             </div>
           ) : null}
@@ -251,7 +323,9 @@ export function ProductPurchasePanel({
               : !canAddToCart
                 ? soldOutLabel
                 : stickyPrice
-                  ? `Add — ${stickyPrice}`
+                  ? paymentChoice === 'deposit'
+                    ? `Deposit — ${stickyPrice}`
+                    : `Add — ${stickyPrice}`
                   : 'Add to cart'}
           </AddToCartButton>
         </div>

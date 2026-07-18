@@ -13,9 +13,9 @@ import {TrustBar} from '~/components/TrustBar';
 import {
   HOMEPAGE_PRODUCT_HANDLES,
   SHOPIFY_HOME_PRODUCT_HANDLES,
+  heroYoutubePosterUrl,
   type HomepageProductHandle,
 } from '~/lib/homepage-data';
-import heroPosterDesktop from '~/assets/m4-hero-new.webp';
 import {buildMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
@@ -32,7 +32,7 @@ export function links() {
     {
       rel: 'preload',
       as: 'image',
-      href: heroPosterDesktop,
+      href: heroYoutubePosterUrl(),
       fetchPriority: 'high',
     },
   ];

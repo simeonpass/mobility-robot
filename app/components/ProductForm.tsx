@@ -19,6 +19,7 @@ export function ProductForm({
   selectedVariant,
   cartAttributes = [],
   addonLines = [],
+  sellingPlanId,
   disabled,
   soldOutLabel = 'Sold out',
   addToCartLabel = 'Add to cart',
@@ -29,6 +30,8 @@ export function ProductForm({
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
   cartAttributes?: AttributeInput[];
   addonLines?: OptimisticCartLineInput[];
+  /** When set, line is added with this Shopify selling plan (e.g. 10% deposit). */
+  sellingPlanId?: string | null;
   disabled?: boolean;
   soldOutLabel?: string;
   addToCartLabel?: string;
@@ -49,6 +52,7 @@ export function ProductForm({
           quantity: 1,
           selectedVariant,
           attributes: cartAttributes,
+          ...(sellingPlanId ? {sellingPlanId} : {}),
         },
         ...addonLines.map((line) => ({
           ...line,

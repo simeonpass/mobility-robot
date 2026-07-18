@@ -15,7 +15,7 @@ const fadeUp = (delay: number, reducedMotion: boolean) =>
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion() ?? false;
-  const m4bUrl = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b']}`;
+  const x12Url = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`;
 
   return (
     <section
@@ -46,8 +46,8 @@ export function HeroSection() {
             style={{textShadow: '0 2px 28px rgba(0,0,0,0.6)'}}
             {...fadeUp(0.1, reducedMotion)}
           >
-            Introducing the new{' '}
-            <span className="home-hero-title-product">XSTO M4B</span>
+            Introducing the{' '}
+            <span className="home-hero-title-product">XSTO X12</span>
           </motion.h1>
 
           <motion.p
@@ -55,8 +55,8 @@ export function HeroSection() {
             style={{textShadow: '0 1px 16px rgba(0,0,0,0.5)'}}
             {...fadeUp(0.2, reducedMotion)}
           >
-            Removable, adjustable footrest for easier transfers — with the same
-            self-balancing performance and compact fold.
+            Stair-climbing and all-terrain mobility — climbs steps up to 40°
+            with AI-powered mode switching.
           </motion.p>
 
           <motion.div
@@ -65,9 +65,9 @@ export function HeroSection() {
           >
             <Link
               className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"
-              to={m4bUrl}
+              to={x12Url}
             >
-              Shop the M4B
+              Shop the X12
             </Link>
 
             <Link

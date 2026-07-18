@@ -6,7 +6,7 @@ import {Link} from 'react-router';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackBeginCheckout} from '~/lib/analytics';
 import {withOnlineStoreChannel, isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
-import {getDeliveryInfo} from '~/lib/product-delivery';
+import {getCartDeliveryInfo} from '~/lib/product-delivery';
 import {formatProductPrice} from '~/lib/product-pricing';
 import {getCartTotals} from '~/lib/vat-relief';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
@@ -29,13 +29,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   const checkoutUrl = cart?.checkoutUrl
     ? withOnlineStoreChannel(cart.checkoutUrl)
     : null;
-  const delivery = getDeliveryInfo({
-    availableForSale: true,
-    quantityAvailable: 1,
-  });
-
-  const {openCartModal} = useVatRelief();
   const cartLines = cart?.lines?.nodes ?? [];
+  const delivery = getCartDeliveryInfo(cartLines);
+  const {openCartModal} = useVatRelief();
   const vatEligibleLines = cartLines.filter(
     (line) =>
       !isAccessoryProduct(line.merchandise.product.handle) &&

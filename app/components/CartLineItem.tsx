@@ -23,7 +23,8 @@ export function CartLineItem({
   line: CartLine;
   childrenMap: LineItemChildrenMap;
 }) {
-  const {id, merchandise, quantity, attributes, cost} = line;
+  const {id, merchandise, quantity, attributes, cost, sellingPlanAllocation} =
+    line;
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
@@ -35,6 +36,8 @@ export function CartLineItem({
   const vatEligible = !accessory;
   const isAside = layout === 'aside';
   const unitPrice = merchandise.price;
+  const isDepositLine = Boolean(sellingPlanAllocation?.sellingPlan?.id);
+  const depositPlanName = sellingPlanAllocation?.sellingPlan?.name;
   const lineTotalMoney = {
     amount: String(
       getLineCatalogGross({quantity, merchandise, cost, attributes}),
@@ -112,6 +115,13 @@ export function CartLineItem({
                   VAT relief
                 </span>
               ) : null}
+              {isDepositLine ? (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-950">
+                  {depositPlanName && /deposit/i.test(depositPlanName)
+                    ? depositPlanName
+                    : '10% deposit'}
+                </span>
+              ) : null}
               {selectedOptions.map((option) =>
                 option.value === 'Default Title' ? null : (
                   <span
@@ -123,6 +133,20 @@ export function CartLineItem({
                 ),
               )}
             </div>
+
+            {isDepositLine ? (
+              <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground">
+                Deposit today
+                {sellingPlanAllocation?.checkoutChargeAmount ? (
+                  <>
+                    {' '}
+                    (
+                    <Money data={sellingPlanAllocation.checkoutChargeAmount} />)
+                  </>
+                ) : null}
+                . Balance due before dispatch.
+              </p>
+            ) : null}
 
             {vatEligible ? (
               <button

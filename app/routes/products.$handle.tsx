@@ -320,6 +320,37 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
       amount
       currencyCode
     }
+    sellingPlanAllocations(first: 10) {
+      nodes {
+        checkoutChargeAmount {
+          amount
+          currencyCode
+        }
+        remainingBalanceChargeAmount {
+          amount
+          currencyCode
+        }
+        priceAdjustments {
+          price {
+            amount
+            currencyCode
+          }
+          compareAtPrice {
+            amount
+            currencyCode
+          }
+        }
+        sellingPlan {
+          id
+          name
+          description
+          options {
+            name
+            value
+          }
+        }
+      }
+    }
   }
 ` as const;
 

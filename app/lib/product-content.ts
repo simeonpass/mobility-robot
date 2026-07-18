@@ -354,7 +354,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'Joystick Controller',
       'User Manual',
     ],
-    deliveryWarranty: DELIVERY_WARRANTY,
+    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nWhen ordered as a pre-order build, estimated delivery is about 2 weeks. Pay in full or place a 10% deposit; balance due before dispatch.`,
     faqs: ezgo2FAQs,
     videos: [],
   },
@@ -392,7 +392,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 models are available by pre-order. Place a deposit to join the build queue; balance due before dispatch.`,
+    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 models are available by pre-order (estimated ~10 weeks). Pay in full or place a 10% deposit to join the build queue; balance due before dispatch.`,
     faqs: x12FAQs,
     videos: [
       {title: 'Watch the X12 in Action', embedUrl: YOUTUBE.x12},
@@ -434,7 +434,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 Pro models are available by pre-order. Place a deposit to join the build queue; balance due before dispatch.`,
+    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 Pro models are available by pre-order (estimated ~10 weeks). Pay in full or place a 10% deposit to join the build queue; balance due before dispatch.`,
     faqs: x12FAQs,
     videos: [
       {title: 'Watch the X12 Pro in Action', embedUrl: YOUTUBE.x12Pro},

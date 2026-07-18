@@ -113,7 +113,7 @@ export const x12FAQs: ProductFAQ[] = [
   {
     question: 'Is the X12 available to buy now?',
     answer:
-      'The X12 is available by pre-order only due to high demand. Place a 10% deposit to join the build queue, with an estimated delivery of approximately 12 weeks. You pay the remaining balance before dispatch.',
+      'The X12 is available by pre-order due to high demand. You can pay in full or place a 10% deposit to join the build queue, with an estimated delivery of approximately 10 weeks. The remaining balance (if you chose a deposit) is due before dispatch.',
   },
   {
     question: "What's included in the box with the X12?",
@@ -192,6 +192,11 @@ export const ezgo2FAQs: ProductFAQ[] = [
     question: 'Can I claim VAT relief on the EzGo2?',
     answer:
       'Yes. If you have a long-term illness or disability, you can purchase the EzGo2 VAT-free. Complete a VAT exemption declaration during checkout.',
+  },
+  {
+    question: 'How soon can I receive the EzGo2?',
+    answer:
+      'When available to order now, estimated delivery is about 2 weeks. You can pay in full or place a 10% deposit; any remaining balance is due before dispatch.',
   },
 ];
 
