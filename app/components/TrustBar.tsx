@@ -71,12 +71,6 @@ export function TrustBar() {
             width={80}
           />
         </div>
-
-        <div className="flex justify-center border-t border-border/60 py-5">
-          <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary md:text-sm">
-            Official UK Distributor of XSTO
-          </span>
-        </div>
       </div>
     </section>
   );

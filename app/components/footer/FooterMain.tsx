@@ -16,7 +16,7 @@ export function FooterMain() {
         <div className="mb-4 grid grid-cols-2 gap-x-6 gap-y-5 md:mb-6 md:grid-cols-3 md:gap-x-10 md:gap-y-6">
           <div className="col-span-2 space-y-4 md:col-span-1">
             <img
-              alt="XSTO UK — Official UK Distributor"
+              alt="XSTO UK"
               className="h-10 w-auto max-w-[220px] rounded-none object-contain object-left"
               decoding="async"
               height={40}
@@ -24,7 +24,8 @@ export function FooterMain() {
               width={220}
             />
             <p className="text-sm leading-relaxed text-white/75">
-              Official UK Distributor of XSTO self-balancing power wheelchairs.
+              Self-balancing powered wheelchairs — UK sales, delivery and support
+              from Bentech Medical Ltd.
             </p>
             <address className="space-y-1 not-italic text-sm text-white/75">
               <p>

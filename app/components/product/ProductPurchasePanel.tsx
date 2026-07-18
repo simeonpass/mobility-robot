@@ -117,7 +117,7 @@ export function ProductPurchasePanel({
     <div className="product-buy-box lg:sticky lg:top-24 lg:max-w-[440px] lg:justify-self-end">
       <header className="mb-6 space-y-2">
         <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-          XSTO · Official UK distributor
+          XSTO UK
         </p>
         <h1 className="font-display text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground md:text-[2rem]">
           {displayName ?? title}

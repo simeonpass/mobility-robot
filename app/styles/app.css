@@ -436,7 +436,8 @@
 
   .home-hero {
     margin-top: calc(-1 * (var(--announcement-bar-height, 2.5rem) + var(--header-height)));
-    padding-top: calc(var(--announcement-bar-height, 2.5rem) + var(--header-height));
+    padding: 0 !important;
+    padding-top: calc(var(--announcement-bar-height, 2.5rem) + var(--header-height)) !important;
   }
 
   /* Site header — frosted white bar, navy text (always readable) */
@@ -519,6 +520,30 @@
 
   .hero-cta-primary {
     backdrop-filter: blur(4px);
+  }
+
+  a.btn-hero-primary,
+  a.btn-hero-secondary {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a.btn-hero-primary {
+    color: hsl(var(--navy));
+  }
+
+  a.btn-hero-primary:hover {
+    color: hsl(var(--navy));
+    text-decoration: none;
+  }
+
+  a.btn-hero-secondary {
+    color: #fff;
+  }
+
+  a.btn-hero-secondary:hover {
+    color: #fff;
+    text-decoration: none;
   }
   .text-gradient-gold {
     @apply bg-clip-text text-transparent;
