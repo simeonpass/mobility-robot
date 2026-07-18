@@ -16,7 +16,6 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
 import {applyReferralDiscount} from '~/lib/referral-discount';
-import {syncVatReliefDiscount} from '~/lib/vat-relief-discount';
 import {legacyRedirect} from '~/lib/redirects';
 import {ConsentProvider} from '~/components/ConsentBanner';
 import {Ga4Tracker} from '~/components/Ga4Tracker';
@@ -117,7 +116,6 @@ function loadDeferredData({context, request}: Route.LoaderArgs) {
   return {
     cart: (async () => {
       await applyReferralDiscount(request, cart);
-      await syncVatReliefDiscount(cart);
       return cart.get();
     })(),
     isLoggedIn: customerAccount.isLoggedIn(),

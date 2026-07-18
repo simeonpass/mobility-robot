@@ -1,0 +1,20 @@
+# Shopify app config for the VAT relief discount function.
+# Link to your Partners app:  shopify app config link
+# Deploy the function:        shopify app deploy
+
+name = "XSTO VAT Relief"
+client_id = "00000000000000000000000000000001"
+application_url = "https://xsto.co.uk"
+embedded = false
+
+[auth]
+redirect_urls = ["https://xsto.co.uk/auth/callback"]
+
+[build]
+dev_store_url = "f7vjea-hq.myshopify.com"
+
+[access_scopes]
+scopes = "write_discounts"
+
+[webhooks]
+api_version = "2025-01"

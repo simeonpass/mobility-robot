@@ -1,7 +1,5 @@
-import {
-  formatProductPrice,
-  toExVatAmount,
-} from '~/lib/product-pricing';
+import {formatProductPrice} from '~/lib/product-pricing';
+import {exVatFromGross, vatPortionFromGross} from '~/lib/vat-math';
 import {getHomepageProductSlot} from '~/lib/homepage-data';
 
 const VAT_RELIEF_KEY = 'VAT Relief';
@@ -32,8 +30,12 @@ export function getLineDisplayAmount({
   vatRelief: boolean;
 }) {
   const numeric = Number(amount);
-  const displayAmount = vatRelief ? toExVatAmount(amount) : numeric;
-  return formatProductPrice(displayAmount, currencyCode);
+  const displayAmount = vatRelief ? exVatFromGross(amount) : numeric;
+  return formatProductPrice(
+    displayAmount,
+    currencyCode,
+    vatRelief ? {fractionDigits: 2} : undefined,
+  );
 }
 
 export function getVatSavingsAmount(
@@ -46,8 +48,7 @@ export function getVatSavingsAmount(
   return lines.reduce((total, line) => {
     if (!lineHasVatRelief(line.attributes)) return total;
     const inc = Number(line.cost?.totalAmount?.amount ?? 0);
-    const ex = toExVatAmount(String(inc));
-    return total + (inc - ex);
+    return total + vatPortionFromGross(inc);
   }, 0);
 }
 

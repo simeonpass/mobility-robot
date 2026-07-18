@@ -1,6 +1,6 @@
-import {useMemo, useState, useEffect} from 'react';
-import {Link, useLocation} from 'react-router';
-import {BadgePercent, Check, ShieldCheck} from 'lucide-react';
+import {useMemo, useState} from 'react';
+import {Link} from 'react-router';
+import {BadgePercent, Check} from 'lucide-react';
 import type {MappedProductOptions} from '@shopify/hydrogen';
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
 import type {ProductFragment} from 'storefrontapi.generated';
@@ -11,16 +11,11 @@ import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {getDeliveryInfo} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
-  getActiveCartPriceDisplay,
   getExVatDisplay,
   getIncVatDisplay,
   getKlarnaInstallmentDisplay,
   getVatSavingsDisplay,
 } from '~/lib/product-pricing';
-import {
-  buildVatReliefRegisterUrl,
-  readVatReliefRegistration,
-} from '~/lib/vat-relief-session';
 
 export type VatDeclaration = {
   email: string;
@@ -28,8 +23,6 @@ export type VatDeclaration = {
   address: string;
   condition: string;
 };
-
-type PriceView = 'inc-vat' | 'ex-vat';
 
 type ProductPurchasePanelProps = {
   productHandle: string;
@@ -40,6 +33,13 @@ type ProductPurchasePanelProps = {
   productOptions: MappedProductOptions[];
 };
 
+const EMPTY_DECLARATION: VatDeclaration = {
+  email: '',
+  name: '',
+  address: '',
+  condition: '',
+};
+
 export function ProductPurchasePanel({
   productHandle,
   title,
@@ -48,43 +48,15 @@ export function ProductPurchasePanel({
   selectedVariant,
   productOptions,
 }: ProductPurchasePanelProps) {
-  const location = useLocation();
-  const vatReliefRegisterUrl = buildVatReliefRegisterUrl(
-    `${location.pathname}${location.search}`,
-  );
-  const [registeredProfile, setRegisteredProfile] = useState<
-    ReturnType<typeof readVatReliefRegistration>
-  >(null);
-  const [priceView, setPriceView] = useState<PriceView>('inc-vat');
-  const [declaration, setDeclaration] = useState<VatDeclaration>({
-    email: '',
-    name: '',
-    address: '',
-    condition: '',
-  });
-
-  useEffect(() => {
-    const stored = readVatReliefRegistration();
-    setRegisteredProfile(stored);
-    if (stored) {
-      setDeclaration({
-        email: stored.email,
-        name: stored.name,
-        address: stored.address,
-        condition: stored.condition,
-      });
-    }
-  }, []);
+  const [vatReliefEnabled, setVatReliefEnabled] = useState(false);
+  const [declaration, setDeclaration] = useState<VatDeclaration>(EMPTY_DECLARATION);
 
   const price = selectedVariant?.price;
   const compareAtPrice = selectedVariant?.compareAtPrice;
-  const vatReliefEnabled = priceView === 'ex-vat';
-
   const incVatDisplay = getIncVatDisplay(price);
   const exVatDisplay = getExVatDisplay(price);
   const vatSavings = getVatSavingsDisplay(price);
   const klarnaInstallment = getKlarnaInstallmentDisplay(price);
-  const activePrice = getActiveCartPriceDisplay(price, vatReliefEnabled);
 
   const delivery = selectedVariant
     ? getDeliveryInfo({
@@ -101,14 +73,18 @@ export function ProductPurchasePanel({
 
   const canAddToCart =
     Boolean(selectedVariant?.availableForSale) &&
-    (!vatReliefEnabled || (Boolean(registeredProfile) && vatFormComplete));
+    (!vatReliefEnabled || vatFormComplete);
 
   const cartAttributes = useMemo(
     () => (vatReliefEnabled ? buildVatCartAttributes(declaration) : []),
     [declaration, vatReliefEnabled],
   );
 
-  const addToCartLabel = activePrice ? `Add to cart — ${activePrice}` : 'Add to cart';
+  const addToCartLabel = vatReliefEnabled && exVatDisplay
+    ? `Add to cart — ${exVatDisplay}`
+    : incVatDisplay
+      ? `Add to cart — ${incVatDisplay}`
+      : 'Add to cart';
 
   return (
     <div className="product-buy-box lg:sticky lg:top-24 lg:max-w-[440px] lg:justify-self-end">
@@ -131,31 +107,19 @@ export function ProductPurchasePanel({
           compareAtPrice={compareAtPrice}
           exVatDisplay={exVatDisplay}
           incVatDisplay={incVatDisplay}
-          priceView={priceView}
+          vatReliefEnabled={vatReliefEnabled}
           vatSavings={vatSavings}
         />
-        <div className="mt-4">
-          <VatPriceToggle onChange={setPriceView} value={priceView} />
-        </div>
       </section>
 
-      {vatReliefEnabled ? (
-        registeredProfile ? (
-          <VatReliefRegisteredSummary
-            declaration={declaration}
-            email={registeredProfile.email}
-            registerUrl={vatReliefRegisterUrl}
-          />
-        ) : (
-          <VatReliefRegisterPrompt registerUrl={vatReliefRegisterUrl} />
-        )
-      ) : (
-        <VatReliefHint
-          exVatDisplay={exVatDisplay}
-          registerUrl="/vat-relief"
-          vatSavings={vatSavings}
-        />
-      )}
+      <VatReliefSection
+        declaration={declaration}
+        enabled={vatReliefEnabled}
+        exVatDisplay={exVatDisplay}
+        onDeclarationChange={setDeclaration}
+        onEnabledChange={setVatReliefEnabled}
+        vatSavings={vatSavings}
+      />
 
       <div className="mt-6 space-y-4">
         <ProductForm
@@ -168,9 +132,9 @@ export function ProductPurchasePanel({
           selectedVariant={selectedVariant}
           soldOutLabel={
             selectedVariant?.availableForSale
-              ? vatReliefEnabled && !registeredProfile
-                ? 'Register for VAT relief'
-                : 'Complete VAT declaration'
+              ? vatReliefEnabled && !vatFormComplete
+                ? 'Complete VAT declaration'
+                : 'Sold out'
               : 'Sold out'
           }
         />
@@ -187,7 +151,7 @@ export function ProductPurchasePanel({
           className="font-medium underline-offset-2 hover:text-foreground hover:underline"
           to="/vat-relief"
         >
-          Register for VAT relief
+          Full VAT relief registration
         </Link>
         <span aria-hidden className="mx-1.5 text-border">
           ·
@@ -203,65 +167,22 @@ export function ProductPurchasePanel({
   );
 }
 
-function VatPriceToggle({
-  value,
-  onChange,
-}: {
-  value: PriceView;
-  onChange: (view: PriceView) => void;
-}) {
-  return (
-    <div
-      aria-label="Price display"
-      className="product-vat-toggle grid grid-cols-2 gap-1 rounded-lg bg-secondary/80 p-1"
-      role="group"
-    >
-      <button
-        aria-pressed={value === 'inc-vat'}
-        className={[
-          'rounded-md px-3 py-2.5 text-xs font-semibold uppercase tracking-wide transition-all',
-          value === 'inc-vat'
-            ? 'bg-background text-foreground shadow-soft ring-1 ring-border/60'
-            : 'text-muted-foreground hover:text-foreground',
-        ].join(' ')}
-        onClick={() => onChange('inc-vat')}
-        type="button"
-      >
-        Inc. VAT
-      </button>
-      <button
-        aria-pressed={value === 'ex-vat'}
-        className={[
-          'rounded-md px-3 py-2.5 text-xs font-semibold uppercase tracking-wide transition-all',
-          value === 'ex-vat'
-            ? 'bg-vat-price text-white shadow-soft ring-1 ring-vat-price/30'
-            : 'text-muted-foreground hover:text-foreground',
-        ].join(' ')}
-        onClick={() => onChange('ex-vat')}
-        type="button"
-      >
-        Ex. VAT
-      </button>
-    </div>
-  );
-}
-
 function ProductPriceDisplay({
-  priceView,
   incVatDisplay,
   exVatDisplay,
   compareAtPrice,
   vatSavings,
+  vatReliefEnabled,
 }: {
-  priceView: PriceView;
   incVatDisplay: string | null;
   exVatDisplay: string | null;
   compareAtPrice?: MoneyV2 | null;
   vatSavings: string | null;
+  vatReliefEnabled: boolean;
 }) {
   if (!incVatDisplay) return null;
 
-  const showingExVat = priceView === 'ex-vat' && exVatDisplay;
+  const primaryPrice = vatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
 
   return (
     <div aria-label="Price" role="group">
@@ -269,10 +190,10 @@ function ProductPriceDisplay({
         <p
           className={[
             'text-[2rem] font-semibold tabular-nums leading-none tracking-[-0.03em] md:text-[2.25rem]',
-            showingExVat ? 'text-vat-price' : 'text-foreground',
+            vatReliefEnabled ? 'text-vat-price' : 'text-foreground',
           ].join(' ')}
         >
-          {showingExVat ? exVatDisplay : incVatDisplay}
+          {primaryPrice}
         </p>
         {compareAtPrice ? (
           <p className="pt-1 text-right text-xs text-muted-foreground">
@@ -284,136 +205,212 @@ function ProductPriceDisplay({
         ) : null}
       </div>
 
-      {showingExVat ? (
-        <div className="mt-3 space-y-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-vat-price/10 px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-wide text-vat-price ring-1 ring-vat-price/20">
-            <Check aria-hidden className="size-3" strokeWidth={2.5} />
-            VAT relief price
-          </span>
-          <p className="text-sm text-muted-foreground">
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        {vatReliefEnabled ? (
+          <>
+            <span className="font-medium text-vat-price">VAT relief price</span>
+            <span className="mx-1.5 text-border" aria-hidden>
+              ·
+            </span>
             <span className="line-through tabular-nums">{incVatDisplay}</span>
-            <span className="text-muted-foreground/80"> inc. VAT</span>
-            {vatSavings ? (
-              <span className="ml-2 font-semibold text-vat-price">
-                Save {vatSavings}
-              </span>
+            <span> inc. VAT</span>
+          </>
+        ) : (
+          <>
+            {incVatDisplay} inc. VAT
+            {exVatDisplay ? (
+              <>
+                <span className="mx-1.5 text-border" aria-hidden>
+                  ·
+                </span>
+                <span className="font-medium tabular-nums text-vat-price">
+                  {exVatDisplay}
+                </span>
+                <span className="text-vat-price/80"> with VAT relief</span>
+                {vatSavings ? (
+                  <span className="text-vat-price/80"> (save {vatSavings})</span>
+                ) : null}
+              </>
             ) : null}
-          </p>
-        </div>
-      ) : (
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Including VAT
-          {exVatDisplay ? (
-            <>
-              <span className="mx-1.5 text-border" aria-hidden>
-                ·
-              </span>
-              <span className="font-medium tabular-nums text-vat-price">
-                {exVatDisplay}
-              </span>
-              <span className="text-vat-price/80"> with VAT relief</span>
-            </>
-          ) : null}
-        </p>
-      )}
+          </>
+        )}
+      </p>
     </div>
   );
 }
 
-function VatReliefHint({
+function VatReliefSection({
+  enabled,
+  onEnabledChange,
+  declaration,
+  onDeclarationChange,
   exVatDisplay,
   vatSavings,
-  registerUrl,
 }: {
+  enabled: boolean;
+  onEnabledChange: (enabled: boolean) => void;
+  declaration: VatDeclaration;
+  onDeclarationChange: (declaration: VatDeclaration) => void;
   exVatDisplay: string | null;
   vatSavings: string | null;
-  registerUrl: string;
 }) {
   return (
-    <div className="product-vat-hint flex gap-3 rounded-xl border border-gold/20 bg-gradient-to-br from-gold/5 to-transparent px-4 py-3.5">
-      <BadgePercent
-        aria-hidden
-        className="mt-0.5 size-5 shrink-0 text-gold"
-        strokeWidth={1.5}
-      />
-      <p className="text-[0.8125rem] leading-relaxed text-muted-foreground">
-        Eligible for HMRC VAT relief
-        {exVatDisplay && vatSavings ? (
-          <>
-            {' '}
-            — save{' '}
-            <strong className="font-semibold tabular-nums text-vat-price">
-              {vatSavings}
-            </strong>{' '}
-            at{' '}
-            <strong className="font-semibold tabular-nums text-vat-price">
-              {exVatDisplay}
-            </strong>
-          </>
-        ) : null}
-        .{' '}
-        <Link className="font-semibold text-foreground hover:underline" to={registerUrl}>
-          Register
-        </Link>{' '}
-        or switch to <strong className="font-medium text-foreground">Ex. VAT</strong>.
-      </p>
-    </div>
-  );
-}
-
-function VatReliefRegisterPrompt({registerUrl}: {registerUrl: string}) {
-  return (
-    <div className="mt-5 space-y-4 rounded-xl border border-gold/25 bg-gradient-to-br from-gold/10 to-transparent p-4">
-      <div className="flex gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gold/15 ring-1 ring-gold/25">
-          <ShieldCheck
-            aria-hidden
-            className="size-5 text-gold"
-            strokeWidth={1.5}
-          />
+    <section
+      aria-labelledby="vat-relief-heading"
+      className="rounded-xl border border-border bg-secondary/30 p-4"
+    >
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          checked={enabled}
+          className="mt-1 size-4 rounded border-border"
+          id="vat-relief-toggle"
+          onChange={(event) => onEnabledChange(event.target.checked)}
+          type="checkbox"
+        />
+        <span className="min-w-0">
+          <span
+            className="flex items-center gap-2 text-sm font-semibold text-foreground"
+            id="vat-relief-heading"
+          >
+            <BadgePercent aria-hidden className="size-4 text-vat-price" strokeWidth={1.5} />
+            I&apos;m eligible for HMRC VAT relief
+          </span>
+          <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+            For chronically sick or disabled people buying for personal use.
+            {exVatDisplay && vatSavings ? (
+              <>
+                {' '}
+                Pay{' '}
+                <strong className="font-semibold tabular-nums text-vat-price">
+                  {exVatDisplay}
+                </strong>{' '}
+                instead of the inc-VAT price — save{' '}
+                <strong className="font-semibold tabular-nums text-vat-price">
+                  {vatSavings}
+                </strong>
+                .
+              </>
+            ) : null}
+          </span>
         </span>
-        <div>
-          <p className="text-sm font-semibold text-foreground">
-            Register for VAT relief before you buy
+      </label>
+
+      {enabled ? (
+        <div className="mt-4 space-y-3 border-t border-border/70 pt-4">
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Complete this HMRC declaration. The exact VAT amount is removed at
+            checkout — no discount code needed.
           </p>
-          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-            One-time HMRC declaration. We create your VAT-exempt account — sign
-            in and shop at the ex-VAT price.
+
+          <VatField
+            autoComplete="name"
+            id="vat-name"
+            label="Full name"
+            onChange={(value) =>
+              onDeclarationChange({...declaration, name: value})
+            }
+            value={declaration.name}
+          />
+          <VatField
+            autoComplete="email"
+            id="vat-email"
+            label="Email"
+            onChange={(value) =>
+              onDeclarationChange({...declaration, email: value})
+            }
+            type="email"
+            value={declaration.email}
+          />
+          <VatTextArea
+            id="vat-address"
+            label="Address"
+            onChange={(value) =>
+              onDeclarationChange({...declaration, address: value})
+            }
+            value={declaration.address}
+          />
+          <VatField
+            id="vat-condition"
+            label="Nature of condition"
+            onChange={(value) =>
+              onDeclarationChange({...declaration, condition: value})
+            }
+            placeholder="e.g. long-term mobility impairment"
+            value={declaration.condition}
+          />
+
+          <p className="flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
+            <Check aria-hidden className="mt-0.5 size-3.5 shrink-0 text-vat-price" />
+            I declare that I am chronically sick or disabled, that this product
+            is for my personal use, and that I am eligible under HMRC Notice
+            701/7.
           </p>
         </div>
-      </div>
-      <Link className="btn-atc inline-flex w-full justify-center" to={registerUrl}>
-        Register for VAT relief
-      </Link>
+      ) : null}
+    </section>
+  );
+}
+
+function VatField({
+  id,
+  label,
+  value,
+  onChange,
+  type = 'text',
+  autoComplete,
+  placeholder,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  autoComplete?: string;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-xs font-medium text-foreground" htmlFor={id}>
+        {label}
+      </label>
+      <input
+        autoComplete={autoComplete}
+        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+        id={id}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        required
+        type={type}
+        value={value}
+      />
     </div>
   );
 }
 
-function VatReliefRegisteredSummary({
-  email,
-  declaration,
-  registerUrl,
+function VatTextArea({
+  id,
+  label,
+  value,
+  onChange,
 }: {
-  email: string;
-  declaration: VatDeclaration;
-  registerUrl: string;
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
 }) {
   return (
-    <div className="mt-5 space-y-2 rounded-xl border border-vat-price/25 bg-vat-price/10 px-4 py-3.5">
-      <p className="flex items-center gap-2 text-sm font-semibold text-vat-price">
-        <Check aria-hidden className="size-4" strokeWidth={2.5} />
-        VAT relief registered
-      </p>
-      <p className="text-sm text-muted-foreground">
-        Checkout signed in as{' '}
-        <span className="font-medium text-foreground">{email}</span>
-      </p>
-      <p className="text-xs text-muted-foreground">
-        {declaration.name} · {declaration.condition}
-      </p>
-      <Link className="text-xs font-semibold text-gold hover:underline" to={registerUrl}>
-        Update declaration
-      </Link>
+    <div>
+      <label className="mb-1 block text-xs font-medium text-foreground" htmlFor={id}>
+        {label}
+      </label>
+      <textarea
+        autoComplete="street-address"
+        className="min-h-[72px] w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+        id={id}
+        onChange={(event) => onChange(event.target.value)}
+        required
+        value={value}
+      />
     </div>
   );
 }

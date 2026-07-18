@@ -4,7 +4,6 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
-import {getVatReliefDiscountStatus} from '~/lib/vat-relief-discount';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -44,8 +43,6 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const cartHasItems = (cart?.totalQuantity ?? 0) > 0;
   const childrenMap = getLineItemChildrenMap(lines);
   const itemCount = cart?.totalQuantity ?? 0;
-  const vatReliefDiscountActive =
-    getVatReliefDiscountStatus(cart).codeApplicable;
 
   if (isAside) {
     return (
@@ -94,7 +91,6 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
                       key={line.id}
                       layout={layout}
                       line={line}
-                      vatReliefDiscountActive={vatReliefDiscountActive}
                     />
                   );
                 })}
@@ -129,7 +125,6 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
                   key={line.id}
                   layout={layout}
                   line={line}
-                  vatReliefDiscountActive={vatReliefDiscountActive}
                 />
               );
             })}

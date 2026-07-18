@@ -12,7 +12,9 @@
     "typecheck": "react-router typegen && tsc --noEmit",
     "test": "vitest run",
     "codegen": "shopify hydrogen codegen && react-router typegen",
-    "generate-sitemap": "npx tsx scripts/generate-sitemap.ts"
+    "generate-sitemap": "npx tsx scripts/generate-sitemap.ts",
+    "shopify:deploy": "shopify app deploy",
+    "shopify:function:build": "npm run build --prefix extensions/vat-relief-discount"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

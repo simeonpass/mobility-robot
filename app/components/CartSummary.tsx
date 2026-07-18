@@ -9,11 +9,10 @@ import {withOnlineStoreChannel} from '~/lib/cart-utils';
 import {getDeliveryInfo} from '~/lib/product-delivery';
 import {formatProductPrice} from '~/lib/product-pricing';
 import {
-  getVatReliefDiscountAmount,
-  getVatReliefDiscountStatus,
-  isVatReliefDiscountCode,
-  VAT_RELIEF_DISCOUNT_CODE,
-} from '~/lib/vat-relief-discount';
+  cartHasVatReliefLines,
+  getEstimatedCartTotal,
+  getVatReliefLineTotals,
+} from '~/lib/vat-relief';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -25,8 +24,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   const summaryId = useId();
   const discountCodeInputId = useId();
   const {analyticsAllowed} = useConsent();
-  const vatReliefStatus = getVatReliefDiscountStatus(cart);
-  const vatDiscountAmount = getVatReliefDiscountAmount(cart);
+  const hasVatRelief = cartHasVatReliefLines(cart);
+  const vatTotals = getVatReliefLineTotals(cart);
+  const estimatedTotal = getEstimatedCartTotal(cart);
   const currencyCode =
     cart?.cost?.subtotalAmount?.currencyCode ??
     cart?.cost?.totalAmount?.currencyCode ??
@@ -44,10 +44,6 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
       ?.filter((discount) => discount.applicable)
       .map(({code}) => code) ?? [];
 
-  const otherDiscountCodes = applicableCodes.filter(
-    (code) => !isVatReliefDiscountCode(code),
-  );
-
   const content = (
     <div className="space-y-4">
       <div className="rounded-lg border border-border/60 bg-secondary/40 p-4">
@@ -58,40 +54,25 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         <p className="mt-0.5 text-sm text-muted-foreground">{delivery.etaLabel}</p>
       </div>
 
-      {vatReliefStatus.hasLine ? (
-        <div className="rounded-lg border border-border bg-secondary/40 p-3 text-sm text-muted-foreground">
+      {hasVatRelief ? (
+        <div className="rounded-lg border border-vat-price/25 bg-vat-price/10 p-3 text-sm">
           <p className="font-medium text-foreground">VAT relief declaration on file</p>
-          <p className="mt-1">
-            Proceed to checkout using the same email from your declaration.
+          <p className="mt-1 text-muted-foreground">
+            The exact VAT amount is removed at checkout automatically. Sign in with
+            the same email if you have an account.
             <Link className="ml-1 font-medium text-foreground hover:underline" to="/account/login">
               Sign in
-            </Link>{' '}
-            if you have an account — this helps Shopify apply your VAT-exempt
-            customer status.
+            </Link>
           </p>
         </div>
       ) : (
         <div className="rounded-lg border border-vat-price/20 bg-vat-price/10 p-3">
           <p className="text-sm font-medium text-foreground">VAT relief available</p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Select excluding VAT on the product page if you are eligible.
+            Tick &quot;I&apos;m eligible for HMRC VAT relief&quot; on the product page.
           </p>
         </div>
       )}
-
-      {vatReliefStatus.hasLine &&
-      vatReliefStatus.codeApplied &&
-      !vatReliefStatus.codeApplicable ? (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
-          <p className="text-sm font-medium text-destructive">
-            VAT relief discount could not be applied
-          </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Ensure the {VAT_RELIEF_DISCOUNT_CODE} discount is active in Shopify
-            Admin, or contact us before checkout.
-          </p>
-        </div>
-      ) : null}
 
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
@@ -105,17 +86,17 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           </span>
         </div>
 
-        {vatReliefStatus.codeApplicable && vatDiscountAmount > 0 ? (
+        {hasVatRelief && vatTotals.vatRemoved > 0 ? (
           <div className="flex justify-between font-medium text-vat-price">
-            <span>VAT relief ({VAT_RELIEF_DISCOUNT_CODE})</span>
-            <span>−{formatProductPrice(vatDiscountAmount, currencyCode)}</span>
+            <span>VAT relief (exact)</span>
+            <span>−{formatProductPrice(vatTotals.vatRemoved, currencyCode, {fractionDigits: 2})}</span>
           </div>
         ) : null}
 
-        {otherDiscountCodes.length > 0 ? (
+        {applicableCodes.length > 0 ? (
           <div className="flex justify-between text-muted-foreground">
-            <span>Discount{otherDiscountCodes.length > 1 ? 's' : ''}</span>
-            <span>{otherDiscountCodes.join(', ')}</span>
+            <span>Discount{applicableCodes.length > 1 ? 's' : ''}</span>
+            <span>{applicableCodes.join(', ')}</span>
           </div>
         ) : null}
 
@@ -126,14 +107,18 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
       </div>
 
       <CartDiscounts
-        applicableCodes={otherDiscountCodes}
+        applicableCodes={applicableCodes}
         discountCodeInputId={discountCodeInputId}
       />
 
       <div className="flex justify-between border-t border-border pt-4">
-        <span className="text-lg font-semibold text-foreground">Total</span>
         <span className="text-lg font-semibold text-foreground">
-          {cart?.cost?.totalAmount ? (
+          {hasVatRelief ? 'Estimated total' : 'Total'}
+        </span>
+        <span className="text-lg font-semibold text-foreground">
+          {hasVatRelief && estimatedTotal != null ? (
+            formatProductPrice(estimatedTotal, currencyCode, {fractionDigits: 2})
+          ) : cart?.cost?.totalAmount ? (
             <Money data={cart.cost.totalAmount} />
           ) : (
             '—'
@@ -141,11 +126,12 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         </span>
       </div>
 
-      {vatReliefStatus.codeApplicable && vatDiscountAmount > 0 ? (
+      {hasVatRelief && vatTotals.vatRemoved > 0 ? (
         <div className="rounded-lg border border-vat-price/20 bg-vat-price/10 p-3 text-center">
           <p className="text-sm font-medium text-vat-price">
-            VAT relief applied — you&apos;re saving{' '}
-            {formatProductPrice(vatDiscountAmount, currencyCode)}
+            You&apos;re saving{' '}
+            {formatProductPrice(vatTotals.vatRemoved, currencyCode, {fractionDigits: 2})}{' '}
+            with VAT relief
           </p>
         </div>
       ) : null}
@@ -170,13 +156,15 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
             );
             trackBeginCheckout(
               items,
-              Number(cart.cost?.totalAmount?.amount ?? 0),
+              estimatedTotal ?? Number(cart.cost?.totalAmount?.amount ?? 0),
               cart.cost?.totalAmount?.currencyCode ?? 'GBP',
             );
           }}
         >
           Proceed to checkout
-          {cart?.cost?.totalAmount ? (
+          {hasVatRelief && estimatedTotal != null ? (
+            <> — {formatProductPrice(estimatedTotal, currencyCode, {fractionDigits: 2})}</>
+          ) : cart?.cost?.totalAmount ? (
             <>
               {' '}
               — <Money data={cart.cost.totalAmount} />
@@ -231,11 +219,7 @@ function CartDiscounts({
               {applicableCodes.join(', ')}
             </code>
           </span>
-          <UpdateDiscountForm
-            discountCodes={
-              applicableCodes.filter((code) => isVatReliefDiscountCode(code))
-            }
-          >
+          <UpdateDiscountForm discountCodes={applicableCodes}>
             <button
               aria-label="Remove discount code"
               className="text-xs text-muted-foreground hover:text-foreground"
@@ -247,11 +231,7 @@ function CartDiscounts({
         </div>
       ) : null}
 
-      <UpdateDiscountForm
-        discountCodes={applicableCodes.filter((code) =>
-          isVatReliefDiscountCode(code),
-        )}
-      >
+      <UpdateDiscountForm discountCodes={applicableCodes}>
         <div className="flex gap-2">
           <label className="sr-only" htmlFor={discountCodeInputId}>
             Discount code

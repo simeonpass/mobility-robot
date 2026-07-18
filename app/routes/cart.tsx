@@ -3,10 +3,6 @@ import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
-import {
-  finalizeCartWithVatRelief,
-  syncVatReliefDiscount,
-} from '~/lib/vat-relief-discount';
 import {syncVatExemptionCustomersFromCart} from '~/lib/shopify-admin-vat';
 import {NOINDEX_HEADERS, noindexMeta} from '~/lib/seo';
 
@@ -35,38 +31,24 @@ export async function action({request, context}: Route.ActionArgs) {
 
   switch (action) {
     case CartForm.ACTIONS.LinesAdd:
-      result = await finalizeCartWithVatRelief(
-        cart,
-        await cart.addLines(inputs.lines),
-      );
+      result = await cart.addLines(inputs.lines);
       break;
     case CartForm.ACTIONS.LinesUpdate:
-      result = await finalizeCartWithVatRelief(
-        cart,
-        await cart.updateLines(inputs.lines),
-      );
+      result = await cart.updateLines(inputs.lines);
       break;
     case CartForm.ACTIONS.LinesRemove:
-      result = await finalizeCartWithVatRelief(
-        cart,
-        await cart.removeLines(inputs.lineIds),
-      );
+      result = await cart.removeLines(inputs.lineIds);
       break;
     case CartForm.ACTIONS.DiscountCodesUpdate: {
       const formDiscountCode = inputs.discountCode;
 
-      // User inputted discount code
       const discountCodes = (
         formDiscountCode ? [formDiscountCode] : []
       ) as string[];
 
-      // Combine discount codes already applied on cart
       discountCodes.push(...inputs.discountCodes);
 
-      result = await finalizeCartWithVatRelief(
-        cart,
-        await cart.updateDiscountCodes(discountCodes),
-      );
+      result = await cart.updateDiscountCodes(discountCodes);
       break;
     }
     case CartForm.ACTIONS.GiftCardCodesAdd: {
@@ -123,7 +105,6 @@ export async function action({request, context}: Route.ActionArgs) {
 
 export async function loader({context}: Route.LoaderArgs) {
   const {cart} = context;
-  await syncVatReliefDiscount(cart);
   return await cart.get();
 }
 

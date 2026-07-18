@@ -1,0 +1,16 @@
+query RunInput {
+  cart {
+    lines {
+      id
+      quantity
+      cost {
+        totalAmount {
+          amount
+        }
+      }
+      attribute(key: "VAT Relief") {
+        value
+      }
+    }
+  }
+}

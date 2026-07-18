@@ -7,7 +7,8 @@
  * Note: On UK stores with VAT-inclusive pricing, marking a customer tax-exempt
  * may not always reduce checkout totals without Shopify Plus cart transforms,
  * dynamic tax-inclusive pricing, or a dedicated VAT app. This records the
- * customer for merchant review and pairs with the VATRELIEF discount fallback.
+ * customer for merchant review. Checkout uses the VAT Relief Shopify Function
+ * for exact per-line VAT removal (see extensions/vat-relief-discount).
  */
 
 export type VatExemptionCustomerInput = {

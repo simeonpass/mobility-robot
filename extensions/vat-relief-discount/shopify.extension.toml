@@ -1,0 +1,23 @@
+api_version = "2025-01"
+
+[[extensions]]
+name = "VAT Relief (exact)"
+handle = "vat-relief-discount"
+type = "function"
+description = "Removes the exact VAT portion from cart lines with a HMRC VAT relief declaration."
+
+[[extensions.targeting]]
+target = "purchase.product-discount.run"
+input_query = "src/run.graphql"
+export = "run"
+
+[extensions.build]
+command = "npm run build"
+path = "dist/function.wasm"
+
+[extensions.ui]
+enable_create = true
+
+[extensions.ui.paths]
+create = "/"
+details = "/"

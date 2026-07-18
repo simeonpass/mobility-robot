@@ -12,9 +12,7 @@ import {
   lineHasVatRelief,
 } from '~/lib/cart-utils';
 import {formatProductPrice} from '~/lib/product-pricing';
-import type {
-  CartApiQueryFragment,
-} from 'storefrontapi.generated';
+import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 export type CartLine = OptimisticCartLine<CartApiQueryFragment>;
 
@@ -22,12 +20,10 @@ export function CartLineItem({
   layout,
   line,
   childrenMap,
-  vatReliefDiscountActive = false,
 }: {
   layout: CartLayout;
   line: CartLine;
   childrenMap: LineItemChildrenMap;
-  vatReliefDiscountActive?: boolean;
 }) {
   const {id, merchandise, quantity, attributes} = line;
   const {product, title, image, selectedOptions, price} = merchandise;
@@ -36,27 +32,16 @@ export function CartLineItem({
   const {analyticsAllowed} = useConsent();
   const lineItemChildren = childrenMap[id];
   const vatRelief = lineHasVatRelief(attributes);
-  const useDiscountedAmounts = vatRelief && vatReliefDiscountActive;
-  const unitAmount = useDiscountedAmounts
-    ? formatProductPrice(
-        Number(line.cost?.amountPerQuantity?.amount ?? price.amount),
-        price.currencyCode,
-      )
-    : getLineDisplayAmount({
-        amount: price.amount,
-        currencyCode: price.currencyCode,
-        vatRelief,
-      });
-  const lineTotal = useDiscountedAmounts
-    ? formatProductPrice(
-        Number(line.cost?.totalAmount?.amount ?? price.amount),
-        price.currencyCode,
-      )
-    : getLineDisplayAmount({
-        amount: line.cost?.totalAmount?.amount ?? price.amount,
-        currencyCode: price.currencyCode,
-        vatRelief,
-      });
+  const unitAmount = getLineDisplayAmount({
+    amount: price.amount,
+    currencyCode: price.currencyCode,
+    vatRelief,
+  });
+  const lineTotal = getLineDisplayAmount({
+    amount: line.cost?.totalAmount?.amount ?? price.amount,
+    currencyCode: price.currencyCode,
+    vatRelief,
+  });
   const accessory = isAccessoryProduct(product.handle);
 
   return (
@@ -168,7 +153,6 @@ export function CartLineItem({
               key={childLine.id}
               layout={layout}
               line={childLine}
-              vatReliefDiscountActive={vatReliefDiscountActive}
             />
           ))}
         </ul>

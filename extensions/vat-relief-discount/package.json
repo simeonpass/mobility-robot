@@ -1,0 +1,19 @@
+{
+  "name": "vat-relief-discount",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "build": "npm exec -- shopify app function build",
+    "typegen": "npm exec -- shopify app function typegen",
+    "preview": "npm exec -- shopify app function run",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@shopify/shopify_function": "~2.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.7"
+  }
+}
