@@ -28,10 +28,12 @@ export function Aside({
   children,
   heading,
   type,
+  hideHeader = false,
 }: {
   children?: React.ReactNode;
   type: AsideType;
   heading: React.ReactNode;
+  hideHeader?: boolean;
 }) {
   const {type: activeType, close} = useAside();
   const expanded = type === activeType;
@@ -56,18 +58,29 @@ export function Aside({
   return (
     <div
       aria-modal
-      className={`overlay ${expanded ? 'expanded' : ''}`}
+      className={[
+        'overlay',
+        `overlay--${type}`,
+        expanded ? 'expanded' : '',
+      ].join(' ')}
       role="dialog"
-      aria-labelledby={id}
+      aria-labelledby={hideHeader ? undefined : id}
     >
-      <button className="close-outside" onClick={close} />
+      <button className="close-outside" onClick={close} type="button" />
       <aside>
-        <header>
-          <h3 id={id}>{heading}</h3>
-          <button className="close reset" onClick={close} aria-label="Close">
-            &times;
-          </button>
-        </header>
+        {hideHeader ? null : (
+          <header>
+            <h3 id={id}>{heading}</h3>
+            <button
+              className="close reset"
+              onClick={close}
+              aria-label="Close"
+              type="button"
+            >
+              &times;
+            </button>
+          </header>
+        )}
         <main>{children}</main>
       </aside>
     </div>

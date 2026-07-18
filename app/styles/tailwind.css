@@ -1,6 +1,5 @@
 /**
- * Configure Tailwind v4 in this file using CSS variables and directives:
- * https://tailwindcss.com/docs/v4-beta#css-first-configuration
+ * Tailwind entry point — theme and tokens live in app.css.
+ * Import app.css here if a separate Tailwind bundle is needed.
  */
-
-@import 'tailwindcss';
+@import './app.css';

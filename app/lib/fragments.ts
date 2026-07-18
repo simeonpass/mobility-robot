@@ -164,6 +164,14 @@ export const CART_QUERY_FRAGMENT = `#graphql
       key
       value
     }
+    discountAllocations {
+      discountedAmount {
+        ...Money
+      }
+      ... on CartCodeDiscountAllocation {
+        code
+      }
+    }
     discountCodes {
       code
       applicable

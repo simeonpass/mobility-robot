@@ -4,6 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {getVatReliefDiscountStatus} from '~/lib/vat-relief-discount';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -13,7 +14,7 @@ export type CartMainProps = {
 };
 
 export type LineItemChildrenMap = {[parentId: string]: CartLine[]};
-/** Returns a map of all line items and their children. */
+
 function getLineItemChildrenMap(lines: CartLine[]): LineItemChildrenMap {
   const children: LineItemChildrenMap = {};
   for (const line of lines) {
@@ -32,37 +33,90 @@ function getLineItemChildrenMap(lines: CartLine[]): LineItemChildrenMap {
   }
   return children;
 }
-/**
- * The main cart component that displays the cart items and summary.
- * It is used by both the /cart route and the cart aside dialog.
- */
-export function CartMain({layout, cart: originalCart}: CartMainProps) {
-  // The useOptimisticCart hook applies pending actions to the cart
-  // so the user immediately sees feedback when they modify the cart.
-  const cart = useOptimisticCart(originalCart);
 
-  const linesCount = Boolean(cart?.lines?.nodes?.length || 0);
-  const withDiscount =
-    cart &&
-    Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
-  const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
-  const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
-  const childrenMap = getLineItemChildrenMap(cart?.lines?.nodes ?? []);
+export function CartMain({layout, cart: originalCart}: CartMainProps) {
+  const cart = useOptimisticCart(originalCart);
+  const {close} = useAside();
+  const isAside = layout === 'aside';
+
+  const lines = cart?.lines?.nodes ?? [];
+  const linesCount = lines.length > 0;
+  const cartHasItems = (cart?.totalQuantity ?? 0) > 0;
+  const childrenMap = getLineItemChildrenMap(lines);
+  const itemCount = cart?.totalQuantity ?? 0;
+  const vatReliefDiscountActive =
+    getVatReliefDiscountStatus(cart).codeApplicable;
+
+  if (isAside) {
+    return (
+      <section
+        aria-label="Cart drawer"
+        className="flex h-full min-h-0 flex-col"
+      >
+        <div className="flex items-center gap-3 border-b border-border px-6 py-4">
+          <div className="flex size-10 items-center justify-center rounded-full bg-gold/10">
+            <CartIcon />
+          </div>
+          <h2 className="text-xl font-semibold text-foreground">Your Cart</h2>
+          <div className="ml-auto flex items-center gap-3">
+            {cartHasItems ? (
+              <span className="rounded-full bg-secondary px-3 py-1 text-sm font-medium text-foreground">
+                {itemCount} {itemCount === 1 ? 'item' : 'items'}
+              </span>
+            ) : null}
+            <button
+              aria-label="Close cart"
+              className="inline-flex size-9 items-center justify-center rounded-lg text-xl text-muted-foreground hover:bg-secondary hover:text-foreground"
+              onClick={close}
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        {!linesCount ? (
+          <CartEmpty onContinue={close} variant="drawer" />
+        ) : (
+          <>
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+              <ul className="space-y-4" aria-label="Cart line items">
+                {lines.map((line) => {
+                  if (
+                    'parentRelationship' in line &&
+                    line.parentRelationship?.parent
+                  ) {
+                    return null;
+                  }
+                  return (
+                    <CartLineItem
+                      childrenMap={childrenMap}
+                      key={line.id}
+                      layout={layout}
+                      line={line}
+                      vatReliefDiscountActive={vatReliefDiscountActive}
+                    />
+                  );
+                })}
+              </ul>
+            </div>
+            {cartHasItems && cart ? (
+              <CartSummary cart={cart} layout={layout} />
+            ) : null}
+          </>
+        )}
+      </section>
+    );
+  }
 
   return (
-    <section
-      className={className}
-      aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
-    >
-      <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
-        <p id="cart-lines" className="sr-only">
-          Line items
-        </p>
-        <div>
-          <ul aria-labelledby="cart-lines">
-            {(cart?.lines?.nodes ?? []).map((line) => {
-              // we do not render non-parent lines at the root of the cart
+    <section aria-label="Cart page" className="mx-auto max-w-3xl">
+      {!linesCount ? (
+        <CartEmpty variant="page" />
+      ) : (
+        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+          <ul className="space-y-4" aria-label="Cart line items">
+            {lines.map((line) => {
               if (
                 'parentRelationship' in line &&
                 line.parentRelationship?.parent
@@ -71,38 +125,75 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
               }
               return (
                 <CartLineItem
-                  key={line.id}
-                  line={line}
-                  layout={layout}
                   childrenMap={childrenMap}
+                  key={line.id}
+                  layout={layout}
+                  line={line}
+                  vatReliefDiscountActive={vatReliefDiscountActive}
                 />
               );
             })}
           </ul>
+          {cartHasItems && cart ? (
+            <CartSummary cart={cart} layout={layout} />
+          ) : null}
         </div>
-        {cartHasItems && <CartSummary cart={cart} layout={layout} />}
-      </div>
+      )}
     </section>
   );
 }
 
+function CartIcon() {
+  return (
+    <svg
+      aria-hidden
+      className="size-5 text-gold"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="9" cy="20" r="1" />
+      <circle cx="18" cy="20" r="1" />
+    </svg>
+  );
+}
+
 function CartEmpty({
-  hidden = false,
+  onContinue,
+  variant,
 }: {
-  hidden: boolean;
-  layout?: CartMainProps['layout'];
+  onContinue?: () => void;
+  variant: 'drawer' | 'page';
 }) {
   const {close} = useAside();
+
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+    <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
+      <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-secondary">
+        <CartIcon />
+      </div>
+      <h3 className="text-xl font-semibold text-foreground">
+        Your cart is empty
+      </h3>
+      <p className="mt-2 max-w-xs text-sm text-muted-foreground">
+        Add some products to get started with your order.
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link
+        className="mt-6 inline-flex rounded-lg bg-gold px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-gold-light"
+        onClick={() => {
+          close();
+          onContinue?.();
+        }}
+        prefetch="intent"
+        to={variant === 'drawer' ? '/#product-range' : '/'}
+      >
+        Continue shopping
       </Link>
     </div>
   );

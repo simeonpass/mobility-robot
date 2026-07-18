@@ -1,0 +1,315 @@
+import type {ProductFAQ} from '~/lib/product-faqs';
+import {m4FAQs, m4ProFAQs, x12FAQs} from '~/lib/product-faqs';
+import {
+  getHomepageProductSlot,
+  type HomepageProductHandle,
+} from '~/lib/homepage-data';
+
+export type ProductSpec = {label: string; value: string; unit?: string};
+export type ProductDimension = {label: string; value: string};
+export type ProductVideo = {title: string; embedUrl: string};
+
+export type ProductFeatureBlock = {
+  title: string;
+  description: string;
+  highlights: string[];
+};
+
+export type ProductContent = {
+  displayName?: string;
+  tagline?: string;
+  overview: string;
+  highlights: string[];
+  features?: ProductFeatureBlock[];
+  specs: ProductSpec[];
+  dimensions: ProductDimension[];
+  inBox: string[];
+  deliveryWarranty: string;
+  faqs: ProductFAQ[];
+  videos: ProductVideo[];
+};
+
+const DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. In-stock models typically arrive within 5–7 working days.
+
+Warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts, and 1 year on the battery. Bentech Medical Ltd manages all UK warranty claims as the official distributor.`;
+
+const YOUTUBE = {
+  m4: 'https://www.youtube-nocookie.com/embed/D-7Pt3OUdQg',
+  m4Pro: 'https://www.youtube-nocookie.com/embed/R2eyc-2uYNQ',
+  x12: 'https://www.youtube-nocookie.com/embed/ihXdzLuNz2s',
+  x12Pro: 'https://www.youtube-nocookie.com/embed/4KFMBL5jX20',
+} as const;
+
+const CONTENT: Record<HomepageProductHandle, ProductContent> = {
+  'xsto-m4': {
+    displayName: 'XSTO M4',
+    tagline: 'Smart Wheelchair — Technology Redefining the Beauty of Travel',
+    overview:
+      'The XSTO M4 overcomes the fear of uphill and downhill travel. The smart control platform monitors slopes in real time, automatically levelling the chassis for smooth, stable movement. Electric height adjustment from 347–650 mm, one-button folding, and tool-free 4-module disassembly make it truly portable.',
+    highlights: [
+      'Self-balancing smart control platform',
+      'Electric height adjustment (347–650 mm)',
+      'One-button electric folding',
+      '15 km range · 10° slope capability',
+    ],
+    features: [
+      {
+        title: 'Self-Balancing Technology',
+        description:
+          'The M4 uses a gyroscopic self-balancing system to keep you stable on slopes, kerbs and uneven ground.',
+        highlights: [
+          '10° maximum climbing angle',
+          'Real-time slope monitoring',
+          'Automatic chassis levelling',
+          'Front & rear self-balancing',
+        ],
+      },
+      {
+        title: 'Electric Height Adjustment',
+        description:
+          'Adjust seat height at the touch of a button — ideal for tables, desks and social eye-level conversation.',
+        highlights: [
+          '347–650 mm seat height range',
+          'One-touch electric control',
+          'Tilt positioning for tables & desks',
+          'Smooth, quiet motor',
+        ],
+      },
+      {
+        title: 'Omnidirectional Movement',
+        description:
+          'Mecanum wheels enable precise 360° movement in tight spaces where conventional chairs struggle.',
+        highlights: [
+          'Full 360° directional movement',
+          '820 mm turning radius',
+          '50 mm obstacle clearance',
+          '10" solid rear tyres',
+        ],
+      },
+      {
+        title: 'Foldable & Portable',
+        description:
+          'Folds in seconds and breaks into four lightweight modules for car boots, trains and home storage.',
+        highlights: [
+          'One-button electric folding',
+          'Tool-free 4-module quick-detach',
+          'Heaviest module just 16 kg',
+          'Fits any car boot',
+        ],
+      },
+      {
+        title: 'Smart Control Options',
+        description:
+          'Control your M4 via joystick, Bluetooth remote or the XSTO app — with interchangeable left/right mounting.',
+        highlights: [
+          'Joystick, Bluetooth remote & app control',
+          'Interchangeable left/right handle',
+          'IPX4 water resistant',
+          'iOS & Android compatible',
+        ],
+      },
+    ],
+    specs: [
+      {label: 'Max Load Capacity', value: '115 kg', unit: '(254 lbs)'},
+      {label: 'Range', value: '15 km', unit: '(9.3 miles)'},
+      {label: 'Top Speed', value: '6 km/h', unit: '(3.7 mph)'},
+      {label: 'Max Slope', value: '10°'},
+      {label: 'Weight (no battery)', value: '51.5 kg', unit: '(114 lbs)'},
+      {label: 'Battery', value: '25.55V', unit: '15.5Ah'},
+      {label: 'Charge Time', value: '4 hours'},
+      {label: 'Protection', value: 'IPX4', unit: 'Water Resistant'},
+    ],
+    dimensions: [
+      {label: 'Folded Size', value: '1040 × 580 × 570 mm'},
+      {label: 'Unfolded Size', value: '1035 × 580 × 930 mm'},
+      {label: 'Seat Height Range', value: '347–650 mm'},
+      {label: 'Turning Radius', value: '820 mm'},
+    ],
+    inBox: [
+      'XSTO M4 Power Wheelchair',
+      '25.55V 15.5Ah Lithium Battery',
+      'Battery Charger',
+      'Joystick Controller',
+      'Bluetooth Remote Control',
+      'User Manual',
+      'Tool Kit',
+    ],
+    deliveryWarranty: DELIVERY_WARRANTY,
+    faqs: m4FAQs,
+    videos: [{title: 'Watch the M4 in Action', embedUrl: YOUTUBE.m4}],
+  },
+  'xsto-m4-pro': {
+    tagline: 'Premium Smart Wheelchair — Safe, Comfortable, Ergonomic Design',
+    overview:
+      'The XSTO M4 Pro delivers uncompromised comfort and absolute safety. Electric seat height, 0–20° seat tilt with synchronous legrest, and 135° backrest recline for total customisation. Integrated LED lighting, 150 kg capacity, 26 km range, and 15° slope capability.',
+    highlights: [
+      '150 kg capacity · 26 km range',
+      '0–20° seat tilt · 135° backrest recline',
+      'Integrated LED head, tail and turn lights',
+      '450–730 mm electric seat height',
+    ],
+    specs: [
+      {label: 'Max Load Capacity', value: '150 kg', unit: '(330 lbs)'},
+      {label: 'Range', value: '26 km', unit: '(16.2 miles)'},
+      {label: 'Top Speed', value: '6 km/h', unit: '(3.7 mph)'},
+      {label: 'Max Slope', value: '15°'},
+      {label: 'Weight (no battery)', value: '60.1 kg', unit: '(132 lbs)'},
+      {label: 'Seat Tilt', value: '0–20°', unit: '(default 7°)'},
+      {label: 'Backrest Recline', value: 'Up to 135°'},
+      {label: 'Obstacle Height', value: '85 mm fwd', unit: '/ 50 mm rev'},
+    ],
+    dimensions: [
+      {label: 'Folded Size', value: '1040 × 592 × 770 mm'},
+      {label: 'Unfolded Size', value: '1120 × 592 × 1040 mm'},
+      {label: 'Seat Height Range', value: '450–730 mm'},
+      {label: 'Turning Radius', value: '825 mm'},
+    ],
+    inBox: [
+      'XSTO M4 Pro Power Wheelchair',
+      '25.2V 23.8Ah Lithium Battery',
+      'Battery Charger',
+      'Joystick Controller',
+      'Bluetooth Remote Control',
+      'User Manual',
+      'Tool Kit',
+    ],
+    deliveryWarranty: DELIVERY_WARRANTY,
+    faqs: m4ProFAQs,
+    videos: [{title: 'Watch the M4 Pro in Action', embedUrl: YOUTUBE.m4Pro}],
+  },
+  'xsto-m4b': {
+    tagline: 'Self-Levelling · New Folding Footrest',
+    overview:
+      'The XSTO M4B builds on the award-winning M4 platform with a brand new folding footrest for easier transfers and a tidier folded footprint. Self-balancing, electric height adjustment and omnidirectional wheels — all in a chair that folds into any car boot.',
+    highlights: [
+      'New folding footrest design',
+      'Self-balancing chassis · 10° slopes',
+      'Electric height adjustment 347–650 mm',
+      'Omnidirectional mecanum wheels',
+    ],
+    specs: [
+      {label: 'Max Load Capacity', value: '115 kg', unit: '(254 lbs)'},
+      {label: 'Range', value: '15 km', unit: '(9.3 miles)'},
+      {label: 'Top Speed', value: '6 km/h', unit: '(3.7 mph)'},
+      {label: 'Max Slope', value: '10°'},
+      {label: 'Weight (no battery)', value: '52 kg', unit: '(115 lbs)'},
+      {label: 'Footrest', value: 'New folding footrest'},
+      {label: 'Protection', value: 'IPX4', unit: 'Water Resistant'},
+    ],
+    dimensions: [
+      {label: 'Folded Size', value: '1040 × 580 × 570 mm'},
+      {label: 'Unfolded Size', value: '1035 × 580 × 930 mm'},
+      {label: 'Seat Height Range', value: '347–650 mm'},
+      {label: 'Turning Radius', value: '820 mm'},
+    ],
+    inBox: [
+      'XSTO M4B Power Wheelchair',
+      '25.55V 15.5Ah Lithium Battery',
+      'Battery Charger',
+      'Joystick Controller',
+      'Bluetooth Remote Control',
+      'User Manual',
+      'Tool Kit',
+    ],
+    deliveryWarranty: DELIVERY_WARRANTY,
+    faqs: m4FAQs,
+    videos: [{title: 'Watch the M4 in Action', embedUrl: YOUTUBE.m4}],
+  },
+  'xsto-x12': {
+    tagline: 'AI-Powered All-Terrain Mobility Robot',
+    overview:
+      'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries with gyroscopic self-balancing.',
+    highlights: [
+      'Climbs stairs up to 40° incline',
+      '35 km range on dual batteries',
+      'Three terrain modes for any surface',
+      'LiDAR obstacle detection',
+    ],
+    specs: [
+      {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
+      {label: 'Range', value: '35 km', unit: '(22 miles)'},
+      {label: 'Max Stair Slope', value: '40°'},
+      {label: 'Weight (no battery)', value: '115 kg', unit: '(254 lbs)'},
+      {label: 'Battery', value: '25.2V', unit: '25.6Ah × 2'},
+      {label: 'Max Pit Width', value: '300 mm', unit: '(tracked)'},
+      {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
+    ],
+    dimensions: [
+      {label: 'Folded Dimensions', value: '1185 × 685 × 617 mm'},
+      {label: 'Unfolded Dimensions', value: '1210 × 685 × 1550 mm'},
+      {label: 'Seat Height Range', value: '490–762 mm'},
+      {label: 'Recline Angle', value: '90°–121°'},
+    ],
+    inBox: [
+      'XSTO X12 All-Terrain Mobility Robot',
+      '2× 25.2V 25.6Ah Lithium Battery Packs',
+      'Battery Charger',
+      'Joystick Controller',
+      'Wireless Key',
+      'User Manual',
+      'Tool Kit',
+    ],
+    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 models are available by pre-order. Place a deposit to join the build queue; balance due before dispatch.`,
+    faqs: x12FAQs,
+    videos: [{title: 'Watch the X12 in Action', embedUrl: YOUTUBE.x12}],
+  },
+  'xsto-x12-pro': {
+    tagline: 'AI Stair Climbing Mobility Wheelchair — Pro Edition',
+    overview:
+      'The X12 Pro adds an electric legrest and electric seat adjustment over the standard X12. Same 136 kg capacity, 40° stair capability, dual batteries, and 35 km range — with enhanced comfort and Pro-exclusive adjustments.',
+    highlights: [
+      'Electric legrest (Pro exclusive)',
+      'Climbs stairs up to 40° incline',
+      'Dual battery system — 35 km range',
+      'LiDAR obstacle detection',
+    ],
+    specs: [
+      {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
+      {label: 'Range', value: '35 km', unit: '(22 miles)'},
+      {label: 'Max Stair Slope', value: '40°'},
+      {label: 'Weight (no battery)', value: '116 kg', unit: '(256 lbs)'},
+      {label: 'Legrest Adjustment', value: 'Electric (Pro exclusive)'},
+      {label: 'Battery', value: '25.2V', unit: '25.6Ah × 2'},
+      {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
+    ],
+    dimensions: [
+      {label: 'Folded Dimensions', value: '1185 × 685 × 617 mm'},
+      {label: 'Unfolded Dimensions', value: '1210 × 685 × 1550 mm'},
+      {label: 'Seat Height Range', value: '490–762 mm'},
+      {label: 'Recline Angle', value: '90°–121°'},
+    ],
+    inBox: [
+      'XSTO X12 Pro All-Terrain Mobility Robot',
+      '2× 25.2V 25.6Ah Lithium Battery Packs',
+      'Battery Charger',
+      'Joystick Controller',
+      'Wireless Key',
+      'User Manual',
+      'Tool Kit',
+    ],
+    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 Pro models are available by pre-order. Place a deposit to join the build queue; balance due before dispatch.`,
+    faqs: x12FAQs,
+    videos: [{title: 'Watch the X12 Pro in Action', embedUrl: YOUTUBE.x12Pro}],
+  },
+};
+
+export function getProductContent(
+  shopifyHandle: string,
+): ProductContent | undefined {
+  const slot = getHomepageProductSlot(shopifyHandle);
+  return slot ? CONTENT[slot] : undefined;
+}
+
+export function mergeProductVideos(
+  content: ProductContent | undefined,
+  metafieldEmbedUrl?: string | null,
+): ProductVideo[] {
+  const videos = [...(content?.videos ?? [])];
+  if (
+    metafieldEmbedUrl &&
+    !videos.some((video) => video.embedUrl === metafieldEmbedUrl)
+  ) {
+    videos.unshift({title: 'Product video', embedUrl: metafieldEmbedUrl});
+  }
+  return videos;
+}

@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* XSTO Brand Palette — Shopify-aligned: pure white, dark navy, serif. */
+
+    /* Pure white background — minimal, editorial. */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    /* Cream tokens neutralised to soft greys (preserves component compat). */
+    --cream: 0 0% 99%;
+    --cream-deep: 220 14% 96%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary = dark navy (Shopify aesthetic). */
+    --primary: 222 47% 11%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 220 14% 92%;
+    --muted-foreground: 220 9% 46%;
+
+    /* Accent = navy too — drop warm gold from primary surfaces. */
+    --accent: 222 47% 11%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 222 47% 11%;
+
+    --radius: 0.75rem;
+
+    /* Legacy "blue" tokens now map to navy for backwards compatibility. */
+    --xsto-blue: 222 47% 11%;
+    --xsto-blue-light: 222 40% 20%;
+    --xsto-blue-dark: 222 47% 8%;
+    --xsto-blue-muted: 222 20% 55%;
+
+    /* "Gold" tokens repurposed as Medical Blue accent (#2563EB) — Clinical White & Medical Blue palette.
+       Token names kept for backwards compatibility with existing components. */
+    --gold: 221 83% 53%;
+    --gold-light: 217 91% 60%;
+    --gold-dark: 224 76% 40%;
+
+    /* Navy = brand primary surface. */
+    --navy: 222 47% 11%;
+    --navy-light: 222 40% 20%;
+    
+    /* Neutral slate tones - warmer undertones */
+    --slate: 220 9% 46%;
+    --slate-light: 220 9% 56%;
+
+    /* Legacy mappings — now Medical Blue. */
+    --xsto-orange: 221 83% 53%;
+    --xsto-orange-light: 217 91% 60%;
+    --xsto-orange-dark: 224 76% 40%;
+
+    /* Gradients — accent gradients now Medical Blue. */
+    --gradient-gold: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(217 91% 60%) 100%);
+    --gradient-xsto: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(222 40% 20%) 100%);
+    --gradient-navy: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(222 40% 20%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 14% 97%) 100%);
+
+    /* Shadows - refined for depth */
+    --shadow-soft: 0 4px 20px -4px hsl(222 47% 11% / 0.06);
+    --shadow-medium: 0 8px 30px -8px hsl(222 47% 11% / 0.1);
+    --shadow-strong: 0 20px 60px -15px hsl(222 47% 11% / 0.15);
+    --shadow-luxe: 0 30px 80px -30px hsl(222 47% 11% / 0.22), 0 8px 24px -8px hsl(222 47% 11% / 0.08);
+    --shadow-gold: 0 4px 12px -2px hsl(221 83% 53% / 0.25);
+    --shadow-gold-glow: 0 18px 50px -12px hsl(221 83% 53% / 0.35);
+    --shadow-xsto: 0 8px 30px -8px hsl(222 47% 11% / 0.25);
+
+    --gradient-gold-sheen: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(221 83% 53%) 45%, hsl(224 76% 40%) 100%);
+    --gradient-cream: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 14% 97%) 60%, hsl(0 0% 100%) 100%);
+    --gradient-radial-gold: radial-gradient(circle at 50% 0%, hsl(221 83% 53% / 0.08), transparent 60%);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 15%;
+    --sidebar-primary: 222 47% 11%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 222 47% 11%;
+  }
+
+  .dark {
+    /* Dark mode - refined rich palette */
+    --background: 222 47% 6%;
+    --foreground: 210 20% 98%;
+
+    --card: 222 47% 9%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 222 47% 9%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 222 30% 14%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 40 96% 55%;
+    --accent-foreground: 222 47% 6%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 40 96% 55%;
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 30% 12%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 222 30% 18%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased text-lg;
+    font-family: 'Outfit', system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', system-ui, sans-serif;
+    @apply font-semibold tracking-tight;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-gold);
+    /* Prevent italic glyph clipping by bg-clip-text */
+    display: inline-block;
+    padding-right: 0.15em;
+    margin-right: -0.05em;
+  }
+
+  .text-gradient-xsto {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-xsto);
+  }
+
+  .bg-gradient-gold {
+    background-image: var(--gradient-gold);
+  }
+
+  .bg-gradient-xsto {
+    background-image: var(--gradient-xsto);
+  }
+
+  .bg-gradient-navy {
+    background-image: var(--gradient-navy);
+  }
+
+  .bg-gradient-hero {
+    background-image: var(--gradient-hero);
+  }
+
+  .bg-gradient-blue {
+    background-image: var(--gradient-xsto);
+  }
