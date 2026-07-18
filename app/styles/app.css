@@ -510,6 +510,15 @@
     @apply inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-gold px-1.5 py-0.5 text-[0.6875rem] font-semibold leading-none text-white;
   }
 
+  .hero-video-element {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
   .hero-youtube-embed {
     @apply pointer-events-none absolute inset-0 overflow-hidden;
   }
@@ -518,19 +527,16 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    /* Scale past cover so edge title cards / lower-thirds are cropped out */
-    width: max(115vw, 204vh);
-    height: max(64.7vw, 115vh);
+    width: max(100vw, 177.78vh);
+    height: max(56.25vw, 100vh);
     min-width: 100%;
     min-height: 100%;
     transform: translate(-50%, -50%);
     border: 0;
-    /* Soft blur washes burned-in captions without killing the product motion */
-    filter: brightness(0.92) contrast(1.05) blur(2.5px);
   }
 
   .hero-video-poster {
-    @apply absolute inset-0 transition-opacity duration-1000;
+    @apply absolute inset-0 z-[1] transition-opacity duration-1000;
   }
 
   .hero-video-layer--playing .hero-video-poster {

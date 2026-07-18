@@ -1,7 +1,7 @@
 import {BadgePercent} from 'lucide-react';
 import {motion, useReducedMotion} from 'framer-motion';
 import {Link} from 'react-router';
-import {HeroYoutubeBackground} from '~/components/home/HeroYoutubeBackground';
+import {HeroVideoBackground} from '~/components/home/HeroVideoBackground';
 import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 
 const fadeUp = (delay: number, reducedMotion: boolean) =>
@@ -15,7 +15,7 @@ const fadeUp = (delay: number, reducedMotion: boolean) =>
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion() ?? false;
-  const m4Url = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`;
+  const m4bUrl = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b']}`;
 
   return (
     <section
@@ -23,31 +23,30 @@ export function HeroSection() {
       className="home-hero relative min-h-[100svh] overflow-hidden bg-navy !p-0"
     >
       <div aria-hidden className="absolute inset-0">
-        <HeroYoutubeBackground />
+        <HeroVideoBackground />
       </div>
 
-      {/* Readability overlays — keep product visible, make type crisp */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-[1] bg-black/35"
+        className="pointer-events-none absolute inset-0 z-[1] bg-black/30"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-32 bg-gradient-to-b from-black/50 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-32 bg-gradient-to-b from-black/45 to-transparent"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[58%] bg-gradient-to-t from-black/80 via-black/45 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[55%] bg-gradient-to-t from-black/80 via-black/40 to-transparent"
       />
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-end px-6 pb-16 pt-32 sm:px-8 md:pb-24 md:pt-36 lg:pb-28">
         <div className="max-w-2xl text-left text-white">
           <motion.p
-            className="font-display mb-2 text-[1.5rem] font-medium leading-none tracking-tight text-white md:mb-3 md:text-[2rem] lg:text-[2.25rem]"
-            style={{textShadow: '0 2px 24px rgba(0,0,0,0.55)'}}
+            className="font-display mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/85 md:mb-3 md:text-sm"
+            style={{textShadow: '0 2px 16px rgba(0,0,0,0.5)'}}
             {...fadeUp(0.1, reducedMotion)}
           >
-            World&apos;s First
+            New · XSTO M4B
           </motion.p>
 
           <motion.h1
@@ -55,7 +54,7 @@ export function HeroSection() {
             style={{textShadow: '0 2px 28px rgba(0,0,0,0.6)'}}
             {...fadeUp(0.2, reducedMotion)}
           >
-            Self-Balancing Mobility Robot
+            New front wheels. Folding footrest.
           </motion.h1>
 
           <motion.p
@@ -63,7 +62,8 @@ export function HeroSection() {
             style={{textShadow: '0 1px 16px rgba(0,0,0,0.5)'}}
             {...fadeUp(0.3, reducedMotion)}
           >
-            Free UK delivery · Full warranty · VAT relief eligible
+            The M4B launches with redesigned front wheels and a folding footrest
+            for easier transfers — same self-balancing ride, cleaner fold.
           </motion.p>
 
           <motion.div
@@ -72,9 +72,9 @@ export function HeroSection() {
           >
             <Link
               className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-8 text-sm font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline md:h-14 md:px-10 md:text-[0.9375rem]"
-              to={m4Url}
+              to={m4bUrl}
             >
-              Shop the M4
+              Shop the M4B
             </Link>
 
             <Link

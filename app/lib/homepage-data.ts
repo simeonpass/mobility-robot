@@ -220,9 +220,9 @@ export function getHomepageProductSlot(
 }
 
 export const HERO_VIDEO_URL =
-  'https://pub-b6593f4aaa3143c4b018c61c953c56f7.r2.dev/xsto%20film.mp4';
+  'https://cdn.shopify.com/videos/c/o/v/24482dbe89234283a018301fa020db98.mp4';
 
-/** Full-bleed homepage hero — XSTO mobility robot film */
+/** @deprecated Prefer HERO_VIDEO_URL (M4B launch film). Kept for any legacy embeds. */
 export const HOMEPAGE_HERO_YOUTUBE_ID = 'ihXdzLuNz2s';
 
 export function buildHeroYoutubeEmbedUrl(videoId: string): string {
@@ -260,7 +260,7 @@ export const HOMEPAGE_PRODUCT_BULLETS: Record<
     'Integrated LED head, tail and turn lights',
   ],
   'xsto-m4b': [
-    'New folding footrest design',
+    'New front wheels · folding footrest',
     'Self-balancing chassis · 10° slopes',
     'Electric height adjustment 347–650 mm',
   ],

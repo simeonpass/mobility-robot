@@ -178,14 +178,14 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     videos: [{title: 'Watch the M4 Pro in Action', embedUrl: YOUTUBE.m4Pro}],
   },
   'xsto-m4b': {
-    tagline: 'Self-Levelling · New Folding Footrest',
+    tagline: 'New Front Wheels · Folding Footrest',
     overview:
-      'The XSTO M4B builds on the award-winning M4 platform with a brand new folding footrest for easier transfers and a tidier folded footprint. Self-balancing, electric height adjustment and omnidirectional wheels — all in a chair that folds into any car boot.',
+      'The XSTO M4B builds on the award-winning M4 platform with redesigned front wheels and a brand new folding footrest for easier transfers and a tidier folded footprint. Self-balancing, electric height adjustment and omnidirectional movement — all in a chair that folds into any car boot.',
     highlights: [
-      'New folding footrest design',
+      'New front wheel design',
+      'New folding footrest',
       'Self-balancing chassis · 10° slopes',
       'Electric height adjustment 347–650 mm',
-      'Omnidirectional mecanum wheels',
     ],
     specs: [
       {label: 'Max Load Capacity', value: '115 kg', unit: '(254 lbs)'},

@@ -75,6 +75,7 @@ export default async function handleRequest(
       'https://*.tile.openstreetmap.org',
       'https://pub-b6593f4aaa3143c4b018c61c953c56f7.r2.dev',
     ],
+    mediaSrc: ["'self'", 'https://cdn.shopify.com', 'blob:'],
     fontSrc: ["'self'", 'https://fonts.gstatic.com'],
     styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     frameSrc: [
