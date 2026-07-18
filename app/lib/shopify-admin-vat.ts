@@ -27,7 +27,8 @@ type CustomerUpsertResult =
   | {ok: true; customerId: string; created: boolean}
   | {ok: false; reason: 'missing_token' | 'invalid_email' | 'admin_error'; message?: string};
 
-const CUSTOMER_SEARCH_QUERY = `#graphql
+// Not tagged #graphql — Admin API docs must not run through Storefront codegen.
+const CUSTOMER_SEARCH_QUERY = `
   query VatExemptionCustomerSearch($query: String!) {
     customers(first: 1, query: $query) {
       nodes {
@@ -39,7 +40,7 @@ const CUSTOMER_SEARCH_QUERY = `#graphql
   }
 `;
 
-const CUSTOMER_CREATE_MUTATION = `#graphql
+const CUSTOMER_CREATE_MUTATION = `
   mutation VatExemptionCustomerCreate($input: CustomerInput!) {
     customerCreate(input: $input) {
       customer {
@@ -55,7 +56,7 @@ const CUSTOMER_CREATE_MUTATION = `#graphql
   }
 `;
 
-const CUSTOMER_UPDATE_MUTATION = `#graphql
+const CUSTOMER_UPDATE_MUTATION = `
   mutation VatExemptionCustomerUpdate($input: CustomerInput!) {
     customerUpdate(input: $input) {
       customer {
