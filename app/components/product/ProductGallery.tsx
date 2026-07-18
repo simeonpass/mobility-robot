@@ -2,6 +2,7 @@ import {useCallback, useEffect, useId, useState} from 'react';
 import {AnimatePresence, motion, useReducedMotion} from 'framer-motion';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {Image} from '@shopify/hydrogen';
+import {ProductVideoPlayer} from '~/components/product/ProductVideoPlayer';
 import type {GalleryMediaItem} from '~/lib/product-gallery';
 
 type ProductGalleryProps = {
@@ -59,7 +60,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
                 aria-label={label}
                 aria-selected={selected}
                 className={[
-                  'relative size-[4.25rem] shrink-0 overflow-hidden rounded-md border transition-all sm:size-[4.75rem]',
+                  'relative size-11 shrink-0 overflow-hidden rounded-md border transition-all sm:size-[4.75rem]',
                   selected
                     ? 'border-foreground ring-1 ring-foreground/20'
                     : 'border-border/80 opacity-70 hover:border-foreground/30 hover:opacity-100',
@@ -100,17 +101,19 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
     ) : null;
 
   return (
-    <div className="min-w-0 lg:flex lg:gap-3">
-      {thumbList ? <div className="order-2 mt-3 lg:order-1 lg:mt-0">{thumbList}</div> : null}
+    <div className="flex min-w-0 flex-col gap-3 lg:flex-row">
+      {thumbList ? (
+        <div className="order-2 lg:order-1 lg:mt-0">{thumbList}</div>
+      ) : null}
 
       <div
         aria-label={`${productTitle} gallery`}
         aria-roledescription="carousel"
-        className="relative order-1 min-w-0 flex-1"
+        className="relative order-1 min-w-0 flex-1 lg:order-2"
         id={`${groupId}-main-media`}
         role="region"
       >
-        <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-secondary/40">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border/60 bg-white sm:aspect-square">
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               animate={{opacity: 1}}
@@ -121,19 +124,17 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
               transition={{duration: reducedMotion ? 0 : 0.2}}
             >
               {activeItem.type === 'image' ? (
-                <div className="flex size-full items-center justify-center p-5 md:p-10">
+                <div className="flex size-full items-center justify-center p-3 sm:p-4 md:p-6">
                   <Image
                     alt={activeItem.altText || productTitle}
                     className="max-h-full max-w-full object-contain"
                     data={activeItem}
-                    sizes="(min-width: 1024px) 58vw, 100vw"
+                    sizes="(min-width: 1024px) 55vw, 100vw"
                   />
                 </div>
               ) : (
-                <iframe
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="size-full border-0"
+                <ProductVideoPlayer
+                  className="size-full border-0 object-contain"
                   src={activeItem.embedUrl}
                   title={activeItem.title}
                 />
@@ -145,7 +146,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
             <>
               <button
                 aria-label="Previous image"
-                className="absolute left-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-soft backdrop-blur-sm transition-colors hover:bg-background"
+                className="absolute left-2 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-soft backdrop-blur-sm transition-colors hover:bg-background sm:left-3 sm:size-9"
                 onClick={goPrev}
                 type="button"
               >
@@ -153,7 +154,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
               </button>
               <button
                 aria-label="Next image"
-                className="absolute right-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-soft backdrop-blur-sm transition-colors hover:bg-background"
+                className="absolute right-2 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-soft backdrop-blur-sm transition-colors hover:bg-background sm:right-3 sm:size-9"
                 onClick={goNext}
                 type="button"
               >

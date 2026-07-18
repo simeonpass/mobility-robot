@@ -120,34 +120,41 @@ function ConsentBanner() {
   return (
     <div
       aria-labelledby="consent-banner-title"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background p-4 shadow-strong md:p-6"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background p-3 shadow-strong sm:p-4 md:p-6"
       role="dialog"
     >
-      <div className="xsto-container flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="xsto-container flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold text-foreground" id="consent-banner-title">
             Cookie preferences
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            We use essential cookies for cart and checkout. Analytics cookies help us
-            improve xsto.co.uk — only loaded if you accept.{' '}
+          <p className="mt-1 text-[0.8125rem] leading-snug text-muted-foreground sm:text-sm">
+            Essential cookies for cart and checkout. Analytics only if you accept.{' '}
             <Link className="text-gold hover:underline" to="/privacy">
               Privacy policy
             </Link>
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary text-sm" onClick={rejectAll} type="button">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+          <button
+            className="btn-secondary min-h-11 text-sm"
+            onClick={rejectAll}
+            type="button"
+          >
             Reject
           </button>
           <button
-            className="btn-secondary text-sm"
+            className="btn-secondary min-h-11 text-sm"
             onClick={() => setShowPreferences(true)}
             type="button"
           >
             Preferences
           </button>
-          <button className="btn-atc text-sm" onClick={acceptAll} type="button">
+          <button
+            className="btn-atc col-span-2 min-h-11 text-sm sm:col-span-1"
+            onClick={acceptAll}
+            type="button"
+          >
             Accept all
           </button>
         </div>

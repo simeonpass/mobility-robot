@@ -145,6 +145,10 @@ export function collectGalleryMedia({
   return items;
 }
 
+export function isDirectVideoUrl(url: string): boolean {
+  return /\.mp4($|\?)/i.test(url);
+}
+
 export function normalizeYoutubeEmbed(value?: string | null): string | null {
   if (!value) return null;
 
@@ -163,7 +167,12 @@ export function normalizeYoutubeEmbed(value?: string | null): string | null {
     return `https://www.youtube-nocookie.com/embed/${watchMatch[1]}`;
   }
 
-  return value.startsWith('http') ? value : null;
+  // Local public assets (e.g. /videos/x12/demo.mp4) or remote MP4/HTTP URLs.
+  if (value.startsWith('/') || value.startsWith('http')) {
+    return value;
+  }
+
+  return null;
 }
 
 export function extractYoutubeVideoId(embedUrl: string): string | null {

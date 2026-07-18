@@ -2,13 +2,9 @@ import {useEffect} from 'react';
 import {useLocation} from 'react-router';
 import {useConsent} from '~/components/ConsentBanner';
 
-function shouldHideChat(pathname: string, search: string): boolean {
+function shouldHideChat(pathname: string): boolean {
   if (pathname.startsWith('/account')) return true;
   if (pathname.startsWith('/checkout')) return true;
-  if (pathname.startsWith('/vat-relief')) {
-    const params = new URLSearchParams(search);
-    if (params.has('registered')) return true;
-  }
   return false;
 }
 
@@ -21,7 +17,7 @@ export function ShopChat({shopId}: {shopId?: string | null}) {
 
   useEffect(() => {
     if (!shopId || !marketingAllowed) return;
-    if (shouldHideChat(location.pathname, location.search)) return;
+    if (shouldHideChat(location.pathname)) return;
     if (document.getElementById('shop-chat-script')) return;
 
     const script = document.createElement('script');
@@ -34,7 +30,7 @@ export function ShopChat({shopId}: {shopId?: string | null}) {
     return () => {
       script.remove();
     };
-  }, [location.pathname, location.search, marketingAllowed, shopId]);
+  }, [location.pathname, marketingAllowed, shopId]);
 
   return null;
 }

@@ -11,23 +11,23 @@ import {SafetyDisclaimer} from '~/components/footer/SafetyDisclaimer';
 
 export function FooterMain() {
   return (
-    <div className="bg-navy-soft py-8 text-white md:py-10">
+    <div className="bg-navy py-10 text-white md:py-12">
       <div className="xsto-container">
-        <div className="mb-4 grid grid-cols-2 gap-x-6 gap-y-5 md:mb-6 md:grid-cols-3 md:gap-x-10 md:gap-y-6">
+        <div className="mb-6 grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-6 md:mb-8 md:grid-cols-3 md:gap-x-10 md:gap-y-6">
           <div className="col-span-2 space-y-4 md:col-span-1">
             <img
               alt="XSTO UK"
-              className="h-10 w-auto max-w-[220px] rounded-none object-contain object-left"
+              className="h-9 w-auto max-w-[200px] rounded-none object-contain object-left sm:h-10 sm:max-w-[220px]"
               decoding="async"
               height={40}
               src={xstoWordmark}
               width={220}
             />
-            <p className="text-sm leading-relaxed text-white/75">
+            <p className="text-sm leading-relaxed text-white/85">
               Self-balancing powered wheelchairs — UK sales, delivery and support
               from Bentech Medical Ltd.
             </p>
-            <address className="space-y-1 not-italic text-sm text-white/75">
+            <address className="space-y-1 not-italic text-sm text-white/85">
               <p>
                 <a
                   className="transition-colors hover:text-white"
@@ -95,7 +95,7 @@ function FooterLinkColumn({
         {links.map((link) => (
           <li key={link.url}>
             <NavLink
-              className="text-sm text-white/75 transition-colors hover:text-white"
+              className="inline-flex min-h-11 items-center text-sm text-white/85 transition-colors hover:text-white"
               prefetch="intent"
               to={link.url}
             >
@@ -120,7 +120,7 @@ function SocialLink({
   return (
     <a
       aria-label={label}
-      className="inline-flex size-8 items-center justify-center rounded-full border border-white/20 text-white/75 transition-colors hover:border-white/40 hover:text-white"
+      className="inline-flex size-11 items-center justify-center rounded-full border border-white/25 text-white transition-colors hover:border-white/50 hover:bg-white/10"
       href={href}
       rel="noopener noreferrer"
       target="_blank"

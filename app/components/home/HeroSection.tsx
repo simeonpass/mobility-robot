@@ -39,54 +39,50 @@ export function HeroSection() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[55%] bg-gradient-to-t from-black/80 via-black/40 to-transparent"
       />
 
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-end px-6 pb-16 pt-32 sm:px-8 md:pb-24 md:pt-36 lg:pb-28">
-        <div className="max-w-2xl text-left text-white">
-          <motion.p
-            className="font-display mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/85 md:mb-3 md:text-sm"
-            style={{textShadow: '0 2px 16px rgba(0,0,0,0.5)'}}
+      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-end px-4 pb-[7.5rem] pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:px-8 md:pb-20 md:pt-36 lg:pb-24">
+        <div className="home-hero-copy w-full max-w-2xl text-left text-white">
+          <motion.h1
+            className="home-hero-title font-display text-white"
+            style={{textShadow: '0 2px 28px rgba(0,0,0,0.6)'}}
             {...fadeUp(0.1, reducedMotion)}
           >
-            New · XSTO M4B
-          </motion.p>
-
-          <motion.h1
-            className="font-display mb-3 text-[1.625rem] font-semibold uppercase leading-[1.12] tracking-[0.08em] text-white sm:text-[2rem] md:mb-4 md:text-[2.5rem] md:tracking-[0.1em] lg:text-[3rem]"
-            style={{textShadow: '0 2px 28px rgba(0,0,0,0.6)'}}
-            {...fadeUp(0.2, reducedMotion)}
-          >
-            New front wheels. Folding footrest.
+            Introducing the new{' '}
+            <span className="home-hero-title-product">XSTO M4B</span>
           </motion.h1>
 
           <motion.p
-            className="mb-6 max-w-lg font-sans text-base leading-relaxed text-white/90 md:mb-8 md:text-lg"
+            className="home-hero-support font-sans"
             style={{textShadow: '0 1px 16px rgba(0,0,0,0.5)'}}
-            {...fadeUp(0.3, reducedMotion)}
+            {...fadeUp(0.2, reducedMotion)}
           >
-            The M4B launches with redesigned front wheels and a folding footrest
-            for easier transfers — same self-balancing ride, cleaner fold.
+            Removable, adjustable footrest for easier transfers — with the same
+            self-balancing performance and compact fold.
           </motion.p>
 
           <motion.div
-            className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-3"
-            {...fadeUp(0.4, reducedMotion)}
+            className="home-hero-cta-group"
+            {...fadeUp(0.3, reducedMotion)}
           >
             <Link
-              className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-8 text-sm font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline md:h-14 md:px-10 md:text-[0.9375rem]"
+              className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"
               to={m4bUrl}
             >
               Shop the M4B
             </Link>
 
             <Link
-              className="btn-hero-secondary font-display inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/80 bg-black/25 px-6 text-sm font-medium text-white no-underline backdrop-blur-sm transition-colors hover:border-white hover:bg-black/40 hover:text-white hover:no-underline md:h-14"
+              className="btn-hero-secondary font-display inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/55 bg-black/20 px-4 text-center text-[0.8125rem] font-medium leading-snug tracking-wide text-white/90 no-underline backdrop-blur-sm transition-colors hover:border-white/80 hover:bg-black/35 hover:text-white hover:no-underline sm:px-6 md:h-14 md:text-sm"
               to="/vat-relief"
             >
               <BadgePercent
                 aria-hidden
-                className="size-4 shrink-0 text-white"
+                className="size-3.5 shrink-0 text-white/85 md:size-4"
                 strokeWidth={1.5}
               />
-              Save 20% with VAT relief
+              <span className="sm:hidden">VAT relief — pay no VAT</span>
+              <span className="hidden sm:inline">
+                Eligible customers pay no VAT.
+              </span>
             </Link>
           </motion.div>
         </div>

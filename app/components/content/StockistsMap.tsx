@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import type {Dealer} from '~/lib/dealers';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -11,6 +11,41 @@ type StockistsMapProps = {
   searchOrigin?: {lat: number; lng: number} | null;
 };
 
+/** Soft pan limit: British Isles + nearby seas (includes NI, Scotland, ROI). */
+const MAX_BOUNDS: [[number, number], [number, number]] = [
+  [48.8, -12.5],
+  [61.5, 3.5],
+];
+
+/** Initial UK-focused view before markers fit (England/Scotland/Wales/NI + Dublin). */
+const UK_FOCUS_BOUNDS: [[number, number], [number, number]] = [
+  [50.5, -7.5],
+  [56.3, 1.6],
+];
+
+function dealersBounds(
+  dealers: Dealer[],
+): [[number, number], [number, number]] | null {
+  if (dealers.length === 0) return null;
+
+  let minLat = dealers[0].lat;
+  let maxLat = dealers[0].lat;
+  let minLng = dealers[0].lng;
+  let maxLng = dealers[0].lng;
+
+  for (const dealer of dealers) {
+    minLat = Math.min(minLat, dealer.lat);
+    maxLat = Math.max(maxLat, dealer.lat);
+    minLng = Math.min(minLng, dealer.lng);
+    maxLng = Math.max(maxLng, dealer.lng);
+  }
+
+  return [
+    [minLat, minLng],
+    [maxLat, maxLng],
+  ];
+}
+
 export function StockistsMap({
   dealers,
   selectedDealerId,
@@ -22,6 +57,7 @@ export function StockistsMap({
   const markersRef = useRef<import('leaflet').LayerGroup | null>(null);
   const onSelectRef = useRef(onSelectDealer);
   onSelectRef.current = onSelectDealer;
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,7 +83,10 @@ export function StockistsMap({
 
       const map = L.map(containerRef.current, {
         scrollWheelZoom: false,
-      }).setView([54.5, -3.5], 6);
+        minZoom: 5,
+        maxBounds: MAX_BOUNDS,
+        maxBoundsViscosity: 0.65,
+      }).fitBounds(UK_FOCUS_BOUNDS, {padding: [16, 16], maxZoom: 7});
 
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
@@ -69,6 +108,8 @@ export function StockistsMap({
         resizeObserver = new ResizeObserver(syncSize);
         resizeObserver.observe(containerRef.current);
       }
+
+      if (!cancelled) setMapReady(true);
     }
 
     void initMap();
@@ -76,6 +117,7 @@ export function StockistsMap({
     return () => {
       cancelled = true;
       resizeObserver?.disconnect();
+      setMapReady(false);
       mapRef.current?.remove();
       mapRef.current = null;
       markersRef.current = null;
@@ -85,9 +127,11 @@ export function StockistsMap({
   useEffect(() => {
     const map = mapRef.current;
     const layerGroup = markersRef.current;
-    if (!map || !layerGroup) return;
+    if (!mapReady || !map || !layerGroup) return;
 
     void import('leaflet').then((L) => {
+      if (!mapRef.current || !markersRef.current) return;
+
       layerGroup.clearLayers();
 
       dealers.forEach((dealer) => {
@@ -99,11 +143,11 @@ export function StockistsMap({
         layerGroup.addLayer(marker);
       });
     });
-  }, [dealers]);
+  }, [dealers, mapReady]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!mapReady || !map) return;
 
     if (selectedDealerId) {
       const dealer = dealers.find((entry) => entry.name === selectedDealerId);
@@ -115,15 +159,21 @@ export function StockistsMap({
 
     if (searchOrigin) {
       map.setView([searchOrigin.lat, searchOrigin.lng], 8, {animate: true});
+      return;
     }
-  }, [dealers, searchOrigin, selectedDealerId]);
+
+    const bounds = dealersBounds(dealers);
+    if (bounds) {
+      map.fitBounds(bounds, {padding: [28, 28], maxZoom: 8, animate: false});
+    }
+  }, [dealers, mapReady, searchOrigin, selectedDealerId]);
 
   return (
     <div
       aria-label="UK dealer map"
-      className="relative z-0 h-[320px] min-h-[320px] overflow-hidden rounded-xl border border-border bg-secondary md:h-[520px] md:min-h-[520px]"
+      className="relative z-0 h-[300px] min-h-[300px] overflow-hidden rounded-xl border border-border bg-secondary md:h-[400px] md:min-h-[400px]"
       ref={containerRef}
-      role="img"
+      role="region"
     />
   );
 }

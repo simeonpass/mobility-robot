@@ -41,5 +41,9 @@ export default defineConfig({
   },
   server: {
     allowedHosts: ['.tryhydrogen.dev'],
+    // Huge local demo MP4s (~685MB) — serve on demand, don't watch for HMR.
+    watch: {
+      ignored: ['**/public/videos/**'],
+    },
   },
 });

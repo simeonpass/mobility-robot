@@ -1,5 +1,5 @@
 import type {ProductFAQ} from '~/lib/product-faqs';
-import {m4FAQs, m4ProFAQs, x12FAQs} from '~/lib/product-faqs';
+import {m4FAQs, m4ProFAQs, x12FAQs, ezgo2FAQs} from '~/lib/product-faqs';
 import {
   getHomepageProductSlot,
   type HomepageProductHandle,
@@ -8,6 +8,11 @@ import {
 export type ProductSpec = {label: string; value: string; unit?: string};
 export type ProductDimension = {label: string; value: string};
 export type ProductVideo = {title: string; embedUrl: string};
+export type ProductDownload = {
+  title: string;
+  href: string;
+  description?: string;
+};
 
 export type ProductFeatureBlock = {
   title: string;
@@ -27,7 +32,47 @@ export type ProductContent = {
   deliveryWarranty: string;
   faqs: ProductFAQ[];
   videos: ProductVideo[];
+  downloads?: ProductDownload[];
 };
+
+const M4_SERIES_PRODUCT_SHEET: ProductDownload = {
+  title: 'M4 Series Product Sheet',
+  href: '/docs/m4/xsto-m4-series-product-sheet.pdf',
+  description: 'Technical overview and key specifications for the M4 series.',
+};
+
+const M4_USER_MANUAL: ProductDownload = {
+  title: 'M4 User Manual',
+  href: '/docs/m4/xsto-m4-user-manual.pdf',
+  description: 'Operating guide, safety instructions, and maintenance (D701000220).',
+};
+
+const M4_AND_M4B_DOWNLOADS: ProductDownload[] = [
+  M4_SERIES_PRODUCT_SHEET,
+  M4_USER_MANUAL,
+];
+
+const M4_PRO_DOWNLOADS: ProductDownload[] = [M4_SERIES_PRODUCT_SHEET];
+
+const X12_SERIES_PRODUCT_SHEET: ProductDownload = {
+  title: 'X12 Series Product Sheet',
+  href: '/docs/x12/xsto-x12-series-product-sheet.pdf',
+  description: 'Technical overview and key specifications for the X12 series.',
+};
+
+const X12_USER_MANUAL: ProductDownload = {
+  title: 'X12 Series User Manual',
+  href: '/docs/x12/xsto-x12-user-manual.pdf',
+  description: 'Operating guide, safety instructions, and maintenance (D701000274).',
+};
+
+const X12_SERIES_DOWNLOADS: ProductDownload[] = [
+  X12_SERIES_PRODUCT_SHEET,
+  X12_USER_MANUAL,
+];
+
+/** Giant local demo MP4s kept out of public/ (see tmp/local-videos). */
+const X12_SERIES_VIDEOS: ProductVideo[] = [];
 
 const DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. In-stock models typically arrive within 5–7 working days.
 
@@ -117,11 +162,14 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Weight (no battery)', value: '51.5 kg', unit: '(114 lbs)'},
       {label: 'Battery', value: '25.55V', unit: '15.5Ah'},
       {label: 'Charge Time', value: '4 hours'},
+      {label: 'Obstacle Clearance', value: '50 mm'},
+      {label: 'Ditch Crossing', value: '100 mm'},
       {label: 'Protection', value: 'IPX4', unit: 'Water Resistant'},
     ],
     dimensions: [
       {label: 'Folded Size', value: '1040 × 580 × 570 mm'},
       {label: 'Unfolded Size', value: '1035 × 580 × 930 mm'},
+      {label: 'Highest Position', value: '980 × 580 × 1080 mm'},
       {label: 'Seat Height Range', value: '347–650 mm'},
       {label: 'Turning Radius', value: '820 mm'},
     ],
@@ -137,6 +185,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     deliveryWarranty: DELIVERY_WARRANTY,
     faqs: m4FAQs,
     videos: [{title: 'Watch the M4 in Action', embedUrl: YOUTUBE.m4}],
+    downloads: M4_AND_M4B_DOWNLOADS,
   },
   'xsto-m4-pro': {
     tagline: 'Premium Smart Wheelchair — Safe, Comfortable, Ergonomic Design',
@@ -154,13 +203,18 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Top Speed', value: '6 km/h', unit: '(3.7 mph)'},
       {label: 'Max Slope', value: '15°'},
       {label: 'Weight (no battery)', value: '60.1 kg', unit: '(132 lbs)'},
+      {label: 'Battery', value: '25.2V', unit: '23.8Ah'},
+      {label: 'Charge Time', value: '6 hours'},
       {label: 'Seat Tilt', value: '0–20°', unit: '(default 7°)'},
       {label: 'Backrest Recline', value: 'Up to 135°'},
       {label: 'Obstacle Height', value: '85 mm fwd', unit: '/ 50 mm rev'},
+      {label: 'Ditch Crossing', value: '100 mm'},
+      {label: 'Protection', value: 'IPX4', unit: 'Water Resistant'},
     ],
     dimensions: [
       {label: 'Folded Size', value: '1040 × 592 × 770 mm'},
       {label: 'Unfolded Size', value: '1120 × 592 × 1040 mm'},
+      {label: 'Highest Position', value: '1120 × 592 × 1200 mm'},
       {label: 'Seat Height Range', value: '450–730 mm'},
       {label: 'Turning Radius', value: '825 mm'},
     ],
@@ -176,6 +230,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     deliveryWarranty: DELIVERY_WARRANTY,
     faqs: m4ProFAQs,
     videos: [{title: 'Watch the M4 Pro in Action', embedUrl: YOUTUBE.m4Pro}],
+    downloads: M4_PRO_DOWNLOADS,
   },
   'xsto-m4b': {
     tagline: 'New Front Wheels · Folding Footrest',
@@ -192,13 +247,18 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Range', value: '15 km', unit: '(9.3 miles)'},
       {label: 'Top Speed', value: '6 km/h', unit: '(3.7 mph)'},
       {label: 'Max Slope', value: '10°'},
-      {label: 'Weight (no battery)', value: '52 kg', unit: '(115 lbs)'},
-      {label: 'Footrest', value: 'New folding footrest'},
+      {label: 'Weight (no battery)', value: '55.5 kg', unit: '(122 lbs)'},
+      {label: 'Battery', value: '25.55V', unit: '15.5Ah'},
+      {label: 'Charge Time', value: '4 hours'},
+      {label: 'Footrest', value: 'Integrated folding pedals'},
+      {label: 'Obstacle Clearance', value: '50 mm'},
+      {label: 'Ditch Crossing', value: '100 mm'},
       {label: 'Protection', value: 'IPX4', unit: 'Water Resistant'},
     ],
     dimensions: [
-      {label: 'Folded Size', value: '1040 × 580 × 570 mm'},
-      {label: 'Unfolded Size', value: '1035 × 580 × 930 mm'},
+      {label: 'Folded Size', value: '1040 × 590 × 570 mm'},
+      {label: 'Unfolded Size', value: '1050 × 590 × 1055 mm'},
+      {label: 'Highest Position', value: '1125 × 590 × 1190 mm'},
       {label: 'Seat Height Range', value: '347–650 mm'},
       {label: 'Turning Radius', value: '820 mm'},
     ],
@@ -214,6 +274,89 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     deliveryWarranty: DELIVERY_WARRANTY,
     faqs: m4FAQs,
     videos: [{title: 'Watch the M4 in Action', embedUrl: YOUTUBE.m4}],
+    downloads: M4_AND_M4B_DOWNLOADS,
+  },
+  'xsto-ezgo2': {
+    displayName: 'XSTO EzGo2',
+    tagline: 'Carbon Fiber · Ultra-Lightweight · Fold With Ease',
+    overview:
+      'The XSTO EzGo2 is an aerospace-grade carbon fiber power wheelchair weighing just 11.5 kg without battery. Three-step folding to a 26 cm packed width, dual 150W motors, and a 24V 10Ah battery make it ideal for indoor mobility, travel, and effortless lifting into a car boot.',
+    highlights: [
+      'Only 11.5 kg without battery',
+      'High-strength full carbon fiber frame',
+      'Three-step quick fold · 26 cm folded width',
+      '15 km range · 136 kg capacity',
+    ],
+    features: [
+      {
+        title: 'Aerospace-Grade Carbon Fiber',
+        description:
+          'A full carbon fiber frame delivers exceptional strength at ultra-low weight — light enough for many users to lift with one hand.',
+        highlights: [
+          '11.5 kg frame weight (no battery)',
+          'High-strength carbon fiber construction',
+          'Battery approx. 2.2 kg',
+          'Easy boot and travel packing',
+        ],
+      },
+      {
+        title: 'Three-Step Quick Folding',
+        description:
+          'One lift, one pull, one fold — compact storage with a folded width of just 26 cm.',
+        highlights: [
+          'Folded size 630 × 260 × 700 mm',
+          'Unfolded size 860 × 600 × 900 mm',
+          'Fits easily in most car boots',
+          'Ideal for flats and travel',
+        ],
+      },
+      {
+        title: 'Smart Everyday Comfort',
+        description:
+          'Ventilated seat cushion, smart LED controller, holding brake, anti-tip wheel, and high-brightness LED lighting for safer daily use.',
+        highlights: [
+          '24V 10Ah lithium battery',
+          '150W × 2 motors',
+          'Joystick control',
+          'Indoor-focused agility',
+        ],
+      },
+    ],
+    specs: [
+      {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
+      {label: 'Weight (no battery)', value: '11.5 kg', unit: '(25 lbs)'},
+      {label: 'Battery Weight', value: '2.2 kg', unit: '(4.9 lbs)'},
+      {label: 'Range', value: '15 km', unit: '(9.3 miles)'},
+      {label: 'Top Speed', value: '≤ 4.5 km/h', unit: '(2.8 mph)'},
+      {label: 'Climbing Capacity', value: '≥ 3°'},
+      {label: 'Usage Type', value: 'Indoor'},
+      {label: 'Battery', value: '24V', unit: '10Ah'},
+      {label: 'Motor Power', value: '150W × 2'},
+      {label: 'Frame Material', value: 'Carbon fiber'},
+      {label: 'Obstacle Clearance', value: '≥ 25 mm'},
+      {label: 'Gap Crossing', value: '100 mm'},
+      {label: 'Turning Diameter', value: '≤ 1800 mm'},
+    ],
+    dimensions: [
+      {label: 'Folded Size', value: '630 × 260 × 700 mm'},
+      {label: 'Unfolded Size', value: '860 × 600 × 900 mm'},
+      {label: 'Seat Width', value: '430 mm'},
+      {label: 'Seat Depth', value: '400 mm'},
+      {label: 'Front Seat Height', value: '490 mm'},
+      {label: 'Backrest Height', value: '400 mm'},
+      {label: 'Front Wheel', value: '6.5 inch'},
+      {label: 'Rear Wheel', value: '12 inch'},
+    ],
+    inBox: [
+      'XSTO EzGo2 Carbon Fiber Power Wheelchair',
+      '24V 10Ah Lithium Battery',
+      'Battery Charger',
+      'Joystick Controller',
+      'User Manual',
+    ],
+    deliveryWarranty: DELIVERY_WARRANTY,
+    faqs: ezgo2FAQs,
+    videos: [],
   },
   'xsto-x12': {
     tagline: 'AI-Powered All-Terrain Mobility Robot',
@@ -251,7 +394,11 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     ],
     deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 models are available by pre-order. Place a deposit to join the build queue; balance due before dispatch.`,
     faqs: x12FAQs,
-    videos: [{title: 'Watch the X12 in Action', embedUrl: YOUTUBE.x12}],
+    videos: [
+      {title: 'Watch the X12 in Action', embedUrl: YOUTUBE.x12},
+      ...X12_SERIES_VIDEOS,
+    ],
+    downloads: X12_SERIES_DOWNLOADS,
   },
   'xsto-x12-pro': {
     tagline: 'AI Stair Climbing Mobility Wheelchair — Pro Edition',
@@ -289,7 +436,11 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     ],
     deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 Pro models are available by pre-order. Place a deposit to join the build queue; balance due before dispatch.`,
     faqs: x12FAQs,
-    videos: [{title: 'Watch the X12 Pro in Action', embedUrl: YOUTUBE.x12Pro}],
+    videos: [
+      {title: 'Watch the X12 Pro in Action', embedUrl: YOUTUBE.x12Pro},
+      ...X12_SERIES_VIDEOS,
+    ],
+    downloads: X12_SERIES_DOWNLOADS,
   },
 };
 

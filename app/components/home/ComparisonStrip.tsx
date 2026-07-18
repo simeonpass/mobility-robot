@@ -41,7 +41,7 @@ export function ComparisonStrip() {
         </div>
 
         <div className="overflow-x-auto rounded-2xl border border-border bg-background shadow-soft">
-          <table className="w-full min-w-[720px] border-collapse text-sm">
+          <table className="w-full min-w-[900px] border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-secondary/40">
                 <th className="px-4 py-4 text-left font-semibold text-foreground md:px-6">

@@ -4,7 +4,7 @@ import {ArrowUpRight} from 'lucide-react';
 import {SectionIntro} from '~/components/home/SectionIntro';
 import type {HomeProductFragment} from 'storefrontapi.generated';
 import {
-  formatExVatPrice,
+  formatHomepageFromPrice,
   getHomepageProductSlot,
   HOMEPAGE_FLAGSHIP_HANDLES,
   HOMEPAGE_PRODUCT_BADGES,
@@ -30,11 +30,11 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
         <div className="xsto-container">
           <SectionIntro
             accent="XSTO"
-            description="Four flagship models. Self-balancing, foldable, stair-climbing — every chair ships with full UK warranty and free delivery."
-            label="Shop the range"
-            suffix="for you."
-            title="Find the"
-          />
+          description="Six models across the XSTO range — from ultra-light carbon fiber to stair-climbing. Every chair ships with full UK warranty and free delivery."
+          label="Shop the range"
+          suffix="for you."
+          title="Find the"
+        />
           <p className="text-center text-muted-foreground">
             Product details are loading. Please check back shortly.
           </p>
@@ -48,19 +48,20 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
       <div className="xsto-container">
         <SectionIntro
           accent="XSTO"
-          description="Four flagship models. Self-balancing, foldable, stair-climbing — every chair ships with full UK warranty and free delivery."
+          description="Six models across the XSTO range — from ultra-light carbon fiber to stair-climbing. Every chair ships with full UK warranty and free delivery."
           label="Shop the range"
           suffix="for you."
           title="Find the"
         />
 
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {flagshipProducts.map((product, index) => {
             const slot = getHomepageProductSlot(product.handle) as
               | HomepageFlagshipHandle
               | undefined;
             const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
-            const exVatPrice = formatExVatPrice(
+            const exVatPrice = formatHomepageFromPrice(
+              slot,
               product.priceRange.minVariantPrice.amount,
               product.priceRange.minVariantPrice.currencyCode,
             );
@@ -77,12 +78,12 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                   to={`/products/${product.handle}`}
                 >
                   {meta ? (
-                    <span className="absolute left-4 top-4 z-10 rounded-full bg-background/95 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm">
+                    <span className="absolute left-3 top-3 z-10 rounded-full bg-background/95 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:text-xs">
                       {meta.badge}
                     </span>
                   ) : null}
 
-                  <div className="flex aspect-[4/3] items-center justify-center bg-gradient-cream p-6">
+                  <div className="flex aspect-[16/11] items-center justify-center bg-gradient-cream p-4 sm:aspect-[4/3] sm:p-6">
                     {product.featuredImage ? (
                       <Image
                         alt={product.featuredImage.altText || product.title}
@@ -93,14 +94,14 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                     ) : null}
                   </div>
 
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="text-lg font-semibold text-foreground">
+                  <div className="flex flex-1 flex-col p-4 sm:p-5">
+                    <h3 className="text-base font-semibold text-foreground sm:text-lg">
                       {meta?.shortName ?? product.title}
                     </h3>
-                    <p className="mt-2 text-xl font-semibold text-gold">
+                    <p className="mt-1.5 text-lg font-semibold text-gold sm:mt-2 sm:text-xl">
                       From {exVatPrice}
                     </p>
-                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-gold">
+                    <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-gold sm:mt-5 sm:min-h-0">
                       {meta?.exploreLabel ?? 'View details'}
                       <ArrowUpRight
                         aria-hidden

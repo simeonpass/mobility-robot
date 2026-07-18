@@ -125,7 +125,10 @@ export function VatReliefModal({
                 <BadgePercent aria-hidden className="size-3.5" />
                 HMRC VAT relief
               </div>
-              <h2 className="text-xl font-semibold tracking-tight" id={titleId}>
+              <h2
+                className="text-xl font-semibold tracking-tight text-white"
+                id={titleId}
+              >
                 {title}
               </h2>
               {subtitle ? (

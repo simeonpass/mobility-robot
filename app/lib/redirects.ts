@@ -22,12 +22,11 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/track-order': '/account/orders',
   '/index.html': '/',
   '/videos': '/blog',
-  '/demo': '/demo',
-  '/quote': '/quote',
-  '/account': '/account',
   '/products/xsto-m4': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`,
   '/products/xsto-m4-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4-pro']}`,
   '/products/xsto-m4b': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b']}`,
+  '/products/xsto-ezgo2': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-ezgo2']}`,
+  '/products/ezgo2-mobility-robot': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-ezgo2']}`,
   '/products/xsto-x12': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`,
   '/products/xsto-x12-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
 };
@@ -61,6 +60,10 @@ export type LegacyRedirectResult = {
 /**
  * Resolve a legacy URL to its new path, or null if no redirect applies.
  */
+const CANONICAL_PRODUCT_PATHS = new Set(
+  Object.values(SHOPIFY_HOME_PRODUCT_HANDLES).map((handle) => `/products/${handle}`),
+);
+
 export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | null {
   const url = new URL(request.url);
   const pathname = url.pathname.replace(/\/+$/, '') || '/';
@@ -80,13 +83,18 @@ export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | 
   }
 
   const exact = LEGACY_REDIRECTS[pathname];
-  if (exact) {
+  if (exact && exact !== pathname) {
     return {destination: exact, cacheControl: LEGACY_REDIRECT_CACHE_CONTROL};
   }
 
-  for (const {prefix, target} of PRODUCT_PREFIX_REDIRECTS) {
-    if (pathname === prefix || pathname.startsWith(`${prefix}-`)) {
-      return {destination: target, cacheControl: LEGACY_REDIRECT_CACHE_CONTROL};
+  // Never prefix-redirect a live Shopify product URL. Handles like
+  // xsto-x12-pro-ai-... start with the short xsto-x12- legacy prefix.
+  if (!CANONICAL_PRODUCT_PATHS.has(pathname)) {
+    for (const {prefix, target} of PRODUCT_PREFIX_REDIRECTS) {
+      if (pathname === target) continue;
+      if (pathname === prefix || pathname.startsWith(`${prefix}-`)) {
+        return {destination: target, cacheControl: LEGACY_REDIRECT_CACHE_CONTROL};
+      }
     }
   }
 

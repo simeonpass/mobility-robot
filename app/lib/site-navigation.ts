@@ -3,41 +3,107 @@ import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 export type NavItem = {
   title: string;
   url: string;
+  description?: string;
 };
 
-export const MAIN_NAV: NavItem[] = [
-  {title: 'Home', url: '/'},
-  {title: 'M4', url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`},
+export type NavGroup = {
+  title: string;
+  items: NavItem[];
+};
+
+function productUrl(handle: keyof typeof SHOPIFY_HOME_PRODUCT_HANDLES) {
+  return `/products/${SHOPIFY_HOME_PRODUCT_HANDLES[handle]}`;
+}
+
+/** Product series shown in the Models dropdown / mobile menu. */
+export const PRODUCT_NAV_GROUPS: NavGroup[] = [
   {
-    title: 'M4 Pro',
-    url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4-pro']}`,
+    title: 'M4 Series',
+    items: [
+      {
+        title: 'M4',
+        url: productUrl('xsto-m4'),
+        description: 'Self-levelling everyday chair',
+      },
+      {
+        title: 'M4 Pro',
+        url: productUrl('xsto-m4-pro'),
+        description: 'Premium comfort & capacity',
+      },
+      {
+        title: 'M4B',
+        url: productUrl('xsto-m4b'),
+        description: 'Updated wheels & footrest',
+      },
+    ],
   },
-  {title: 'M4B', url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b']}`},
-  {title: 'X12', url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`},
   {
-    title: 'X12 Pro',
-    url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
+    title: 'EzGo2',
+    items: [
+      {
+        title: 'EzGo2',
+        url: productUrl('xsto-ezgo2'),
+        description: 'Ultra-light carbon fiber',
+      },
+    ],
   },
+  {
+    title: 'X12 Series',
+    items: [
+      {
+        title: 'X12',
+        url: productUrl('xsto-x12'),
+        description: 'All-terrain stair climber',
+      },
+      {
+        title: 'X12 Pro',
+        url: productUrl('xsto-x12-pro'),
+        description: 'Fully configurable X12',
+      },
+    ],
+  },
+];
+
+/** Flat product links (all chairs). */
+export const PRODUCT_NAV_ITEMS: NavItem[] = PRODUCT_NAV_GROUPS.flatMap(
+  (group) => group.items,
+);
+
+/** Secondary links in the desktop header (kept lean). */
+export const HEADER_SECONDARY_NAV: NavItem[] = [
   {title: 'Accessories', url: '/collections/accessories'},
-  {title: 'FAQ', url: '/faq'},
   {title: 'Stockists', url: '/stockists'},
+  {title: 'FAQ', url: '/faq'},
+];
+
+/** Extra links shown in the mobile menu under Explore. */
+export const HEADER_MOBILE_EXTRA_NAV: NavItem[] = [
   {title: 'Blog', url: '/blog'},
-  {title: 'Demo', url: '/demo'},
+  {title: 'Request a quote', url: '/quote'},
+];
+
+export const HEADER_CTA: NavItem = {
+  title: 'Book a demo',
+  url: '/demo',
+};
+
+/** @deprecated Prefer PRODUCT_NAV_GROUPS / HEADER_SECONDARY_NAV for new UI */
+export const MAIN_NAV: NavItem[] = [
+  ...PRODUCT_NAV_ITEMS,
+  ...HEADER_SECONDARY_NAV,
+  {title: 'Blog', url: '/blog'},
+  HEADER_CTA,
   {title: 'Quote', url: '/quote'},
 ];
 
 export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'Shop All', url: '/collections/all'},
-  {title: 'M4', url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`},
-  {
-    title: 'M4 Pro',
-    url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4-pro']}`,
-  },
-  {title: 'X12', url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`},
-  {
-    title: 'X12 Pro',
-    url: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
-  },
+  {title: 'M4', url: productUrl('xsto-m4')},
+  {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
+  {title: 'M4B', url: productUrl('xsto-m4b')},
+  {title: 'EzGo2', url: productUrl('xsto-ezgo2')},
+  {title: 'X12', url: productUrl('xsto-x12')},
+  {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Find a Dealer', url: '/stockists'},
   {title: 'Book Demo', url: '/demo'},

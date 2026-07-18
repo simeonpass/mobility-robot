@@ -7,12 +7,17 @@ function requestFor(path: string) {
 
 describe('resolveLegacyRedirect', () => {
   for (const [source, target] of Object.entries(LEGACY_REDIRECTS)) {
+    if (source === target) continue;
     it(`301 ${source} → ${target}`, () => {
       const result = resolveLegacyRedirect(requestFor(source));
       expect(result?.destination).toBe(target);
       expect(result?.cacheControl).toContain('max-age=3600');
     });
   }
+
+  it('skips identity legacy entries', () => {
+    expect(resolveLegacyRedirect(requestFor('/products/xsto-m4-pro'))).toBeNull();
+  });
 
   it('redirects blog article paths', () => {
     const result = resolveLegacyRedirect(
@@ -35,7 +40,23 @@ describe('resolveLegacyRedirect', () => {
     expect(result?.destination).toBe('/products/xsto-m4-pro');
   });
 
+
+  it('does not redirect canonical X12 Pro Shopify handle', () => {
+    expect(
+      resolveLegacyRedirect(
+        requestFor(
+          '/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
+        ),
+      ),
+    ).toBeNull();
+  });
+
   it('returns null for unknown paths', () => {
     expect(resolveLegacyRedirect(requestFor('/collections/all'))).toBeNull();
+  });
+
+  it('does not redirect live /demo or /quote routes', () => {
+    expect(resolveLegacyRedirect(requestFor('/demo'))).toBeNull();
+    expect(resolveLegacyRedirect(requestFor('/quote'))).toBeNull();
   });
 });
