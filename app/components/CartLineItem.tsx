@@ -3,161 +3,250 @@ import type {CartLayout, LineItemChildrenMap} from '~/components/CartMain';
 import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
-import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
+import {useConsent} from '~/components/ConsentBanner';
+import {toGa4Item, trackRemoveFromCart} from '~/lib/analytics';
+import {
+  getLineDisplayAmount,
+  isAccessoryProduct,
+  lineHasVatRelief,
+} from '~/lib/cart-utils';
+import {formatProductPrice} from '~/lib/product-pricing';
 import type {
   CartApiQueryFragment,
-  CartLineFragment,
 } from 'storefrontapi.generated';
 
 export type CartLine = OptimisticCartLine<CartApiQueryFragment>;
 
-/**
- * A single line item in the cart. It displays the product image, title, price.
- * It also provides controls to update the quantity or remove the line item.
- * If the line is a parent line that has child components (like warranties or gift wrapping), they are
- * rendered nested below the parent line.
- */
 export function CartLineItem({
   layout,
   line,
   childrenMap,
+  vatReliefDiscountActive = false,
 }: {
   layout: CartLayout;
   line: CartLine;
   childrenMap: LineItemChildrenMap;
+  vatReliefDiscountActive?: boolean;
 }) {
-  const {id, merchandise} = line;
-  const {product, title, image, selectedOptions} = merchandise;
+  const {id, merchandise, quantity, attributes} = line;
+  const {product, title, image, selectedOptions, price} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
+  const {analyticsAllowed} = useConsent();
   const lineItemChildren = childrenMap[id];
-  const childrenLabelId = `cart-line-children-${id}`;
+  const vatRelief = lineHasVatRelief(attributes);
+  const useDiscountedAmounts = vatRelief && vatReliefDiscountActive;
+  const unitAmount = useDiscountedAmounts
+    ? formatProductPrice(
+        Number(line.cost?.amountPerQuantity?.amount ?? price.amount),
+        price.currencyCode,
+      )
+    : getLineDisplayAmount({
+        amount: price.amount,
+        currencyCode: price.currencyCode,
+        vatRelief,
+      });
+  const lineTotal = useDiscountedAmounts
+    ? formatProductPrice(
+        Number(line.cost?.totalAmount?.amount ?? price.amount),
+        price.currencyCode,
+      )
+    : getLineDisplayAmount({
+        amount: line.cost?.totalAmount?.amount ?? price.amount,
+        currencyCode: price.currencyCode,
+        vatRelief,
+      });
+  const accessory = isAccessoryProduct(product.handle);
 
   return (
-    <li key={id} className="cart-line">
-      <div className="cart-line-inner">
-        {image && (
-          <Image
-            alt={title}
-            aspectRatio="1/1"
-            data={image}
-            height={100}
-            loading="lazy"
-            width={100}
-          />
-        )}
+    <li className="list-none">
+      <div className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+        <div className="flex items-start gap-4">
+          {image ? (
+            <Link
+              className="relative size-24 shrink-0 overflow-hidden rounded-lg border border-border/60 bg-background sm:size-28"
+              onClick={() => layout === 'aside' && close()}
+              prefetch="intent"
+              to={lineItemUrl}
+            >
+              <Image
+                alt={title}
+                className="size-full object-contain p-2"
+                data={image}
+                height={112}
+                loading="lazy"
+                width={112}
+              />
+            </Link>
+          ) : null}
 
-        <div>
-          <Link
-            prefetch="intent"
-            to={lineItemUrl}
-            onClick={() => {
-              if (layout === 'aside') {
-                close();
-              }
-            }}
-          >
-            <p>
-              <strong>{product.title}</strong>
-            </p>
-          </Link>
-          <ProductPrice price={line?.cost?.totalAmount} />
-          <ul>
-            {selectedOptions.map((option) => (
-              <li key={option.name}>
-                <small>
-                  {option.name}: {option.value}
-                </small>
-              </li>
-            ))}
-          </ul>
-          <CartLineQuantity line={line} />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {accessory ? 'Accessory' : product.vendor || 'XSTO'}
+                </p>
+                <Link
+                  className="mt-1 block text-base font-semibold leading-tight text-foreground hover:text-gold sm:text-lg"
+                  onClick={() => layout === 'aside' && close()}
+                  prefetch="intent"
+                  to={lineItemUrl}
+                >
+                  {product.title}
+                </Link>
+                {title !== product.title && title !== 'Default Title' ? (
+                  <p className="mt-1 text-sm text-muted-foreground">{title}</p>
+                ) : null}
+                <p
+                  className={[
+                    'mt-1 text-sm',
+                    vatRelief ? 'font-medium text-vat-price' : 'text-muted-foreground',
+                  ].join(' ')}
+                >
+                  {unitAmount} each
+                  {vatRelief ? ' · ex. VAT' : ''}
+                </p>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Total
+                </p>
+                <p
+                  className={[
+                    'mt-1 text-lg font-semibold',
+                    vatRelief ? 'text-vat-price' : 'text-foreground',
+                  ].join(' ')}
+                >
+                  {lineTotal}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {vatRelief ? (
+                <span className="rounded-full border border-vat-price/30 bg-vat-price/10 px-2 py-0.5 text-[10px] font-medium text-vat-price">
+                  VAT Free
+                </span>
+              ) : null}
+              {selectedOptions.map((option) =>
+                option.value === 'Default Title' ? null : (
+                  <span
+                    className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground"
+                    key={option.name}
+                  >
+                    {option.name}: {option.value}
+                  </span>
+                ),
+              )}
+            </div>
+
+            <CartLineQuantity
+          line={line}
+          onRemove={() => {
+            if (!analyticsAllowed) return;
+            trackRemoveFromCart(
+              toGa4Item({
+                id: merchandise.id,
+                title: product.title,
+                price: price.amount,
+                quantity,
+              }),
+              price.currencyCode,
+            );
+          }}
+        />
+          </div>
         </div>
       </div>
 
       {lineItemChildren ? (
-        <div>
-          <p id={childrenLabelId} className="sr-only">
-            Line items with {product.title}
-          </p>
-          <ul aria-labelledby={childrenLabelId} className="cart-line-children">
-            {lineItemChildren.map((childLine) => (
-              <CartLineItem
-                childrenMap={childrenMap}
-                key={childLine.id}
-                line={childLine}
-                layout={layout}
-              />
-            ))}
-          </ul>
-        </div>
+        <ul className="ml-4 mt-3 space-y-3 border-l border-border pl-4">
+          {lineItemChildren.map((childLine) => (
+            <CartLineItem
+              childrenMap={childrenMap}
+              key={childLine.id}
+              layout={layout}
+              line={childLine}
+              vatReliefDiscountActive={vatReliefDiscountActive}
+            />
+          ))}
+        </ul>
       ) : null}
     </li>
   );
 }
 
-/**
- * Provides the controls to update the quantity of a line item in the cart.
- * These controls are disabled when the line item is new, and the server
- * hasn't yet responded that it was successfully added to the cart.
- */
-function CartLineQuantity({line}: {line: CartLine}) {
+function CartLineQuantity({
+  line,
+  onRemove,
+}: {
+  line: CartLine;
+  onRemove?: () => void;
+}) {
   if (!line || typeof line?.quantity === 'undefined') return null;
   const {id: lineId, quantity, isOptimistic} = line;
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
+    <div className="mt-4 flex items-center justify-between gap-3 border-t border-border/50 pt-4">
+      <div className="flex items-center gap-2">
+        <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+          <button
+            aria-label="Decrease quantity"
+            className="inline-flex size-9 items-center justify-center rounded-lg border border-border text-foreground hover:border-gold disabled:opacity-40"
+            disabled={quantity <= 1 || !!isOptimistic}
+            type="submit"
+          >
+            −
+          </button>
+        </CartLineUpdateButton>
+        <span className="min-w-8 text-center text-sm font-semibold">
+          {quantity}
+        </span>
+        <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+          <button
+            aria-label="Increase quantity"
+            className="inline-flex size-9 items-center justify-center rounded-lg border border-border text-foreground hover:border-gold disabled:opacity-40"
+            disabled={!!isOptimistic}
+            type="submit"
+          >
+            +
+          </button>
+        </CartLineUpdateButton>
+      </div>
+      <CartLineRemoveButton
+        disabled={!!isOptimistic}
+        lineIds={[lineId]}
+        onRemove={onRemove}
+      />
     </div>
   );
 }
 
-/**
- * A button that removes a line item from the cart. It is disabled
- * when the line item is new, and the server hasn't yet responded
- * that it was successfully added to the cart.
- */
 function CartLineRemoveButton({
   lineIds,
   disabled,
+  onRemove,
 }: {
   lineIds: string[];
   disabled: boolean;
+  onRemove?: () => void;
 }) {
   return (
     <CartForm
-      fetcherKey={getUpdateKey(lineIds)}
-      route="/cart"
       action={CartForm.ACTIONS.LinesRemove}
+      fetcherKey={getUpdateKey(lineIds)}
       inputs={{lineIds}}
+      route="/cart"
     >
-      <button disabled={disabled} type="submit">
+      <button
+        className="text-sm text-muted-foreground hover:text-destructive disabled:opacity-40"
+        disabled={disabled}
+        onClick={onRemove}
+        type="submit"
+      >
         Remove
       </button>
     </CartForm>
@@ -175,23 +264,16 @@ function CartLineUpdateButton({
 
   return (
     <CartForm
-      fetcherKey={getUpdateKey(lineIds)}
-      route="/cart"
       action={CartForm.ACTIONS.LinesUpdate}
+      fetcherKey={getUpdateKey(lineIds)}
       inputs={{lines}}
+      route="/cart"
     >
       {children}
     </CartForm>
   );
 }
 
-/**
- * Returns a unique key for the update action. This is used to make sure actions modifying the same line
- * items are not run concurrently, but cancel each other. For example, if the user clicks "Increase quantity"
- * and "Decrease quantity" in rapid succession, the actions will cancel each other and only the last one will run.
- * @param lineIds - line ids affected by the update
- * @returns
- */
 function getUpdateKey(lineIds: string[]) {
   return [CartForm.ACTIONS.LinesUpdate, ...lineIds].join('-');
 }

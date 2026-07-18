@@ -5,7 +5,8 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import type {ProductItemFragment} from 'storefrontapi.generated';
-import {JsonLd, PageShell} from '~/components/content/PageShell';
+import {Ga4CollectionView} from '~/components/Ga4CollectionView';
+import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, itemListJsonLd, breadcrumbJsonLd} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -96,6 +97,15 @@ export default function Collection() {
 
   return (
     <div className="collection xsto-container py-8 md:py-12">
+      <Ga4CollectionView
+        listName={collection.title}
+        products={collection.products.nodes.map((product) => ({
+          id: product.id,
+          title: product.title,
+          handle: product.handle,
+          priceAmount: product.priceRange.minVariantPrice.amount,
+        }))}
+      />
       <JsonLd data={[breadcrumbJsonLd(breadcrumbItems), listSchema]} />
       <h1 className="text-3xl font-bold text-foreground md:text-4xl">{collection.title}</h1>
       <p className="collection-description">{collection.description}</p>

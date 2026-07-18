@@ -18,6 +18,9 @@ import {PageLayout} from './components/PageLayout';
 import {applyReferralDiscount} from '~/lib/referral-discount';
 import {syncVatReliefDiscount} from '~/lib/vat-relief-discount';
 import {legacyRedirect} from '~/lib/redirects';
+import {ConsentProvider} from '~/components/ConsentBanner';
+import {Ga4Tracker} from '~/components/Ga4Tracker';
+import {ShopChat} from '~/components/ShopChat';
 import {JsonLd} from '~/components/content/PageShell';
 import {sitewideJsonLdGraph} from '~/lib/seo';
 import {HTML_LANG} from '~/lib/const';
@@ -91,6 +94,8 @@ export async function loader(args: Route.LoaderArgs) {
 
   return {
     ...deferredData,
+    ga4Id: env.PUBLIC_GA4_ID ?? null,
+    shopId: env.PUBLIC_SHOP_ID ?? null,
     shop: getShopAnalytics({
       storefront,
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
@@ -155,9 +160,13 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      <PageLayout {...data}>
-        <Outlet />
-      </PageLayout>
+      <ConsentProvider ga4Id={data.ga4Id}>
+        <Ga4Tracker ga4Id={data.ga4Id} />
+        <ShopChat shopId={data.shopId} />
+        <PageLayout {...data}>
+          <Outlet />
+        </PageLayout>
+      </ConsentProvider>
     </Analytics.Provider>
   );
 }
@@ -175,14 +184,20 @@ export function ErrorBoundary() {
   }
 
   return (
-    <div className="route-error">
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
+    <div className="xsto-container flex min-h-[60vh] flex-col items-center justify-center py-16 text-center">
+      <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
+        {errorStatus}
+      </p>
+      <h1 className="mt-2 text-3xl font-bold text-foreground">Something went wrong</h1>
+      <p className="mt-3 max-w-md text-muted-foreground">
+        We couldn&apos;t load this page. Please try again or return to the homepage.
+      </p>
+      {errorMessage && errorStatus >= 500 ? (
+        <p className="mt-4 max-w-lg text-xs text-muted-foreground">{errorMessage}</p>
+      ) : null}
+      <a className="btn-atc mt-8" href="/">
+        Back to homepage
+      </a>
     </div>
   );
 }

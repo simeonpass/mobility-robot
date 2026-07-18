@@ -22,9 +22,10 @@ import {
   buildProductTabContent,
   getProductSpecs,
 } from '~/lib/product-specs';
-import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {Ga4ProductView} from '~/components/Ga4ProductView';
 import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
+import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -145,6 +146,13 @@ export default function Product() {
 
   return (
     <div className="product-page bg-background pb-20 md:pb-28">
+      <Ga4ProductView
+        currencyCode={selectedVariant?.price.currencyCode ?? 'GBP'}
+        id={selectedVariant?.id ?? product.id}
+        price={selectedVariant?.price.amount ?? '0'}
+        title={product.title}
+        vendor={product.vendor}
+      />
       <JsonLd data={productSchema} />
       <div className="xsto-container py-5 md:py-8">
         <ProductBreadcrumbs title={staticContent?.displayName ?? product.title} />

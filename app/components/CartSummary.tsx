@@ -1,8 +1,19 @@
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
-import {useEffect, useId, useRef, useState} from 'react';
-import {useFetcher} from 'react-router';
+import {useId} from 'react';
+import {Link} from 'react-router';
+import {useConsent} from '~/components/ConsentBanner';
+import {toGa4Item, trackBeginCheckout} from '~/lib/analytics';
+import {withOnlineStoreChannel} from '~/lib/cart-utils';
+import {getDeliveryInfo} from '~/lib/product-delivery';
+import {formatProductPrice} from '~/lib/product-pricing';
+import {
+  getVatReliefDiscountAmount,
+  getVatReliefDiscountStatus,
+  isVatReliefDiscountCode,
+  VAT_RELIEF_DISCOUNT_CODE,
+} from '~/lib/vat-relief-discount';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -10,105 +21,252 @@ type CartSummaryProps = {
 };
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
-  const className =
-    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
+  const isAside = layout === 'aside';
   const summaryId = useId();
-  const discountsHeadingId = useId();
   const discountCodeInputId = useId();
-  const giftCardHeadingId = useId();
-  const giftCardInputId = useId();
+  const {analyticsAllowed} = useConsent();
+  const vatReliefStatus = getVatReliefDiscountStatus(cart);
+  const vatDiscountAmount = getVatReliefDiscountAmount(cart);
+  const currencyCode =
+    cart?.cost?.subtotalAmount?.currencyCode ??
+    cart?.cost?.totalAmount?.currencyCode ??
+    'GBP';
+  const checkoutUrl = cart?.checkoutUrl
+    ? withOnlineStoreChannel(cart.checkoutUrl)
+    : null;
+  const delivery = getDeliveryInfo({
+    availableForSale: true,
+    quantityAvailable: 1,
+  });
 
-  return (
-    <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId}>Totals</h4>
-      <dl role="group" className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
-          {cart?.cost?.subtotalAmount?.amount ? (
-            <Money data={cart?.cost?.subtotalAmount} />
-          ) : (
-            '-'
-          )}
-        </dd>
-      </dl>
+  const applicableCodes =
+    cart?.discountCodes
+      ?.filter((discount) => discount.applicable)
+      .map(({code}) => code) ?? [];
+
+  const otherDiscountCodes = applicableCodes.filter(
+    (code) => !isVatReliefDiscountCode(code),
+  );
+
+  const content = (
+    <div className="space-y-4">
+      <div className="rounded-lg border border-border/60 bg-secondary/40 p-4">
+        <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Estimated UK delivery
+        </p>
+        <p className="text-sm font-medium text-foreground">{delivery.headline}</p>
+        <p className="mt-0.5 text-sm text-muted-foreground">{delivery.etaLabel}</p>
+      </div>
+
+      {vatReliefStatus.hasLine ? (
+        <div className="rounded-lg border border-border bg-secondary/40 p-3 text-sm text-muted-foreground">
+          <p className="font-medium text-foreground">VAT relief declaration on file</p>
+          <p className="mt-1">
+            Proceed to checkout using the same email from your declaration.
+            <Link className="ml-1 font-medium text-foreground hover:underline" to="/account/login">
+              Sign in
+            </Link>{' '}
+            if you have an account — this helps Shopify apply your VAT-exempt
+            customer status.
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-vat-price/20 bg-vat-price/10 p-3">
+          <p className="text-sm font-medium text-foreground">VAT relief available</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Select excluding VAT on the product page if you are eligible.
+          </p>
+        </div>
+      )}
+
+      {vatReliefStatus.hasLine &&
+      vatReliefStatus.codeApplied &&
+      !vatReliefStatus.codeApplicable ? (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+          <p className="text-sm font-medium text-destructive">
+            VAT relief discount could not be applied
+          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Ensure the {VAT_RELIEF_DISCOUNT_CODE} discount is active in Shopify
+            Admin, or contact us before checkout.
+          </p>
+        </div>
+      ) : null}
+
+      <div className="space-y-2 text-sm">
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Subtotal</span>
+          <span>
+            {cart?.cost?.subtotalAmount ? (
+              <Money data={cart.cost.subtotalAmount} />
+            ) : (
+              '—'
+            )}
+          </span>
+        </div>
+
+        {vatReliefStatus.codeApplicable && vatDiscountAmount > 0 ? (
+          <div className="flex justify-between font-medium text-vat-price">
+            <span>VAT relief ({VAT_RELIEF_DISCOUNT_CODE})</span>
+            <span>−{formatProductPrice(vatDiscountAmount, currencyCode)}</span>
+          </div>
+        ) : null}
+
+        {otherDiscountCodes.length > 0 ? (
+          <div className="flex justify-between text-muted-foreground">
+            <span>Discount{otherDiscountCodes.length > 1 ? 's' : ''}</span>
+            <span>{otherDiscountCodes.join(', ')}</span>
+          </div>
+        ) : null}
+
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Shipping</span>
+          <span className="font-medium text-vat-price">FREE</span>
+        </div>
+      </div>
+
       <CartDiscounts
-        discountCodes={cart?.discountCodes}
-        discountsHeadingId={discountsHeadingId}
+        applicableCodes={otherDiscountCodes}
         discountCodeInputId={discountCodeInputId}
       />
-      <CartGiftCard
-        giftCardCodes={cart?.appliedGiftCards}
-        giftCardHeadingId={giftCardHeadingId}
-        giftCardInputId={giftCardInputId}
-      />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+
+      <div className="flex justify-between border-t border-border pt-4">
+        <span className="text-lg font-semibold text-foreground">Total</span>
+        <span className="text-lg font-semibold text-foreground">
+          {cart?.cost?.totalAmount ? (
+            <Money data={cart.cost.totalAmount} />
+          ) : (
+            '—'
+          )}
+        </span>
+      </div>
+
+      {vatReliefStatus.codeApplicable && vatDiscountAmount > 0 ? (
+        <div className="rounded-lg border border-vat-price/20 bg-vat-price/10 p-3 text-center">
+          <p className="text-sm font-medium text-vat-price">
+            VAT relief applied — you&apos;re saving{' '}
+            {formatProductPrice(vatDiscountAmount, currencyCode)}
+          </p>
+        </div>
+      ) : null}
+
+      <p className="text-xs text-muted-foreground">
+        Secure Shopify checkout · Full UK warranty &amp; support
+      </p>
+
+      {checkoutUrl ? (
+        <a
+          className="btn-atc w-full"
+          href={checkoutUrl}
+          onClick={() => {
+            if (!analyticsAllowed || !cart?.lines?.nodes?.length) return;
+            const items = cart.lines.nodes.map((line) =>
+              toGa4Item({
+                id: line.merchandise.id,
+                title: line.merchandise.product.title,
+                price: line.merchandise.price.amount,
+                quantity: line.quantity,
+              }),
+            );
+            trackBeginCheckout(
+              items,
+              Number(cart.cost?.totalAmount?.amount ?? 0),
+              cart.cost?.totalAmount?.currencyCode ?? 'GBP',
+            );
+          }}
+        >
+          Proceed to checkout
+          {cart?.cost?.totalAmount ? (
+            <>
+              {' '}
+              — <Money data={cart.cost.totalAmount} />
+            </>
+          ) : null}
+        </a>
+      ) : null}
     </div>
   );
-}
 
-function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
-  if (!checkoutUrl) return null;
+  if (isAside) {
+    return (
+      <div
+        aria-labelledby={summaryId}
+        className="shrink-0 border-t border-border bg-background px-6 py-4"
+      >
+        <h3 className="sr-only" id={summaryId}>
+          Cart totals
+        </h3>
+        {content}
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
-      </a>
-      <br />
-    </div>
+    <aside
+      aria-labelledby={summaryId}
+      className="h-fit rounded-xl border border-border bg-card p-6"
+    >
+      <h3 className="mb-4 text-lg font-semibold text-foreground" id={summaryId}>
+        Order summary
+      </h3>
+      {content}
+    </aside>
   );
 }
 
 function CartDiscounts({
-  discountCodes,
-  discountsHeadingId,
+  applicableCodes,
   discountCodeInputId,
 }: {
-  discountCodes?: CartApiQueryFragment['discountCodes'];
-  discountsHeadingId: string;
+  applicableCodes: string[];
   discountCodeInputId: string;
 }) {
-  const codes: string[] =
-    discountCodes
-      ?.filter((discount) => discount.applicable)
-      ?.map(({code}) => code) || [];
-
   return (
-    <section aria-label="Discounts">
-      {/* Have existing discount, display it with a remove option */}
-      <dl hidden={!codes.length}>
-        <div>
-          <dt id={discountsHeadingId}>Discounts</dt>
-          <UpdateDiscountForm>
-            <div
-              className="cart-discount"
-              role="group"
-              aria-labelledby={discountsHeadingId}
+    <section aria-label="Discount code">
+      {applicableCodes.length > 0 ? (
+        <div className="mb-2 flex items-center justify-between rounded-lg border border-border bg-secondary/40 px-3 py-2 text-sm">
+          <span>
+            Code applied:{' '}
+            <code className="font-medium text-foreground">
+              {applicableCodes.join(', ')}
+            </code>
+          </span>
+          <UpdateDiscountForm
+            discountCodes={
+              applicableCodes.filter((code) => isVatReliefDiscountCode(code))
+            }
+          >
+            <button
+              aria-label="Remove discount code"
+              className="text-xs text-muted-foreground hover:text-foreground"
+              type="submit"
             >
-              <code>{codes?.join(', ')}</code>
-              &nbsp;
-              <button type="submit" aria-label="Remove discount">
-                Remove
-              </button>
-            </div>
+              Remove
+            </button>
           </UpdateDiscountForm>
         </div>
-      </dl>
+      ) : null}
 
-      {/* Show an input to apply a discount */}
-      <UpdateDiscountForm discountCodes={codes}>
-        <div>
-          <label htmlFor={discountCodeInputId} className="sr-only">
+      <UpdateDiscountForm
+        discountCodes={applicableCodes.filter((code) =>
+          isVatReliefDiscountCode(code),
+        )}
+      >
+        <div className="flex gap-2">
+          <label className="sr-only" htmlFor={discountCodeInputId}>
             Discount code
           </label>
           <input
+            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
             id={discountCodeInputId}
-            type="text"
             name="discountCode"
-            placeholder="Discount code"
+            placeholder="Discount code (e.g. JENNI10)"
+            type="text"
           />
-          &nbsp;
-          <button type="submit" aria-label="Apply discount code">
+          <button
+            className="shrink-0 rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:border-gold"
+            type="submit"
+          >
             Apply
           </button>
         </div>
@@ -126,175 +284,13 @@ function UpdateDiscountForm({
 }) {
   return (
     <CartForm
-      route="/cart"
       action={CartForm.ACTIONS.DiscountCodesUpdate}
       inputs={{
-        discountCodes: discountCodes || [],
+        discountCodes: discountCodes ?? [],
       }}
-    >
-      {children}
-    </CartForm>
-  );
-}
-
-function CartGiftCard({
-  giftCardCodes,
-  giftCardHeadingId,
-  giftCardInputId,
-}: {
-  giftCardCodes: CartApiQueryFragment['appliedGiftCards'] | undefined;
-  giftCardHeadingId: string;
-  giftCardInputId: string;
-}) {
-  const giftCardCodeInput = useRef<HTMLInputElement>(null);
-  const removeButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
-  const previousCardIdsRef = useRef<string[]>([]);
-  const giftCardAddFetcher = useFetcher({key: 'gift-card-add'});
-  const [removedCardIndex, setRemovedCardIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (giftCardAddFetcher.data) {
-      if (giftCardCodeInput.current !== null) {
-        giftCardCodeInput.current.value = '';
-      }
-    }
-  }, [giftCardAddFetcher.data]);
-
-  useEffect(() => {
-    const currentCardIds = giftCardCodes?.map((card) => card.id) || [];
-
-    if (removedCardIndex !== null && giftCardCodes) {
-      const focusTargetIndex = Math.min(
-        removedCardIndex,
-        giftCardCodes.length - 1,
-      );
-      const focusTargetCard = giftCardCodes[focusTargetIndex];
-      const focusButton = focusTargetCard
-        ? removeButtonRefs.current.get(focusTargetCard.id)
-        : null;
-
-      if (focusButton) {
-        focusButton.focus();
-      } else if (giftCardCodeInput.current) {
-        giftCardCodeInput.current.focus();
-      }
-
-      setRemovedCardIndex(null);
-    }
-
-    previousCardIdsRef.current = currentCardIds;
-  }, [giftCardCodes, removedCardIndex]);
-
-  const handleRemoveClick = (cardId: string) => {
-    const index = previousCardIdsRef.current.indexOf(cardId);
-    if (index !== -1) {
-      setRemovedCardIndex(index);
-    }
-  };
-
-  return (
-    <section aria-label="Gift cards">
-      {giftCardCodes && giftCardCodes.length > 0 && (
-        <dl>
-          <dt id={giftCardHeadingId}>Applied Gift Card(s)</dt>
-          {giftCardCodes.map((giftCard) => (
-            <dd key={giftCard.id} className="cart-discount">
-              <RemoveGiftCardForm
-                giftCardId={giftCard.id}
-                lastCharacters={giftCard.lastCharacters}
-                onRemoveClick={() => handleRemoveClick(giftCard.id)}
-                buttonRef={(el: HTMLButtonElement | null) => {
-                  if (el) {
-                    removeButtonRefs.current.set(giftCard.id, el);
-                  } else {
-                    removeButtonRefs.current.delete(giftCard.id);
-                  }
-                }}
-              >
-                <code>***{giftCard.lastCharacters}</code>
-                &nbsp;
-                <Money data={giftCard.amountUsed} />
-              </RemoveGiftCardForm>
-            </dd>
-          ))}
-        </dl>
-      )}
-
-      <AddGiftCardForm fetcherKey="gift-card-add">
-        <div>
-          <label htmlFor={giftCardInputId} className="sr-only">
-            Gift card code
-          </label>
-          <input
-            id={giftCardInputId}
-            type="text"
-            name="giftCardCode"
-            placeholder="Gift card code"
-            ref={giftCardCodeInput}
-          />
-          &nbsp;
-          <button
-            type="submit"
-            disabled={giftCardAddFetcher.state !== 'idle'}
-            aria-label="Apply gift card code"
-          >
-            Apply
-          </button>
-        </div>
-      </AddGiftCardForm>
-    </section>
-  );
-}
-
-function AddGiftCardForm({
-  fetcherKey,
-  children,
-}: {
-  fetcherKey?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <CartForm
-      fetcherKey={fetcherKey}
       route="/cart"
-      action={CartForm.ACTIONS.GiftCardCodesAdd}
     >
       {children}
-    </CartForm>
-  );
-}
-
-function RemoveGiftCardForm({
-  giftCardId,
-  lastCharacters,
-  children,
-  onRemoveClick,
-  buttonRef,
-}: {
-  giftCardId: string;
-  lastCharacters: string;
-  children: React.ReactNode;
-  onRemoveClick?: () => void;
-  buttonRef?: (el: HTMLButtonElement | null) => void;
-}) {
-  return (
-    <CartForm
-      route="/cart"
-      action={CartForm.ACTIONS.GiftCardCodesRemove}
-      inputs={{
-        giftCardCodes: [giftCardId],
-      }}
-    >
-      {children}
-      &nbsp;
-      <button
-        type="submit"
-        aria-label={`Remove gift card ending in ${lastCharacters}`}
-        onClick={onRemoveClick}
-        ref={buttonRef}
-      >
-        Remove
-      </button>
     </CartForm>
   );
 }
