@@ -62,7 +62,8 @@
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  /* Kept for class compat; resolves to display (logo has no serif) */
+  --font-serif: 'Outfit', ui-sans-serif, system-ui, sans-serif;
 
   --breakpoint-2xl: 87.5rem;
 
@@ -98,117 +99,119 @@
     /* XSTO Brand Palette — pure white, dark navy, Medical Blue accent. */
 
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 216 39% 14%;
 
-    --cream: 0 0% 99%;
-    --cream-deep: 220 14% 96%;
+    --cream: 210 20% 99%;
+    --cream-deep: 214 18% 96%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 216 39% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 216 39% 14%;
 
-    --primary: 221 83% 53%;
+    /* Brand red from logo flag / LTD (#d02030) */
+    --primary: 354 73% 47%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 214 18% 96%;
+    --secondary-foreground: 216 39% 14%;
 
-    --muted: 220 14% 92%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 214 16% 93%;
+    --muted-foreground: 216 12% 42%;
 
-    --accent: 221 83% 53%;
+    --accent: 354 73% 47%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 222 47% 11%;
+    --border: 214 16% 88%;
+    --input: 214 16% 88%;
+    --ring: 216 39% 20%;
 
     --radius: 0.75rem;
 
-    --xsto-blue: 222 47% 11%;
-    --xsto-blue-light: 222 40% 20%;
-    --xsto-blue-dark: 222 47% 8%;
-    --xsto-blue-muted: 222 20% 55%;
+    /* Logo navy family (#203048 / #182850) */
+    --xsto-blue: 216 39% 20%;
+    --xsto-blue-light: 216 32% 28%;
+    --xsto-blue-dark: 224 54% 16%;
+    --xsto-blue-muted: 216 14% 48%;
 
-    /* "Gold" tokens = Medical Blue accent — names kept for component compat. */
-    --gold: 221 83% 53%;
-    --gold-light: 217 91% 60%;
-    --gold-dark: 224 76% 40%;
-    --vat-price: 160 84% 39%;
+    /* "Gold" tokens = brand red — names kept for component compat */
+    --gold: 354 73% 47%;
+    --gold-light: 354 70% 56%;
+    --gold-dark: 354 76% 38%;
+    --vat-price: 160 72% 32%;
 
-    --navy: 222 47% 11%;
-    --navy-light: 222 35% 22%;
-    --navy-soft: 222 25% 28%;
+    --navy: 216 39% 20%;
+    --navy-light: 216 32% 28%;
+    --navy-soft: 216 30% 24%;
 
-    --slate: 220 9% 46%;
-    --slate-light: 220 9% 56%;
+    --slate: 216 12% 42%;
+    --slate-light: 216 10% 54%;
 
-    --xsto-orange: 221 83% 53%;
-    --xsto-orange-light: 217 91% 60%;
-    --xsto-orange-dark: 224 76% 40%;
+    --xsto-orange: 354 73% 47%;
+    --xsto-orange-light: 354 70% 56%;
+    --xsto-orange-dark: 354 76% 38%;
 
     --gradient-gold: linear-gradient(
       135deg,
-      hsl(221 83% 53%) 0%,
-      hsl(217 91% 60%) 100%
+      hsl(354 73% 47%) 0%,
+      hsl(354 70% 56%) 100%
     );
     --gradient-xsto: linear-gradient(
       135deg,
-      hsl(222 47% 11%) 0%,
-      hsl(222 40% 20%) 100%
+      hsl(216 39% 20%) 0%,
+      hsl(216 32% 28%) 100%
     );
     --gradient-navy: linear-gradient(
       135deg,
-      hsl(222 47% 11%) 0%,
-      hsl(222 40% 20%) 100%
+      hsl(216 39% 20%) 0%,
+      hsl(224 54% 16%) 100%
     );
     --gradient-hero: linear-gradient(
       180deg,
       hsl(0 0% 100%) 0%,
-      hsl(220 14% 97%) 100%
+      hsl(214 18% 97%) 100%
     );
 
-    --shadow-soft: 0 4px 20px -4px hsl(222 47% 11% / 0.06);
-    --shadow-medium: 0 8px 30px -8px hsl(222 47% 11% / 0.1);
-    --shadow-strong: 0 20px 60px -15px hsl(222 47% 11% / 0.15);
+    --shadow-soft: 0 4px 20px -4px hsl(216 39% 20% / 0.06);
+    --shadow-medium: 0 8px 30px -8px hsl(216 39% 20% / 0.1);
+    --shadow-strong: 0 20px 60px -15px hsl(216 39% 20% / 0.15);
     --shadow-luxe:
-      0 30px 80px -30px hsl(222 47% 11% / 0.22),
-      0 8px 24px -8px hsl(222 47% 11% / 0.08);
-    --shadow-gold: 0 4px 12px -2px hsl(221 83% 53% / 0.25);
-    --shadow-gold-glow: 0 18px 50px -12px hsl(221 83% 53% / 0.35);
-    --shadow-xsto: 0 8px 30px -8px hsl(222 47% 11% / 0.25);
+      0 30px 80px -30px hsl(216 39% 20% / 0.22),
+      0 8px 24px -8px hsl(216 39% 20% / 0.08);
+    --shadow-gold: 0 4px 12px -2px hsl(354 73% 47% / 0.25);
+    --shadow-gold-glow: 0 18px 50px -12px hsl(354 73% 47% / 0.3);
+    --shadow-xsto: 0 8px 30px -8px hsl(216 39% 20% / 0.25);
 
     --gradient-gold-sheen: linear-gradient(
       135deg,
-      hsl(217 91% 60%) 0%,
-      hsl(221 83% 53%) 45%,
-      hsl(224 76% 40%) 100%
+      hsl(354 70% 56%) 0%,
+      hsl(354 73% 47%) 45%,
+      hsl(354 76% 38%) 100%
     );
     --gradient-cream: linear-gradient(
       180deg,
       hsl(0 0% 100%) 0%,
-      hsl(220 14% 97%) 60%,
+      hsl(214 18% 97%) 60%,
       hsl(0 0% 100%) 100%
     );
     --gradient-radial-gold: radial-gradient(
       circle at 50% 0%,
-      hsl(221 83% 53% / 0.08),
+      hsl(354 73% 47% / 0.07),
       transparent 60%
     );
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 15%;
-    --sidebar-primary: 222 47% 11%;
+    --sidebar-foreground: 216 39% 14%;
+    --sidebar-primary: 216 39% 20%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 222 47% 11%;
+    --sidebar-accent: 214 18% 96%;
+    --sidebar-accent-foreground: 216 39% 20%;
+    --sidebar-border: 214 16% 88%;
+    --sidebar-ring: 216 39% 20%;
 
     /* Hydrogen layout tokens — aliased to brand palette */
     --aside-width: 400px;
@@ -223,42 +226,49 @@
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 216 39% 8%;
     --foreground: 210 20% 98%;
 
-    --card: 222 47% 9%;
+    --card: 216 35% 11%;
     --card-foreground: 210 20% 98%;
 
-    --popover: 222 47% 9%;
+    --popover: 216 35% 11%;
     --popover-foreground: 210 20% 98%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 354 73% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 30% 14%;
+    --secondary: 216 25% 16%;
     --secondary-foreground: 210 20% 98%;
 
-    --muted: 222 30% 14%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 216 25% 16%;
+    --muted-foreground: 215 16% 70%;
 
-    --accent: 40 96% 55%;
-    --accent-foreground: 222 47% 6%;
+    --accent: 354 73% 55%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 40 96% 55%;
+    --border: 216 25% 20%;
+    --input: 216 25% 20%;
+    --ring: 354 73% 55%;
 
-    --sidebar-background: 222 47% 8%;
+    --gold: 354 73% 55%;
+    --gold-light: 354 70% 62%;
+    --gold-dark: 354 76% 45%;
+    --navy: 216 30% 78%;
+    --navy-light: 216 25% 88%;
+    --navy-soft: 216 35% 14%;
+
+    --sidebar-background: 216 39% 9%;
     --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-accent: 222 30% 12%;
+    --sidebar-primary: 354 73% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 216 25% 14%;
     --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 222 30% 18%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 216 25% 20%;
+    --sidebar-ring: 354 73% 55%;
   }
 
   * {
@@ -271,7 +281,7 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased text-base;
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-size: 16px;
     line-height: 1.6;
     letter-spacing: -0.011em;
@@ -284,9 +294,18 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-sans);
-    @apply font-semibold tracking-tight;
+    font-family: var(--font-display);
+    @apply font-semibold tracking-tight text-foreground;
     letter-spacing: -0.02em;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-serif {
+    /* Logo is sans-only — map legacy serif utility to display for consistency */
+    font-family: var(--font-display);
   }
 }
 
@@ -381,8 +400,8 @@
     @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-sm font-semibold text-white no-underline shadow-gold transition-all hover:brightness-105 hover:text-white disabled:cursor-not-allowed disabled:opacity-60;
     background-image: linear-gradient(
       135deg,
-      hsl(221 83% 48%) 0%,
-      hsl(217 91% 58%) 100%
+      hsl(354 76% 42%) 0%,
+      hsl(354 70% 54%) 100%
     );
     color: #ffffff;
   }
@@ -1289,10 +1308,10 @@ a.btn-checkout,
 button.btn-checkout {
   background-image: linear-gradient(
     135deg,
-    hsl(221 83% 48%) 0%,
-    hsl(217 91% 58%) 100%
+    hsl(354 76% 42%) 0%,
+    hsl(354 70% 54%) 100%
   ) !important;
-  box-shadow: 0 4px 16px -2px hsl(221 83% 53% / 0.45);
+  box-shadow: 0 4px 16px -2px hsl(354 73% 47% / 0.4);
 }
 
 a.btn-checkout:hover,
