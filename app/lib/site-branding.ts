@@ -14,7 +14,7 @@ export const HEADER_LOGO = {
 } as const;
 
 /** Display height in the header; width scales from intrinsic aspect ratio. */
-export const HEADER_LOGO_DISPLAY_HEIGHT = 56;
+export const HEADER_LOGO_DISPLAY_HEIGHT = 64;
 
 export function headerLogoDisplayWidth(
   height = HEADER_LOGO_DISPLAY_HEIGHT,

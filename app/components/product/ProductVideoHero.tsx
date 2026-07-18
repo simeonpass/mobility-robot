@@ -1,6 +1,8 @@
 import {useState} from 'react';
 import {Play} from 'lucide-react';
 import type {ProductVideo} from '~/lib/product-content';
+import {extractYoutubeVideoId} from '~/lib/product-gallery';
+import {ProductVideoPlayer} from '~/components/product/ProductVideoPlayer';
 
 type ProductVideoHeroProps = {
   video: ProductVideo;
@@ -9,22 +11,21 @@ type ProductVideoHeroProps = {
 
 export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
   const [playing, setPlaying] = useState(false);
-  const youtubeId = extractYoutubeId(video.embedUrl);
+  const youtubeId = extractYoutubeVideoId(video.embedUrl);
 
   return (
-    <section className="mt-16 md:mt-20">
-      <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+    <section className="mt-10 md:mt-12">
+      <h2 className="mb-4 text-center font-display text-xl font-semibold tracking-[-0.02em] text-navy md:text-2xl">
         {video.title}
       </h2>
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-navy shadow-luxe">
+      <div className="overflow-hidden rounded-xl border border-border bg-navy shadow-medium">
         {playing ? (
           <div className="aspect-video">
-            <iframe
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              className="size-full border-0"
-              src={`${video.embedUrl}${video.embedUrl.includes('?') ? '&' : '?'}autoplay=1`}
+            <ProductVideoPlayer
+              autoPlay
+              className="size-full border-0 object-contain"
+              src={video.embedUrl}
               title={video.title}
             />
           </div>
@@ -42,6 +43,7 @@ export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
                 src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
               />
             ) : (
+              /* Direct/local MP4s: never attach src until play — posters would fetch hundreds of MB. */
               <div className="size-full bg-gradient-navy" />
             )}
             <div className="absolute inset-0 bg-navy/30 transition-colors group-hover:bg-navy/20" />
@@ -54,9 +56,4 @@ export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
       </div>
     </section>
   );
-}
-
-function extractYoutubeId(embedUrl: string): string | null {
-  const match = embedUrl.match(/\/embed\/([^?&/]+)/);
-  return match?.[1] ?? null;
 }

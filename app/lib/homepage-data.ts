@@ -1,6 +1,11 @@
-/** Four flagship models shown on the homepage grid and comparison table. */
+/**
+ * Flagship models shown on the homepage grid and comparison table.
+ * Ordered cheapest → most expensive (ex-VAT marketing / display prices).
+ */
 export const HOMEPAGE_FLAGSHIP_HANDLES = [
+  'xsto-ezgo2',
   'xsto-m4',
+  'xsto-m4b',
   'xsto-m4-pro',
   'xsto-x12',
   'xsto-x12-pro',
@@ -23,6 +28,16 @@ export const HOMEPAGE_PRODUCT_BADGES: Record<
     shortName: 'XSTO M4 Pro',
     exploreLabel: 'Explore XSTO M4 Pro',
   },
+  'xsto-m4b': {
+    badge: 'New',
+    shortName: 'XSTO M4B',
+    exploreLabel: 'Explore XSTO M4B',
+  },
+  'xsto-ezgo2': {
+    badge: 'Ultra-Light',
+    shortName: 'XSTO EzGo2',
+    exploreLabel: 'Explore XSTO EzGo2',
+  },
   'xsto-x12': {
     badge: 'Stair Climber',
     shortName: 'XSTO X12',
@@ -35,7 +50,21 @@ export const HOMEPAGE_PRODUCT_BADGES: Record<
   },
 };
 
-export const HOMEPAGE_VIDEO_ITEMS = [
+/** M4B launch film — Shopify CDN MP4 used by the homepage hero. */
+export const HERO_VIDEO_URL =
+  'https://cdn.shopify.com/videos/c/o/v/24482dbe89234283a018301fa020db98.mp4';
+
+export type HomepageVideoItem = {
+  id: string;
+  title: string;
+  description: string;
+  /** YouTube ID for iframe playback. */
+  youtubeId?: string;
+  /** Direct MP4/CDN URL (click-to-play; used when no YouTube ID). */
+  videoUrl?: string;
+};
+
+export const HOMEPAGE_VIDEO_ITEMS: readonly HomepageVideoItem[] = [
   {
     id: 'm4',
     youtubeId: 'D-7Pt3OUdQg',
@@ -51,33 +80,36 @@ export const HOMEPAGE_VIDEO_ITEMS = [
       'Discover the M4 Pro with integrated headrest, electric folding, and LED safety lighting',
   },
   {
-    id: 'x12',
-    youtubeId: 'ihXdzLuNz2s',
-    title: 'XSTO X12 — All-Terrain Robot',
+    id: 'm4b',
+    // Same Shopify CDN MP4 as the homepage hero (no dedicated M4B YouTube yet).
+    videoUrl: HERO_VIDEO_URL,
+    title: 'XSTO M4B — New Front Wheels',
     description:
-      'Watch the X12 climb stairs, conquer slopes, and navigate rugged terrain with AI control',
+      'See the M4B platform with redesigned front wheels, folding footrest, and self-balancing control',
   },
   {
     id: 'x12-pro',
     youtubeId: '4KFMBL5jX20',
-    title: 'XSTO X12 Pro — Pro Edition',
+    title: 'XSTO X12 Pro — Stair Climber',
     description:
-      "See the X12 Pro's electric legrest, enhanced comfort, and Pro-exclusive features in action",
+      "See the X12 Pro climb stairs, tackle rough terrain, and deliver Pro-exclusive comfort features",
   },
-] as const;
+];
 
 export type ComparisonFeatureRow = {
   label: string;
   values: Record<HomepageFlagshipHandle, string | boolean>;
 };
 
-/** Feature matrix for the homepage comparison table (4 flagship models). */
+/** Feature matrix for the homepage comparison table. */
 export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   {
     label: 'Self-Balancing',
     values: {
       'xsto-m4': true,
       'xsto-m4-pro': true,
+      'xsto-m4b': true,
+      'xsto-ezgo2': false,
       'xsto-x12': true,
       'xsto-x12-pro': true,
     },
@@ -87,6 +119,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': true,
       'xsto-m4-pro': true,
+      'xsto-m4b': true,
+      'xsto-ezgo2': true,
       'xsto-x12': false,
       'xsto-x12-pro': false,
     },
@@ -96,8 +130,21 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': false,
       'xsto-m4-pro': false,
+      'xsto-m4b': false,
+      'xsto-ezgo2': false,
       'xsto-x12': true,
       'xsto-x12-pro': true,
+    },
+  },
+  {
+    label: 'Carbon Fiber',
+    values: {
+      'xsto-m4': false,
+      'xsto-m4-pro': false,
+      'xsto-m4b': false,
+      'xsto-ezgo2': true,
+      'xsto-x12': false,
+      'xsto-x12-pro': false,
     },
   },
   {
@@ -105,6 +152,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': false,
       'xsto-m4-pro': true,
+      'xsto-m4b': false,
+      'xsto-ezgo2': false,
       'xsto-x12': false,
       'xsto-x12-pro': true,
     },
@@ -114,8 +163,21 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': false,
       'xsto-m4-pro': false,
+      'xsto-m4b': false,
+      'xsto-ezgo2': false,
       'xsto-x12': false,
       'xsto-x12-pro': true,
+    },
+  },
+  {
+    label: 'Folding Footrest',
+    values: {
+      'xsto-m4': false,
+      'xsto-m4-pro': false,
+      'xsto-m4b': true,
+      'xsto-ezgo2': false,
+      'xsto-x12': false,
+      'xsto-x12-pro': false,
     },
   },
   {
@@ -123,6 +185,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': '10°',
       'xsto-m4-pro': '15°',
+      'xsto-m4b': '10°',
+      'xsto-ezgo2': '3°',
       'xsto-x12': '40°',
       'xsto-x12-pro': '40°',
     },
@@ -132,6 +196,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': '15 km',
       'xsto-m4-pro': '26 km',
+      'xsto-m4b': '15 km',
+      'xsto-ezgo2': '15 km',
       'xsto-x12': '35 km',
       'xsto-x12-pro': '35 km',
     },
@@ -141,6 +207,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': '6 km/h',
       'xsto-m4-pro': '6 km/h',
+      'xsto-m4b': '6 km/h',
+      'xsto-ezgo2': '4.5 km/h',
       'xsto-x12': '12 km/h',
       'xsto-x12-pro': '12 km/h',
     },
@@ -150,6 +218,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     values: {
       'xsto-m4': '51.5 kg',
       'xsto-m4-pro': '60.1 kg',
+      'xsto-m4b': '55.5 kg',
+      'xsto-ezgo2': '11.5 kg',
       'xsto-x12': '115 kg',
       'xsto-x12-pro': '116 kg',
     },
@@ -159,6 +229,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
 export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = {
   'xsto-m4': 'M4',
   'xsto-m4-pro': 'M4 Pro',
+  'xsto-m4b': 'M4B',
+  'xsto-ezgo2': 'EzGo2',
   'xsto-x12': 'X12',
   'xsto-x12-pro': 'X12 Pro',
 };
@@ -168,6 +240,7 @@ export const HOMEPAGE_PRODUCT_HANDLES = [
   'xsto-m4',
   'xsto-m4-pro',
   'xsto-m4b',
+  'xsto-ezgo2',
   'xsto-x12',
   'xsto-x12-pro',
 ] as const;
@@ -185,6 +258,7 @@ export const SHOPIFY_HOME_PRODUCT_HANDLES: Record<
   'xsto-m4': 'buy-robot-wheelchair',
   'xsto-m4-pro': 'xsto-m4-pro',
   'xsto-m4b': 'xsto-m4b-1',
+  'xsto-ezgo2': 'xsto-ezgo2-carbon-fiber-power-wheelchair',
   'xsto-x12': 'x12-all-terrain-mobility-robot',
   'xsto-x12-pro':
     'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
@@ -212,15 +286,13 @@ export function getHomepageProductSlot(
   if (/x12-all-terrain|xsto-x12(?!-pro|-pre)/i.test(shopifyHandle)) {
     return 'xsto-x12';
   }
+  if (/ezgo|ez-go/i.test(shopifyHandle)) return 'xsto-ezgo2';
   if (/m4b/i.test(shopifyHandle)) return 'xsto-m4b';
   if (/m4.*pro|m4-pro/i.test(shopifyHandle)) return 'xsto-m4-pro';
   if (/buy-robot-wheelchair|^xsto-m4$/i.test(shopifyHandle)) return 'xsto-m4';
 
   return undefined;
 }
-
-export const HERO_VIDEO_URL =
-  'https://cdn.shopify.com/videos/c/o/v/24482dbe89234283a018301fa020db98.mp4';
 
 /** @deprecated Prefer HERO_VIDEO_URL (M4B launch film). Kept for any legacy embeds. */
 export const HOMEPAGE_HERO_YOUTUBE_ID = 'ihXdzLuNz2s';
@@ -264,6 +336,11 @@ export const HOMEPAGE_PRODUCT_BULLETS: Record<
     'Self-balancing chassis · 10° slopes',
     'Electric height adjustment 347–650 mm',
   ],
+  'xsto-ezgo2': [
+    'Aerospace-grade carbon fiber frame',
+    'Only 11.5 kg without battery',
+    '3-step fold · 15 km range',
+  ],
   'xsto-x12': [
     'Climbs stairs up to 40° incline',
     '35 km range on dual batteries',
@@ -289,6 +366,15 @@ export type ComparisonRow = {
 /** Comparison strip data — sourced from docs/rebuild product specs. */
 export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
   {
+    model: 'EzGo2',
+    handle: 'xsto-ezgo2',
+    shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-ezgo2'],
+    weight: '11.5 kg',
+    capacity: '136 kg',
+    range: '15 km',
+    foldedSize: '630 × 260 × 700 mm',
+  },
+  {
     model: 'M4',
     handle: 'xsto-m4',
     shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4'],
@@ -298,6 +384,15 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
     foldedSize: '1040 × 580 × 570 mm',
   },
   {
+    model: 'M4B',
+    handle: 'xsto-m4b',
+    shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b'],
+    weight: '55.5 kg',
+    capacity: '115 kg',
+    range: '15 km',
+    foldedSize: '1040 × 590 × 570 mm',
+  },
+  {
     model: 'M4 Pro',
     handle: 'xsto-m4-pro',
     shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4-pro'],
@@ -305,15 +400,6 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
     capacity: '150 kg',
     range: '26 km',
     foldedSize: '1040 × 592 × 770 mm',
-  },
-  {
-    model: 'M4B',
-    handle: 'xsto-m4b',
-    shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b'],
-    weight: '52 kg',
-    capacity: '115 kg',
-    range: '15 km',
-    foldedSize: '1040 × 580 × 570 mm',
   },
   {
     model: 'X12',
@@ -335,6 +421,17 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
   },
 ];
 
+/**
+ * Homepage "From" price overrides (ex-VAT marketing amounts).
+ * Used when Shopify Admin still has a different live price — cart/checkout
+ * continue to use the Storefront API amount until Admin is updated.
+ */
+export const HOMEPAGE_DISPLAY_PRICE_EX_VAT: Partial<
+  Record<HomepageFlagshipHandle, {amount: number; currencyCode: string}>
+> = {
+  'xsto-ezgo2': {amount: 1995, currencyCode: 'GBP'},
+};
+
 export function formatExVatPrice(amount: string, currencyCode: string): string {
   const exVat = Number(amount) / 1.2;
   return new Intl.NumberFormat('en-GB', {
@@ -343,6 +440,24 @@ export function formatExVatPrice(amount: string, currencyCode: string): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(exVat);
+}
+
+/** Homepage grid "From" price — prefers display overrides over Shopify. */
+export function formatHomepageFromPrice(
+  slot: HomepageFlagshipHandle | undefined,
+  amount: string,
+  currencyCode: string,
+): string {
+  const override = slot ? HOMEPAGE_DISPLAY_PRICE_EX_VAT[slot] : undefined;
+  if (override) {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: override.currencyCode,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(override.amount);
+  }
+  return formatExVatPrice(amount, currencyCode);
 }
 
 export function youtubeEmbedUrl(

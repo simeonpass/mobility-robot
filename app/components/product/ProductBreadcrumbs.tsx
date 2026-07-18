@@ -16,21 +16,29 @@ export function ProductBreadcrumbs({title}: ProductBreadcrumbsProps) {
   return (
     <>
       <JsonLd data={breadcrumbJsonLd(items)} />
-      <nav aria-label="Breadcrumb" className="mb-8 text-xs text-muted-foreground md:mb-10">
-      <ol className="flex flex-wrap items-center gap-2">
+      <nav aria-label="Breadcrumb" className="mb-4 text-[0.6875rem] text-slate md:mb-5">
+      <ol className="flex flex-wrap items-center gap-1.5">
         <li>
-          <Link className="hover:text-gold" prefetch="intent" to="/">
+          <Link className="transition-colors hover:text-navy" prefetch="intent" to="/">
             Home
           </Link>
         </li>
-        <li aria-hidden>/</li>
+        <li aria-hidden className="text-border">
+          /
+        </li>
         <li>
-          <Link className="hover:text-gold" prefetch="intent" to="/#product-range">
+          <Link
+            className="transition-colors hover:text-navy"
+            prefetch="intent"
+            to="/#product-range"
+          >
             Wheelchairs
           </Link>
         </li>
-        <li aria-hidden>/</li>
-        <li aria-current="page" className="font-medium text-foreground">
+        <li aria-hidden className="text-border">
+          /
+        </li>
+        <li aria-current="page" className="font-medium text-navy">
           {title}
         </li>
       </ol>

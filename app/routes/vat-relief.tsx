@@ -1,285 +1,191 @@
-import {useEffect, useState} from 'react';
-import {Link, data, useLoaderData, useSearchParams} from 'react-router';
+import {Link} from 'react-router';
 import type {Route} from './+types/vat-relief';
-import {Check, ShieldCheck} from 'lucide-react';
-import {PageHeader, PageShell} from '~/components/content/PageShell';
+import {BadgePercent, Check, ShieldCheck} from 'lucide-react';
+import {ContentWithToc} from '~/components/content/ContentWithToc';
+import {JsonLd, PageShell} from '~/components/content/PageShell';
 import {
-  FormField,
-  FormSuccess,
-  SubmitButton,
-  TextArea,
-  TextInput,
-} from '~/components/forms/FormField';
-import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
-import {vatReliefRegistrationSchema} from '~/lib/form-schemas';
-import {buildMeta, NOINDEX_HEADERS} from '~/lib/seo';
-import {adminApiConfigured} from '~/lib/shopify-admin-vat';
-import {
-  buildAccountLoginUrl,
-  saveVatReliefRegistration,
-} from '~/lib/vat-relief-session';
+  VAT_RELIEF_ELIGIBLE_PRODUCTS,
+  VAT_RELIEF_STEPS,
+  vatReliefSections,
+} from '~/lib/content/vat-relief';
+import {pageMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({location}) => {
-  const registered = new URLSearchParams(location.search).has('registered');
-  return buildMeta({
-    title: registered ? 'VAT Relief — Sign In' : 'Register for VAT Relief',
+export const meta: Route.MetaFunction = () =>
+  pageMeta({
+    title: 'VAT Relief on Mobility Aids',
     description:
-      'Register for HMRC VAT relief on XSTO mobility products. Create your VAT-exempt customer account before you shop.',
+      'Eligible customers pay no VAT on XSTO powered wheelchairs. Declare eligibility on the product page or in your cart — VAT is removed automatically at checkout.',
     path: '/vat-relief',
-    robots: registered ? 'noindex, nofollow' : undefined,
   });
-};
-
-export const headers: Route.HeadersFunction = ({loaderHeaders}) => loaderHeaders;
-
-export async function loader({context, request}: Route.LoaderArgs) {
-  const registered = new URL(request.url).searchParams.has('registered');
-
-  return data(
-    {adminConfigured: adminApiConfigured(context.env)},
-    registered ? {headers: NOINDEX_HEADERS} : undefined,
-  );
-}
-
-const STEPS = [
-  {
-    title: 'Register',
-    description: 'Complete the HMRC declaration below',
-  },
-  {
-    title: 'Sign in',
-    description: 'Create or sign in to your account with the same email',
-  },
-  {
-    title: 'Shop',
-    description: 'Purchase at the VAT-relief price at checkout',
-  },
-] as const;
-
-type VatReliefApiResponse = {
-  ok?: boolean;
-  email?: string;
-  name?: string;
-  address?: string;
-  condition?: string;
-  error?: string;
-};
 
 export default function VatReliefPage() {
-  const {adminConfigured} = useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
-  const returnTo = searchParams.get('return') ?? '/collections/all';
-  const [redirecting, setRedirecting] = useState(false);
-
-  const {errors, loading, success, handleSubmit, fetcherData} =
-    useValidatedApiForm({
-      schema: vatReliefRegistrationSchema,
-      action: '/api/vat-relief',
-    });
-
-  const response = fetcherData as VatReliefApiResponse | undefined;
-
-  useEffect(() => {
-    if (!success || !response?.email) return;
-
-    saveVatReliefRegistration({
-      email: response.email,
-      name: response.name ?? '',
-      address: response.address ?? '',
-      condition: response.condition ?? '',
-      registeredAt: new Date().toISOString(),
-    });
-
-    setRedirecting(true);
-    const loginUrl = buildAccountLoginUrl({
-      email: response.email,
-      returnTo,
-    });
-
-    const timer = window.setTimeout(() => {
-      window.location.href = loginUrl;
-    }, 2500);
-
-    return () => window.clearTimeout(timer);
-  }, [success, response, returnTo]);
-
   return (
-    <PageShell className="max-w-3xl">
-      <PageHeader
-        description="Under HMRC rules, individuals with a long-term illness or disability may purchase eligible mobility aids VAT-free. Register once, then sign in before you shop."
-        title="Register for VAT Relief"
+    <PageShell>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'VAT Relief on XSTO Mobility Aids',
+          description:
+            'How eligible customers claim HMRC VAT relief on XSTO powered wheelchairs from Bentech Medical Ltd.',
+        }}
       />
 
-      <ol className="mb-10 grid gap-4 sm:grid-cols-3">
-        {STEPS.map((step, index) => (
-          <li
-            className="rounded-xl border border-border bg-card p-4 shadow-soft"
-            key={step.title}
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
-              Step {index + 1}
-            </p>
-            <p className="mt-2 font-semibold text-foreground">{step.title}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {step.description}
-            </p>
-          </li>
-        ))}
-      </ol>
-
-      {!adminConfigured ? (
-        <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-          Online VAT registration is being finalised. You can still complete the
-          form — our team will create your VAT-exempt account manually. For
-          immediate help, email{' '}
-          <a className="font-medium underline" href="mailto:support@xsto.co.uk">
-            support@xsto.co.uk
-          </a>
-          .
-        </div>
-      ) : null}
-
-      {response?.ok === false && response.error ? (
-        <div className="mb-6 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          {response.error}
-        </div>
-      ) : null}
-
-      {success ? (
-        <div className="space-y-4">
-          <FormSuccess>
-            <span className="inline-flex items-center gap-2">
-              <Check aria-hidden className="size-5 text-vat-price" />
-              VAT relief registration complete
-            </span>
-          </FormSuccess>
-          <p className="text-center text-sm text-muted-foreground">
-            {redirecting
-              ? 'Redirecting you to sign in…'
-              : 'Preparing your account sign-in…'}
+      <section className="overflow-hidden rounded-2xl border border-border bg-gradient-navy text-white">
+        <div className="px-6 py-10 md:px-10 md:py-14">
+          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/90">
+            <BadgePercent aria-hidden className="size-3.5" />
+            HMRC Notice 701/7
           </p>
-          {response?.email ? (
-            <p className="text-center">
-              <Link
-                className="text-sm font-medium text-gold hover:underline"
-                to={buildAccountLoginUrl({
-                  email: response.email,
-                  returnTo,
-                })}
-              >
-                Continue to sign in now
-              </Link>
-            </p>
-          ) : null}
-        </div>
-      ) : (
-        <>
-          <div className="mb-8 rounded-xl border border-border bg-secondary/40 p-5">
-            <div className="flex gap-3">
-              <ShieldCheck
-                aria-hidden
-                className="mt-0.5 size-5 shrink-0 text-gold"
-                strokeWidth={1.5}
-              />
-              <div className="text-sm leading-relaxed text-muted-foreground">
-                <p className="font-medium text-foreground">
-                  Who qualifies for VAT relief?
-                </p>
-                <p className="mt-2">
-                  VAT relief applies when a mobility aid is supplied to a
-                  chronically sick or disabled person for personal use. You must
-                  provide a truthful declaration. Bentech Medical Ltd may
-                  request supporting information and will report suspected fraud
-                  to HMRC.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <FormField error={errors.name} id="name" label="Full name">
-              <TextInput
-                autoComplete="name"
-                id="name"
-                name="name"
-                required
-                type="text"
-              />
-            </FormField>
-
-            <FormField error={errors.email} id="email" label="Email address">
-              <TextInput
-                autoComplete="email"
-                id="email"
-                name="email"
-                required
-                type="email"
-              />
-            </FormField>
-
-            <FormField error={errors.address} id="address" label="Address">
-              <TextArea
-                autoComplete="street-address"
-                id="address"
-                name="address"
-                required
-              />
-            </FormField>
-
-            <FormField
-              error={errors.condition}
-              id="condition"
-              label="Nature of condition"
+          <h1 className="max-w-2xl font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
+            Eligible customers pay no VAT
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">
+            If you are chronically sick or disabled, you can buy qualifying XSTO
+            powered wheelchairs VAT-free. Declare eligibility when you shop —
+            we remove the exact VAT amount at checkout.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link className="btn-checkout inline-flex h-11 items-center px-5" to="/collections/all">
+              Shop the range
+            </Link>
+            <Link
+              className="inline-flex h-11 items-center rounded-lg border border-white/25 bg-white/5 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10"
+              to="/faq#faq-vat-relief"
             >
-              <TextInput
-                id="condition"
-                name="condition"
-                placeholder="e.g. long-term mobility impairment"
-                required
-                type="text"
-              />
-            </FormField>
+              Eligibility FAQ
+            </Link>
+          </div>
+        </div>
+      </section>
 
-            <fieldset className="rounded-xl border border-border bg-card p-4">
-              <legend className="sr-only">HMRC declaration</legend>
-              <label className="flex cursor-pointer items-start gap-3 text-sm">
-                <input
-                  className="mt-1 size-4 rounded border-border"
-                  name="declaration"
-                  type="checkbox"
-                  value="yes"
-                />
-                <span className="leading-relaxed text-foreground">
-                  I declare that I am chronically sick or disabled, that the
-                  goods are for my personal or domestic use, and that I am
-                  eligible for VAT relief under HMRC Notice 701/7. I understand
-                  that making a false declaration is an offence.
-                </span>
-              </label>
-              {errors.declaration ? (
-                <p className="mt-2 text-xs text-destructive" role="alert">
-                  {errors.declaration}
-                </p>
-              ) : null}
-            </fieldset>
+      <nav aria-label="Breadcrumb" className="mt-6 text-xs text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-2">
+          <li>
+            <Link className="hover:text-gold" prefetch="intent" to="/">
+              Home
+            </Link>
+          </li>
+          <li aria-hidden>/</li>
+          <li aria-current="page" className="font-medium text-foreground">
+            VAT Relief
+          </li>
+        </ol>
+      </nav>
 
-            <SubmitButton loading={loading}>
-              Register &amp; continue to sign in
-            </SubmitButton>
-          </form>
-        </>
-      )}
+      <section aria-labelledby="vat-steps-heading" className="mt-10">
+        <h2
+          className="text-2xl font-bold text-foreground md:text-3xl"
+          id="vat-steps-heading"
+        >
+          How to claim VAT relief
+        </h2>
+        <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
+          No advance account approval. Claim relief on the product page or in
+          your cart, then check out as normal.
+        </p>
+        <ol className="mt-8 grid gap-6 sm:grid-cols-3">
+          {VAT_RELIEF_STEPS.map((step, index) => (
+            <li className="relative" key={step.title}>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
+                Step {index + 1}
+              </p>
+              <p className="mt-2 font-semibold text-foreground">{step.title}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {step.description}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </section>
 
-      <p className="mt-10 text-center text-sm text-muted-foreground">
-        Already registered?{' '}
-        <Link className="font-medium text-gold hover:underline" to="/account/login">
-          Sign in to your account
-        </Link>
-        {' · '}
-        <Link className="font-medium text-gold hover:underline" to="/faq">
-          VAT relief FAQ
-        </Link>
-      </p>
+      <section
+        aria-labelledby="vat-qualify-summary"
+        className="mt-12 flex gap-4 border-y border-border py-6"
+      >
+        <ShieldCheck
+          aria-hidden
+          className="mt-0.5 size-6 shrink-0 text-navy"
+          strokeWidth={1.5}
+        />
+        <div>
+          <h2 className="font-semibold text-foreground" id="vat-qualify-summary">
+            Quick eligibility check
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            VAT relief applies when a mobility aid is supplied to a chronically
+            sick or disabled person for personal use. You confirm this with a
+            short declaration — name, address, nature of condition and an HMRC
+            eligibility statement. Bentech Medical Ltd may request supporting
+            information and will report suspected fraud to HMRC.
+          </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="vat-products-heading" className="mt-12">
+        <h2
+          className="text-xl font-semibold text-foreground"
+          id="vat-products-heading"
+        >
+          Eligible products
+        </h2>
+        <p className="mt-2 max-w-2xl text-muted-foreground">
+          Claim VAT relief on these powered wheelchairs. Accessories purchased
+          separately are not included in the same declaration.
+        </p>
+        <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {VAT_RELIEF_ELIGIBLE_PRODUCTS.map((product) => (
+            <li key={product.path}>
+              <Link
+                className="flex items-center gap-2 text-sm font-medium text-navy underline-offset-2 hover:underline"
+                prefetch="intent"
+                to={product.path}
+              >
+                <Check aria-hidden className="size-4 shrink-0 text-vat-price" />
+                {product.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <div className="mt-14">
+        <ContentWithToc sections={vatReliefSections} />
+      </div>
+
+      <section
+        aria-labelledby="vat-next-heading"
+        className="mt-14 border-t border-border pt-10"
+      >
+        <h2
+          className="text-xl font-semibold text-foreground"
+          id="vat-next-heading"
+        >
+          Ready to shop?
+        </h2>
+        <p className="mt-2 max-w-2xl text-muted-foreground">
+          Browse the range, complete your declaration when you add to cart, and
+          see VAT removed at checkout. Prefer to talk it through first? Book a
+          demo or contact the team.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link className="btn-checkout inline-flex h-11 items-center px-5" to="/collections/all">
+            Shop all products
+          </Link>
+          <Link
+            className="inline-flex h-11 items-center rounded-lg border border-border px-5 text-sm font-medium text-foreground hover:bg-secondary"
+            to="/demo"
+          >
+            Book a demo
+          </Link>
+          <Link
+            className="inline-flex h-11 items-center rounded-lg border border-border px-5 text-sm font-medium text-foreground hover:bg-secondary"
+            to="/contact"
+          >
+            Contact us
+          </Link>
+        </div>
+      </section>
     </PageShell>
   );
 }

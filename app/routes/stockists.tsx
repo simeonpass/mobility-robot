@@ -5,7 +5,7 @@ import {JsonLd, PageHeader, PageShell} from '~/components/content/PageShell';
 import {StockistCard} from '~/components/content/StockistCard';
 import {StockistsMap} from '~/components/content/StockistsMap';
 import {DEALERS} from '~/lib/dealers';
-import {geocodePostcode, sortDealersByDistance, type RankedDealer} from '~/lib/geo';
+import {geocodePostcode, sortDealersByDistance} from '~/lib/geo';
 import {pageMeta, localBusinessListJsonLd} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
@@ -52,13 +52,12 @@ export default function StockistsPage() {
   const searchError = fetcher.data?.error ?? null;
 
   const displayDealers = useMemo(() => {
-    const list: RankedDealer[] =
-      rankedDealers ??
-      DEALERS.map((dealer) => ({
-        ...dealer,
-        distanceKm: 0,
-      }));
-    return list.slice(0, 10);
+    if (rankedDealers) return rankedDealers.slice(0, 10);
+
+    return DEALERS.map((dealer) => ({
+      ...dealer,
+      distanceKm: 0,
+    }));
   }, [rankedDealers]);
 
   const jsonLd = localBusinessListJsonLd(
@@ -104,7 +103,7 @@ export default function StockistsPage() {
           type="text"
         />
         <button
-          className="rounded-lg bg-gold px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-gold-light disabled:opacity-60"
+          className="min-h-12 rounded-lg bg-gold px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-gold-light disabled:opacity-60 sm:min-h-0"
           disabled={searching}
           type="submit"
         >
@@ -118,7 +117,7 @@ export default function StockistsPage() {
         </p>
       ) : null}
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-8">
         <StockistsMap
           dealers={DEALERS}
           onSelectDealer={(dealer) => setSelectedDealerId(dealer.name)}
@@ -126,7 +125,7 @@ export default function StockistsPage() {
           selectedDealerId={selectedDealerId}
         />
 
-        <div className="space-y-4">
+        <div className="order-first space-y-3 lg:order-none lg:space-y-4">
           <h2 className="text-lg font-semibold text-foreground">
             {rankedDealers ? 'Nearest stockists' : 'All stockists'}
           </h2>

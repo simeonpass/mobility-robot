@@ -1,7 +1,7 @@
 const inputClassName =
-  'w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground';
-const labelClassName = 'mb-1 block text-sm font-medium text-foreground';
-const errorClassName = 'mt-1 text-xs text-destructive';
+  'w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base text-foreground transition-colors placeholder:text-muted-foreground/80 focus-visible:border-navy/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy/15 sm:text-sm';
+const labelClassName = 'mb-1.5 block text-sm font-medium text-foreground';
+const errorClassName = 'mt-1.5 text-xs text-destructive';
 
 export function FormField({
   id,
@@ -53,7 +53,7 @@ export function SubmitButton({
 }) {
   return (
     <button
-      className="btn-accent w-full sm:w-auto disabled:opacity-60"
+      className="btn-accent min-h-11 w-full sm:w-auto sm:min-w-[11rem] disabled:opacity-60"
       disabled={loading}
       type="submit"
     >

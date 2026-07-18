@@ -95,6 +95,7 @@ async function loadRelatedProducts({context}: Route.LoaderArgs) {
     data?.m4,
     data?.m4Pro,
     data?.m4b,
+    data?.ezgo2,
     data?.x12,
     data?.x12Pro,
   ].filter(Boolean);
@@ -185,7 +186,7 @@ export default function Product() {
   });
 
   return (
-    <div className="product-page bg-background pb-20 md:pb-28">
+    <div className="product-page product-page--has-mobile-atc bg-background pb-14 md:pb-20">
       <Ga4ProductView
         currencyCode={selectedVariant?.price.currencyCode ?? 'GBP'}
         id={selectedVariant?.id ?? product.id}
@@ -194,10 +195,10 @@ export default function Product() {
         vendor={product.vendor}
       />
       <JsonLd data={productSchema} />
-      <div className="xsto-container py-5 md:py-8">
+      <div className="xsto-container py-3 md:py-6">
         <ProductBreadcrumbs title={staticContent?.displayName ?? product.title} />
 
-        <div className="product grid gap-10 md:gap-14 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start lg:gap-16 xl:gap-20">
+        <div className="product grid gap-5 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,400px)] lg:items-start lg:gap-10 xl:gap-12">
           <div className="min-w-0">
             <ProductGallery items={galleryItems} productTitle={product.title} />
           </div>
@@ -430,6 +431,9 @@ const RELATED_PRODUCTS_QUERY = `#graphql
       ...HomeProduct
     }
     m4b: product(handle: "xsto-m4b-1") {
+      ...HomeProduct
+    }
+    ezgo2: product(handle: "xsto-ezgo2-carbon-fiber-power-wheelchair") {
       ...HomeProduct
     }
     x12: product(handle: "x12-all-terrain-mobility-robot") {

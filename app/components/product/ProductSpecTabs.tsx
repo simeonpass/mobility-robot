@@ -1,6 +1,7 @@
 import {useId, useState} from 'react';
 import {Link} from 'react-router';
 import {Check} from 'lucide-react';
+import {ProductVideoPlayer} from '~/components/product/ProductVideoPlayer';
 import {isXstoRangeProduct, type ProductContent} from '~/lib/product-specs';
 
 type ProductSpecTabsProps = {
@@ -12,6 +13,7 @@ const TAB_ORDER = [
   {id: 'overview', label: 'Description'},
   {id: 'specifications', label: 'Specifications'},
   {id: 'included', label: 'In the Box'},
+  {id: 'downloads', label: 'Downloads'},
   {id: 'delivery', label: 'Shipping & Returns'},
   {id: 'faq', label: 'FAQ'},
   {id: 'videos', label: 'Videos'},
@@ -25,6 +27,10 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
   const showAllTabs = isXstoRangeProduct(shopifyHandle);
 
   const visibleTabs = TAB_ORDER.filter((tab) => {
+    if (tab.id === 'downloads') {
+      return (content.downloads?.length ?? 0) > 0;
+    }
+
     if (showAllTabs) return true;
 
     switch (tab.id) {
@@ -56,7 +62,7 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
     : visibleTabs[0].id;
 
   return (
-    <section aria-labelledby={`${baseId}-heading`} className="mt-16 md:mt-20">
+    <section aria-labelledby={`${baseId}-heading`} className="mt-10 md:mt-12">
       <h2 className="sr-only" id={`${baseId}-heading`}>
         Product details
       </h2>
@@ -73,10 +79,10 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
               aria-controls={`${baseId}-panel-${tab.id}`}
               aria-selected={selected}
               className={[
-                'shrink-0 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
+                'shrink-0 border-b-2 px-3 py-3 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors sm:px-3.5 sm:py-2.5',
                 selected
-                  ? 'border-gold text-foreground'
-                  : 'border-transparent text-muted-foreground hover:text-foreground',
+                  ? 'border-navy text-navy'
+                  : 'border-transparent text-slate hover:text-navy',
               ].join(' ')}
               id={`${baseId}-tab-${tab.id}`}
               key={tab.id}
@@ -90,7 +96,7 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
         })}
       </div>
 
-      <div className="py-8 md:py-10">
+      <div className="py-6 md:py-8">
         {active === 'overview' ? (
           <TabPanel id={`${baseId}-panel-overview`} labelledBy={`${baseId}-tab-overview`}>
             {content.overview ? (
@@ -232,6 +238,47 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
           </TabPanel>
         ) : null}
 
+        {active === 'downloads' && content.downloads?.length ? (
+          <TabPanel
+            id={`${baseId}-panel-downloads`}
+            labelledBy={`${baseId}-tab-downloads`}
+          >
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {content.downloads.map((file) => (
+                <li key={file.href}>
+                  <a
+                    className="group flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-4 transition-colors hover:border-navy/30 hover:bg-navy/[0.02]"
+                    download
+                    href={file.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-navy text-[0.65rem] font-bold tracking-wide text-white"
+                    >
+                      PDF
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-navy group-hover:underline">
+                        {file.title}
+                      </span>
+                      {file.description ? (
+                        <span className="mt-1 block text-xs leading-relaxed text-slate">
+                          {file.description}
+                        </span>
+                      ) : null}
+                      <span className="mt-2 inline-block text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+                        Download
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </TabPanel>
+        ) : null}
+
         {active === 'delivery' ? (
           <TabPanel id={`${baseId}-panel-delivery`} labelledBy={`${baseId}-tab-delivery`}>
             <div className="max-w-3xl space-y-4 text-base leading-relaxed text-foreground">
@@ -282,10 +329,8 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
               {content.videos.map((video) => (
                 <div className="space-y-3" key={video.embedUrl}>
                   <div className="aspect-video overflow-hidden rounded-2xl border border-border bg-secondary shadow-soft">
-                    <iframe
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="size-full border-0"
+                    <ProductVideoPlayer
+                      className="size-full border-0 object-contain"
                       src={video.embedUrl}
                       title={video.title}
                     />

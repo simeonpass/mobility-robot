@@ -92,17 +92,17 @@ export function CartLineItem({
                 {title !== product.title && title !== 'Default Title' ? (
                   <p className="mt-0.5 text-xs text-muted-foreground">{title}</p>
                 ) : null}
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <div className="mt-0.5 text-xs text-muted-foreground">
                   <Money data={unitPrice} /> each
-                </p>
+                </div>
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Total
                 </p>
-                <p className="mt-0.5 text-base font-semibold text-foreground">
+                <div className="mt-0.5 text-base font-semibold text-foreground">
                   <Money data={lineTotalMoney} />
-                </p>
+                </div>
               </div>
             </div>
 

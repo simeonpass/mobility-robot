@@ -61,15 +61,15 @@ export function StockistCard({
         ) : null}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-x-1 gap-y-1">
         {dealer.offers_demo ? (
-          <span className="rounded-full bg-vat-price/10 px-2 py-0.5 text-xs font-medium text-vat-price">
+          <span className="mr-1 rounded-full bg-vat-price/10 px-2.5 py-1 text-xs font-medium text-vat-price">
             Offers demo
           </span>
         ) : null}
         {onSelect ? (
           <button
-            className="text-xs font-medium text-gold hover:text-gold-dark"
+            className="inline-flex min-h-11 items-center px-2 text-xs font-medium text-gold hover:text-gold-dark"
             onClick={onSelect}
             type="button"
           >
@@ -77,7 +77,7 @@ export function StockistCard({
           </button>
         ) : null}
         <a
-          className="text-xs font-medium text-gold hover:text-gold-dark"
+          className="inline-flex min-h-11 items-center px-2 text-xs font-medium text-gold hover:text-gold-dark"
           href={getDirectionsUrl(dealer)}
           rel="noopener noreferrer"
           target="_blank"
@@ -86,7 +86,7 @@ export function StockistCard({
         </a>
         {dealer.website ? (
           <a
-            className="text-xs font-medium text-muted-foreground hover:text-foreground"
+            className="inline-flex min-h-11 items-center px-2 text-xs font-medium text-muted-foreground hover:text-foreground"
             href={dealer.website}
             rel="noopener noreferrer"
             target="_blank"

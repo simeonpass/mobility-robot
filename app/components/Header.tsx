@@ -1,4 +1,11 @@
-import {Suspense, useEffect, useState} from 'react';
+import {
+  Suspense,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import {Await, NavLink, useAsyncValue, useLocation} from 'react-router';
 import {
   type CartViewPayload,
@@ -12,7 +19,14 @@ import {
   HEADER_LOGO_DISPLAY_HEIGHT,
   headerLogoDisplayWidth,
 } from '~/lib/site-branding';
-import {MAIN_NAV} from '~/lib/site-navigation';
+import {
+  HEADER_CTA,
+  HEADER_MOBILE_EXTRA_NAV,
+  HEADER_SECONDARY_NAV,
+  PRODUCT_NAV_GROUPS,
+  PRODUCT_NAV_ITEMS,
+  type NavItem,
+} from '~/lib/site-navigation';
 
 interface HeaderProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -41,24 +55,26 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, [isHome]);
 
-  const headerClass = isHome ? 'site-header site-header--home' : 'site-header site-header--solid';
+  const headerClass = isHome
+    ? 'site-header site-header--home'
+    : 'site-header site-header--solid';
   const headerStyle = isHome
-    ? ({'--header-scroll-blend': scrollBlend} as React.CSSProperties)
+    ? ({'--header-scroll-blend': scrollBlend} as CSSProperties)
     : undefined;
 
   return (
     <header className={headerClass} style={headerStyle}>
-      <div className="xsto-container flex h-16 items-center gap-4">
+      <div className="xsto-container flex h-[4.5rem] items-center gap-1.5 sm:gap-3 lg:gap-5">
         <NavLink
           aria-label="XSTO UK home"
-          className="shrink-0"
+          className="site-header-logo min-w-0 shrink"
           end
           prefetch="intent"
           to="/"
         >
           <img
             alt={HEADER_LOGO.dark.alt}
-            className="h-14 w-auto rounded-none object-contain"
+            className="h-12 w-auto max-w-[min(100%,11rem)] rounded-none object-contain object-left sm:h-14 sm:max-w-[14rem] md:h-16 md:max-w-none"
             decoding="async"
             fetchPriority="high"
             height={HEADER_LOGO_DISPLAY_HEIGHT}
@@ -77,11 +93,23 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
 
 type Viewport = 'desktop' | 'mobile';
 
-function navLinkClass(isActive: boolean) {
+function navLinkClass(isActive: boolean, extra = '') {
   return [
     'site-header-link',
     isActive ? 'site-header-link--active' : '',
-  ].join(' ');
+    extra,
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function isPathActive(pathname: string, url: string) {
+  if (url === '/') return pathname === '/';
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
+function isProductNavActive(pathname: string) {
+  return PRODUCT_NAV_ITEMS.some((item) => isPathActive(pathname, item.url));
 }
 
 export function HeaderMenu({
@@ -94,19 +122,163 @@ export function HeaderMenu({
   const {close} = useAside();
   const isMobile = viewport === 'mobile';
 
+  if (isMobile) {
+    return (
+      <MobileNav
+        close={close}
+        isLoggedIn={isLoggedIn}
+      />
+    );
+  }
+
   return (
     <nav
-      aria-label={isMobile ? 'Mobile navigation' : 'Main navigation'}
-      className={
-        isMobile
-          ? 'flex flex-col gap-1'
-          : 'mx-auto hidden items-center gap-1 md:flex'
-      }
+      aria-label="Main navigation"
+      className="mx-auto hidden min-w-0 items-center gap-0.5 md:flex"
       role="navigation"
     >
-      {isMobile && isLoggedIn ? (
+      <ModelsDropdown />
+      {HEADER_SECONDARY_NAV.map((item) => (
         <NavLink
-          className={navLinkClass(false)}
+          className={({isActive}) => navLinkClass(isActive)}
+          key={item.url}
+          prefetch="intent"
+          to={item.url}
+        >
+          {item.title}
+        </NavLink>
+      ))}
+    </nav>
+  );
+}
+
+function ModelsDropdown() {
+  const {pathname} = useLocation();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
+  const active = isProductNavActive(pathname);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  return (
+    <div className="site-header-dropdown" ref={rootRef}>
+      <button
+        aria-controls={menuId}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className={[
+          'site-header-link site-header-dropdown-trigger',
+          active || open ? 'site-header-link--active' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        onClick={() => setOpen((value) => !value)}
+        type="button"
+      >
+        Models
+        <ChevronIcon open={open} />
+      </button>
+
+      {open ? (
+        <div
+          className="site-header-dropdown-panel"
+          id={menuId}
+          role="menu"
+        >
+          <div className="site-header-dropdown-grid">
+            {PRODUCT_NAV_GROUPS.map((group) => (
+              <div className="site-header-dropdown-group" key={group.title}>
+                <p className="site-header-dropdown-label">{group.title}</p>
+                <ul className="site-header-dropdown-list">
+                  {group.items.map((item) => (
+                    <li key={item.url}>
+                      <NavLink
+                        className={({isActive}) =>
+                          [
+                            'site-header-dropdown-item',
+                            isActive
+                              ? 'site-header-dropdown-item--active'
+                              : '',
+                          ]
+                            .filter(Boolean)
+                            .join(' ')
+                        }
+                        onClick={() => setOpen(false)}
+                        prefetch="intent"
+                        role="menuitem"
+                        to={item.url}
+                      >
+                        <span className="site-header-dropdown-item-title">
+                          {item.title}
+                        </span>
+                        {item.description ? (
+                          <span className="site-header-dropdown-item-desc">
+                            {item.description}
+                          </span>
+                        ) : null}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="site-header-dropdown-footer">
+            <NavLink
+              className="site-header-dropdown-footer-link"
+              onClick={() => setOpen(false)}
+              prefetch="intent"
+              to="/collections/all"
+            >
+              View all chairs
+            </NavLink>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function MobileNav({
+  close,
+  isLoggedIn,
+}: {
+  close: () => void;
+  isLoggedIn?: Promise<boolean>;
+}) {
+  return (
+    <nav
+      aria-label="Mobile navigation"
+      className="site-header-mobile"
+      role="navigation"
+    >
+      {isLoggedIn ? (
+        <NavLink
+          className={navLinkClass(false, 'site-header-mobile-account')}
           onClick={close}
           prefetch="intent"
           to="/account"
@@ -118,19 +290,59 @@ export function HeaderMenu({
           </Suspense>
         </NavLink>
       ) : null}
-      {MAIN_NAV.map((item) => (
-        <NavLink
-          className={({isActive}) => navLinkClass(isActive)}
-          end={item.url === '/'}
-          key={item.url}
-          onClick={isMobile ? close : undefined}
-          prefetch="intent"
-          to={item.url}
-        >
-          {item.title}
-        </NavLink>
-      ))}
+
+      <div className="site-header-mobile-section">
+        <p className="site-header-mobile-label">Models</p>
+        {PRODUCT_NAV_GROUPS.map((group) => (
+          <div className="site-header-mobile-group" key={group.title}>
+            <p className="site-header-mobile-group-title">{group.title}</p>
+            {group.items.map((item) => (
+              <MobileNavLink close={close} item={item} key={item.url} />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div className="site-header-mobile-section">
+        <p className="site-header-mobile-label">Explore</p>
+        {[...HEADER_SECONDARY_NAV, ...HEADER_MOBILE_EXTRA_NAV].map((item) => (
+          <MobileNavLink close={close} item={item} key={item.url} />
+        ))}
+      </div>
+
+      <NavLink
+        className="site-header-cta site-header-cta--mobile"
+        onClick={close}
+        prefetch="intent"
+        to={HEADER_CTA.url}
+      >
+        {HEADER_CTA.title}
+      </NavLink>
     </nav>
+  );
+}
+
+function MobileNavLink({
+  item,
+  close,
+}: {
+  item: NavItem;
+  close: () => void;
+}) {
+  return (
+    <NavLink
+      className={({isActive}) =>
+        navLinkClass(isActive, 'site-header-mobile-link')
+      }
+      onClick={close}
+      prefetch="intent"
+      to={item.url}
+    >
+      <span>{item.title}</span>
+      {item.description ? (
+        <span className="site-header-mobile-link-desc">{item.description}</span>
+      ) : null}
+    </NavLink>
   );
 }
 
@@ -141,11 +353,29 @@ function HeaderCtas({
   return (
     <nav
       aria-label="Account and cart"
-      className="ml-auto flex shrink-0 items-center gap-2 md:gap-3"
+      className="ml-auto flex shrink-0 items-center gap-0 sm:gap-1 md:gap-2"
       role="navigation"
     >
+      <NavLink
+        className="site-header-cta site-header-cta--compact md:hidden"
+        prefetch="intent"
+        to={HEADER_CTA.url}
+      >
+        Demo
+      </NavLink>
+      <NavLink
+        className="site-header-cta hidden md:inline-flex"
+        prefetch="intent"
+        to={HEADER_CTA.url}
+      >
+        {HEADER_CTA.title}
+      </NavLink>
       <HeaderMenuMobileToggle />
-      <NavLink className="site-header-link hidden sm:inline-flex" prefetch="intent" to="/account">
+      <NavLink
+        className="site-header-link hidden sm:inline-flex"
+        prefetch="intent"
+        to="/account"
+      >
         <Suspense fallback="Sign in">
           <Await errorElement="Sign in" resolve={isLoggedIn}>
             {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
@@ -186,8 +416,24 @@ function SearchToggle() {
   const {open} = useAside();
 
   return (
-    <button className="site-header-link" onClick={() => open('search')} type="button">
-      Search
+    <button
+      aria-label="Search"
+      className="site-header-icon-btn"
+      onClick={() => open('search')}
+      type="button"
+    >
+      <svg
+        aria-hidden
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+      </svg>
+      <span className="sr-only">Search</span>
     </button>
   );
 }
@@ -198,7 +444,8 @@ function CartBadge({count}: {count: number}) {
 
   return (
     <button
-      className="site-header-link inline-flex items-center gap-1.5"
+      aria-label={count > 0 ? `Cart, ${count} items` : 'Cart'}
+      className="site-header-icon-btn site-header-cart-btn"
       onClick={() => {
         open('cart');
         publish('cart_viewed', {
@@ -210,7 +457,7 @@ function CartBadge({count}: {count: number}) {
       }}
       type="button"
     >
-      Cart
+      <span className="hidden sm:inline">Cart</span>
       <span className="site-header-cart-count">{count}</span>
     </button>
   );
@@ -230,4 +477,24 @@ function CartBanner() {
   const originalCart = useAsyncValue() as CartApiQueryFragment | null;
   const cart = useOptimisticCart(originalCart);
   return <CartBadge count={cart?.totalQuantity ?? 0} />;
+}
+
+function ChevronIcon({open}: {open: boolean}) {
+  return (
+    <svg
+      aria-hidden
+      className={[
+        'site-header-chevron size-3.5 shrink-0',
+        open ? 'site-header-chevron--open' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }

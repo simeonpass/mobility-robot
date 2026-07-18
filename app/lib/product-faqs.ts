@@ -167,6 +167,34 @@ export const homepageFAQs: ProductFAQ[] = [
 ];
 
 /** General FAQs shown on the homepage preview and /faq route (Phase 6). */
+export const ezgo2FAQs: ProductFAQ[] = [
+  {
+    question: 'What makes the EzGo2 different from the M4 series?',
+    answer:
+      'The EzGo2 is an ultra-lightweight carbon fiber power wheelchair at just 11.5 kg without battery — designed for easy lifting, three-step folding (folded width 26 cm), and indoor-focused use. The M4 series is heavier, self-balancing, and built for outdoor slopes and longer-day versatility.',
+  },
+  {
+    question: 'How light is the EzGo2?',
+    answer:
+      'The frame weighs only 11.5 kg without the battery (battery approximately 2.2 kg). Many users can lift it with one hand for car boots, trains, and home storage.',
+  },
+  {
+    question: 'What is the EzGo2 weight capacity and range?',
+    answer:
+      'Maximum user capacity is 136 kg. The 24V 10Ah lithium battery provides up to 15 km range under typical indoor use, with a top speed of up to 4.5 km/h.',
+  },
+  {
+    question: 'Is the EzGo2 suitable outdoors?',
+    answer:
+      'It is specified primarily for indoor use, with climbing capacity of about 3° and obstacle clearance of 25 mm+. For steeper slopes, kerbs, and outdoor terrain, the M4 or X12 ranges are a better fit.',
+  },
+  {
+    question: 'Can I claim VAT relief on the EzGo2?',
+    answer:
+      'Yes. If you have a long-term illness or disability, you can purchase the EzGo2 VAT-free. Complete a VAT exemption declaration during checkout.',
+  },
+];
+
 export const generalFAQs: ProductFAQ[] = [
   {
     question: 'Can I claim VAT relief on XSTO products?',

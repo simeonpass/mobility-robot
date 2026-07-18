@@ -46,6 +46,7 @@ export function buildProductTabContent({
     videos: metafieldEmbedUrl
       ? [{title: 'Product video', embedUrl: metafieldEmbedUrl}]
       : [],
+    downloads: [],
   };
 }
 

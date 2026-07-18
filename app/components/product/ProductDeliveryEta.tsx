@@ -33,37 +33,37 @@ export function ProductDeliveryEta({delivery}: ProductDeliveryEtaProps) {
   return (
     <div
       className={[
-        'flex items-start gap-3 rounded-lg border px-4 py-3.5',
+        'flex items-start gap-2.5 rounded-lg border px-3 py-2.5',
         styles.container,
       ].join(' ')}
     >
       <span
         aria-hidden
         className={[
-          'mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-background shadow-soft ring-4',
+          'mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-background ring-2',
           styles.ring,
         ].join(' ')}
       >
         <Icon
           aria-hidden
-          className="size-4 text-foreground"
+          className="size-3.5 text-foreground"
           strokeWidth={1.75}
         />
       </span>
 
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <span
             aria-hidden
-            className={['size-2 shrink-0 rounded-full', styles.dot].join(' ')}
+            className={['size-1.5 shrink-0 rounded-full', styles.dot].join(' ')}
           />
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-[0.8125rem] font-semibold text-navy">
             {delivery.headline}
           </p>
-          <span className="hidden text-muted-foreground sm:inline">·</span>
-          <p className="text-sm text-muted-foreground">{delivery.detail}</p>
+          <span className="hidden text-slate sm:inline">·</span>
+          <p className="text-[0.8125rem] text-slate">{delivery.detail}</p>
         </div>
-        <p className="mt-1 text-sm font-medium text-foreground">
+        <p className="mt-0.5 text-[0.8125rem] font-medium text-navy">
           {delivery.etaLabel}
         </p>
       </div>

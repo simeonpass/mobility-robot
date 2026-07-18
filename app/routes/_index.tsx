@@ -1,6 +1,5 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
-import type {HomeProductsByAliasQuery} from 'storefrontapi.generated';
 import {ComparisonStrip} from '~/components/home/ComparisonStrip';
 import {ExperienceRangeSection} from '~/components/home/ExperienceRangeSection';
 import {FaqPreview} from '~/components/home/FaqPreview';
@@ -23,7 +22,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'XSTO Powered Wheelchairs UK',
     description:
-      'Official UK distributor of XSTO foldable powered wheelchairs. M4, M4 Pro, M4B, X12 and X12 Pro — free UK delivery, VAT relief eligible.',
+      'Official UK distributor of XSTO foldable powered wheelchairs. M4, M4 Pro, M4B, EzGo2, X12 and X12 Pro — free UK delivery, VAT relief eligible.',
     path: '/',
     image: undefined,
   });
@@ -78,6 +77,7 @@ const HANDLE_QUERY_KEYS: Record<HomepageProductHandle, string> = {
   'xsto-m4': 'm4',
   'xsto-m4-pro': 'm4Pro',
   'xsto-m4b': 'm4b',
+  'xsto-ezgo2': 'ezgo2',
   'xsto-x12': 'x12',
   'xsto-x12-pro': 'x12Pro',
 };
@@ -91,9 +91,8 @@ function dedupeProducts(products: HomeProduct[]): HomeProduct[] {
   });
 }
 
-type AliasProductData = Pick<
-  HomeProductsByAliasQuery,
-  'm4' | 'm4Pro' | 'm4b' | 'x12' | 'x12Pro'
+type AliasProductData = Partial<
+  Record<'m4' | 'm4Pro' | 'm4b' | 'ezgo2' | 'x12' | 'x12Pro', HomeProduct | null>
 >;
 
 function resolveHomeProducts(
@@ -161,6 +160,9 @@ const HOME_PRODUCTS_ALIAS_QUERY = `#graphql
       ...HomeProduct
     }
     m4b: product(handle: "xsto-m4b-1") {
+      ...HomeProduct
+    }
+    ezgo2: product(handle: "xsto-ezgo2-carbon-fiber-power-wheelchair") {
       ...HomeProduct
     }
     x12: product(handle: "x12-all-terrain-mobility-robot") {

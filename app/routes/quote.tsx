@@ -24,6 +24,7 @@ const MODEL_OPTIONS = [
   'M4',
   'M4 Pro',
   'M4B',
+  'EzGo2',
   'X12',
   'X12 Pro',
   'Multiple / Unsure',

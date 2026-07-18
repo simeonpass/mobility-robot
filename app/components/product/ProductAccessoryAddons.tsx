@@ -1,7 +1,7 @@
-import {useId} from 'react';
+import {useId, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {Link} from 'react-router';
-import {Check} from 'lucide-react';
+import {Check, ChevronDown} from 'lucide-react';
 import {formatCompatibilityLabel, resolveAccessoryCompatibility} from '~/lib/accessories';
 import {formatExVatPrice} from '~/lib/homepage-data';
 
@@ -48,6 +48,8 @@ type ProductAccessoryAddonsProps = {
   chairLabel?: string;
 };
 
+const INITIAL_VISIBLE = 4;
+
 export function ProductAccessoryAddons({
   products,
   selectedIds,
@@ -55,32 +57,47 @@ export function ProductAccessoryAddons({
   chairLabel,
 }: ProductAccessoryAddonsProps) {
   const headingId = useId();
+  const [expanded, setExpanded] = useState(false);
 
-  if (!products.length) return null;
+  const available = products.filter(
+    (product) => product.selectedOrFirstAvailableVariant?.availableForSale,
+  );
+
+  if (!available.length) return null;
+
+  const visible = expanded ? available : available.slice(0, INITIAL_VISIBLE);
+  const hiddenCount = Math.max(0, available.length - INITIAL_VISIBLE);
 
   return (
     <section
       aria-labelledby={headingId}
-      className="rounded-2xl border border-border bg-secondary/20 p-4 md:p-5"
+      className="rounded-lg border border-border/80 bg-background"
     >
-      <header className="mb-4">
-        <h2
-          className="text-sm font-semibold text-foreground"
-          id={headingId}
-        >
-          Recommended add-ons
-        </h2>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-          {chairLabel
-            ? `Optional accessories that fit the ${chairLabel}. Tick any to add with your chair.`
-            : 'Optional accessories for this chair. Tick any to add with your order.'}
-        </p>
+      <header className="flex items-baseline justify-between gap-3 border-b border-border/70 px-3 py-2.5">
+        <div>
+          <h2
+            className="text-xs font-semibold uppercase tracking-[0.14em] text-navy"
+            id={headingId}
+          >
+            Frequently bought with
+          </h2>
+          <p className="mt-0.5 text-[0.7rem] text-slate">
+            {chairLabel
+              ? `Optional extras that fit ${chairLabel}`
+              : 'Optional extras for this chair'}
+          </p>
+        </div>
+        {selectedIds.size > 0 ? (
+          <span className="shrink-0 text-[0.7rem] font-semibold tabular-nums text-primary">
+            {selectedIds.size} selected
+          </span>
+        ) : null}
       </header>
 
-      <ul className="space-y-2.5">
-        {products.map((product) => {
+      <ul className="divide-y divide-border/60">
+        {visible.map((product) => {
           const variant = product.selectedOrFirstAvailableVariant;
-          if (!variant?.id || !variant.availableForSale) return null;
+          if (!variant?.id) return null;
 
           const checked = selectedIds.has(variant.id);
           const exVat = formatExVatPrice(
@@ -94,13 +111,11 @@ export function ProductAccessoryAddons({
             <li key={product.id}>
               <label
                 className={[
-                  'flex cursor-pointer items-start gap-3 rounded-xl border bg-background p-3 transition-colors',
-                  checked
-                    ? 'border-foreground/40 shadow-soft'
-                    : 'border-border hover:border-foreground/25',
+                  'flex cursor-pointer items-center gap-2.5 px-3 py-2.5 transition-colors',
+                  checked ? 'bg-navy/[0.03]' : 'hover:bg-secondary/40',
                 ].join(' ')}
               >
-                <span className="relative mt-0.5 flex size-5 shrink-0 items-center justify-center">
+                <span className="relative flex size-4 shrink-0 items-center justify-center">
                   <input
                     checked={checked}
                     className="peer sr-only"
@@ -110,49 +125,49 @@ export function ProductAccessoryAddons({
                   <span
                     aria-hidden
                     className={[
-                      'flex size-5 items-center justify-center rounded-md border transition-colors',
+                      'flex size-4 items-center justify-center rounded border transition-colors',
                       checked
-                        ? 'border-foreground bg-foreground text-background'
-                        : 'border-border bg-background',
+                        ? 'border-navy bg-navy text-white'
+                        : 'border-border bg-white',
                     ].join(' ')}
                   >
                     {checked ? (
-                      <Check className="size-3.5" strokeWidth={2.5} />
+                      <Check className="size-2.5" strokeWidth={3} />
                     ) : null}
                   </span>
                 </span>
 
                 {image?.url ? (
-                  <span className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-cream p-1.5">
+                  <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded bg-white ring-1 ring-border/70">
                     <Image
                       alt={image.altText || product.title}
-                      className="max-h-full w-full object-contain"
+                      className="max-h-full w-full object-contain p-0.5"
                       data={{
                         url: image.url,
                         altText: image.altText ?? product.title,
-                        width: 112,
-                        height: 112,
+                        width: 80,
+                        height: 80,
                       }}
-                      sizes="56px"
+                      sizes="40px"
                     />
                   </span>
                 ) : null}
 
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold leading-snug text-foreground">
+                  <span className="block truncate text-[0.8125rem] font-medium leading-snug text-navy">
                     {product.title}
                   </span>
-                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                  <span className="mt-0.5 block truncate text-[0.65rem] text-slate">
                     {formatCompatibilityLabel(slots)}
                   </span>
-                  <span className="mt-1 block text-sm font-semibold text-gold">
-                    {exVat}{' '}
-                    <span className="font-normal text-muted-foreground">
-                      ex VAT
-                    </span>
+                </span>
+
+                <span className="shrink-0 text-right">
+                  <span className="block text-[0.8125rem] font-semibold tabular-nums text-navy">
+                    {exVat}
                   </span>
                   <Link
-                    className="mt-1 inline-block text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                    className="mt-0.5 block text-[0.65rem] font-medium text-slate underline-offset-2 hover:text-navy hover:underline"
                     onClick={(event) => event.stopPropagation()}
                     prefetch="intent"
                     to={`/products/${product.handle}`}
@@ -165,6 +180,23 @@ export function ProductAccessoryAddons({
           );
         })}
       </ul>
+
+      {hiddenCount > 0 ? (
+        <button
+          className="flex w-full items-center justify-center gap-1 border-t border-border/70 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-navy transition-colors hover:bg-secondary/50"
+          onClick={() => setExpanded((value) => !value)}
+          type="button"
+        >
+          {expanded ? 'Show fewer' : `Show ${hiddenCount} more`}
+          <ChevronDown
+            aria-hidden
+            className={[
+              'size-3.5 transition-transform',
+              expanded ? 'rotate-180' : '',
+            ].join(' ')}
+          />
+        </button>
+      ) : null}
     </section>
   );
 }

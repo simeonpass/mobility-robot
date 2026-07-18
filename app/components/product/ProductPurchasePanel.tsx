@@ -4,6 +4,8 @@ import {BadgePercent, Check, Pencil} from 'lucide-react';
 import type {MappedProductOptions, OptimisticCartLineInput} from '@shopify/hydrogen';
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
 import type {ProductFragment} from 'storefrontapi.generated';
+import {AddToCartButton} from '~/components/AddToCartButton';
+import {useAside} from '~/components/Aside';
 import {ProductForm} from '~/components/ProductForm';
 import {
   ProductAccessoryAddons,
@@ -48,6 +50,7 @@ export function ProductPurchasePanel({
     setProductVatRelief,
     openProductModal,
   } = useVatRelief();
+  const {open} = useAside();
 
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(
     () => new Set(),
@@ -104,6 +107,30 @@ export function ProductPurchasePanel({
       ? `${baseLabel} + ${addonCount} add-on${addonCount === 1 ? '' : 's'}`
       : baseLabel;
 
+  const soldOutLabel = selectedVariant?.availableForSale
+    ? productVatReliefEnabled && !vatFormComplete
+      ? 'Complete VAT declaration'
+      : 'Sold out'
+    : 'Sold out';
+
+  const cartLines: OptimisticCartLineInput[] = selectedVariant
+    ? [
+        {
+          merchandiseId: selectedVariant.id,
+          quantity: 1,
+          selectedVariant,
+          attributes: cartAttributes,
+        },
+        ...addonLines.map((line) => ({
+          ...line,
+          parent: line.parent ?? {merchandiseId: selectedVariant.id},
+        })),
+      ]
+    : [];
+
+  const stickyPrice =
+    productVatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
+
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
       const next = new Set(prev);
@@ -114,22 +141,22 @@ export function ProductPurchasePanel({
   };
 
   return (
-    <div className="product-buy-box lg:sticky lg:top-24 lg:max-w-[440px] lg:justify-self-end">
-      <header className="mb-6 space-y-2">
-        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+    <div className="product-buy-box lg:sticky lg:top-24">
+      <header className="mb-3 border-b border-border/70 pb-3 sm:mb-4 sm:pb-4">
+        <p className="mb-1.5 text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-primary">
           XSTO UK
         </p>
-        <h1 className="font-display text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground md:text-[2rem]">
+        <h1 className="font-display text-[1.45rem] font-semibold leading-[1.15] tracking-[-0.03em] text-navy sm:text-[1.65rem] md:text-[1.85rem]">
           {displayName ?? title}
         </h1>
         {tagline ? (
-          <p className="text-[0.9375rem] leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 text-sm leading-snug text-slate sm:mt-2">
             {tagline}
           </p>
         ) : null}
       </header>
 
-      <section aria-label="Pricing" className="product-price-card mb-5">
+      <section aria-label="Pricing" className="product-price-card mb-3 sm:mb-4">
         <ProductPriceDisplay
           compareAtPrice={compareAtPrice}
           exVatDisplay={exVatDisplay}
@@ -154,7 +181,23 @@ export function ProductPurchasePanel({
         vatSavings={vatSavings}
       />
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-3 space-y-3 sm:mt-4">
+        <ProductForm
+          addToCartClassName="btn-atc hidden w-full lg:inline-flex"
+          addToCartLabel={addToCartLabel}
+          addonLines={addonLines}
+          cartAttributes={cartAttributes}
+          disabled={!canAddToCart}
+          productHandle={productHandle}
+          productOptions={productOptions}
+          selectedVariant={selectedVariant}
+          soldOutLabel={soldOutLabel}
+        />
+
+        {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
+
+        <ProductTrustBadges />
+
         {accessoryAddons.length ? (
           <ProductAccessoryAddons
             chairLabel={displayName ?? title}
@@ -164,48 +207,55 @@ export function ProductPurchasePanel({
           />
         ) : null}
 
-        <ProductForm
-          addToCartClassName="btn-atc w-full"
-          addToCartLabel={addToCartLabel}
-          addonLines={addonLines}
-          cartAttributes={cartAttributes}
-          disabled={!canAddToCart}
-          productHandle={productHandle}
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-          soldOutLabel={
-            selectedVariant?.availableForSale
-              ? productVatReliefEnabled && !vatFormComplete
-                ? 'Complete VAT declaration'
-                : 'Sold out'
-              : 'Sold out'
-          }
-        />
-
-        {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
-
-        <ProductTrustBadges />
-
         <ProductCheckoutTrust klarnaInstallment={klarnaInstallment} />
       </div>
 
-      <p className="mt-5 text-center text-xs text-muted-foreground">
+      <p className="mt-4 text-center text-[0.6875rem] text-slate">
         <Link
-          className="font-medium underline-offset-2 hover:text-foreground hover:underline"
+          className="font-medium text-navy underline-offset-2 hover:underline"
           to="/vat-relief"
         >
-          Full VAT relief registration
+          How VAT relief works
         </Link>
         <span aria-hidden className="mx-1.5 text-border">
           ·
         </span>
         <Link
-          className="font-medium underline-offset-2 hover:text-foreground hover:underline"
+          className="font-medium text-navy underline-offset-2 hover:underline"
           to="/faq"
         >
           Eligibility FAQ
         </Link>
       </p>
+
+      <div className="product-mobile-atc">
+        <div className="mx-auto flex max-w-[1400px] items-center gap-3">
+          {stickyPrice ? (
+            <div className="min-w-0 shrink">
+              <p className="truncate font-display text-lg font-semibold tabular-nums leading-none tracking-[-0.03em] text-navy">
+                {stickyPrice}
+              </p>
+              <p className="mt-0.5 truncate text-[0.65rem] text-slate">
+                {productVatReliefEnabled ? 'VAT relief price' : 'inc. VAT'}
+              </p>
+            </div>
+          ) : null}
+          <AddToCartButton
+            className="btn-atc min-h-12 flex-1 px-4 text-sm"
+            disabled={!canAddToCart}
+            lines={cartLines}
+            onClick={() => open('cart')}
+          >
+            {!selectedVariant?.availableForSale
+              ? soldOutLabel
+              : !canAddToCart
+                ? soldOutLabel
+                : stickyPrice
+                  ? `Add — ${stickyPrice}`
+                  : 'Add to cart'}
+          </AddToCartButton>
+        </div>
+      </div>
     </div>
   );
 }
@@ -229,26 +279,26 @@ function ProductPriceDisplay({
 
   return (
     <div aria-label="Price" role="group">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-baseline justify-between gap-3">
         <p
           className={[
-            'text-[2rem] font-semibold tabular-nums leading-none tracking-[-0.03em] md:text-[2.25rem]',
-            vatReliefEnabled ? 'text-vat-price' : 'text-foreground',
+            'font-display text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.04em] sm:text-[2rem] md:text-[2.15rem]',
+            vatReliefEnabled ? 'text-vat-price' : 'text-navy',
           ].join(' ')}
         >
           {primaryPrice}
         </p>
         {compareAtPrice ? (
-          <p className="pt-1 text-right text-xs text-muted-foreground">
-            <span className="block uppercase tracking-wide">RRP</span>
-            <span className="line-through tabular-nums">
+          <p className="text-right text-[0.65rem] uppercase tracking-[0.12em] text-slate">
+            <span className="block">RRP</span>
+            <span className="text-sm font-medium normal-case tracking-normal line-through tabular-nums">
               {getIncVatDisplay(compareAtPrice)}
             </span>
           </p>
         ) : null}
       </div>
 
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+      <p className="mt-1.5 text-sm leading-snug text-slate">
         {vatReliefEnabled ? (
           <>
             <span className="font-medium text-vat-price">VAT relief price</span>
@@ -260,18 +310,19 @@ function ProductPriceDisplay({
           </>
         ) : (
           <>
-            {incVatDisplay} inc. VAT
+            <span className="tabular-nums text-navy/80">{incVatDisplay}</span>
+            <span> inc. VAT</span>
             {exVatDisplay ? (
               <>
                 <span className="mx-1.5 text-border" aria-hidden>
                   ·
                 </span>
-                <span className="font-medium tabular-nums text-vat-price">
+                <span className="font-semibold tabular-nums text-vat-price">
                   {exVatDisplay}
                 </span>
-                <span className="text-vat-price/80"> with VAT relief</span>
+                <span className="text-vat-price"> with VAT relief</span>
                 {vatSavings ? (
-                  <span className="text-vat-price/80"> (save {vatSavings})</span>
+                  <span className="text-vat-price"> (save {vatSavings})</span>
                 ) : null}
               </>
             ) : null}
@@ -298,20 +349,20 @@ function VatReliefCard({
   return (
     <section
       aria-labelledby="vat-relief-heading"
-      className="rounded-xl border border-border bg-secondary/30 p-4"
+      className="rounded-lg border border-navy/10 bg-navy/[0.03] px-3.5 py-3"
     >
-      <div className="flex items-start gap-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-background">
-          <BadgePercent aria-hidden className="size-4 text-foreground" strokeWidth={1.5} />
+      <div className="flex items-start gap-2.5">
+        <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-navy text-white">
+          <BadgePercent aria-hidden className="size-3.5" strokeWidth={1.75} />
         </div>
         <div className="min-w-0 flex-1">
           <h2
-            className="text-sm font-semibold text-foreground"
+            className="text-sm font-semibold text-navy"
             id="vat-relief-heading"
           >
             HMRC VAT relief
           </h2>
-          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-0.5 text-[0.8125rem] leading-snug text-slate">
             {enabled && vatFormComplete ? (
               <>
                 Declaration saved
@@ -319,7 +370,7 @@ function VatReliefCard({
                   <>
                     {' '}
                     — pay{' '}
-                    <strong className="font-semibold tabular-nums text-foreground">
+                    <strong className="font-semibold tabular-nums text-navy">
                       {exVatDisplay}
                     </strong>{' '}
                     (save {vatSavings})
@@ -328,12 +379,12 @@ function VatReliefCard({
               </>
             ) : (
               <>
-                Chronically sick or disabled? You may pay the ex-VAT price
+                Eligible? Pay the ex-VAT price
                 {vatSavings ? (
                   <>
                     {' '}
                     and save{' '}
-                    <strong className="font-semibold tabular-nums text-foreground">
+                    <strong className="font-semibold tabular-nums text-navy">
                       {vatSavings}
                     </strong>
                   </>
@@ -344,20 +395,20 @@ function VatReliefCard({
           </p>
 
           {enabled && vatFormComplete ? (
-            <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
+            <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-vat-price">
               <Check aria-hidden className="size-3.5" />
-              Ready to apply at checkout
+              Ready at checkout
             </p>
           ) : null}
 
           <button
-            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:border-foreground/30"
+            className="mt-2.5 inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-navy-light"
             onClick={onOpen}
             type="button"
           >
             {enabled ? (
               <>
-                <Pencil aria-hidden className="size-3.5" />
+                <Pencil aria-hidden className="size-3" />
                 {vatFormComplete ? 'Edit declaration' : 'Complete declaration'}
               </>
             ) : (
