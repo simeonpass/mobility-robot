@@ -21,3 +21,13 @@ export const DEFAULT_OG_IMAGE_HEIGHT = 630;
 export const DEFAULT_SHOP_ID = '90445414778';
 
 export const HTML_LANG = 'en-GB';
+
+/**
+ * Legacy public hosts that should 301 to SITE_URL if the Hydrogen app
+ * receives them. Prefer Shopify/DNS domain redirects at the edge when possible.
+ */
+export const LEGACY_PUBLIC_HOSTS = [
+  'xsto.co.uk',
+  'www.xsto.co.uk',
+  'www.mobilityrobot.co.uk',
+] as const;
