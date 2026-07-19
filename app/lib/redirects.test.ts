@@ -59,4 +59,19 @@ describe('resolveLegacyRedirect', () => {
     expect(resolveLegacyRedirect(requestFor('/demo'))).toBeNull();
     expect(resolveLegacyRedirect(requestFor('/quote'))).toBeNull();
   });
+
+  it('redirects Lovable sitemap paths', () => {
+    expect(resolveLegacyRedirect(requestFor('/find-dealer'))?.destination).toBe(
+      '/stockists',
+    );
+    expect(resolveLegacyRedirect(requestFor('/accessories'))?.destination).toBe(
+      '/collections/accessories',
+    );
+    expect(
+      resolveLegacyRedirect(requestFor('/warranty-registration'))?.destination,
+    ).toBe('/warranty');
+    expect(
+      resolveLegacyRedirect(requestFor('/products/phone-holder'))?.destination,
+    ).toBe('/products/phone-holder-for-m4');
+  });
 });

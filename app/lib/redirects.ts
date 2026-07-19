@@ -3,6 +3,7 @@ import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 
 /** Exact legacy path → new path (301). */
 export const LEGACY_REDIRECTS: Record<string, string> = {
+  // Shopify Online Store /pages/* legacy paths
   '/pages/about': '/about',
   '/pages/warranty': '/warranty',
   '/pages/faq': '/faq',
@@ -21,7 +22,20 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/blogs/news': '/blog',
   '/track-order': '/account/orders',
   '/index.html': '/',
+
+  // Lovable xsto.co.uk sitemap paths (pre-Hydrogen)
+  '/accessories': '/collections/accessories',
+  '/find-dealer': '/stockists',
   '/videos': '/blog',
+  '/reviews': '/',
+  '/trade': '/quote',
+  '/official-uk-distributor': '/about',
+  '/warranty-registration': '/warranty',
+  '/returns-policy': '/returns',
+  '/privacy-policy': '/privacy',
+  '/terms-of-service': '/terms',
+
+  // Short / alternate product handles
   '/products/xsto-m4': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`,
   '/products/xsto-m4-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4-pro']}`,
   '/products/xsto-m4b': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b']}`,
@@ -29,6 +43,24 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/products/ezgo2-mobility-robot': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-ezgo2']}`,
   '/products/xsto-x12': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`,
   '/products/xsto-x12-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
+
+  // Lovable accessory handles → current Shopify accessory handles / catalogue
+  '/products/phone-holder': '/products/phone-holder-for-m4',
+  '/products/battery-charger': '/products/power-chair-battery-charger',
+  '/products/headrest': '/products/adjustable-headrest-m4-pro',
+  '/products/backrest-headrest': '/products/adjustable-headrest-m4-pro',
+  '/products/battery-24v': '/products/lithium-15-6-ah-battery',
+  '/products/spare-battery-24v': '/products/lithium-15-6-ah-battery',
+  '/products/sidebag': '/collections/accessories',
+  '/products/aux-controller': '/collections/accessories',
+  '/products/rearview-mirror': '/collections/accessories',
+  '/products/trunk-support': '/collections/accessories',
+  '/products/umbrella-holder': '/collections/accessories',
+  '/products/side-guard': '/collections/accessories',
+  '/products/seat-cushion-m': '/collections/accessories',
+  '/products/seat-cushion-l': '/collections/accessories',
+  '/products/backrest-cushion-m': '/collections/accessories',
+  '/products/backrest-cushion-l': '/collections/accessories',
 };
 
 const PRODUCT_PREFIX_REDIRECTS: Array<{prefix: string; target: string}> = [
