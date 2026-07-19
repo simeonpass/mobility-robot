@@ -98,6 +98,7 @@ export async function loader(args: Route.LoaderArgs) {
     ...deferredData,
     ga4Id: env.PUBLIC_GA4_ID ?? null,
     shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
+    shopDomain: env.PUBLIC_STORE_DOMAIN || null,
     shop: getShopAnalytics({
       storefront,
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
@@ -164,7 +165,7 @@ export default function App() {
       <ConsentProvider ga4Id={data.ga4Id}>
         <VatReliefProvider>
           <Ga4Tracker ga4Id={data.ga4Id} />
-          <ShopChat shopId={data.shopId} />
+          <ShopChat shopDomain={data.shopDomain} shopId={data.shopId} />
           <PageLayout {...data}>
             <Outlet />
           </PageLayout>

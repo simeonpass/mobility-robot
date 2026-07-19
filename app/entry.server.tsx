@@ -58,6 +58,8 @@ export default async function handleRequest(
       'https://www.googletagmanager.com',
       'https://cdn.shopify.com',
       'https://cdn.judge.me',
+      'https://js.hcaptcha.com',
+      'https://*.hcaptcha.com',
     ],
     connectSrc: [
       'https://nominatim.openstreetmap.org',
@@ -68,6 +70,15 @@ export default async function handleRequest(
       'https://cdn.judge.me',
       'https://judge.me',
       'https://*.judge.me',
+      // Shopify Inbox
+      'https://shopify-chat.shopifyapps.com',
+      'https://messaging-api.shopifyapps.com',
+      'https://*.pusher.com',
+      'wss://*.pusher.com',
+      'https://*.hcaptcha.com',
+      'https://notify.bugsnag.com',
+      'https://otlp-http-production.shopifysvc.com',
+      'https://error-analytics-sessions-production.shopifysvc.com',
     ],
     imgSrc: [
       "'self'",
@@ -81,6 +92,7 @@ export default async function handleRequest(
       'https://cdn.judge.me',
       'https://judge.me',
       'https://*.judge.me',
+      'https://shopify-chat.shopifyapps.com',
     ],
     mediaSrc: ["'self'", 'https://cdn.shopify.com', 'blob:'],
     fontSrc: ["'self'", 'https://fonts.gstatic.com', 'https://cdn.judge.me'],
@@ -89,12 +101,16 @@ export default async function handleRequest(
       "'unsafe-inline'",
       'https://fonts.googleapis.com',
       'https://cdn.judge.me',
+      'https://cdn.shopify.com',
     ],
     frameSrc: [
       "'self'",
       'https://www.youtube.com',
       'https://www.youtube-nocookie.com',
       'https://www.openstreetmap.org',
+      'https://shopify-chat.shopifyapps.com',
+      'https://*.hcaptcha.com',
+      'https://newassets.hcaptcha.com',
     ],
   });
 

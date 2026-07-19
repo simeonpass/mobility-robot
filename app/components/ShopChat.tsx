@@ -1,6 +1,11 @@
-import {useEffect} from 'react';
+import {Script} from '@shopify/hydrogen';
 import {useLocation} from 'react-router';
-import {useConsent} from '~/components/ConsentBanner';
+
+type ShopifyInboxProps = {
+  shopDomain?: string | null;
+  /** Shopify numeric shop ID (meta.json → id). Also used as Inbox shop_id. */
+  shopId?: string | null;
+};
 
 function shouldHideChat(pathname: string): boolean {
   if (pathname.startsWith('/account')) return true;
@@ -8,29 +13,33 @@ function shouldHideChat(pathname: string): boolean {
   return false;
 }
 
-export function ShopChat({shopId}: {shopId?: string | null}) {
+/**
+ * Shopify Inbox chat widget for Hydrogen.
+ * Official theme app-embed does not inject on headless storefronts, so we load
+ * shopifyChatV1.js directly (see Shopify hydrogen discussion #878).
+ */
+export function ShopChat({shopDomain, shopId}: ShopifyInboxProps) {
   const location = useLocation();
-  const {consent} = useConsent();
 
-  const marketingAllowed =
-    consent.choice === 'granted' && consent.preferences.marketing;
+  if (!shopDomain || !shopId) return null;
+  if (shouldHideChat(location.pathname)) return null;
 
-  useEffect(() => {
-    if (!shopId || !marketingAllowed) return;
-    if (shouldHideChat(location.pathname)) return;
-    if (document.getElementById('shop-chat-script')) return;
+  const params = new URLSearchParams({
+    v: 'V1',
+    api_env: 'production',
+    shop_id: shopId,
+    shop: shopDomain,
+    c: 'black',
+    s: 'icon',
+    p: 'button_right',
+    vp: 'lowest',
+    t: 'chat_with_us',
+    i: 'chat_bubble',
+  });
 
-    const script = document.createElement('script');
-    script.id = 'shop-chat-script';
-    script.async = true;
-    script.src = 'https://cdn.shopify.com/shopifycloud/shop-js/client.js';
-    script.setAttribute('data-shop-id', shopId);
-    document.body.appendChild(script);
+  const src = `https://cdn.shopify.com/shopifycloud/shopify_chat/storefront/shopifyChatV1.js?${params.toString()}`;
 
-    return () => {
-      script.remove();
-    };
-  }, [location.pathname, marketingAllowed, shopId]);
-
-  return null;
+  return (
+    <Script async id="shopify-inbox" src={src} suppressHydrationWarning />
+  );
 }
