@@ -16,6 +16,12 @@ declare global {
     PUBLIC_GA4_ID?: string;
     /** Numeric Shopify shop ID for Shop Chat widget */
     PUBLIC_SHOP_ID?: string;
+    /** Judge.me shop domain (defaults to PUBLIC_STORE_DOMAIN) */
+    JUDGEME_SHOP_DOMAIN?: string;
+    /** Judge.me public token — required to enable widgets */
+    JUDGEME_PUBLIC_TOKEN?: string;
+    /** Judge.me CDN host */
+    JUDGEME_CDN_HOST?: string;
   }
 }
 

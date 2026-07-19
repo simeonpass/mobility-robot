@@ -21,8 +21,10 @@ import {ConsentProvider} from '~/components/ConsentBanner';
 import {VatReliefProvider} from '~/components/vat-relief/VatReliefProvider';
 import {Ga4Tracker} from '~/components/Ga4Tracker';
 import {ShopChat} from '~/components/ShopChat';
+import {JudgemeBootstrap} from '~/components/reviews/Judgeme';
 import {JsonLd} from '~/components/content/PageShell';
 import {sitewideJsonLdGraph} from '~/lib/seo';
+import {getJudgemeConfig} from '~/lib/judgeme';
 import {DEFAULT_SHOP_ID, HTML_LANG} from '~/lib/const';
 
 export type RootLoader = typeof loader;
@@ -82,6 +84,10 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
+    {
+      rel: 'preconnect',
+      href: 'https://cdn.judge.me',
+    },
     {rel: 'icon', type: 'image/png', href: favicon},
     {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
     {rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png'},
@@ -99,6 +105,7 @@ export async function loader(args: Route.LoaderArgs) {
     ga4Id: env.PUBLIC_GA4_ID ?? null,
     shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,
+    judgeme: getJudgemeConfig(env),
     shop: getShopAnalytics({
       storefront,
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
@@ -166,6 +173,7 @@ export default function App() {
         <VatReliefProvider>
           <Ga4Tracker ga4Id={data.ga4Id} />
           <ShopChat shopDomain={data.shopDomain} shopId={data.shopId} />
+          <JudgemeBootstrap config={data.judgeme} />
           <PageLayout {...data}>
             <Outlet />
           </PageLayout>

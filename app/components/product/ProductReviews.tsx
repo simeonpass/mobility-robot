@@ -1,4 +1,8 @@
 import {useMemo, useState} from 'react';
+import {
+  JudgemeReviewWidget,
+  useJudgemeConfig,
+} from '~/components/reviews/Judgeme';
 import {ReviewCard} from '~/components/reviews/ReviewCard';
 import {StarRating} from '~/components/reviews/StarRating';
 import {
@@ -11,19 +15,44 @@ const PAGE_SIZE = 8;
 
 type ProductReviewsProps = {
   productHandle: string;
+  productId?: string;
   productTitle?: string;
 };
 
 export function ProductReviews({
   productHandle,
+  productId,
   productTitle,
 }: ProductReviewsProps) {
+  const judgeme = useJudgemeConfig();
   const reviews = useMemo(
     () => getReviewsForProduct(productHandle),
     [productHandle],
   );
   const summary = summarizeReviews(reviews);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  if (judgeme && productId) {
+    return (
+      <section
+        aria-label={`${productTitle ?? 'Product'} reviews`}
+        className="mt-12 border-t border-border pt-10 md:mt-14 md:pt-12"
+        id="reviews"
+      >
+        <div className="mb-6">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-navy/45">
+            Customer reviews
+          </p>
+          <h2 className="mt-1 font-display text-2xl font-semibold tracking-[-0.02em] text-navy md:text-[1.75rem]">
+            What owners say
+          </h2>
+        </div>
+        <div className="min-h-[12rem]">
+          <JudgemeReviewWidget productId={productId} />
+        </div>
+      </section>
+    );
+  }
 
   if (summary.count === 0) return null;
 

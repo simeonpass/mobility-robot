@@ -1,6 +1,11 @@
 import {Link} from 'react-router';
 import {ReviewCard} from '~/components/reviews/ReviewCard';
 import {StarRating} from '~/components/reviews/StarRating';
+import {
+  JudgemeAllReviewsRating,
+  JudgemeCarousel,
+  useJudgemeConfig,
+} from '~/components/reviews/Judgeme';
 import {SectionIntro} from '~/components/home/SectionIntro';
 import {
   getAllReviews,
@@ -10,12 +15,48 @@ import {
 import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 
 export function ReviewsSection() {
+  const judgeme = useJudgemeConfig();
   const featured = getHomepageFeaturedReviews(6);
   const summary = summarizeReviews(getAllReviews());
+  const m4Path = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`;
+
+  if (judgeme) {
+    return (
+      <section
+        aria-label="Customer reviews"
+        className="xsto-section bg-[#f7f6f4]"
+      >
+        <div className="xsto-container">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <SectionIntro
+              accent="reviews."
+              align="left"
+              description="Verified customer feedback collected through Judge.me."
+              label="Customer stories"
+              title="Verified"
+            />
+            <div className="min-h-[2.5rem] shrink-0 md:pb-1 md:text-right">
+              <JudgemeAllReviewsRating />
+            </div>
+          </div>
+          <div className="mt-8 min-h-[10rem]">
+            <JudgemeCarousel />
+          </div>
+          <p className="mt-8 text-center">
+            <Link
+              className="text-sm font-semibold text-gold underline-offset-4 hover:underline"
+              prefetch="intent"
+              to={m4Path}
+            >
+              Read product reviews →
+            </Link>
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   if (summary.count === 0) return null;
-
-  const m4Path = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`;
 
   return (
     <section aria-label="Customer reviews" className="xsto-section bg-[#f7f6f4]">

@@ -227,6 +227,7 @@ export default function Product() {
               accessoryAddons={accessoryAddons}
               displayName={staticContent?.displayName}
               productHandle={product.handle}
+              productId={product.id}
               productOptions={productOptions}
               selectedVariant={selectedVariant}
               tagline={staticContent?.tagline}
@@ -243,6 +244,7 @@ export default function Product() {
 
         <ProductReviews
           productHandle={product.handle}
+          productId={product.id}
           productTitle={staticContent?.displayName ?? product.title}
         />
 

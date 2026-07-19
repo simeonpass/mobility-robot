@@ -35,6 +35,7 @@ import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
 
 type ProductPurchasePanelProps = {
   productHandle: string;
+  productId?: string;
   title: string;
   displayName?: string;
   tagline?: string;
@@ -45,6 +46,7 @@ type ProductPurchasePanelProps = {
 
 export function ProductPurchasePanel({
   productHandle,
+  productId,
   title,
   displayName,
   tagline,
@@ -207,7 +209,10 @@ export function ProductPurchasePanel({
         <h1 className="font-display text-[1.45rem] font-semibold leading-[1.15] tracking-[-0.03em] text-navy sm:text-[1.65rem] md:text-[1.85rem]">
           {displayName ?? title}
         </h1>
-        <ProductReviewSummary productHandle={productHandle} />
+        <ProductReviewSummary
+          productHandle={productHandle}
+          productId={productId}
+        />
         {tagline ? (
           <p className="mt-1.5 text-sm leading-snug text-slate sm:mt-2">
             {tagline}

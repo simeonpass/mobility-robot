@@ -1,12 +1,33 @@
 import {Link} from 'react-router';
+import {
+  JudgemePreviewBadge,
+  useJudgemeConfig,
+} from '~/components/reviews/Judgeme';
 import {StarRating} from '~/components/reviews/StarRating';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 
 type ProductReviewSummaryProps = {
   productHandle: string;
+  productId?: string;
 };
 
-export function ProductReviewSummary({productHandle}: ProductReviewSummaryProps) {
+export function ProductReviewSummary({
+  productHandle,
+  productId,
+}: ProductReviewSummaryProps) {
+  const judgeme = useJudgemeConfig();
+
+  if (judgeme && productId) {
+    return (
+      <a
+        className="mt-2 inline-flex min-h-[1.5rem] items-center no-underline"
+        href="#reviews"
+      >
+        <JudgemePreviewBadge productId={productId} />
+      </a>
+    );
+  }
+
   const summary = summarizeReviews(getReviewsForProduct(productHandle));
   if (summary.count === 0) return null;
 
