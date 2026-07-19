@@ -1,5 +1,9 @@
-/** Canonical production origin — used for canonical URLs, OG, JSON-LD, sitemap. */
-export const SITE_URL = 'https://xsto.co.uk';
+/**
+ * Canonical production origin — used for canonical URLs, OG, JSON-LD, sitemap.
+ * Public storefront domain is mobilityrobot.co.uk (XSTO brand retained).
+ * xsto.co.uk should 301 to this origin, preserving path.
+ */
+export const SITE_URL = 'https://mobilityrobot.co.uk';
 
 export const SITE_NAME = 'XSTO UK';
 

@@ -170,7 +170,7 @@ export const x12FAQs: ProductFAQ[] = [
   },
 ];
 
-/** M4-focused FAQs for the homepage accordion (mirrors xsto.co.uk). */
+/** M4-focused FAQs for the homepage accordion. */
 export const homepageFAQs: ProductFAQ[] = [
   {
     question: 'Why choose the M4 wheelchair?',

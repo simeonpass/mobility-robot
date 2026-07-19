@@ -7,7 +7,7 @@ import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 export const meta: Route.MetaFunction = () =>
   noindexMeta({
     title: 'Page Not Found',
-    description: 'The page you requested could not be found on xsto.co.uk.',
+    description: 'The page you requested could not be found on mobilityrobot.co.uk.',
     path: '/404',
   });
 

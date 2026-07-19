@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {LEGACY_REDIRECTS, resolveLegacyRedirect} from './redirects';
 
 function requestFor(path: string) {
-  return new Request(`https://xsto.co.uk${path}`);
+  return new Request(`https://mobilityrobot.co.uk${path}`);
 }
 
 describe('resolveLegacyRedirect', () => {

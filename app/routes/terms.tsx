@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = () =>
   pageMeta({
     title: 'Terms & Conditions',
     description:
-      'Terms of use and purchase for xsto.co.uk, operated by Bentech Medical Ltd, official UK XSTO distributor.',
+      'Terms of use and purchase for mobilityrobot.co.uk, operated by Bentech Medical Ltd, official UK XSTO distributor.',
     path: '/terms',
   });
 

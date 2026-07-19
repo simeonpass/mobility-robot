@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = () =>
   pageMeta({
     title: 'Privacy Policy',
     description:
-      'How Bentech Medical Ltd collects, uses and protects your personal data on xsto.co.uk.',
+      'How Bentech Medical Ltd collects, uses and protects your personal data on mobilityrobot.co.uk.',
     path: '/privacy',
   });
 
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
     <PageShell>
       <PageHeader
         breadcrumbs={[{name: 'Home', path: '/'}, {name: 'Privacy'}]}
-        description="Last updated: July 2026. Bentech Medical Ltd is the data controller for xsto.co.uk."
+        description="Last updated: July 2026. Bentech Medical Ltd is the data controller for mobilityrobot.co.uk."
         title="Privacy Policy"
       />
       <ContentWithToc sections={privacySections} />
