@@ -1,10 +1,8 @@
 import {Script} from '@shopify/hydrogen';
-import {createElement} from 'react';
 import {useLocation} from 'react-router';
-import agentPageData from '~/data/shopify-agent-page-data.json';
 import {
   DEFAULT_SHOPIFY_INBOX_EXTERNAL_ID,
-  SHOPIFY_INBOX_BUNDLE_SELECTOR_SRC,
+  SHOPIFY_INBOX_CHAT_LOADER_SRC,
 } from '~/lib/const';
 
 type ShopifyInboxProps = {
@@ -32,8 +30,11 @@ function shouldHideChat(pathname: string): boolean {
 }
 
 /**
- * Shopify Inbox for Hydrogen — mirrors the Online Store theme app embed.
- * Numeric shop_id alone 401s; Inbox authenticates with `data-external-identifier`.
+ * Shopify Inbox for Hydrogen.
+ *
+ * Uses the theme’s legacy inbox-chat-loader (same external-identifier as Liquid).
+ * The newer agent.js bundle needs Online Store `/agent/handoff`, which Hydrogen
+ * does not serve — that path left a blank panel on Oxygen.
  */
 export function ShopChat({shopDomain, inboxExternalId}: ShopifyInboxProps) {
   const location = useLocation();
@@ -42,53 +43,23 @@ export function ShopChat({shopDomain, inboxExternalId}: ShopifyInboxProps) {
   if (!shopDomain || !externalId) return null;
   if (shouldHideChat(location.pathname)) return null;
 
-  const embedJson = JSON.stringify({settings: CHAT_EMBED_SETTINGS});
-
   return (
     <>
       <script
         id="shopify-chat-app-embed-data"
         type="application/json"
-        dangerouslySetInnerHTML={{__html: embedJson}}
-      />
-      <script
-        id="shopify-agent-app-embed-data"
-        type="application/json"
-        dangerouslySetInnerHTML={{__html: embedJson}}
-      />
-      <script
-        id="shopify-agent-page-data"
-        type="application/json"
-        dangerouslySetInnerHTML={{__html: JSON.stringify(agentPageData)}}
-      />
-      <style
         dangerouslySetInnerHTML={{
-          __html: `
-shopify-agent:defined:empty,
-shopify-chat:defined:empty {
-  --shopify-chat-bg-color: #ffffff;
-  --shopify-agent-bg-color: #ffffff;
-  --shopify-chat-text-color: #000000;
-  --shopify-agent-text-color: #000000;
-  --shopify-chat-accent-bg-color: #202a36;
-  --shopify-agent-accent-bg-color: #202a36;
-  --shopify-chat-accent-text-color: #ffffff;
-  --shopify-agent-accent-text-color: #ffffff;
-  --shopify-chat-activator-offset: 20px;
-  --shopify-agent-activator-offset: 20px;
-  --shopify-chat-border-radius: 16px;
-  --shopify-agent-border-radius: 16px;
-}
-`,
+          __html: JSON.stringify({settings: CHAT_EMBED_SETTINGS}),
         }}
       />
+      {/*
+        id must be chat-button-container — inbox-chat-loader.js reads dataset
+        from this script and sets shopId from data-external-identifier.
+      */}
       <Script
-        id="shopify-chat-bundle-selector"
+        id="chat-button-container"
         defer
-        src={SHOPIFY_INBOX_BUNDLE_SELECTOR_SRC}
-        data-chat-src="https://cdn.shopify.com/storefront/web-components/agent.js"
-        data-agent-src="https://cdn.shopify.com/storefront/web-components/agent.js"
-        data-legacy-src="https://cdn.shopify.com/extensions/019f6b79-ce23-71b4-b954-65d455fad0e8/shopify-inbox-1291/assets/inbox-chat-loader.js"
+        src={SHOPIFY_INBOX_CHAT_LOADER_SRC}
         data-horizontal-position="bottom_right"
         data-vertical-position="lowest"
         data-icon="chat_bubble"
@@ -101,8 +72,6 @@ shopify-chat:defined:empty {
         data-external-identifier={externalId}
         suppressHydrationWarning
       />
-      {/* Host element required for the modern agent.js Inbox bundle */}
-      {createElement('shopify-chat')}
     </>
   );
 }

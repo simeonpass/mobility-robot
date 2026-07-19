@@ -25,8 +25,10 @@ Inbox authenticates with `data-external-identifier` (e.g.
    - `PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID=<from theme>`
 4. CSP for Inbox is in `app/entry.server.tsx` (`scriptSrcElem` + messaging/pusher hosts).
 
-## Behaviour
+## How Hydrogen loads Inbox
 
-- Same bundle selector + `agent.js` / legacy loader path as the Online Store theme.
-- Hidden on `/account/*` and `/checkout`.
-- Not gated by the cookie banner.
+Uses the theme’s **legacy** `inbox-chat-loader.js` with
+`data-external-identifier` (same value as Liquid).
+
+The newer `agent.js` bundle also needs Online Store route `/agent/handoff`,
+which Hydrogen/Oxygen does not provide — that left a blank chat panel.

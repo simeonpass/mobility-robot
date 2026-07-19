@@ -87,6 +87,8 @@ export default async function handleRequest(
       // Shopify Inbox
       'https://shopify-chat.shopifyapps.com',
       'https://messaging-api.shopifyapps.com',
+      'https://inbox.shopify.com',
+      'https://storefront-agent-server.shopify.ai',
       'https://pusher.com',
       'https://*.pusher.com',
       'wss://*.pusher.com',
@@ -135,6 +137,7 @@ export default async function handleRequest(
       'https://player.vimeo.com',
       'https://www.openstreetmap.org',
       'https://shopify-chat.shopifyapps.com',
+      'https://inbox.shopify.com',
       'https://*.hcaptcha.com',
       'https://newassets.hcaptcha.com',
       'https://www.hcaptcha.com',
