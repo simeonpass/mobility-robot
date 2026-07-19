@@ -84,11 +84,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     <div className="space-y-1.5 text-sm">
       <div className="flex justify-between">
         <span className="text-muted-foreground">
-          {totals.hasDeposit
-            ? 'Due today'
-            : totals.hasVatRelief
-              ? 'Subtotal (inc. VAT)'
-              : 'Subtotal'}
+          {totals.hasDeposit ? 'Due today' : 'Subtotal (inc. VAT)'}
         </span>
         <span className="font-medium text-foreground">
           {formatProductPrice(totals.subtotalIncVat, currencyCode, {
@@ -169,8 +165,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
         {totals?.hasVatRelief ? (
           <p className="mb-2 text-xs text-muted-foreground">
-            VAT relief applied to eligible items.
-            {!totals.vatReliefApplied ? ' Exact amount confirmed at checkout.' : null}
+            VAT relief applied — no VAT charged when you check out with your
+            declaration email (sign in if you have an account).
           </p>
         ) : null}
 
@@ -180,7 +176,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <span className="text-base font-semibold text-foreground">
             {totals?.hasDeposit
               ? 'Due today'
-              : totals?.hasVatRelief && !totals.vatReliefApplied
+              : totals?.isEstimated
                 ? 'Estimated total'
                 : 'Total'}
           </span>
@@ -190,6 +186,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
               : '—'}
           </span>
         </div>
+        {totals?.isEstimated && !totals.hasDeposit ? (
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            {totals.hasVatRelief
+              ? 'Ex VAT on relief items; VAT confirmed at checkout.'
+              : 'Includes estimated 20% VAT; confirmed at checkout.'}
+          </p>
+        ) : null}
 
         <div className="mt-3 space-y-2">
           {checkoutSection}
@@ -223,14 +226,15 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <div className="rounded-lg border border-border bg-secondary/30 p-3 text-sm">
             <p className="font-medium text-foreground">VAT relief on eligible items</p>
             <p className="mt-1 text-muted-foreground">
-              The exact VAT amount is removed automatically at checkout.
+              You pay the ex-VAT catalog price. At checkout, tax is waived for
+              your declaration email —{' '}
               <Link
-                className="ml-1 font-medium text-foreground hover:underline"
+                className="font-medium text-foreground hover:underline"
                 to="/account/login"
               >
-                Sign in
+                sign in
               </Link>{' '}
-              with the same email if you have an account.
+              with that email if you have an account.
             </p>
           </div>
         ) : (
@@ -262,7 +266,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <span className="text-lg font-semibold text-foreground">
             {totals?.hasDeposit
               ? 'Due today'
-              : totals?.hasVatRelief && !totals?.vatReliefApplied
+              : totals?.isEstimated
                 ? 'Estimated total'
                 : 'Total'}
           </span>
@@ -272,6 +276,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
               : '—'}
           </span>
         </div>
+        {totals?.isEstimated && !totals.hasDeposit ? (
+          <p className="text-xs text-muted-foreground">
+            {totals.hasVatRelief
+              ? 'Ex VAT on relief items; VAT confirmed at checkout.'
+              : 'Includes estimated 20% VAT; confirmed at checkout.'}
+          </p>
+        ) : null}
 
         <p className="text-xs text-muted-foreground">
           Secure Shopify checkout · Full UK warranty &amp; support

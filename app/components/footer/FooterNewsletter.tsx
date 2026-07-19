@@ -20,8 +20,8 @@ export function FooterNewsletter() {
   }, [result?.success]);
 
   return (
-    <div className="border-b border-border bg-secondary/60 py-4 md:py-5">
-      <div className="xsto-container flex flex-col items-center justify-between gap-3 sm:flex-row">
+    <div className="border-b border-border bg-secondary/60 py-3 md:py-3.5">
+      <div className="xsto-container flex flex-col items-center justify-between gap-2 sm:flex-row">
         <div className="text-center sm:text-left">
           <p className="text-base font-semibold text-foreground md:text-lg">
             Stay Updated
@@ -33,7 +33,7 @@ export function FooterNewsletter() {
 
         <fetcher.Form
           action="/api/newsletter"
-          className="flex w-full max-w-md flex-col gap-2 sm:w-auto sm:flex-row"
+          className="flex w-full max-w-md flex-col gap-1.5 sm:w-auto sm:flex-row"
           method="post"
         >
           <label className="sr-only" htmlFor="footer-newsletter-email">
@@ -41,7 +41,7 @@ export function FooterNewsletter() {
           </label>
           <input
             autoComplete="email"
-            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground"
+            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
             id="footer-newsletter-email"
             name="email"
             placeholder="Your email"
@@ -50,7 +50,7 @@ export function FooterNewsletter() {
             type="email"
           />
           <button
-            className="btn-accent shrink-0 px-5 py-2.5 text-sm"
+            className="btn-accent shrink-0 px-5 py-2 text-sm"
             disabled={isSubmitting}
             type="submit"
           >
@@ -61,7 +61,7 @@ export function FooterNewsletter() {
 
       {result?.success ? (
         <p
-          className="xsto-container mt-3 text-center text-xs text-muted-foreground sm:text-right"
+          className="xsto-container mt-2 text-center text-xs text-muted-foreground sm:text-right"
           role="status"
         >
           {result.message}
@@ -70,7 +70,7 @@ export function FooterNewsletter() {
 
       {result?.error ? (
         <p
-          className="xsto-container mt-3 text-center text-xs text-destructive sm:text-right"
+          className="xsto-container mt-2 text-center text-xs text-destructive sm:text-right"
           role="alert"
         >
           {result.error}

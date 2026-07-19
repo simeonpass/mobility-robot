@@ -4,11 +4,11 @@
  * Requires a custom app with `write_customers` scope and env:
  *   SHOPIFY_ADMIN_API_ACCESS_TOKEN
  *
- * Note: On UK stores with VAT-inclusive pricing, marking a customer tax-exempt
- * may not always reduce checkout totals without Shopify Plus cart transforms,
- * dynamic tax-inclusive pricing, or a dedicated VAT app. This records the
- * customer for merchant review. Checkout uses the VAT Relief Shopify Function
- * for exact per-line VAT removal (see extensions/vat-relief-discount).
+ * Catalog prices are tax-exclusive. VAT relief is applied by marking the
+ * declarant `taxExempt: true` so Shopify does not add 20% VAT — payable =
+ * catalog (ex VAT). The product discount function must apply **£0** (or no
+ * candidates); combining taxExempt with a catalog/6 discount under-charges
+ * (~£833 on a £1000 item).
  */
 
 export type VatExemptionCustomerInput = {
@@ -125,6 +125,8 @@ function buildCustomerInput(input: VatExemptionCustomerInput) {
     email: input.email.trim().toLowerCase(),
     firstName,
     lastName,
+    // Tax-exclusive catalog: no product discount — taxExempt waives VAT so
+    // payable = catalog. Customer must use this email at checkout (ideally signed in).
     taxExempt: true,
     tags: ['vat-relief', 'vat-relief-declared'],
     note,

@@ -7,10 +7,10 @@ import {
 const vatReliefAttributes = [{key: 'VAT Relief', value: 'Yes'}];
 
 function makeCart({
-  lineAmount = '3995.00',
-  unitPrice = '3995.00',
-  subtotalAmount = '3995.00',
-  totalAmount = '3995.00',
+  lineAmount = '3329.17',
+  unitPrice = '3329.17',
+  subtotalAmount = '3329.17',
+  totalAmount = '3329.17',
   discountAllocations = [],
 }: {
   lineAmount?: string;
@@ -41,29 +41,119 @@ function makeCart({
   };
 }
 
-describe('vat-relief cart totals', () => {
-  it('estimates ex-VAT total before Shopify applies the automatic discount', () => {
+describe('vat-relief cart totals (tax-exclusive catalog)', () => {
+  it('estimates payable = catalog (ex VAT) when relief is declared', () => {
     const cart = makeCart();
     const totals = getCartTotals(cart);
 
+    expect(isVatReliefDiscountApplied(cart)).toBe(true);
     expect(totals).toEqual({
       subtotalIncVat: 3995,
       vatRemoved: 665.83,
       total: 3329.17,
+      vatReliefApplied: true,
+      hasVatRelief: true,
+      hasDeposit: false,
+      isEstimated: true,
+    });
+  });
+
+  it('£1000 ex VAT with relief → estimated payable £1000 (not £833)', () => {
+    const cart = makeCart({
+      lineAmount: '1000',
+      unitPrice: '1000',
+      subtotalAmount: '1000',
+      totalAmount: '1000',
+    });
+
+    expect(getCartTotals(cart)).toEqual({
+      subtotalIncVat: 1200,
+      vatRemoved: 200,
+      total: 1000,
+      vatReliefApplied: true,
+      hasVatRelief: true,
+      hasDeposit: false,
+      isEstimated: true,
+    });
+  });
+
+  it('£1000 ex VAT without relief → estimated payable £1200', () => {
+    const cart = {
+      lines: {
+        nodes: [
+          {
+            quantity: 1,
+            attributes: [],
+            merchandise: {price: {amount: '1000'}},
+            cost: {
+              totalAmount: {amount: '1000'},
+              amountPerQuantity: {amount: '1000'},
+            },
+          },
+        ],
+      },
+      cost: {
+        subtotalAmount: {amount: '1000', currencyCode: 'GBP'},
+        totalAmount: {amount: '1000', currencyCode: 'GBP'},
+        totalTaxAmount: {amount: '0', currencyCode: 'GBP'},
+      },
+      discountAllocations: [],
+    };
+
+    expect(getCartTotals(cart)).toEqual({
+      subtotalIncVat: 1200,
+      vatRemoved: 0,
+      total: 1200,
       vatReliefApplied: false,
-      hasVatRelief: true,
+      hasVatRelief: false,
       hasDeposit: false,
+      isEstimated: true,
     });
   });
 
-  it('does not subtract VAT twice when the discount is already in cart totals', () => {
+  it('uses Shopify cart total when tax is already calculated', () => {
+    const cart = {
+      lines: {
+        nodes: [
+          {
+            quantity: 1,
+            attributes: [],
+            merchandise: {price: {amount: '1000'}},
+            cost: {
+              totalAmount: {amount: '1000'},
+              amountPerQuantity: {amount: '1000'},
+            },
+          },
+        ],
+      },
+      cost: {
+        subtotalAmount: {amount: '1000', currencyCode: 'GBP'},
+        totalAmount: {amount: '1200', currencyCode: 'GBP'},
+        totalTaxAmount: {amount: '200', currencyCode: 'GBP'},
+      },
+      discountAllocations: [],
+    };
+
+    expect(getCartTotals(cart)).toEqual({
+      subtotalIncVat: 1200,
+      vatRemoved: 0,
+      total: 1200,
+      vatReliefApplied: false,
+      hasVatRelief: false,
+      hasDeposit: false,
+      isEstimated: false,
+    });
+  });
+
+  it('ignores legacy product discounts on cart — estimate stays catalog net', () => {
     const cart = makeCart({
-      subtotalAmount: '3329.17',
-      totalAmount: '3329.17',
-      discountAllocations: [{discountedAmount: {amount: '665.83'}}],
+      lineAmount: '2774.31',
+      unitPrice: '3329.17',
+      subtotalAmount: '2774.31',
+      totalAmount: '2774.31',
+      discountAllocations: [{discountedAmount: {amount: '554.86'}}],
     });
 
-    expect(isVatReliefDiscountApplied(cart)).toBe(true);
     expect(getCartTotals(cart)).toEqual({
       subtotalIncVat: 3995,
       vatRemoved: 665.83,
@@ -71,25 +161,41 @@ describe('vat-relief cart totals', () => {
       vatReliefApplied: true,
       hasVatRelief: true,
       hasDeposit: false,
+      isEstimated: true,
     });
   });
 
-  it('uses catalog price for VAT even when line cost is already discounted', () => {
-    const cart = makeCart({
-      lineAmount: '3329.17',
-      unitPrice: '3995.00',
-      subtotalAmount: '3329.17',
-      totalAmount: '3329.17',
-      discountAllocations: [{discountedAmount: {amount: '665.83'}}],
-    });
+  it('estimates inc-VAT total when no VAT relief is claimed', () => {
+    const cart = {
+      lines: {
+        nodes: [
+          {
+            quantity: 1,
+            attributes: [],
+            merchandise: {price: {amount: '3329.17'}},
+            cost: {
+              totalAmount: {amount: '3329.17'},
+              amountPerQuantity: {amount: '3329.17'},
+            },
+          },
+        ],
+      },
+      cost: {
+        subtotalAmount: {amount: '3329.17', currencyCode: 'GBP'},
+        totalAmount: {amount: '3329.17', currencyCode: 'GBP'},
+      },
+      discountAllocations: [],
+    };
 
+    expect(isVatReliefDiscountApplied(cart)).toBe(false);
     expect(getCartTotals(cart)).toEqual({
       subtotalIncVat: 3995,
-      vatRemoved: 665.83,
-      total: 3329.17,
-      vatReliefApplied: true,
-      hasVatRelief: true,
+      vatRemoved: 0,
+      total: 3995,
+      vatReliefApplied: false,
+      hasVatRelief: false,
       hasDeposit: false,
+      isEstimated: true,
     });
   });
 
@@ -126,13 +232,59 @@ describe('vat-relief cart totals', () => {
       discountAllocations: [],
     };
 
+    // Deposit charge is 10% of tax-exclusive catalog; show estimated inc VAT due today.
     expect(getCartTotals(cart)).toEqual({
-      subtotalIncVat: 1599.5,
+      subtotalIncVat: 1919.4,
       vatRemoved: 0,
-      total: 1599.5,
+      total: 1919.4,
       vatReliefApplied: false,
       hasVatRelief: false,
       hasDeposit: true,
+      isEstimated: true,
+    });
+  });
+
+  it('deposit + VAT relief uses ex-VAT checkout charge', () => {
+    const cart = {
+      lines: {
+        nodes: [
+          {
+            quantity: 1,
+            attributes: vatReliefAttributes,
+            merchandise: {price: {amount: '15995.0'}},
+            cost: {
+              totalAmount: {amount: '15995.0'},
+              amountPerQuantity: {amount: '15995.0'},
+            },
+            sellingPlanAllocation: {
+              checkoutChargeAmount: {amount: '1599.5', currencyCode: 'GBP'},
+              remainingBalanceChargeAmount: {
+                amount: '14395.5',
+                currencyCode: 'GBP',
+              },
+              sellingPlan: {
+                id: 'gid://shopify/SellingPlan/1',
+                name: 'Pay 10% deposit',
+              },
+            },
+          },
+        ],
+      },
+      cost: {
+        subtotalAmount: {amount: '15995.0', currencyCode: 'GBP'},
+        totalAmount: {amount: '15995.0', currencyCode: 'GBP'},
+      },
+      discountAllocations: [],
+    };
+
+    expect(getCartTotals(cart)).toEqual({
+      subtotalIncVat: 1919.4,
+      vatRemoved: 319.9,
+      total: 1599.5,
+      vatReliefApplied: true,
+      hasVatRelief: true,
+      hasDeposit: true,
+      isEstimated: true,
     });
   });
 });

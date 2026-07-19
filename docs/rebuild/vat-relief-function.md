@@ -1,16 +1,48 @@
-# VAT relief — exact checkout discount (Shopify Function)
+# VAT relief — tax-exempt checkout (tax-exclusive catalog)
 
-HMRC VAT relief removes **exactly** 20% VAT from inc-VAT prices (`gross ÷ 1.2`).
-Percentage discount codes cannot do this on Shopify — we use a **Product Discount Function** instead.
+**Catalog basis:** Shopify product prices are **tax-exclusive** (ex VAT). Storefront
+display shows ex VAT (large) and inc VAT = catalog × 1.2 (small).
 
-## How it works
+## How checkout math works
 
-1. Customer ticks **“I'm eligible for HMRC VAT relief”** on the product page and completes the inline declaration.
+| Scenario | Payable |
+|----------|---------|
+| No relief | catalog × 1.2 (Shopify adds 20% VAT) |
+| With relief | catalog (customer `taxExempt: true` — no VAT) |
+
+Example: catalog **£1,000** ex VAT → no relief **£1,200** → with relief **£1,000**.
+
+### Why not a product discount?
+
+A fixed product discount of `catalog / 6` only works if Shopify still adds 20% tax
+on the reduced base (`(net − net/6) × 1.2 = net`). On this store, tax is **not**
+reliably added after that discount in real checkout, so customers were charged
+~**83.3%** of catalog (e.g. **£833** on a **£1,000** item).
+
+Combining `taxExempt` **and** a `/6` discount double-relieves the same way.
+
+**Correct combo for tax-exclusive catalog:**
+
+1. Product discount function applies **£0** (returns no candidates).
+2. Declarant customer is marked **`taxExempt: true`** via Admin API.
+3. Cart UI estimates payable = catalog (ex VAT) for relief lines.
+
+Customer-facing “VAT savings” copy uses catalog × 0.2 (true saving vs paying inc VAT).
+
+## How it works (UX)
+
+1. Customer ticks **“I'm eligible for HMRC VAT relief”** and completes the declaration.
 2. Cart line attributes include `VAT Relief: Yes` plus declaration details.
-3. At checkout, the **VAT Relief (exact)** automatic app discount runs the function (`cart.lines.discounts.generate.run`).
-4. The function applies a **fixed-amount** discount per line equal to the exact VAT portion.
+3. `/api/vat-relief` and cart sync upsert the customer with `taxExempt: true` (+ tags/notes).
+4. At checkout, Shopify charges **no VAT** for that tax-exempt customer → pay catalog.
+5. The automatic app discount remains installed but the function is a no-op.
 
-Example: £3,995 inc VAT → **£665.83** discount → customer pays **£3,329.17**.
+## Admin tax settings (required)
+
+1. **Settings → Taxes** — product prices **exclude** tax (tax-exclusive catalog).
+2. UK VAT **20%** configured for non-exempt customers.
+3. Keep **Charge tax** enabled on wheelchair products.
+4. Declarants **must** be `taxExempt` (set by the website Admin upsert).
 
 ## One-time setup in Shopify
 
@@ -24,94 +56,34 @@ cd ../..
 shopify app deploy --config shopify.app.xsto-vat-relief.toml
 ```
 
-Build from the **repo root** (not only inside the extension folder). The function uses the current Discount API (`cart.lines.discounts.generate.run`), not the deprecated product-discount API.
+Build from the **repo root** (not only inside the extension folder). Redeploy after
+this change so the live function stops applying catalog/6 discounts.
 
-### 2. Create the automatic discount (API — required for this app)
+### 2. Automatic discount (optional keep)
 
-**XSTO VAT Relief** is function-only (no admin UI). Do **not** use **Discounts → Create discount → VAT Relief (exact)** — that opens a blank app page.
-
-Instead, create the discount once via Admin API.
-
-**Option A — XSTO VAT Relief app credentials** (required — `store execute` uses the wrong app):
-
-1. Open [XSTO VAT Relief in Dev Dashboard](https://dev.shopify.com/dashboard/156117887/apps/399371436033)
-2. **Settings → Credentials** → copy **Client secret** (Client ID is `d0589c6e7756aea84becc989391f687d`)
-3. Add to `.env`:
-
-```env
-XSTO_VAT_RELIEF_CLIENT_ID=d0589c6e7756aea84becc989391f687d
-XSTO_VAT_RELIEF_CLIENT_SECRET=shpss_...
-PUBLIC_STORE_DOMAIN=f7vjea-hq.myshopify.com
-```
-
-4. Run:
-
-```bash
-node scripts/create-vat-relief-discount-with-app.mjs
-```
-
-**Option B — Shopify CLI** (only works if Bentech is a Partner dev store):
-
-```bash
-npx shopify app execute --config shopify.app.xsto-vat-relief.toml \
-  --store f7vjea-hq.myshopify.com \
-  --query-file extensions/vat-relief-discount/create-automatic-discount.graphql
-```
-
-Do **not** use `shopify store execute` — it authenticates as a generic CLI app, not XSTO VAT Relief.
-
-**Option C — custom Admin app token** (needs `write_discounts` in `.env`):
-
-```bash
-node scripts/create-vat-relief-discount.mjs
-```
-
-Add to `.env` if missing:
-
-```env
-PUBLIC_STORE_DOMAIN=f7vjea-hq.myshopify.com
-SHOPIFY_ADMIN_API_ACCESS_TOKEN=shpat_...   # from Settings → Develop apps
-```
-
-**Option C — Shopify GraphiQL App** in Admin:
-
-1. Install [Shopify GraphiQL app](https://apps.shopify.com/shopify-graphiql-app) (or use your custom app token)
-2. Run:
-
-```graphql
-mutation {
-  discountAutomaticAppCreate(
-    automaticAppDiscount: {
-      title: "VAT Relief (exact)"
-      functionHandle: "vat-relief-discount"
-      discountClasses: [PRODUCT]
-      startsAt: "2026-07-18T00:00:00"
-    }
-  ) {
-    automaticAppDiscount { discountId title status }
-    userErrors { field message }
-  }
-}
-```
-
-3. In **Discounts**, confirm **VAT Relief (exact)** is **Active**
-4. **Deactivate** the old **VAT Exemption** automatic discount
+The **VAT Relief (exact)** automatic discount can stay **Active**; the function now
+returns no product discount candidates. Or deactivate it — taxExempt alone is enough.
 
 ### 3. Verify
 
-1. Add a wheelchair with VAT relief declaration to cart
-2. Proceed to Shopify checkout
-3. Confirm line shows **“VAT relief”** discount with exact amount (e.g. −£665.83 on £3,995)
+1. Add a wheelchair with VAT relief declaration (registers tax-exempt customer).
+2. Proceed to Shopify checkout **with that email** (sign in if possible).
+3. Confirm **no VAT** / tax line waived and **total ≈ catalog (ex VAT)**.
+4. Without relief: checkout total ≈ catalog × 1.2.
+5. Confirm there is **no** “VAT relief” product discount of ~catalog/6.
 
-## Admin API (optional)
+## Admin API
 
-The `/api/vat-relief` route still marks customers as **tax exempt** in Shopify Admin for your records. The checkout price change comes from the function, not the tax-exempt flag alone.
+`/api/vat-relief` and cart-line sync call `upsertTaxExemptCustomer` with
+`taxExempt: true`. Requires `SHOPIFY_ADMIN_API_ACCESS_TOKEN` with `write_customers`.
 
 ## Files
 
 | Path | Purpose |
 |------|---------|
-| `extensions/vat-relief-discount/` | Shopify Function (exact fixed discount) |
-| `app/lib/vat-math.ts` | Shared VAT calculation (storefront display) |
+| `extensions/vat-relief-discount/` | Shopify Function (no-op product discount) |
+| `app/lib/shopify-admin-vat.ts` | Sets customer `taxExempt: true` |
+| `app/lib/vat-math.ts` | Shared VAT calculation (display; discount = 0) |
 | `app/lib/vat-relief.ts` | Cart estimated totals |
 | `app/components/product/ProductPurchasePanel.tsx` | Inline declaration UX |
+| `docs/rebuild/preorder-deposit.md` | Deposits are 10% of tax-exclusive catalog |

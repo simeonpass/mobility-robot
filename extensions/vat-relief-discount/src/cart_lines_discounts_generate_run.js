@@ -1,12 +1,4 @@
-// @ts-check
-import {
-  DiscountClass,
-  ProductDiscountSelectionStrategy,
-} from '../generated/api';
-import {
-  lineQualifiesForVatRelief,
-  vatPortionFromGross,
-} from './vat-math.js';
+import {DiscountClass} from '../generated/api';
 
 /**
  * @typedef {import('../generated/api').Input} RunInput
@@ -14,6 +6,10 @@ import {
  */
 
 /**
+ * Tax-exclusive catalog: do **not** apply a product discount for VAT relief.
+ * Declarants are `taxExempt` so Shopify charges no VAT and payable = catalog.
+ * Returning operations: [] keeps the automatic discount installed but inert.
+ *
  * @param {RunInput} input
  * @returns {CartLinesDiscountsGenerateRunResult}
  */
@@ -26,42 +22,6 @@ export function cartLinesDiscountsGenerateRun(input) {
     return {operations: []};
   }
 
-  /** @type {NonNullable<CartLinesDiscountsGenerateRunResult['operations'][number]['productDiscountsAdd']>['candidates']} */
-  const candidates = [];
-
-  for (const line of input.cart.lines) {
-    if (!lineQualifiesForVatRelief(line)) continue;
-
-    const gross = Number(line.cost?.subtotalAmount?.amount ?? 0);
-    if (gross <= 0) continue;
-
-    const vatAmount = vatPortionFromGross(gross);
-    if (vatAmount <= 0) continue;
-
-    candidates.push({
-      message: 'VAT relief',
-      targets: [{cartLine: {id: line.id}}],
-      value: {
-        fixedAmount: {
-          amount: vatAmount.toFixed(2),
-          appliesToEachItem: false,
-        },
-      },
-    });
-  }
-
-  if (!candidates.length) {
-    return {operations: []};
-  }
-
-  return {
-    operations: [
-      {
-        productDiscountsAdd: {
-          candidates,
-          selectionStrategy: ProductDiscountSelectionStrategy.All,
-        },
-      },
-    ],
-  };
+  // Intentionally no candidates — relief is via taxExempt, not a line discount.
+  return {operations: []};
 }

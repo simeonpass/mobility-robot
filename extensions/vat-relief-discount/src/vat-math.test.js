@@ -1,19 +1,23 @@
 import {describe, expect, it} from 'vitest';
 import {
-  exVatFromGross,
-  roundMoney,
-  vatPortionFromGross,
+  exVatFromCatalog,
+  vatReliefCheckoutDiscountFromCatalog,
 } from './vat-math.js';
 
-describe('vatPortionFromGross', () => {
-  it('removes exactly 20% VAT from a gross price', () => {
-    expect(vatPortionFromGross(3995)).toBe(665.83);
-    expect(exVatFromGross(3995)).toBe(3329.17);
-    expect(roundMoney(3995 - vatPortionFromGross(3995))).toBe(3329.17);
+describe('vatReliefCheckoutDiscountFromCatalog', () => {
+  it('always returns 0 — taxExempt handles relief on exclusive catalogs', () => {
+    expect(vatReliefCheckoutDiscountFromCatalog(3329.17)).toBe(0);
+    expect(vatReliefCheckoutDiscountFromCatalog(6658.34)).toBe(0);
+    expect(vatReliefCheckoutDiscountFromCatalog(1995)).toBe(0);
+    expect(vatReliefCheckoutDiscountFromCatalog(1000)).toBe(0);
+    expect(exVatFromCatalog(1000)).toBe(1000);
   });
 
-  it('handles multi-quantity line totals', () => {
-    expect(vatPortionFromGross(7990)).toBe(1331.67);
-    expect(exVatFromGross(7990)).toBe(6658.33);
+  it('documents why catalog/6 must not be used when tax is not added after discount', () => {
+    const net = 1000;
+    const legacyDiscount = Math.round((net - net / 1.2) * 100) / 100;
+    expect(legacyDiscount).toBe(166.67);
+    // If Shopify does not add 20% tax after that discount → £833.33 (user bug).
+    expect(Math.round((net - legacyDiscount) * 100) / 100).toBe(833.33);
   });
 });

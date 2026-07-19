@@ -8,7 +8,7 @@ import {
   resolveAccessoryCompatibility,
   type AccessoryChairSlot,
 } from '~/lib/accessories';
-import {formatExVatPrice} from '~/lib/homepage-data';
+import {formatExVatPrice, formatIncVatPrice} from '~/lib/homepage-data';
 
 export type AccessoryListProduct = {
   id: string;
@@ -163,10 +163,10 @@ function FilterChip({
 
 function AccessoryCard({product}: {product: AccessoryListProduct}) {
   const slots = resolveAccessoryCompatibility(product);
-  const exVat = formatExVatPrice(
-    product.priceRange.minVariantPrice.amount,
-    product.priceRange.minVariantPrice.currencyCode,
-  );
+  const amount = product.priceRange.minVariantPrice.amount;
+  const currency = product.priceRange.minVariantPrice.currencyCode;
+  const exVat = formatExVatPrice(amount, currency);
+  const incVat = formatIncVatPrice(amount, currency);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-medium">
@@ -195,7 +195,11 @@ function AccessoryCard({product}: {product: AccessoryListProduct}) {
           <h3 className="mt-1.5 text-base font-semibold leading-snug text-foreground">
             {product.title}
           </h3>
-          <p className="mt-2 text-lg font-semibold text-gold">From {exVat}</p>
+          <p className="mt-2 text-lg font-semibold text-gold">
+            From {exVat}{' '}
+            <span className="text-sm font-medium text-gold/90">ex VAT</span>
+          </p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{incVat} inc VAT</p>
           <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-foreground transition-colors group-hover:text-gold">
             View details
             <ArrowUpRight

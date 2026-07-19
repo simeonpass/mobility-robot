@@ -1,6 +1,7 @@
 /**
  * Flagship models shown on the homepage grid and comparison table.
- * Ordered cheapest → most expensive (ex-VAT marketing / display prices).
+ * Ordered cheapest → most expensive.
+ * Shopify catalog prices are tax-exclusive (ex VAT); UI derives inc VAT as × 1.2.
  */
 export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-ezgo2',
@@ -426,9 +427,9 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
 ];
 
 /**
- * Homepage "From" price overrides (ex-VAT marketing amounts).
- * Used when Shopify Admin still has a different live price — cart/checkout
- * continue to use the Storefront API amount until Admin is updated.
+ * Homepage "From" price overrides (ex-VAT / catalog amounts).
+ * Catalog is tax-exclusive — overrides match Admin ex-VAT prices.
+ * Cart/checkout still use the Storefront API amount.
  */
 export const HOMEPAGE_DISPLAY_PRICE_EX_VAT: Partial<
   Record<HomepageFlagshipHandle, {amount: number; currencyCode: string}>
@@ -436,32 +437,56 @@ export const HOMEPAGE_DISPLAY_PRICE_EX_VAT: Partial<
   'xsto-ezgo2': {amount: 1995, currencyCode: 'GBP'},
 };
 
-export function formatExVatPrice(amount: string, currencyCode: string): string {
-  const exVat = Number(amount) / 1.2;
+function formatGbpWhole(amount: number, currencyCode: string): string {
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency: currencyCode,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(exVat);
+  }).format(amount);
 }
 
-/** Homepage grid "From" price — prefers display overrides over Shopify. */
+/** Catalog is tax-exclusive — ex VAT display is the amount as-is. */
+export function formatExVatPrice(amount: string, currencyCode: string): string {
+  return formatGbpWhole(Number(amount), currencyCode);
+}
+
+/** Inc VAT = catalog × 1.2. */
+export function formatIncVatPrice(amount: string, currencyCode: string): string {
+  return formatGbpWhole(Number(amount) * 1.2, currencyCode);
+}
+
+export type HomepageFromPrices = {
+  exVat: string;
+  incVat: string;
+};
+
+/** Homepage grid prices — ex VAT primary; prefers display overrides over Shopify. */
+export function getHomepageFromPrices(
+  slot: HomepageFlagshipHandle | undefined,
+  amount: string,
+  currencyCode: string,
+): HomepageFromPrices {
+  const override = slot ? HOMEPAGE_DISPLAY_PRICE_EX_VAT[slot] : undefined;
+  if (override) {
+    return {
+      exVat: formatGbpWhole(override.amount, override.currencyCode),
+      incVat: formatGbpWhole(override.amount * 1.2, override.currencyCode),
+    };
+  }
+  return {
+    exVat: formatExVatPrice(amount, currencyCode),
+    incVat: formatIncVatPrice(amount, currencyCode),
+  };
+}
+
+/** @deprecated Prefer getHomepageFromPrices — returns ex-VAT only. */
 export function formatHomepageFromPrice(
   slot: HomepageFlagshipHandle | undefined,
   amount: string,
   currencyCode: string,
 ): string {
-  const override = slot ? HOMEPAGE_DISPLAY_PRICE_EX_VAT[slot] : undefined;
-  if (override) {
-    return new Intl.NumberFormat('en-GB', {
-      style: 'currency',
-      currency: override.currencyCode,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(override.amount);
-  }
-  return formatExVatPrice(amount, currencyCode);
+  return getHomepageFromPrices(slot, amount, currencyCode).exVat;
 }
 
 export function youtubeEmbedUrl(

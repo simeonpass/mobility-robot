@@ -74,7 +74,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
         >
           <img
             alt={HEADER_LOGO.dark.alt}
-            className="h-16 w-auto max-w-[min(100%,13rem)] overflow-visible rounded-none bg-transparent object-contain object-left sm:h-[4.25rem] sm:max-w-[15.5rem] md:h-[4.75rem] md:max-w-none lg:h-20"
+            className="h-16 w-auto max-w-[min(100%,14rem)] overflow-visible rounded-none bg-transparent object-contain object-left sm:h-[4.25rem] sm:max-w-[17rem] md:h-[4.75rem] md:max-w-none lg:h-20"
             decoding="async"
             fetchPriority="high"
             height={HEADER_LOGO_DISPLAY_HEIGHT}

@@ -1,5 +1,9 @@
 import {formatProductPrice} from '~/lib/product-pricing';
-import {exVatFromGross, roundMoney} from '~/lib/vat-math';
+import {
+  exVatFromCatalog,
+  incVatFromCatalog,
+  roundMoney,
+} from '~/lib/vat-math';
 
 type MoneyLike = {
   amount: string;
@@ -140,13 +144,17 @@ export function buildPurchaseOptions({
   return options;
 }
 
+/**
+ * Selling-plan checkout charges are % of tax-exclusive catalog.
+ * Relief path: show catalog deposit (ex VAT). Otherwise show inc VAT (× 1.2).
+ */
 function formatChargeDisplay(
   money: MoneyLike,
   vatReliefEnabled: boolean,
 ): string {
   const amount = vatReliefEnabled
-    ? exVatFromGross(money.amount)
-    : Number(money.amount);
+    ? exVatFromCatalog(money.amount)
+    : incVatFromCatalog(money.amount);
   return formatProductPrice(amount, money.currencyCode ?? 'GBP', {
     fractionDigits: 2,
   });

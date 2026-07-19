@@ -8,11 +8,12 @@ import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackRemoveFromCart} from '~/lib/analytics';
 import {isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
 import {toCartAttributeInputs} from '~/lib/vat-relief-attributes';
-import {getLineCatalogGross} from '~/lib/vat-relief';
+import {getLineCatalogNet} from '~/lib/vat-relief';
 import {
   getLineAmountDueToday,
   resolveLineSellingPlanAllocation,
 } from '~/lib/selling-plans';
+import {exVatFromCatalog, incVatFromCatalog} from '~/lib/vat-math';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
@@ -41,13 +42,21 @@ export function CartLineItem({
   const isAside = layout === 'aside';
   const isDepositLine = Boolean(sellingPlanAllocation?.sellingPlan?.id);
   const depositPlanName = sellingPlanAllocation?.sellingPlan?.name;
-  const dueTodayAmount = getLineAmountDueToday(line);
+  const dueTodayNet = getLineAmountDueToday(line);
+  const catalogNet = getLineCatalogNet({quantity, merchandise, cost, attributes});
+  // Catalog is tax-exclusive: relief → show net; otherwise estimate payable inc VAT.
+  const linePayable = vatRelief
+    ? exVatFromCatalog(isDepositLine ? dueTodayNet : catalogNet)
+    : incVatFromCatalog(isDepositLine ? dueTodayNet : catalogNet);
+  const unitDisplay = vatRelief
+    ? exVatFromCatalog(merchandise.price.amount)
+    : incVatFromCatalog(merchandise.price.amount);
   const lineTotalMoney = {
-    amount: String(
-      isDepositLine
-        ? dueTodayAmount
-        : getLineCatalogGross({quantity, merchandise, cost, attributes}),
-    ),
+    amount: String(linePayable),
+    currencyCode: merchandise.price.currencyCode,
+  };
+  const unitMoney = {
+    amount: String(unitDisplay),
     currencyCode: merchandise.price.currencyCode,
   };
 
@@ -103,13 +112,18 @@ export function CartLineItem({
                 ) : null}
                 {!isDepositLine ? (
                   <div className="mt-0.5 text-xs text-muted-foreground">
-                    <Money data={merchandise.price} /> each
+                    <Money data={unitMoney} /> each
+                    {vatRelief ? ' ex VAT' : ' inc VAT'}
                   </div>
                 ) : null}
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  {isDepositLine ? 'Due today' : 'Total'}
+                  {isDepositLine
+                    ? 'Due today'
+                    : vatRelief
+                      ? 'Total ex VAT'
+                      : 'Total inc VAT'}
                 </p>
                 <div className="mt-0.5 text-base font-semibold text-foreground">
                   <Money data={lineTotalMoney} />
@@ -151,11 +165,21 @@ export function CartLineItem({
                     (
                     <Money
                       data={{
-                        amount:
-                          sellingPlanAllocation.checkoutChargeAmount.amount,
+                        amount: String(
+                          vatRelief
+                            ? exVatFromCatalog(
+                                sellingPlanAllocation.checkoutChargeAmount
+                                  .amount,
+                              )
+                            : incVatFromCatalog(
+                                sellingPlanAllocation.checkoutChargeAmount
+                                  .amount,
+                              ),
+                        ),
                         currencyCode: merchandise.price.currencyCode,
                       }}
                     />
+                    {vatRelief ? ' ex VAT' : ' inc VAT'}
                     )
                   </>
                 ) : null}
@@ -166,9 +190,17 @@ export function CartLineItem({
                     (
                     <Money
                       data={{
-                        amount:
-                          sellingPlanAllocation.remainingBalanceChargeAmount
-                            .amount,
+                        amount: String(
+                          vatRelief
+                            ? exVatFromCatalog(
+                                sellingPlanAllocation
+                                  .remainingBalanceChargeAmount.amount,
+                              )
+                            : incVatFromCatalog(
+                                sellingPlanAllocation
+                                  .remainingBalanceChargeAmount.amount,
+                              ),
+                        ),
                         currencyCode: merchandise.price.currencyCode,
                       }}
                     />
