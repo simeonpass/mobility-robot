@@ -11,7 +11,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
-import favicon from '~/assets/favicon.svg';
+import favicon from '~/assets/favicon.png';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
@@ -82,7 +82,9 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'icon', type: 'image/png', href: favicon},
+    {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+    {rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png'},
   ];
 }
 
