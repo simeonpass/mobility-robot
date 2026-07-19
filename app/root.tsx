@@ -23,7 +23,7 @@ import {Ga4Tracker} from '~/components/Ga4Tracker';
 import {ShopChat} from '~/components/ShopChat';
 import {JsonLd} from '~/components/content/PageShell';
 import {sitewideJsonLdGraph} from '~/lib/seo';
-import {HTML_LANG} from '~/lib/const';
+import {DEFAULT_SHOP_ID, HTML_LANG} from '~/lib/const';
 
 export type RootLoader = typeof loader;
 
@@ -95,7 +95,7 @@ export async function loader(args: Route.LoaderArgs) {
   return {
     ...deferredData,
     ga4Id: env.PUBLIC_GA4_ID ?? null,
-    shopId: env.PUBLIC_SHOP_ID ?? null,
+    shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
     shop: getShopAnalytics({
       storefront,
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
