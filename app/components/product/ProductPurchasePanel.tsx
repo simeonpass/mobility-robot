@@ -14,6 +14,7 @@ import {
 import {ProductCheckoutTrust} from '~/components/product/ProductCheckoutTrust';
 import {ProductDeliveryEta} from '~/components/product/ProductDeliveryEta';
 import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions';
+import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import {getDeliveryInfo} from '~/lib/product-delivery';
@@ -206,6 +207,7 @@ export function ProductPurchasePanel({
         <h1 className="font-display text-[1.45rem] font-semibold leading-[1.15] tracking-[-0.03em] text-navy sm:text-[1.65rem] md:text-[1.85rem]">
           {displayName ?? title}
         </h1>
+        <ProductReviewSummary productHandle={productHandle} />
         {tagline ? (
           <p className="mt-1.5 text-sm leading-snug text-slate sm:mt-2">
             {tagline}

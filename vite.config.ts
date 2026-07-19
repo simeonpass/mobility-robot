@@ -40,10 +40,14 @@ export default defineConfig({
     },
   },
   server: {
+    // Dual-stack (::) so both http://localhost:3000 (::1) and 127.0.0.1 work on macOS.
+    host: '::',
+    port: 3000,
+    strictPort: true,
     allowedHosts: ['.tryhydrogen.dev'],
     // Huge local demo MP4s (~685MB) — serve on demand, don't watch for HMR.
     watch: {
-      ignored: ['**/public/videos/**'],
+      ignored: ['**/public/videos/**', '**/tmp/**'],
     },
   },
 });

@@ -1,6 +1,6 @@
 export function SafetyDisclaimer() {
   return (
-    <p className="text-xs leading-snug text-white/65">
+    <p className="text-[0.6875rem] leading-snug text-white/55">
       *Safe use of XSTO mobility products requires exercising judgement and
       common sense at all times. Users are responsible for operating their
       device safely and assessing terrain, gradients, and conditions before

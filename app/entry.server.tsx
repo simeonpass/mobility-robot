@@ -57,6 +57,7 @@ export default async function handleRequest(
       "'self'",
       'https://www.googletagmanager.com',
       'https://cdn.shopify.com',
+      'https://cdn.judge.me',
     ],
     connectSrc: [
       'https://nominatim.openstreetmap.org',
@@ -64,6 +65,9 @@ export default async function handleRequest(
       'https://region1.google-analytics.com',
       'https://cdn.shopify.com',
       'https://shop.app',
+      'https://cdn.judge.me',
+      'https://judge.me',
+      'https://*.judge.me',
     ],
     imgSrc: [
       "'self'",
@@ -74,10 +78,18 @@ export default async function handleRequest(
       'https://tile.openstreetmap.org',
       'https://*.tile.openstreetmap.org',
       'https://pub-b6593f4aaa3143c4b018c61c953c56f7.r2.dev',
+      'https://cdn.judge.me',
+      'https://judge.me',
+      'https://*.judge.me',
     ],
     mediaSrc: ["'self'", 'https://cdn.shopify.com', 'blob:'],
-    fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-    styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    fontSrc: ["'self'", 'https://fonts.gstatic.com', 'https://cdn.judge.me'],
+    styleSrc: [
+      "'self'",
+      "'unsafe-inline'",
+      'https://fonts.googleapis.com',
+      'https://cdn.judge.me',
+    ],
     frameSrc: [
       "'self'",
       'https://www.youtube.com',

@@ -433,7 +433,7 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
 export const HOMEPAGE_DISPLAY_PRICE_EX_VAT: Partial<
   Record<HomepageFlagshipHandle, {amount: number; currencyCode: string}>
 > = {
-  'xsto-ezgo2': {amount: 1995, currencyCode: 'GBP'},
+  'xsto-ezgo2': {amount: 2000, currencyCode: 'GBP'},
 };
 
 export function formatExVatPrice(amount: string, currencyCode: string): string {
