@@ -14,6 +14,7 @@ import {ProductPurchasePanel} from '~/components/product/ProductPurchasePanel';
 import {ProductSpecTabs} from '~/components/product/ProductSpecTabs';
 import {ProductVideoHero} from '~/components/product/ProductVideoHero';
 import {RelatedProducts} from '~/components/product/RelatedProducts';
+import {ProductAppDownload} from '~/components/product/ProductAppDownload';
 import {
   ACCESSORIES_COLLECTION_HANDLE,
   isAccessoryCompatibleWithChair,
@@ -186,7 +187,7 @@ export default function Product() {
   });
 
   return (
-    <div className="product-page product-page--has-mobile-atc bg-background pb-14 md:pb-20">
+    <div className="product-page product-page--has-mobile-atc bg-background pb-0">
       <Ga4ProductView
         currencyCode={selectedVariant?.price.currencyCode ?? 'GBP'}
         id={selectedVariant?.id ?? product.id}
@@ -227,6 +228,8 @@ export default function Product() {
           products={relatedProducts}
         />
       </div>
+
+      <ProductAppDownload />
 
       <Analytics.ProductView
         data={{

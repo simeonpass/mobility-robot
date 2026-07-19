@@ -64,17 +64,17 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
 
   return (
     <header className={headerClass} style={headerStyle}>
-      <div className="xsto-container flex h-[4.5rem] items-center gap-1.5 sm:gap-3 lg:gap-5">
+      <div className="xsto-container flex h-20 items-center gap-0.5 sm:h-[5.25rem] sm:gap-3 lg:h-[5.5rem] lg:gap-5">
         <NavLink
           aria-label="XSTO UK home"
-          className="site-header-logo min-w-0 shrink"
+          className="site-header-logo min-w-0 shrink-0"
           end
           prefetch="intent"
           to="/"
         >
           <img
             alt={HEADER_LOGO.dark.alt}
-            className="h-12 w-auto max-w-[min(100%,11rem)] rounded-none object-contain object-left sm:h-14 sm:max-w-[14rem] md:h-16 md:max-w-none"
+            className="h-16 w-auto max-w-[min(100%,13rem)] overflow-visible rounded-none bg-transparent object-contain object-left sm:h-[4.25rem] sm:max-w-[15.5rem] md:h-[4.75rem] md:max-w-none lg:h-20"
             decoding="async"
             fetchPriority="high"
             height={HEADER_LOGO_DISPLAY_HEIGHT}
@@ -353,7 +353,7 @@ function HeaderCtas({
   return (
     <nav
       aria-label="Account and cart"
-      className="ml-auto flex shrink-0 items-center gap-0 sm:gap-1 md:gap-2"
+      className="ml-auto flex shrink-0 items-center gap-0 sm:gap-0.5 md:gap-1.5"
       role="navigation"
     >
       <NavLink
@@ -372,7 +372,7 @@ function HeaderCtas({
       </NavLink>
       <HeaderMenuMobileToggle />
       <NavLink
-        className="site-header-link hidden sm:inline-flex"
+        className="site-header-link site-header-link--quiet hidden sm:inline-flex"
         prefetch="intent"
         to="/account"
       >

@@ -1,6 +1,6 @@
 export function DistributorDisclaimer() {
   return (
-    <div className="mt-4 space-y-3 border-t border-white/15 pt-4 text-xs leading-relaxed text-white/65">
+    <div className="mt-3 space-y-2 border-t border-white/15 pt-3 text-xs leading-snug text-white/65">
       <p className="font-medium text-white/80">
         We are not XSTO International — we are the official UK distributor.
       </p>
