@@ -49,20 +49,7 @@ describe('buildPurchaseOptions', () => {
     expect(options[1]).toMatchObject({
       kind: 'deposit',
       sellingPlanId: 'gid://shopify/SellingPlan/1',
-      // Non-relief: show estimated inc-VAT deposit (catalog charge × 1.2).
-      depositDisplay: '£479.40',
-    });
-  });
-
-  it('shows ex-VAT deposit when VAT relief is enabled', () => {
-    const options = buildPurchaseOptions({
-      allocations: [depositAllocation],
-      vatReliefEnabled: true,
-    });
-    expect(options[1]).toMatchObject({
-      kind: 'deposit',
       depositDisplay: '£399.50',
-      remainingDisplay: '£3,595.50',
     });
   });
 

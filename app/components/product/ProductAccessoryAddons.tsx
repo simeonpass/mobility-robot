@@ -166,7 +166,6 @@ export function ProductAccessoryAddons({
                   <span className="block text-[0.8125rem] font-semibold tabular-nums text-navy">
                     {exVat}
                   </span>
-                  <span className="block text-[0.65rem] text-slate">ex VAT</span>
                   <Link
                     className="mt-0.5 block text-[0.65rem] font-medium text-slate underline-offset-2 hover:text-navy hover:underline"
                     onClick={(event) => event.stopPropagation()}

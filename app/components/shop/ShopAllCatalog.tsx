@@ -8,8 +8,7 @@ import {
 } from '~/lib/accessories';
 import {
   formatExVatPrice,
-  formatIncVatPrice,
-  getHomepageFromPrices,
+  formatHomepageFromPrice,
   getHomepageProductSlot,
   HOMEPAGE_PRODUCT_BADGES,
   type HomepageFlagshipHandle,
@@ -124,7 +123,7 @@ function ChairCard({
     | undefined;
   const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
   const preorder = isForcedPreorder(product.handle);
-  const prices = getHomepageFromPrices(
+  const exVatPrice = formatHomepageFromPrice(
     slot,
     product.priceRange.minVariantPrice.amount,
     product.priceRange.minVariantPrice.currencyCode,
@@ -171,11 +170,7 @@ function ChairCard({
             {meta?.shortName ?? product.title}
           </h3>
           <p className="mt-1.5 text-lg font-semibold text-gold sm:mt-2 sm:text-xl">
-            From {prices.exVat}{' '}
-            <span className="text-sm font-medium text-gold/90">ex VAT</span>
-          </p>
-          <p className="mt-0.5 text-sm text-muted-foreground">
-            {prices.incVat} inc VAT
+            From {exVatPrice}
           </p>
           <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-gold sm:mt-5 sm:min-h-0">
             {meta?.exploreLabel ?? 'View details'}
@@ -193,10 +188,10 @@ function ChairCard({
 
 function AccessoryCard({product}: {product: ShopAllProduct}) {
   const slots = resolveAccessoryCompatibility(product);
-  const amount = product.priceRange.minVariantPrice.amount;
-  const currency = product.priceRange.minVariantPrice.currencyCode;
-  const exVat = formatExVatPrice(amount, currency);
-  const incVat = formatIncVatPrice(amount, currency);
+  const exVat = formatExVatPrice(
+    product.priceRange.minVariantPrice.amount,
+    product.priceRange.minVariantPrice.currencyCode,
+  );
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-medium">
@@ -225,11 +220,7 @@ function AccessoryCard({product}: {product: ShopAllProduct}) {
           <h3 className="mt-1.5 text-base font-semibold leading-snug text-foreground">
             {product.title}
           </h3>
-          <p className="mt-2 text-lg font-semibold text-gold">
-            From {exVat}{' '}
-            <span className="text-sm font-medium text-gold/90">ex VAT</span>
-          </p>
-          <p className="mt-0.5 text-sm text-muted-foreground">{incVat} inc VAT</p>
+          <p className="mt-2 text-lg font-semibold text-gold">From {exVat}</p>
           <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-foreground transition-colors group-hover:text-gold">
             View details
             <ArrowUpRight

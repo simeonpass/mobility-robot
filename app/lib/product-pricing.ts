@@ -1,9 +1,5 @@
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
-import {
-  exVatFromCatalog,
-  incVatFromCatalog,
-  vatFromCatalog,
-} from '~/lib/vat-math';
+import {exVatFromGross, roundMoney, vatPortionFromGross} from '~/lib/vat-math';
 
 export function formatProductPrice(
   amount: number,
@@ -19,31 +15,24 @@ export function formatProductPrice(
   }).format(amount);
 }
 
-/** Inc VAT = catalog × 1.2 (catalog is tax-exclusive). */
 export function getIncVatDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
-  return formatProductPrice(
-    incVatFromCatalog(price.amount),
-    price.currencyCode,
-    {fractionDigits: 2},
-  );
+  return formatProductPrice(Number(price.amount), price.currencyCode);
 }
 
-/** Ex VAT = catalog amount (tax-exclusive). */
 export function getExVatDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
   return formatProductPrice(
-    exVatFromCatalog(price.amount),
+    exVatFromGross(price.amount),
     price.currencyCode,
     {fractionDigits: 2},
   );
 }
 
-/** VAT savings vs paying inc VAT (= catalog × 0.2). */
 export function getVatSavingsDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
   return formatProductPrice(
-    vatFromCatalog(price.amount),
+    vatPortionFromGross(price.amount),
     price.currencyCode,
     {fractionDigits: 2},
   );
@@ -51,8 +40,7 @@ export function getVatSavingsDisplay(price?: MoneyV2 | null) {
 
 export function getKlarnaInstallmentDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
-  // Klarna marketing uses the VAT-relief (ex VAT / catalog) price.
-  const monthly = exVatFromCatalog(price.amount) / 12;
+  const monthly = exVatFromGross(price.amount) / 12;
   return formatProductPrice(monthly, price.currencyCode, {fractionDigits: 2});
 }
 

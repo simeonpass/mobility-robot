@@ -178,15 +178,15 @@ export function ProductPurchasePanel({
   const stickyPrice =
     paymentChoice === 'deposit' && depositOption
       ? depositOption.depositDisplay
-      : exVatDisplay ?? incVatDisplay;
+      : productVatReliefEnabled && exVatDisplay
+        ? exVatDisplay
+        : incVatDisplay;
   const stickyPriceHint =
     paymentChoice === 'deposit'
       ? '10% deposit due today'
-      : exVatDisplay
-        ? productVatReliefEnabled
-          ? 'VAT relief price'
-          : 'ex VAT'
-        : 'inc VAT';
+      : productVatReliefEnabled
+        ? 'VAT relief price'
+        : 'inc. VAT';
 
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
@@ -219,6 +219,7 @@ export function ProductPurchasePanel({
           exVatDisplay={exVatDisplay}
           incVatDisplay={incVatDisplay}
           vatReliefEnabled={productVatReliefEnabled}
+          vatSavings={vatSavings}
         />
       </section>
 
@@ -341,38 +342,30 @@ function ProductPriceDisplay({
   incVatDisplay,
   exVatDisplay,
   compareAtPrice,
+  vatSavings,
   vatReliefEnabled,
 }: {
   incVatDisplay: string | null;
   exVatDisplay: string | null;
   compareAtPrice?: MoneyV2 | null;
+  vatSavings: string | null;
   vatReliefEnabled: boolean;
 }) {
-  if (!incVatDisplay && !exVatDisplay) return null;
+  if (!incVatDisplay) return null;
 
-  // Lead with ex-VAT (VAT relief) price; secondary is catalog inc-VAT only once.
-  const primaryPrice = exVatDisplay ?? incVatDisplay;
+  const primaryPrice = vatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
 
   return (
     <div aria-label="Price" role="group">
       <div className="flex items-baseline justify-between gap-3">
-        <div className="min-w-0">
-          <p
-            className={[
-              'font-display text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.04em] sm:text-[2rem] md:text-[2.15rem]',
-              exVatDisplay ? 'text-vat-price' : 'text-navy',
-            ].join(' ')}
-          >
-            {primaryPrice}
-          </p>
-          {exVatDisplay ? (
-            <p className="mt-1.5 text-sm font-medium text-vat-price">
-              {vatReliefEnabled ? 'VAT relief price' : 'ex VAT'}
-            </p>
-          ) : (
-            <p className="mt-1.5 text-sm leading-snug text-slate">inc VAT</p>
-          )}
-        </div>
+        <p
+          className={[
+            'font-display text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.04em] sm:text-[2rem] md:text-[2.15rem]',
+            vatReliefEnabled ? 'text-vat-price' : 'text-navy',
+          ].join(' ')}
+        >
+          {primaryPrice}
+        </p>
         {compareAtPrice ? (
           <p className="text-right text-[0.65rem] uppercase tracking-[0.12em] text-slate">
             <span className="block">RRP</span>
@@ -383,12 +376,37 @@ function ProductPriceDisplay({
         ) : null}
       </div>
 
-      {exVatDisplay && incVatDisplay ? (
-        <p className="mt-1.5 text-sm leading-snug text-slate">
-          <span className="tabular-nums">{incVatDisplay}</span>
-          <span> inc VAT</span>
-        </p>
-      ) : null}
+      <p className="mt-1.5 text-sm leading-snug text-slate">
+        {vatReliefEnabled ? (
+          <>
+            <span className="font-medium text-vat-price">VAT relief price</span>
+            <span className="mx-1.5 text-border" aria-hidden>
+              ·
+            </span>
+            <span className="line-through tabular-nums">{incVatDisplay}</span>
+            <span> inc. VAT</span>
+          </>
+        ) : (
+          <>
+            <span className="tabular-nums text-navy/80">{incVatDisplay}</span>
+            <span> inc. VAT</span>
+            {exVatDisplay ? (
+              <>
+                <span className="mx-1.5 text-border" aria-hidden>
+                  ·
+                </span>
+                <span className="font-semibold tabular-nums text-vat-price">
+                  {exVatDisplay}
+                </span>
+                <span className="text-vat-price"> with VAT relief</span>
+                {vatSavings ? (
+                  <span className="text-vat-price"> (save {vatSavings})</span>
+                ) : null}
+              </>
+            ) : null}
+          </>
+        )}
+      </p>
     </div>
   );
 }

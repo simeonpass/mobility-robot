@@ -4,12 +4,7 @@ import {
   isDepositCartLine,
   type CartLineSellingPlanSource,
 } from '~/lib/selling-plans';
-import {
-  exVatFromCatalog,
-  incVatFromCatalog,
-  roundMoney,
-  vatFromCatalog,
-} from '~/lib/vat-math';
+import {exVatFromGross, roundMoney, vatPortionFromGross} from '~/lib/vat-math';
 
 type MoneyLike = {
   amount?: string | null;
@@ -32,26 +27,18 @@ export type VatReliefCart = {
   cost?: {
     subtotalAmount?: MoneyLike;
     totalAmount?: MoneyLike;
-    totalTaxAmount?: MoneyLike;
   } | null;
   discountAllocations?: Array<{discountedAmount?: MoneyLike}> | null;
 } | null;
 
 export type CartTotals = {
-  /** Payable without VAT relief (catalog × 1.2), or deposit due today. */
   subtotalIncVat: number;
-  /** Customer-facing VAT savings on relief lines (catalog × 0.2). */
   vatRemoved: number;
   total: number;
   vatReliefApplied: boolean;
   hasVatRelief: boolean;
   /** True when any line has a deposit / pre-order selling plan. */
   hasDeposit: boolean;
-  /**
-   * True when Hydrogen cart has no tax yet and we estimated inc VAT (× 1.2)
-   * for non-relief lines. False when using Shopify `cost.totalAmount` with tax.
-   */
-  isEstimated: boolean;
 };
 
 export function cartHasVatReliefLines(cart: VatReliefCart): boolean {
@@ -66,10 +53,8 @@ export function cartHasDepositLines(cart: VatReliefCart): boolean {
   );
 }
 
-/**
- * Tax-exclusive catalog line total — never use discounted cart line cost for VAT math.
- */
-export function getLineCatalogNet(line: VatReliefCartLine): number {
+/** Inc-VAT catalog line total — never use discounted cart line cost for VAT math. */
+export function getLineCatalogGross(line: VatReliefCartLine): number {
   const quantity = line.quantity ?? 1;
   const unitPrice = Number(
     line.merchandise?.price?.amount ??
@@ -82,45 +67,34 @@ export function getLineCatalogNet(line: VatReliefCartLine): number {
   return roundMoney(unitPrice * quantity);
 }
 
-/** @deprecated Use getLineCatalogNet — catalog is tax-exclusive. */
-export function getLineCatalogGross(line: VatReliefCartLine): number {
-  return getLineCatalogNet(line);
-}
-
 export function getVatReliefLineTotals(cart: VatReliefCart) {
-  let netTotal = 0;
+  let grossTotal = 0;
   let vatRemoved = 0;
 
   for (const line of cart?.lines?.nodes ?? []) {
     if (!lineHasVatRelief(line.attributes)) continue;
-    const net = getLineCatalogNet(line);
-    if (net <= 0) continue;
-    netTotal += net;
-    vatRemoved += vatFromCatalog(net);
+    const gross = getLineCatalogGross(line);
+    if (gross <= 0) continue;
+    grossTotal += gross;
+    vatRemoved += vatPortionFromGross(gross);
   }
 
+  vatRemoved = roundMoney(vatRemoved);
+
   return {
-    netTotal: roundMoney(netTotal),
-    vatRemoved: roundMoney(vatRemoved),
-    /** Product discount is always 0 — relief is via taxExempt. */
-    checkoutDiscount: 0,
-    /** Inc-VAT comparison subtotal for relief lines only. */
-    grossTotal: roundMoney(incVatFromCatalog(netTotal)),
+    grossTotal: roundMoney(grossTotal),
+    vatRemoved,
+    netTotal: roundMoney(grossTotal - vatRemoved),
   };
 }
 
-export function sumLineNetSubtotal(cart: VatReliefCart): number {
+export function sumLineGrossSubtotal(cart: VatReliefCart): number {
   return roundMoney(
     (cart?.lines?.nodes ?? []).reduce(
-      (sum, line) => sum + getLineCatalogNet(line),
+      (sum, line) => sum + getLineCatalogGross(line),
       0,
     ),
   );
-}
-
-/** @deprecated Use sumLineNetSubtotal. */
-export function sumLineGrossSubtotal(cart: VatReliefCart): number {
-  return sumLineNetSubtotal(cart);
 }
 
 export function getCartDiscountTotal(cart: VatReliefCart): number {
@@ -133,17 +107,42 @@ export function getCartDiscountTotal(cart: VatReliefCart): number {
   );
 }
 
-/**
- * True when the cart has VAT relief declarations. Payable estimate is already
- * catalog (ex VAT); checkout applies taxExempt (no product discount).
- */
+function amountsMatch(a: number, b: number): boolean {
+  return Math.abs(a - b) < 0.02;
+}
+
+/** True when Shopify has already applied the VAT relief discount to cart totals. */
 export function isVatReliefDiscountApplied(cart: VatReliefCart): boolean {
-  return cartHasVatReliefLines(cart);
+  const {vatRemoved, netTotal} = getVatReliefLineTotals(cart);
+  if (vatRemoved <= 0) return false;
+
+  const discountTotal = getCartDiscountTotal(cart);
+  if (discountTotal > 0 && amountsMatch(discountTotal, vatRemoved)) {
+    return true;
+  }
+
+  const apiSubtotal = Number(cart?.cost?.subtotalAmount?.amount ?? 0);
+  const apiTotal = Number(cart?.cost?.totalAmount?.amount ?? 0);
+  const lineSubtotal = sumLineGrossSubtotal(cart);
+
+  if (apiTotal > 0 && amountsMatch(apiTotal, netTotal)) return true;
+  if (apiTotal > 0 && apiTotal < lineSubtotal && amountsMatch(apiTotal, netTotal)) {
+    return true;
+  }
+  if (
+    apiSubtotal > 0 &&
+    lineSubtotal > apiSubtotal &&
+    amountsMatch(apiSubtotal, netTotal)
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
  * Pay-now totals. Deposit lines use Shopify `checkoutChargeAmount` (cart `cost`
- * stays at full catalog for PRE_ORDER plans). Charges are % of tax-exclusive catalog.
+ * stays at full catalog for PRE_ORDER plans).
  */
 function getDepositCartTotals(cart: VatReliefCart): CartTotals {
   const lines = cart?.lines?.nodes ?? [];
@@ -153,19 +152,15 @@ function getDepositCartTotals(cart: VatReliefCart): CartTotals {
   let hasVatRelief = false;
 
   for (const line of lines) {
-    const dueNet = getLineAmountDueToday(line as CartLineSellingPlanSource);
+    const dueGross = getLineAmountDueToday(line as CartLineSellingPlanSource);
+    subtotalIncVat += dueGross;
     if (lineHasVatRelief(line.attributes)) {
       hasVatRelief = true;
-      const vat = vatFromCatalog(dueNet);
+      const vat = vatPortionFromGross(dueGross);
       vatRemoved += vat;
-      // Relief: pay ex-VAT deposit (catalog %).
-      total += exVatFromCatalog(dueNet);
-      subtotalIncVat += incVatFromCatalog(dueNet);
+      total += roundMoney(exVatFromGross(String(dueGross)));
     } else {
-      // Non-relief: estimate due today inc VAT (Shopify adds tax at checkout).
-      const dueInc = incVatFromCatalog(dueNet);
-      subtotalIncVat += dueInc;
-      total += dueInc;
+      total += dueGross;
     }
   }
 
@@ -173,25 +168,10 @@ function getDepositCartTotals(cart: VatReliefCart): CartTotals {
     subtotalIncVat: roundMoney(subtotalIncVat),
     vatRemoved: roundMoney(vatRemoved),
     total: roundMoney(total),
-    vatReliefApplied: hasVatRelief,
+    vatReliefApplied: false,
     hasVatRelief,
     hasDeposit: true,
-    // Deposit charges are catalog-net; we always estimate tax for display.
-    isEstimated: true,
   };
-}
-
-/**
- * Prefer Shopify cart totals when Storefront has already calculated tax.
- * Hydrogen often returns totalTaxAmount = 0 until checkout — then we estimate.
- */
-function getShopifyTaxInclusiveTotal(cart: VatReliefCart): number | null {
-  const apiTax = Number(cart?.cost?.totalTaxAmount?.amount ?? 0);
-  const apiTotal = Number(cart?.cost?.totalAmount?.amount ?? 0);
-  if (apiTax > 0 && apiTotal > 0) {
-    return roundMoney(apiTotal);
-  }
-  return null;
 }
 
 export function getCartTotals(cart: VatReliefCart): CartTotals | null {
@@ -204,57 +184,33 @@ export function getCartTotals(cart: VatReliefCart): CartTotals | null {
   }
 
   const hasVatRelief = cartHasVatReliefLines(cart);
-  const {vatRemoved} = getVatReliefLineTotals(cart);
-  const catalogNet = sumLineNetSubtotal(cart);
-  const estimatedIncVat = roundMoney(incVatFromCatalog(catalogNet));
+  const {vatRemoved, netTotal} = getVatReliefLineTotals(cart);
+  const subtotalIncVat = sumLineGrossSubtotal(cart);
+  const apiTotal = Number(cart?.cost?.totalAmount?.amount ?? 0);
   const vatReliefApplied = isVatReliefDiscountApplied(cart);
 
   if (!hasVatRelief || vatRemoved <= 0) {
-    const shopifyTotal = getShopifyTaxInclusiveTotal(cart);
-    if (shopifyTotal != null) {
-      return {
-        subtotalIncVat: shopifyTotal,
-        vatRemoved: 0,
-        total: shopifyTotal,
-        vatReliefApplied: false,
-        hasVatRelief: false,
-        hasDeposit: false,
-        isEstimated: false,
-      };
-    }
-    // Tax-exclusive cart API omits VAT until checkout — estimate payable × 1.2.
     return {
-      subtotalIncVat: estimatedIncVat,
+      subtotalIncVat,
       vatRemoved: 0,
-      total: estimatedIncVat,
+      total: apiTotal || subtotalIncVat,
       vatReliefApplied: false,
       hasVatRelief: false,
       hasDeposit: false,
-      isEstimated: true,
     };
   }
 
-  // Mixed / relief cart: never trust API total (may still include VAT before
-  // taxExempt applies at checkout). Relief → net; other lines → × 1.2.
-  let estimatedTotal = 0;
-  for (const line of lines) {
-    const net = getLineCatalogNet(line);
-    if (lineHasVatRelief(line.attributes)) {
-      estimatedTotal += exVatFromCatalog(net);
-    } else {
-      estimatedTotal += incVatFromCatalog(net);
-    }
-  }
-  estimatedTotal = roundMoney(estimatedTotal);
+  const total = vatReliefApplied
+    ? apiTotal || netTotal
+    : roundMoney(subtotalIncVat - vatRemoved);
 
   return {
-    subtotalIncVat: estimatedIncVat,
+    subtotalIncVat,
     vatRemoved,
-    total: estimatedTotal,
+    total,
     vatReliefApplied,
     hasVatRelief,
     hasDeposit: false,
-    isEstimated: true,
   };
 }
 

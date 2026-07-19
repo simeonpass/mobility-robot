@@ -47,7 +47,7 @@ export const vatReliefSections: ContentSection[] = [
     paragraphs: [
       'You no longer need to register a VAT-exempt account and wait for approval before you shop. Eligibility is declared when you buy.',
       'On an eligible product, open the HMRC VAT relief panel, confirm you qualify, and enter your name, email, address and nature of condition. The same declaration can be completed or edited from the cart.',
-      'Your declaration is stored with the order line and registered against your email as tax-exempt. At Shopify checkout you pay the ex-VAT catalog price (for example, £3,329.17 ex VAT instead of £3,995 inc. VAT) — use the same email, and sign in if you have an account.',
+      'Your declaration is stored with the order line. At Shopify checkout, our VAT relief function removes exactly 20% VAT from qualifying lines (for example, £3,995 inc. VAT becomes £3,329.17).',
     ],
   },
   {
@@ -69,7 +69,7 @@ export const vatReliefSections: ContentSection[] = [
     title: 'Which products qualify',
     paragraphs: [
       'VAT relief on this storefront is available on XSTO powered wheelchairs. Accessories sold separately are not claimed through the same relief toggle.',
-      'Product pages show the ex-VAT (VAT relief) price as the main figure, with the including-VAT catalog price underneath. Complete a declaration to pay the ex-VAT amount at checkout.',
+      'Prices on product pages default to including VAT. When you complete a declaration, we show the ex-VAT price and the VAT you save.',
     ],
   },
   {

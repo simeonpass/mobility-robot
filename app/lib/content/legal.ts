@@ -80,7 +80,7 @@ export const termsSections: ContentSection[] = [
     id: 'products',
     title: '2. Products & pricing',
     paragraphs: [
-      'Product descriptions, specifications and images are provided for guidance. Catalog prices exclude VAT; the including-VAT amount is shown for comparison. Eligible customers may claim VAT relief at checkout. We reserve the right to correct pricing errors before accepting an order.',
+      'Product descriptions, specifications and images are provided for guidance. Prices include VAT unless VAT relief is applied at checkout. We reserve the right to correct pricing errors before accepting an order.',
       'Pre-order products require a deposit as stated on the product page. Estimated delivery dates are indicative and not guaranteed.',
     ],
   },

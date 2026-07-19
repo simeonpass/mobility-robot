@@ -84,7 +84,11 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     <div className="space-y-1.5 text-sm">
       <div className="flex justify-between">
         <span className="text-muted-foreground">
-          {totals.hasDeposit ? 'Due today' : 'Subtotal (inc. VAT)'}
+          {totals.hasDeposit
+            ? 'Due today'
+            : totals.hasVatRelief
+              ? 'Subtotal (inc. VAT)'
+              : 'Subtotal'}
         </span>
         <span className="font-medium text-foreground">
           {formatProductPrice(totals.subtotalIncVat, currencyCode, {
@@ -165,9 +169,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
         {totals?.hasVatRelief ? (
           <p className="mb-2 text-xs text-muted-foreground">
-            VAT relief applied — checkout total is the ex-VAT catalog price only
-            when you are signed in with your declaration email (tax-exempt
-            account). Guest checkout still charges VAT.
+            VAT relief applied to eligible items.
+            {!totals.vatReliefApplied ? ' Exact amount confirmed at checkout.' : null}
           </p>
         ) : null}
 
@@ -177,7 +180,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <span className="text-base font-semibold text-foreground">
             {totals?.hasDeposit
               ? 'Due today'
-              : totals?.isEstimated
+              : totals?.hasVatRelief && !totals.vatReliefApplied
                 ? 'Estimated total'
                 : 'Total'}
           </span>
@@ -187,13 +190,6 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
               : '—'}
           </span>
         </div>
-        {totals?.isEstimated && !totals.hasDeposit ? (
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            {totals.hasVatRelief
-              ? 'Ex VAT on relief items; VAT confirmed at checkout.'
-              : 'Includes estimated 20% VAT; confirmed at checkout.'}
-          </p>
-        ) : null}
 
         <div className="mt-3 space-y-2">
           {checkoutSection}
@@ -227,15 +223,14 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <div className="rounded-lg border border-border bg-secondary/30 p-3 text-sm">
             <p className="font-medium text-foreground">VAT relief on eligible items</p>
             <p className="mt-1 text-muted-foreground">
-              You pay the ex-VAT catalog price. Sign in at checkout with your
-              declaration email —{' '}
+              The exact VAT amount is removed automatically at checkout.
               <Link
-                className="font-medium text-foreground hover:underline"
+                className="ml-1 font-medium text-foreground hover:underline"
                 to="/account/login"
               >
-                sign in
+                Sign in
               </Link>{' '}
-              — so Shopify can waive VAT (guest checkout still includes 20% VAT).
+              with the same email if you have an account.
             </p>
           </div>
         ) : (
@@ -267,7 +262,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <span className="text-lg font-semibold text-foreground">
             {totals?.hasDeposit
               ? 'Due today'
-              : totals?.isEstimated
+              : totals?.hasVatRelief && !totals?.vatReliefApplied
                 ? 'Estimated total'
                 : 'Total'}
           </span>
@@ -277,13 +272,6 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
               : '—'}
           </span>
         </div>
-        {totals?.isEstimated && !totals.hasDeposit ? (
-          <p className="text-xs text-muted-foreground">
-            {totals.hasVatRelief
-              ? 'Ex VAT on relief items; VAT confirmed at checkout.'
-              : 'Includes estimated 20% VAT; confirmed at checkout.'}
-          </p>
-        ) : null}
 
         <p className="text-xs text-muted-foreground">
           Secure Shopify checkout · Full UK warranty &amp; support

@@ -120,11 +120,10 @@ Replace the product GIDs with the real IDs from Admin.
 
 ## 3. VAT relief + deposits
 
-- Catalog (and therefore the 10% selling-plan charge) is **tax-exclusive**
 - Cart line **VAT Relief** attributes are unchanged when adding with a selling plan
-- Storefront “due today” with relief = checkout charge (ex VAT); without relief ≈ charge × 1.2
-- The VAT Relief function still runs on checkout lines (discount = charge base / 6 when tax is added after discounts)
-- **Verify** a deposit + VAT relief order end-to-end: deposit due today should match 10% of the ex-VAT catalog
+- Shopify’s checkout charge % is usually calculated on the **catalog / pre-discount** price; the VAT Relief function still runs on checkout lines
+- **Verify** a deposit + VAT relief order end-to-end: deposit amount and remaining balance should look right after VAT removal
+- If the deposit % looks like it was taken on the inc-VAT price while the customer claimed relief, adjust merchant process or pricing policy (document for ops)
 
 ## 4. Klarna / BNPL
 

@@ -1,9 +1,5 @@
 import {formatProductPrice} from '~/lib/product-pricing';
-import {
-  exVatFromCatalog,
-  incVatFromCatalog,
-  vatFromCatalog,
-} from '~/lib/vat-math';
+import {exVatFromGross, vatPortionFromGross} from '~/lib/vat-math';
 import {getHomepageProductSlot} from '~/lib/homepage-data';
 
 const VAT_RELIEF_KEY = 'VAT Relief';
@@ -24,10 +20,6 @@ export function lineHasVatRelief(
   );
 }
 
-/**
- * Line/catalog amounts are tax-exclusive.
- * VAT relief → show catalog (ex VAT); otherwise show inc VAT (× 1.2).
- */
 export function getLineDisplayAmount({
   amount,
   currencyCode,
@@ -37,36 +29,26 @@ export function getLineDisplayAmount({
   currencyCode: string;
   vatRelief: boolean;
 }) {
-  const displayAmount = vatRelief
-    ? exVatFromCatalog(amount)
-    : incVatFromCatalog(amount);
-  return formatProductPrice(displayAmount, currencyCode, {
-    fractionDigits: 2,
-  });
+  const numeric = Number(amount);
+  const displayAmount = vatRelief ? exVatFromGross(amount) : numeric;
+  return formatProductPrice(
+    displayAmount,
+    currencyCode,
+    vatRelief ? {fractionDigits: 2} : undefined,
+  );
 }
 
-/** Customer-facing VAT savings on relief lines (= catalog × 0.2 each). */
 export function getVatSavingsAmount(
   lines: Array<{
     quantity: number;
     cost?: {totalAmount?: {amount: string} | null} | null;
-    merchandise?: {price?: {amount: string} | null} | null;
     attributes?: Array<{key: string; value?: string | null}> | null;
   }>,
 ): number {
   return lines.reduce((total, line) => {
     if (!lineHasVatRelief(line.attributes)) return total;
-    const unit = Number(
-      line.merchandise?.price?.amount ??
-        line.cost?.totalAmount?.amount ??
-        0,
-    );
-    // Prefer unit × qty when available; cost.totalAmount may already be a line total.
-    const catalog =
-      line.merchandise?.price?.amount != null
-        ? unit * (line.quantity ?? 1)
-        : unit;
-    return total + vatFromCatalog(catalog);
+    const inc = Number(line.cost?.totalAmount?.amount ?? 0);
+    return total + vatPortionFromGross(inc);
   }, 0);
 }
 

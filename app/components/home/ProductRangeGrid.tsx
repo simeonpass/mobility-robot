@@ -4,7 +4,7 @@ import {ArrowUpRight} from 'lucide-react';
 import {SectionIntro} from '~/components/home/SectionIntro';
 import type {HomeProductFragment} from 'storefrontapi.generated';
 import {
-  getHomepageFromPrices,
+  formatHomepageFromPrice,
   getHomepageProductSlot,
   HOMEPAGE_FLAGSHIP_HANDLES,
   HOMEPAGE_PRODUCT_BADGES,
@@ -65,7 +65,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
               | HomepageFlagshipHandle
               | undefined;
             const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
-            const {exVat, incVat} = getHomepageFromPrices(
+            const exVatPrice = formatHomepageFromPrice(
               slot,
               product.priceRange.minVariantPrice.amount,
               product.priceRange.minVariantPrice.currencyCode,
@@ -104,13 +104,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                       {meta?.shortName ?? product.title}
                     </h3>
                     <p className="mt-1.5 text-lg font-semibold text-gold sm:mt-2 sm:text-xl">
-                      From {exVat}{' '}
-                      <span className="text-sm font-medium text-gold/90">
-                        ex VAT
-                      </span>
-                    </p>
-                    <p className="mt-0.5 text-sm text-muted-foreground">
-                      {incVat} inc VAT
+                      From {exVatPrice}
                     </p>
                     <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-gold sm:mt-5 sm:min-h-0">
                       {meta?.exploreLabel ?? 'View details'}
