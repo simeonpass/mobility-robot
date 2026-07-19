@@ -28,12 +28,6 @@ export const DEFAULT_SHOP_ID = '90445414778';
 export const DEFAULT_SHOPIFY_INBOX_EXTERNAL_ID =
   '0LePiN80P-zoypskCNcNW443I327GeKq0WN_XNP9gr0';
 
-/** Current Inbox app-extension asset base (versioned; refresh from theme if chat breaks). */
-export const SHOPIFY_INBOX_EXTENSION_ASSETS =
-  'https://cdn.shopify.com/extensions/019f6b79-ce23-71b4-b954-65d455fad0e8/shopify-inbox-1291/assets';
-
-export const SHOPIFY_INBOX_CHAT_LOADER_SRC = `${SHOPIFY_INBOX_EXTENSION_ASSETS}/inbox-chat-loader.js`;
-
 export const HTML_LANG = 'en-GB';
 
 /**

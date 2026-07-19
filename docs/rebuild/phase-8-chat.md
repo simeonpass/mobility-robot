@@ -1,34 +1,28 @@
 # Phase 8 — Shopify Inbox (Hydrogen)
 
-Hydrogen cannot use the Online Store Inbox **app embed** automatically. The
-storefront mirrors the Liquid theme embed in `app/components/ShopChat.tsx`.
+Hydrogen cannot use the Online Store Inbox **app embed** automatically.
+`app/components/ShopChat.tsx` loads `shopifyChatV1.js` with the theme’s
+`data-external-identifier` as `shop_id`.
 
-## Why the old `shopifyChatV1.js?shop_id=` approach failed
+## Why chat failed on Hydrogen
 
-Inbox authenticates with `data-external-identifier` (e.g.
-`0LePiN80P-zoypskCNcNW443I327GeKq0WN_XNP9gr0`), **not** the numeric
-`meta.json` shop id. Sending `90445414778` makes messaging-api return:
-
-`401 The specified identifier does not match any shop`
-
-→ UI: “Chat is unavailable / A technical problem occurred.”
+1. **Wrong shop id** — messaging-api expects Inbox’s
+   `data-external-identifier` (e.g. `0LePiN80P-…`), not the numeric
+   `meta.json` id. Wrong id → `401 The specified identifier does not match any shop`
+   → “A technical problem occurred.”
+2. **Newer agent.js bundle** needs Online Store `/agent/handoff`, which
+   Oxygen does not serve (blank panel). We keep the classic `shopifyChatV1.js` path.
 
 ## Setup
 
-1. Install **Shopify Inbox** and enable it on a Liquid theme once (“Add to theme”).
-   Online Store password must be **off** while using the theme editor iframe.
-2. Copy from the Liquid storefront HTML (View Source / DevTools):
-   - `data-external-identifier=...` on `#shopify-chat-bundle-selector`
-   - Extension asset URL for `shopify-chat-bundle-selector.js` if it changed
-3. Oxygen / `.env` (optional overrides; defaults are in `app/lib/const.ts`):
-   - `PUBLIC_STORE_DOMAIN=f7vjea-hq.myshopify.com`
-   - `PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID=<from theme>`
-4. CSP for Inbox is in `app/entry.server.tsx` (`scriptSrcElem` + messaging/pusher hosts).
+1. Enable Inbox on a Liquid theme once (password off for theme editor).
+2. From Liquid HTML, copy `data-external-identifier` on the chat script.
+3. Optional Oxygen override: `PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID=…`
+   (default is in `app/lib/const.ts`).
+4. `PUBLIC_STORE_DOMAIN=f7vjea-hq.myshopify.com`
+5. CSP for Inbox is in `app/entry.server.tsx`.
 
-## How Hydrogen loads Inbox
+## Behaviour
 
-Uses the theme’s **legacy** `inbox-chat-loader.js` with
-`data-external-identifier` (same value as Liquid).
-
-The newer `agent.js` bundle also needs Online Store route `/agent/handoff`,
-which Hydrogen/Oxygen does not provide — that left a blank chat panel.
+- Hidden on `/account/*` and `/checkout`.
+- Not gated by the cookie banner.
