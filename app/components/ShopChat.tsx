@@ -35,7 +35,7 @@ export function ShopChat({shopDomain, inboxExternalId}: ShopifyInboxProps) {
     // Must be Inbox external-identifier, not meta.json numeric id
     shop_id: externalId,
     shop: shopDomain,
-    c: '#202A36',
+    c: 'black',
     s: 'icon',
     p: 'button_right',
     vp: 'lowest',
