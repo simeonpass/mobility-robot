@@ -1,10 +1,16 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {pageMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
-};
+export const meta: Route.MetaFunction = ({data, params}) =>
+  pageMeta({
+    title: data?.page.title ?? 'Page',
+    description:
+      data?.page.seo?.description ||
+      'XSTO powered wheelchairs from Bentech Medical Ltd.',
+    path: `/pages/${params.handle ?? ''}`,
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

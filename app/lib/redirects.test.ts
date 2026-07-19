@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {LEGACY_REDIRECTS, resolveLegacyRedirect} from './redirects';
 
 function requestFor(path: string) {
-  return new Request(`https://xsto.co.uk${path}`);
+  return new Request(`https://mobilityrobot.co.uk${path}`);
 }
 
 describe('resolveLegacyRedirect', () => {
@@ -58,5 +58,20 @@ describe('resolveLegacyRedirect', () => {
   it('does not redirect live /demo or /quote routes', () => {
     expect(resolveLegacyRedirect(requestFor('/demo'))).toBeNull();
     expect(resolveLegacyRedirect(requestFor('/quote'))).toBeNull();
+  });
+
+  it('redirects Lovable sitemap paths', () => {
+    expect(resolveLegacyRedirect(requestFor('/find-dealer'))?.destination).toBe(
+      '/stockists',
+    );
+    expect(resolveLegacyRedirect(requestFor('/accessories'))?.destination).toBe(
+      '/collections/accessories',
+    );
+    expect(
+      resolveLegacyRedirect(requestFor('/warranty-registration'))?.destination,
+    ).toBe('/warranty');
+    expect(
+      resolveLegacyRedirect(requestFor('/products/phone-holder'))?.destination,
+    ).toBe('/products/phone-holder-for-m4');
   });
 });

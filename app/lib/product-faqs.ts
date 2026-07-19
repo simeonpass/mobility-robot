@@ -17,22 +17,22 @@ export const m4FAQs: ProductFAQ[] = [
   {
     question: "What is the M4's maximum weight capacity?",
     answer:
-      'The M4 supports up to 115 kg (253 lbs) and maintains stable performance within this limit for safe operation.',
+      'The M4 supports up to 115 kg (254 lbs) and maintains stable performance within this limit for safe operation.',
   },
   {
     question: 'How long does the M4 battery last on a single charge?',
     answer:
-      'Under typical daily use (regular speed, moderate terrain), the standard 25.55V 15.5Ah battery provides up to 15 km (9.3 miles) per charge. Full recharge takes 6–8 hours.',
+      'Under typical daily use (regular speed, moderate terrain), the standard 25.55V 15.5Ah battery provides up to 15 km (9.3 miles) per charge. Full recharge takes approximately 4 hours.',
   },
   {
     question: 'Can the M4 be taken on flights?',
     answer:
-      'The M4 includes a standard 24V 15.6Ah removable battery. For air travel, a compatible 24V 10.4Ah battery (sold separately) is recommended. While this battery meets most airline requirements, please confirm with your airline before flying.',
+      'The M4 includes a standard 25.55V 15.5Ah removable battery. For air travel, a compatible lower-capacity airline battery (sold separately) is recommended. While that battery meets most airline requirements, please confirm with your airline before flying.',
   },
   {
     question: 'How soon can I receive the M4 after ordering?',
     answer:
-      'Within the UK: 5–10 business days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
+      'Within the UK: 5–7 working days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
   },
   {
     question: 'What warranty is included with the M4?',
@@ -43,6 +43,49 @@ export const m4FAQs: ProductFAQ[] = [
     question: 'Can I claim VAT relief on the M4?',
     answer:
       'Yes. If you have a long-term illness or disability, you can purchase the M4 VAT-free. Simply complete a VAT exemption declaration during checkout.',
+  },
+];
+
+export const m4bFAQs: ProductFAQ[] = [
+  {
+    question: 'Why choose the XSTO M4B?',
+    answer:
+      'The M4B builds on the award-winning M4 platform with redesigned front wheels and an integrated folding footrest for easier transfers and a tidier folded footprint. It keeps self-balancing control, electric height adjustment (347–650 mm), 10° slope capability, and app-based remote control.',
+  },
+  {
+    question: 'How does the M4B differ from the M4?',
+    answer:
+      'The M4B adds a new front-wheel design and integrated folding pedals. Weight without battery is 55.5 kg (vs 51.5 kg on the M4). Core performance — 115 kg capacity, 15 km range, 6 km/h top speed, and 10° max slope — matches the M4.',
+  },
+  {
+    question: "What is the M4B's maximum weight capacity?",
+    answer:
+      'The M4B supports up to 115 kg (254 lbs) and maintains stable performance within this limit for safe operation.',
+  },
+  {
+    question: 'How long does the M4B battery last on a single charge?',
+    answer:
+      'Under typical daily use (regular speed, moderate terrain), the standard 25.55V 15.5Ah battery provides up to 15 km (9.3 miles) per charge. Full recharge takes approximately 4 hours.',
+  },
+  {
+    question: 'Can the M4B be taken on flights?',
+    answer:
+      'The M4B includes a standard 25.55V 15.5Ah removable battery. For air travel, a compatible lower-capacity airline battery (sold separately) is recommended. While that battery meets most airline requirements, please confirm with your airline before flying.',
+  },
+  {
+    question: 'How soon can I receive the M4B after ordering?',
+    answer:
+      'Within the UK: 5–7 working days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
+  },
+  {
+    question: 'What warranty is included with the M4B?',
+    answer:
+      'The M4B is covered by the standard XSTO manufacturer warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts (motors, controller, etc.), and 1 year on the battery.',
+  },
+  {
+    question: 'Can I claim VAT relief on the M4B?',
+    answer:
+      'Yes. If you have a long-term illness or disability, you can purchase the M4B VAT-free. Simply complete a VAT exemption declaration during checkout.',
   },
 ];
 
@@ -60,7 +103,7 @@ export const m4ProFAQs: ProductFAQ[] = [
   {
     question: 'How long does the M4 Pro battery last?',
     answer:
-      'The M4 Pro provides up to 26 km (16 miles) per charge under normal use. A full recharge takes approximately 6–8 hours. The battery is removable for easy replacement or charging off the chair.',
+      'The M4 Pro provides up to 26 km (16 miles) per charge under normal use. A full recharge takes approximately 6 hours. The battery is removable for easy replacement or charging off the chair.',
   },
   {
     question: 'Is the M4 Pro foldable for transport?',
@@ -85,7 +128,7 @@ export const m4ProFAQs: ProductFAQ[] = [
   {
     question: 'How do I make a warranty claim?',
     answer:
-      'Contact our UK support team at support@xsto.co.uk or call 0208 050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.',
+      'Contact our UK support team at support@mobilityrobot.co.uk or call 0208 050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.',
   },
 ];
 
@@ -108,7 +151,7 @@ export const x12FAQs: ProductFAQ[] = [
   {
     question: 'How much does the X12 weigh?',
     answer:
-      'The X12 weighs approximately 100 kg. It is not designed to be portable like the M4 series — it is built for all-terrain performance and stair-climbing capability. It can be transported in a suitable vehicle with a ramp or hoist.',
+      'The X12 weighs 112.8 kg without battery (X12 Pro: 115.8 kg). It is not designed to be lifted like the M4 series — it is built for all-terrain performance and stair-climbing capability. It can be transported in a suitable vehicle with a ramp or hoist.',
   },
   {
     question: 'Is the X12 available to buy now?',
@@ -127,7 +170,7 @@ export const x12FAQs: ProductFAQ[] = [
   },
 ];
 
-/** M4-focused FAQs for the homepage accordion (mirrors xsto.co.uk). */
+/** M4-focused FAQs for the homepage accordion. */
 export const homepageFAQs: ProductFAQ[] = [
   {
     question: 'Why choose the M4 wheelchair?',
@@ -140,12 +183,12 @@ export const homepageFAQs: ProductFAQ[] = [
   {
     question: 'What is the maximum weight capacity?',
     answer:
-      'The M4 supports up to 115 kg (253 lbs) and maintains stable performance within this limit for safe operation.',
+      'The M4 supports up to 115 kg (254 lbs) and maintains stable performance within this limit for safe operation.',
   },
   {
     question: 'How long does the battery last on a single charge?',
     answer:
-      'Under typical daily use (regular speed, moderate terrain), the standard battery provides up to 15 km (9.3 miles) per charge. Full recharge takes 6–8 hours.',
+      'Under typical daily use (regular speed, moderate terrain), the standard 25.55V 15.5Ah battery provides up to 15 km (9.3 miles) per charge. Full recharge takes approximately 4 hours.',
   },
   {
     question: 'Can the M4 be taken on flights?',
@@ -171,7 +214,7 @@ export const ezgo2FAQs: ProductFAQ[] = [
   {
     question: 'What makes the EzGo2 different from the M4 series?',
     answer:
-      'The EzGo2 is an ultra-lightweight carbon fiber power wheelchair at just 11.5 kg without battery — designed for easy lifting, three-step folding (folded width 26 cm), and indoor-focused use. The M4 series is heavier, self-balancing, and built for outdoor slopes and longer-day versatility.',
+      'The EzGo2 is an ultra-lightweight carbon fibre power wheelchair at just 11.5 kg without battery — designed for easy lifting, three-step folding (folded width 26 cm), and indoor-focused use. The M4 series is heavier, self-balancing, and built for outdoor slopes and longer-day versatility.',
   },
   {
     question: 'How light is the EzGo2?',
@@ -219,6 +262,6 @@ export const generalFAQs: ProductFAQ[] = [
   {
     question: 'Who provides UK customer support?',
     answer:
-      'Bentech Medical Ltd provides free UK-based phone and email support on 0208 050 4849 and support@xsto.co.uk. Our team handles sales, delivery, warranty and after-sales support for all XSTO products in the UK.',
+      'Bentech Medical Ltd provides free UK-based phone and email support on 0208 050 4849 and support@mobilityrobot.co.uk. Our team handles sales, delivery, warranty and after-sales support for all XSTO products in the UK.',
   },
 ];

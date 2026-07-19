@@ -5,8 +5,8 @@ export const privacySections: ContentSection[] = [
     id: 'controller',
     title: '1. Data controller',
     paragraphs: [
-      'Bentech Medical Ltd (Company registration details available on request) is the data controller for personal data collected through xsto.co.uk. Registered address: Unit 2 Old Forge Road, Wimborne, Dorset BH21 7RR, United Kingdom.',
-      'Contact: support@xsto.co.uk · 0208 050 4849',
+      'Bentech Medical Ltd (Company registration details available on request) is the data controller for personal data collected through mobilityrobot.co.uk. Registered address: Unit 2 Old Forge Road, Wimborne, Dorset BH21 7RR, United Kingdom.',
+      'Contact: support@mobilityrobot.co.uk · 0208 050 4849',
     ],
   },
   {
@@ -49,7 +49,7 @@ export const privacySections: ContentSection[] = [
     title: '6. Your rights',
     paragraphs: [
       'Under UK GDPR you have the right to access, rectify, erase, restrict processing, object, and data portability. You may also withdraw consent and lodge a complaint with the Information Commissioner\'s Office (ico.org.uk).',
-      'To exercise your rights, email support@xsto.co.uk.',
+      'To exercise your rights, email support@mobilityrobot.co.uk.',
     ],
   },
   {
@@ -73,7 +73,7 @@ export const termsSections: ContentSection[] = [
     id: 'introduction',
     title: '1. Introduction',
     paragraphs: [
-      'These terms govern your use of xsto.co.uk and purchases from Bentech Medical Ltd, the official UK distributor of XSTO powered wheelchairs. By using this website or placing an order you agree to these terms.',
+      'These terms govern your use of mobilityrobot.co.uk and purchases from Bentech Medical Ltd, the official UK distributor of XSTO powered wheelchairs. By using this website or placing an order you agree to these terms.',
     ],
   },
   {

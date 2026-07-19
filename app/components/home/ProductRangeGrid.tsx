@@ -30,7 +30,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
         <div className="xsto-container">
           <SectionIntro
             accent="XSTO"
-          description="Six models across the XSTO range — from ultra-light carbon fiber to stair-climbing. Every chair ships with full UK warranty and free delivery."
+          description="Flagship models across the XSTO range — from ultra-light carbon fibre to stair-climbing. Every chair ships with full UK warranty and free delivery."
           label="Shop the range"
           suffix="for you."
           title="Find the"
@@ -43,12 +43,17 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
     );
   }
 
+  const modelCountLabel =
+    flagshipProducts.length === 1
+      ? 'One model'
+      : `${flagshipProducts.length} models`;
+
   return (
     <section className="xsto-section bg-background" id="product-range">
       <div className="xsto-container">
         <SectionIntro
           accent="XSTO"
-          description="Six models across the XSTO range — from ultra-light carbon fiber to stair-climbing. Every chair ships with full UK warranty and free delivery."
+          description={`${modelCountLabel} across the XSTO range — from ultra-light carbon fibre to stair-climbing. Every chair ships with full UK warranty and free delivery.`}
           label="Shop the range"
           suffix="for you."
           title="Find the"

@@ -72,7 +72,7 @@ export const m4ProFAQs: ProductFAQ[] = [
   },
   {
     question: "How do I make a warranty claim?",
-    answer: "Contact our UK support team at support@xsto.co.uk or call 0208 050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.",
+    answer: "Contact our UK support team at support@mobilityrobot.co.uk or call 0208 050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.",
   },
   {
     question: "What after-sales support is included?",

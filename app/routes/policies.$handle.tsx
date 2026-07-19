@@ -1,15 +1,20 @@
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/policies.$handle';
 import {type Shop} from '@shopify/hydrogen/storefront-api-types';
+import {pageMeta} from '~/lib/seo';
 
 type SelectedPolicies = keyof Pick<
   Shop,
   'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy'
 >;
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.policy.title ?? ''}`}];
-};
+export const meta: Route.MetaFunction = ({data, params}) =>
+  pageMeta({
+    title: data?.policy.title ?? 'Policy',
+    description:
+      'Store policy from Bentech Medical Ltd, official UK distributor of XSTO.',
+    path: `/policies/${params.handle ?? ''}`,
+  });
 
 export async function loader({params, context}: Route.LoaderArgs) {
   if (!params.handle) {

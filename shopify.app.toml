@@ -4,11 +4,11 @@
 
 name = "XSTO VAT Relief"
 client_id = "d0589c6e7756aea84becc989391f687d"
-application_url = "https://xsto.co.uk"
+application_url = "https://mobilityrobot.co.uk"
 embedded = false
 
 [auth]
-redirect_urls = ["https://xsto.co.uk/auth/callback"]
+redirect_urls = ["https://mobilityrobot.co.uk/auth/callback"]
 
 [build]
 dev_store_url = "f7vjea-hq.myshopify.com"

@@ -78,7 +78,7 @@ export const vatReliefSections: ContentSection[] = [
     title: 'Important information',
     paragraphs: [
       'Bentech Medical Ltd may request supporting information and will report suspected fraud to HMRC. Order and VAT relief records are retained to meet HMRC requirements.',
-      'This page summarises how VAT relief works on xsto.co.uk. It is not personal tax advice. If you are unsure whether you qualify, contact us before ordering or check the latest HMRC guidance on VAT relief for disabled people.',
+      'This page summarises how VAT relief works on mobilityrobot.co.uk. It is not personal tax advice. If you are unsure whether you qualify, contact us before ordering or check the latest HMRC guidance on VAT relief for disabled people.',
     ],
   },
 ];

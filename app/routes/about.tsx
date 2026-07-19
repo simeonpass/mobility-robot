@@ -57,10 +57,10 @@ export default function AboutPage() {
               alt="XSTO M4 powered wheelchair — foldable mobility robot"
               className="size-full object-cover"
               decoding="async"
-              height={640}
+              height={840}
               loading="eager"
-              src="/images/hero-poster.jpg"
-              width={960}
+              src="/images/about-hero.jpg"
+              width={1600}
             />
           </div>
         </div>

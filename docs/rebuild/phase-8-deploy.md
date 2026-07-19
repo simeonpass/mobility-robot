@@ -68,8 +68,10 @@ npx lighthouse http://localhost:3001/stockists --only-categories=performance,seo
 ## Pre-cutover checklist
 
 - [ ] All Phase 8 env vars set in Oxygen
+- [ ] Custom domain `mobilityrobot.co.uk` attached to Oxygen (canonical site)
+- [ ] `xsto.co.uk` 301s to `mobilityrobot.co.uk` preserving path (brand domain retained for redirect only)
 - [ ] GA4 Real-time shows page views after consent
 - [ ] Shop Chat renders with marketing consent
-- [ ] Legacy `/pages/*` URLs return 301
+- [ ] Legacy `/pages/*` URLs return 301 on the new host
 - [ ] Custom 404 with noindex
 - [ ] DNS cutover plan ready (Phase 9)

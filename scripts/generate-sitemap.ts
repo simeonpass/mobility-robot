@@ -9,7 +9,7 @@
 import {writeFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 
-const SITE_URL = 'https://xsto.co.uk';
+const SITE_URL = 'https://mobilityrobot.co.uk';
 
 const STATIC_ROUTES = [
   {path: '/', changefreq: 'weekly', priority: 1.0},

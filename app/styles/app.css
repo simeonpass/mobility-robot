@@ -142,7 +142,8 @@
     --gold: 354 73% 47%;
     --gold-light: 354 70% 56%;
     --gold-dark: 354 76% 38%;
-    --vat-price: 160 72% 32%;
+    /* Darkened for WCAG AA contrast on white (~4.5:1+) */
+    --vat-price: 160 78% 26%;
 
     --navy: 216 42% 16%;
     --navy-light: 216 36% 24%;
