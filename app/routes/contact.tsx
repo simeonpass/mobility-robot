@@ -15,9 +15,9 @@ import {pageMeta, SITE_URL} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
   pageMeta({
-    title: 'Contact Us',
+    title: 'Contact Mobility Robot',
     description:
-      'Contact Bentech Medical Ltd for XSTO sales, support and warranty enquiries. Phone, email and contact form.',
+      'Contact Mobility Robot (Bentech Medical Ltd) for XSTO sales, support and warranty. Phone, email and contact form.',
     path: '/contact',
   });
 
@@ -49,7 +49,7 @@ export default function ContactPage() {
       <PageHeader
         breadcrumbs={[{name: 'Home', path: '/'}, {name: 'Contact'}]}
         description="Our UK team is here to help with product advice, orders, warranty and after-sales support."
-        title="Contact Us"
+        title="Contact Mobility Robot"
       />
 
       <div className="grid gap-10 lg:grid-cols-2">

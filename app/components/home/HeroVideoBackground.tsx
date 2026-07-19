@@ -21,6 +21,7 @@ export function HeroVideoBackground({
     return (
       <img
         alt=""
+        aria-hidden
         className="size-full object-cover object-center"
         decoding="async"
         fetchPriority="high"

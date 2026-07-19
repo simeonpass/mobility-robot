@@ -37,7 +37,7 @@ export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
           >
             {youtubeId ? (
               <img
-                alt=""
+                alt={`${productName} — ${video.title}`}
                 className="size-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.02]"
                 decoding="async"
                 src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}

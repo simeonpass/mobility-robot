@@ -66,7 +66,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
     <header className={headerClass} style={headerStyle}>
       <div className="xsto-container flex h-20 items-center gap-0.5 sm:h-[5.25rem] sm:gap-3 lg:h-[5.5rem] lg:gap-5">
         <NavLink
-          aria-label="XSTO UK home"
+          aria-label="Mobility Robot home"
           className="site-header-logo min-w-0 shrink-0"
           end
           prefetch="intent"

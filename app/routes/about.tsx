@@ -10,9 +10,9 @@ import {pageMeta, SITE_URL} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
   pageMeta({
-    title: 'About Bentech Medical Ltd',
+    title: 'About Mobility Robot',
     description:
-      'Bentech Medical Ltd is the official UK distributor of XSTO powered wheelchairs — clinical quality, UK support and expert fitting.',
+      'Mobility Robot is the UK storefront of Bentech Medical Ltd — official distributor of XSTO powered wheelchairs with clinical quality, UK support and expert fitting.',
     path: '/about',
   });
 
@@ -48,8 +48,8 @@ export default function AboutPage() {
         <div className="grid md:grid-cols-2">
           <div className="flex flex-col justify-center p-8 md:p-12">
             <PageHeader
-              description="Official UK & Ireland distributor of XSTO powered wheelchairs."
-              title="About Bentech Medical Ltd"
+              description="Official UK & Ireland distributor of XSTO powered wheelchairs — the team behind mobilityrobot.co.uk."
+              title="About Mobility Robot"
             />
           </div>
           <div className="relative min-h-[240px] md:min-h-[320px]">

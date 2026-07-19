@@ -1,8 +1,8 @@
 import type {Route} from './+types/[robots.txt]';
+import {SITE_URL} from '~/lib/const';
 
-export function loader({request}: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const body = robotsTxtData({url: url.origin});
+export function loader(_args: Route.LoaderArgs) {
+  const body = robotsTxtData({url: SITE_URL});
 
   return new Response(body, {
     status: 200,

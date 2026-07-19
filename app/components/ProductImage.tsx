@@ -12,7 +12,7 @@ export function ProductImage({
   return (
     <div className="product-image">
       <Image
-        alt={image.altText || 'Product Image'}
+        alt={image.altText || 'XSTO product image'}
         aspectRatio="1/1"
         data={image}
         key={image.id}

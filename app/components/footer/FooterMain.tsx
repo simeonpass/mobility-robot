@@ -16,7 +16,7 @@ export function FooterMain() {
         <div className="mb-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-6 md:mb-5 md:grid-cols-3 md:gap-x-8 md:gap-y-4">
           <div className="col-span-2 space-y-3 md:col-span-1">
             <img
-              alt="XSTO UK"
+              alt="XSTO — Mobility Robot"
               className="h-8 w-auto max-w-[180px] rounded-none object-contain object-left sm:h-9 sm:max-w-[200px]"
               decoding="async"
               height={36}

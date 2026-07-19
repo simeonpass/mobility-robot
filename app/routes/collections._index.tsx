@@ -3,6 +3,15 @@ import type {Route} from './+types/collections._index';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {buildMeta} from '~/lib/seo';
+
+export const meta: Route.MetaFunction = () =>
+  buildMeta({
+    title: 'Shop XSTO Collections',
+    description:
+      'Browse XSTO wheelchair and accessory collections from Mobility Robot, the official UK store.',
+    path: '/collections',
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -46,11 +55,16 @@ export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
+    <div className="collections xsto-container py-8 md:py-12">
+      <h1 className="text-3xl font-bold text-foreground md:text-4xl">
+        Collections
+      </h1>
+      <p className="mt-3 max-w-2xl text-muted-foreground">
+        Explore XSTO powered wheelchair and accessory collections.
+      </p>
       <PaginatedResourceSection<CollectionFragment>
         connection={collections}
-        resourcesClassName="collections-grid"
+        resourcesClassName="collections-grid mt-8"
       >
         {({node: collection, index}) => (
           <CollectionItem
@@ -87,7 +101,9 @@ function CollectionItem({
           sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
-      <h5>{collection.title}</h5>
+      <h2 className="mt-3 text-lg font-semibold text-foreground">
+        {collection.title}
+      </h2>
     </Link>
   );
 }

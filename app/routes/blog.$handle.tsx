@@ -11,7 +11,7 @@ export const meta: Route.MetaFunction = ({data}) => {
   const description =
     article?.seo?.description ||
     article?.excerpt ||
-    'XSTO UK news and mobility guides.';
+    'News and mobility guides from Mobility Robot.';
 
   return buildMeta({
     title,

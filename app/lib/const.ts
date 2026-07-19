@@ -5,7 +5,8 @@
  */
 export const SITE_URL = 'https://mobilityrobot.co.uk';
 
-export const SITE_NAME = 'XSTO UK';
+/** Public storefront brand (title suffix, WebSite schema). Products remain XSTO. */
+export const SITE_NAME = 'Mobility Robot';
 
 /** Default Open Graph share image (true 1200×630). */
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/images/og-default.jpg`;

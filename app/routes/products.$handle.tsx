@@ -31,17 +31,20 @@ import {
 import {Ga4ProductView} from '~/components/Ga4ProductView';
 import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
+import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
-  if (!product) return [{title: 'Product | XSTO UK'}];
+  if (!product) return [{title: 'Product | Mobility Robot'}];
 
-  const title = product.seo?.title || product.title;
-  const description =
-    product.seo?.description ||
-    product.description ||
-    `Buy ${product.title} from the official UK XSTO distributor. Free delivery and full warranty.`;
+  const {title, description} = resolveProductSeo({
+    handle: product.handle,
+    productTitle: product.title,
+    productDescription: product.description,
+    seoTitle: product.seo?.title,
+    seoDescription: product.seo?.description,
+  });
 
   const variant = product.selectedOrFirstAvailableVariant;
   const image = variant?.image?.url || product.images?.nodes?.[0]?.url;
@@ -175,9 +178,17 @@ export default function Product() {
 
   const featuredVideo = tabContent.videos[0];
 
+  const seo = resolveProductSeo({
+    handle: product.handle,
+    productTitle: product.title,
+    productDescription: product.description,
+    seoTitle: product.seo?.title,
+    seoDescription: product.seo?.description,
+  });
+
   const productSchema = productJsonLd({
-    name: product.title,
-    description: product.description,
+    name: staticContent?.displayName || product.title,
+    description: seo.description,
     handle: product.handle,
     sku: selectedVariant?.sku,
     image: selectedVariant?.image?.url || product.images.nodes[0]?.url,

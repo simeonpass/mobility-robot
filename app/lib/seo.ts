@@ -83,6 +83,18 @@ export function absoluteUrl(path: string): string {
   return normalized === '/' ? SITE_URL : `${SITE_URL}${normalized}`;
 }
 
+/**
+ * Rewrite a request so Hydrogen sitemap helpers emit absolute URLs on SITE_URL
+ * even when the app is reached via Oxygen preview or a non-canonical host.
+ */
+export function canonicalSitemapRequest(request: Request): Request {
+  const url = new URL(request.url);
+  return new Request(
+    new URL(`${url.pathname}${url.search}`, SITE_URL),
+    request,
+  );
+}
+
 export function buildMeta({
   title,
   description,
@@ -102,6 +114,8 @@ export function buildMeta({
     {title: fullTitle},
     {name: 'description', content: metaDescription},
     {tagName: 'link', rel: 'canonical', href: url},
+    {property: 'og:site_name', content: SITE_NAME},
+    {property: 'og:locale', content: 'en_GB'},
     {property: 'og:title', content: fullTitle},
     {property: 'og:description', content: metaDescription},
     {property: 'og:url', content: url},
@@ -152,7 +166,7 @@ export function organizationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Bentech Medical Ltd',
-    alternateName: ['Mobility Robot', 'XSTO UK'],
+    alternateName: [SITE_NAME, 'XSTO UK', 'XSTO'],
     url: SITE_URL,
     logo: `${SITE_URL}/images/xsto-bentech-header.png`,
     address: {
@@ -243,6 +257,7 @@ export function productJsonLd({
       url: absoluteUrl(`/products/${handle}`),
       priceCurrency: currencyCode || 'GBP',
       price,
+      itemCondition: 'https://schema.org/NewCondition',
       availability: availableForSale
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
@@ -342,7 +357,7 @@ export function articleJsonLd({
     dateModified: modifiedAt || publishedAt,
     author: {
       '@type': 'Person',
-      name: author || 'XSTO Team',
+      name: author || 'Mobility Robot',
     },
     publisher: {
       '@type': 'Organization',

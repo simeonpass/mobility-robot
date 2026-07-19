@@ -11,10 +11,12 @@ import {buildMeta, itemListJsonLd, breadcrumbJsonLd} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const collection = data?.collection;
-  const title = collection?.title || 'Collection';
+  const title =
+    collection?.seo?.title || collection?.title || 'Collection';
   const description =
+    collection?.seo?.description ||
     collection?.description ||
-    `Shop ${collection?.title ?? 'XSTO products'} from the official UK distributor.`;
+    `Shop ${collection?.title ?? 'XSTO products'} from Mobility Robot, the official UK XSTO store.`;
 
   return buildMeta({
     title,
@@ -177,6 +179,10 @@ const COLLECTION_QUERY = `#graphql
       handle
       title
       description
+      seo {
+        title
+        description
+      }
       products(
         first: $first,
         last: $last,

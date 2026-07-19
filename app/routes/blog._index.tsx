@@ -11,7 +11,7 @@ export const meta: Route.MetaFunction = ({data}) =>
     title: data?.blog?.seo?.title || 'News & Updates',
     description:
       data?.blog?.seo?.description ||
-      'Latest news, guides and updates from XSTO UK and Bentech Medical Ltd.',
+      'Latest news, guides and updates from Mobility Robot and Bentech Medical Ltd.',
     path: '/blog',
   });
 

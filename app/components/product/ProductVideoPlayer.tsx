@@ -34,7 +34,7 @@ export function ProductVideoPlayer({
         >
           {poster ? (
             <img
-              alt=""
+              alt={title}
               className="size-full object-cover opacity-90"
               decoding="async"
               loading="lazy"

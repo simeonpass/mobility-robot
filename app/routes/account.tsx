@@ -13,7 +13,7 @@ import {NOINDEX_HEADERS, noindexMeta} from '~/lib/seo';
 export const meta: Route.MetaFunction = () =>
   noindexMeta({
     title: 'My Account',
-    description: 'Manage your XSTO UK account.',
+    description: 'Manage your Mobility Robot account.',
     path: '/account',
   });
 

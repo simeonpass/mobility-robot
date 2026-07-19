@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = ({data, params}) =>
     title: data?.page.title ?? 'Page',
     description:
       data?.page.seo?.description ||
-      'XSTO powered wheelchairs from Bentech Medical Ltd.',
+      'XSTO powered wheelchairs from Mobility Robot and Bentech Medical Ltd.',
     path: `/pages/${params.handle ?? ''}`,
   });
 

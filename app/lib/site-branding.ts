@@ -3,13 +3,13 @@ export const HEADER_LOGO = {
     src: '/images/xsto-bentech-header.png',
     width: 800,
     height: 250,
-    alt: 'XSTO UK — Official UK Distributor, Bentech Medical Ltd',
+    alt: 'Mobility Robot — Official UK XSTO distributor, Bentech Medical Ltd',
   },
   light: {
     src: '/images/xsto-bentech-header-light.png',
     width: 800,
     height: 250,
-    alt: 'XSTO UK — Official UK Distributor, Bentech Medical Ltd',
+    alt: 'Mobility Robot — Official UK XSTO distributor, Bentech Medical Ltd',
   },
 } as const;
 

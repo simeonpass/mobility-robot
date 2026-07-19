@@ -1,5 +1,6 @@
 import type {Route} from './+types/[sitemap.xml]';
 import {getSitemapIndex} from '@shopify/hydrogen';
+import {canonicalSitemapRequest} from '~/lib/seo';
 
 export async function loader({
   request,
@@ -7,7 +8,7 @@ export async function loader({
 }: Route.LoaderArgs) {
   const response = await getSitemapIndex({
     storefront,
-    request,
+    request: canonicalSitemapRequest(request),
     customChildSitemaps: ['/sitemap.content.xml'],
   });
 

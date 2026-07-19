@@ -15,28 +15,11 @@ function productUrl(handle: keyof typeof SHOPIFY_HOME_PRODUCT_HANDLES) {
   return `/products/${SHOPIFY_HOME_PRODUCT_HANDLES[handle]}`;
 }
 
-/** Product series shown in the Models dropdown / mobile menu. */
+/**
+ * Product series shown in the Models dropdown / mobile menu.
+ * Ordered cheapest → most expensive (EzGo2 → M series → X series).
+ */
 export const PRODUCT_NAV_GROUPS: NavGroup[] = [
-  {
-    title: 'M4 Series',
-    items: [
-      {
-        title: 'M4',
-        url: productUrl('xsto-m4'),
-        description: 'Self-levelling everyday chair',
-      },
-      {
-        title: 'M4 Pro',
-        url: productUrl('xsto-m4-pro'),
-        description: 'Premium comfort & capacity',
-      },
-      {
-        title: 'M4B',
-        url: productUrl('xsto-m4b'),
-        description: 'Updated wheels & footrest',
-      },
-    ],
-  },
   {
     title: 'EzGo2',
     items: [
@@ -48,7 +31,27 @@ export const PRODUCT_NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: 'X12 Series',
+    title: 'M Series',
+    items: [
+      {
+        title: 'M4',
+        url: productUrl('xsto-m4'),
+        description: 'Self-levelling everyday chair',
+      },
+      {
+        title: 'M4B',
+        url: productUrl('xsto-m4b'),
+        description: 'Updated wheels & footrest',
+      },
+      {
+        title: 'M4 Pro',
+        url: productUrl('xsto-m4-pro'),
+        description: 'Premium comfort & capacity',
+      },
+    ],
+  },
+  {
+    title: 'X Series',
     items: [
       {
         title: 'X12',
@@ -98,10 +101,10 @@ export const MAIN_NAV: NavItem[] = [
 
 export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'Shop All', url: '/collections/all'},
-  {title: 'M4', url: productUrl('xsto-m4')},
-  {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
-  {title: 'M4B', url: productUrl('xsto-m4b')},
   {title: 'EzGo2', url: productUrl('xsto-ezgo2')},
+  {title: 'M4', url: productUrl('xsto-m4')},
+  {title: 'M4B', url: productUrl('xsto-m4b')},
+  {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
   {title: 'X12', url: productUrl('xsto-x12')},
   {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
   {title: 'Accessories', url: '/collections/accessories'},

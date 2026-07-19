@@ -12,7 +12,7 @@ export const meta: Route.MetaFunction = () =>
   pageMeta({
     title: 'Authorised XSTO Stockists',
     description:
-      'Find your nearest authorised XSTO stockist across the UK and Ireland. Search by postcode, view on map and book a demo.',
+      'Find your nearest authorised XSTO stockist via Mobility Robot. Search by postcode, view on map and book a demo across the UK and Ireland.',
     path: '/stockists',
   });
 

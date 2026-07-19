@@ -23,7 +23,11 @@ const STATIC_ROUTES = [
   {path: '/contact', changefreq: 'monthly', priority: 0.7},
   {path: '/demo', changefreq: 'monthly', priority: 0.8},
   {path: '/quote', changefreq: 'monthly', priority: 0.8},
+  {path: '/vat-relief', changefreq: 'monthly', priority: 0.7},
   {path: '/blog', changefreq: 'weekly', priority: 0.7},
+  {path: '/collections', changefreq: 'weekly', priority: 0.6},
+  {path: '/collections/all', changefreq: 'weekly', priority: 0.8},
+  {path: '/collections/accessories', changefreq: 'weekly', priority: 0.7},
 ];
 
 function escapeXml(value: string) {

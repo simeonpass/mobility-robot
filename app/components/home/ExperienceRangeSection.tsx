@@ -41,7 +41,7 @@ export function ExperienceRangeSection() {
                 >
                   <div className="relative aspect-video overflow-hidden bg-navy">
                     <img
-                      alt=""
+                      alt={item.title}
                       className="size-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
                       decoding="async"
                       loading="lazy"

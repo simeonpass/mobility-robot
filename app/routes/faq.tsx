@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'Frequently Asked Questions',
     description:
-      'Answers about XSTO wheelchairs, UK delivery, warranty, VAT relief and trade enquiries from Bentech Medical Ltd.',
+      'FAQ for XSTO wheelchairs from Mobility Robot — UK delivery, warranty, VAT relief and trade enquiries.',
     path: '/faq',
   });
 

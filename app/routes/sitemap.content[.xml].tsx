@@ -3,9 +3,8 @@ import {BLOG_ARTICLE_HANDLES_QUERY, BLOG_HANDLE} from '~/lib/blog-queries';
 import {STATIC_SITEMAP_ROUTES} from '~/lib/static-routes';
 import {SITE_URL} from '~/lib/seo';
 
-export async function loader({context, request}: Route.LoaderArgs) {
+export async function loader({context}: Route.LoaderArgs) {
   const {storefront} = context;
-  const origin = new URL(request.url).origin;
 
   let blogArticles: Array<{handle: string; publishedAt?: string | null}> = [];
   try {
@@ -24,12 +23,12 @@ export async function loader({context, request}: Route.LoaderArgs) {
     lastmod?: string;
   }> = [
     ...STATIC_SITEMAP_ROUTES.map((entry) => ({
-      loc: `${origin}${entry.path}`,
+      loc: `${SITE_URL}${entry.path}`,
       changefreq: entry.changefreq,
       priority: entry.priority,
     })),
     ...blogArticles.map((article) => ({
-      loc: `${origin}/blog/${article.handle}`,
+      loc: `${SITE_URL}/blog/${article.handle}`,
       changefreq: 'monthly',
       priority: 0.6,
       lastmod: article.publishedAt ?? undefined,
