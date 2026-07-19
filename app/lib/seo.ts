@@ -35,6 +35,8 @@ type ProductJsonLdInput = {
   price: string;
   currencyCode: string;
   availableForSale: boolean;
+  ratingValue?: number;
+  reviewCount?: number;
 };
 
 type ArticleJsonLdInput = {
@@ -243,6 +245,8 @@ export function productJsonLd({
   price,
   currencyCode,
   availableForSale,
+  ratingValue,
+  reviewCount,
 }: ProductJsonLdInput) {
   return {
     '@context': 'https://schema.org',
@@ -252,6 +256,17 @@ export function productJsonLd({
     image: image || DEFAULT_OG_IMAGE,
     sku: sku || undefined,
     brand: {'@type': 'Brand', name: 'XSTO'},
+    ...(ratingValue && reviewCount
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: Number(ratingValue.toFixed(1)),
+            reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
     offers: {
       '@type': 'Offer',
       url: absoluteUrl(`/products/${handle}`),

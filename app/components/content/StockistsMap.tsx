@@ -171,7 +171,7 @@ export function StockistsMap({
   return (
     <div
       aria-label="UK dealer map"
-      className="relative z-0 h-[300px] max-h-[300px] min-h-[300px] w-full overflow-hidden rounded-xl border border-border bg-secondary md:h-[400px] md:max-h-[400px] md:min-h-[400px] lg:self-start"
+      className="relative z-0 h-full min-h-[280px] w-full overflow-hidden rounded-xl border border-border bg-secondary"
       role="region"
     >
       <div className="h-full w-full" ref={containerRef} />

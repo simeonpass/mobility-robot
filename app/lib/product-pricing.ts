@@ -40,8 +40,13 @@ export function getVatSavingsDisplay(price?: MoneyV2 | null) {
 
 export function getKlarnaInstallmentDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
-  const monthly = exVatFromGross(price.amount) / 12;
-  return formatProductPrice(monthly, price.currencyCode, {fractionDigits: 2});
+  // Klarna Pay in 3 = three interest-free payments of the checkout total.
+  // Use the catalog (inc-VAT) amount — that is what Klarna finances unless VAT
+  // relief is applied at checkout.
+  const installment = roundMoney(Number(price.amount) / 3);
+  return formatProductPrice(installment, price.currencyCode, {
+    fractionDigits: 2,
+  });
 }
 
 export function getActiveCartPriceDisplay(

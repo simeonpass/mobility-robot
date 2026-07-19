@@ -15,6 +15,7 @@ import {ProductSpecTabs} from '~/components/product/ProductSpecTabs';
 import {ProductVideoHero} from '~/components/product/ProductVideoHero';
 import {RelatedProducts} from '~/components/product/RelatedProducts';
 import {ProductAppDownload} from '~/components/product/ProductAppDownload';
+import {ProductReviews} from '~/components/product/ProductReviews';
 import {
   ACCESSORIES_COLLECTION_HANDLE,
   isAccessoryCompatibleWithChair,
@@ -33,6 +34,7 @@ import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
 import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -186,6 +188,9 @@ export default function Product() {
     seoDescription: product.seo?.description,
   });
 
+  const productReviews = getReviewsForProduct(product.handle);
+  const reviewSummary = summarizeReviews(productReviews);
+
   const productSchema = productJsonLd({
     name: staticContent?.displayName || product.title,
     description: seo.description,
@@ -195,6 +200,8 @@ export default function Product() {
     price: selectedVariant?.price.amount ?? '0',
     currencyCode: selectedVariant?.price.currencyCode ?? 'GBP',
     availableForSale: selectedVariant?.availableForSale ?? false,
+    ratingValue: reviewSummary.count > 0 ? reviewSummary.average : undefined,
+    reviewCount: reviewSummary.count > 0 ? reviewSummary.count : undefined,
   });
 
   return (
@@ -233,6 +240,11 @@ export default function Product() {
         ) : null}
 
         <ProductSpecTabs content={tabContent} shopifyHandle={product.handle} />
+
+        <ProductReviews
+          productHandle={product.handle}
+          productTitle={staticContent?.displayName ?? product.title}
+        />
 
         <RelatedProducts
           currentHandle={product.handle}

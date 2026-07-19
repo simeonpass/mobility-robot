@@ -9,6 +9,7 @@ import {
   ProductRangeGrid,
   type HomeProduct,
 } from '~/components/home/ProductRangeGrid';
+import {ReviewsSection} from '~/components/home/ReviewsSection';
 import {TrustBar} from '~/components/TrustBar';
 import {
   HOMEPAGE_PRODUCT_HANDLES,
@@ -67,6 +68,7 @@ export default function Homepage() {
       <ProductRangeGrid products={products} />
       <ComparisonStrip />
       <ExperienceRangeSection />
+      <ReviewsSection />
       <FaqPreview />
       <HomeCtaSection />
     </div>

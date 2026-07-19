@@ -17,11 +17,10 @@ export function ProductCheckoutTrust({
         <p className="text-center text-[0.8125rem] leading-snug text-slate">
           Pay in 3 with{' '}
           <span className="font-semibold text-navy">Klarna</span>
-          {' '}from{' '}
+          {' '}— 3 interest-free payments of{' '}
           <span className="font-semibold tabular-nums text-navy">
             {klarnaInstallment}
           </span>
-          <span className="text-slate">/month</span>
         </p>
       ) : null}
 
