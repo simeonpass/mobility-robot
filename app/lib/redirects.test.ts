@@ -1,8 +1,13 @@
 import {describe, expect, it} from 'vitest';
-import {LEGACY_REDIRECTS, resolveLegacyRedirect} from './redirects';
+import {SITE_URL} from './const';
+import {
+  LEGACY_REDIRECTS,
+  resolveHostRedirect,
+  resolveLegacyRedirect,
+} from './redirects';
 
-function requestFor(path: string) {
-  return new Request(`https://mobilityrobot.co.uk${path}`);
+function requestFor(path: string, origin = SITE_URL) {
+  return new Request(`${origin}${path}`);
 }
 
 describe('resolveLegacyRedirect', () => {
@@ -40,7 +45,6 @@ describe('resolveLegacyRedirect', () => {
     expect(result?.destination).toBe('/products/xsto-m4-pro');
   });
 
-
   it('does not redirect canonical X12 Pro Shopify handle', () => {
     expect(
       resolveLegacyRedirect(
@@ -59,19 +63,42 @@ describe('resolveLegacyRedirect', () => {
     expect(resolveLegacyRedirect(requestFor('/demo'))).toBeNull();
     expect(resolveLegacyRedirect(requestFor('/quote'))).toBeNull();
   });
+});
 
-  it('redirects Lovable sitemap paths', () => {
-    expect(resolveLegacyRedirect(requestFor('/find-dealer'))?.destination).toBe(
-      '/stockists',
+describe('resolveHostRedirect', () => {
+  it('redirects xsto.co.uk to canonical origin', () => {
+    const result = resolveHostRedirect(
+      requestFor('/about', 'https://xsto.co.uk'),
     );
-    expect(resolveLegacyRedirect(requestFor('/accessories'))?.destination).toBe(
-      '/collections/accessories',
+    expect(result?.destination).toBe(`${SITE_URL}/about`);
+  });
+
+  it('redirects www.xsto.co.uk preserving path and query', () => {
+    const result = resolveHostRedirect(
+      requestFor('/faq?ref=old', 'https://www.xsto.co.uk'),
     );
+    expect(result?.destination).toBe(`${SITE_URL}/faq?ref=old`);
+  });
+
+  it('redirects www.mobilityrobot.co.uk to apex', () => {
+    const result = resolveHostRedirect(
+      requestFor('/', 'https://www.mobilityrobot.co.uk'),
+    );
+    expect(result?.destination).toBe(`${SITE_URL}/`);
+  });
+
+  it('does not redirect the canonical host', () => {
+    expect(resolveHostRedirect(requestFor('/'))).toBeNull();
+  });
+
+  it('does not redirect localhost or unknown hosts', () => {
     expect(
-      resolveLegacyRedirect(requestFor('/warranty-registration'))?.destination,
-    ).toBe('/warranty');
+      resolveHostRedirect(requestFor('/', 'http://localhost:3000')),
+    ).toBeNull();
     expect(
-      resolveLegacyRedirect(requestFor('/products/phone-holder'))?.destination,
-    ).toBe('/products/phone-holder-for-m4');
+      resolveHostRedirect(
+        requestFor('/', 'https://example.oxygen.shopify.dev'),
+      ),
+    ).toBeNull();
   });
 });

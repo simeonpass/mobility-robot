@@ -152,7 +152,7 @@ export function organizationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Bentech Medical Ltd',
-    alternateName: 'XSTO UK',
+    alternateName: ['Mobility Robot', 'XSTO UK'],
     url: SITE_URL,
     logo: `${SITE_URL}/images/xsto-bentech-header.png`,
     address: {

@@ -22,7 +22,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'XSTO Powered Wheelchairs UK',
     description:
-      'Official UK distributor of XSTO foldable powered wheelchairs. M4, M4 Pro, M4B, EzGo2, X12 and X12 Pro — free UK delivery, VAT relief eligible.',
+      'Official UK distributor of XSTO foldable powered wheelchairs. M4, M4 Pro, M4B, X12 and X12 Pro — free UK delivery, VAT relief eligible.',
     path: '/',
     image: undefined,
   });

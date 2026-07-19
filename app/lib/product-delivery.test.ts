@@ -42,6 +42,24 @@ describe('getDeliveryInfo', () => {
     expect(info.preorderWeeks).toBe(10);
   });
 
+  it('forces X12 / EzGo2 preorder even when Shopify reports stock', () => {
+    const x12 = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 5,
+      handle: 'x12-all-terrain-mobility-robot',
+    });
+    expect(x12.status).toBe('preorder');
+    expect(x12.detail).toContain('~10 weeks');
+
+    const ezgo = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 2,
+      handle: 'xsto-ezgo2-carbon-fiber-power-wheelchair',
+    });
+    expect(ezgo.status).toBe('preorder');
+    expect(ezgo.detail).toContain('~2 weeks');
+  });
+
   it('marks in-stock products as in_stock', () => {
     const info = getDeliveryInfo({
       availableForSale: true,
@@ -67,14 +85,14 @@ describe('getCartDeliveryInfo', () => {
       {
         merchandise: {
           availableForSale: true,
-          quantityAvailable: 0,
+          quantityAvailable: 5,
           product: {handle: 'xsto-ezgo2-carbon-fiber-power-wheelchair'},
         },
       },
       {
         merchandise: {
           availableForSale: true,
-          quantityAvailable: 0,
+          quantityAvailable: 3,
           product: {handle: 'x12-all-terrain-mobility-robot'},
         },
       },

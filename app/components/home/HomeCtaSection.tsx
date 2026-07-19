@@ -11,7 +11,7 @@ export function HomeCtaSection() {
         <div className="overflow-hidden rounded-3xl border border-border bg-gradient-cream px-6 py-12 text-center shadow-soft md:px-12 md:py-16">
           <SectionIntro
             accent="yourself."
-            description="From £1,995. Free UK delivery. Full UK warranty & support."
+            description="From £1,995 ex VAT. Free UK delivery. Full UK warranty & support."
             label="Take the next step"
             title="Try it"
           />

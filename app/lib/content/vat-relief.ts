@@ -22,7 +22,6 @@ export const VAT_RELIEF_ELIGIBLE_PRODUCTS = [
   {name: 'XSTO M4', path: '/products/xsto-m4'},
   {name: 'XSTO M4 Pro', path: '/products/xsto-m4-pro'},
   {name: 'XSTO M4B', path: '/products/xsto-m4b'},
-  {name: 'XSTO EzGo2', path: '/products/xsto-ezgo2'},
   {name: 'XSTO X12', path: '/products/xsto-x12'},
   {name: 'XSTO X12 Pro', path: '/products/xsto-x12-pro'},
 ] as const;

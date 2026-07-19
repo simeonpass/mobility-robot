@@ -23,7 +23,7 @@ export const DISTRIBUTOR_DISCLAIMER =
 
 export const ABOUT_INTRO = [
   `${COMPANY.name} is the official UK and Ireland distributor of XSTO powered wheelchairs — foldable, portable mobility robots designed for modern independent living.`,
-  'From our base in Wimborne, Dorset, we supply the full XSTO range including the M4, M4 Pro, M4B, EzGo2, X12 and X12 Pro, with free UK delivery, VAT relief eligibility and comprehensive warranty support.',
+  'From our base in Wimborne, Dorset, we supply the XSTO range including the M4, M4 Pro, M4B, X12 and X12 Pro, with free UK delivery, VAT relief eligibility and comprehensive warranty support.',
   'We work with a network of authorised stockists across the UK and Ireland, offering demonstrations, expert advice and local after-sales service.',
 ];
 

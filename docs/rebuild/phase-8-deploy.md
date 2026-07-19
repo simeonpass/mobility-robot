@@ -74,4 +74,42 @@ npx lighthouse http://localhost:3001/stockists --only-categories=performance,seo
 - [ ] Shop Chat renders with marketing consent
 - [ ] Legacy `/pages/*` URLs return 301 on the new host
 - [ ] Custom 404 with noindex
-- [ ] DNS cutover plan ready (Phase 9)
+- [ ] Domain cutover complete (see below)
+
+## Domain cutover — `mobilityrobot.co.uk`
+
+**Canonical public URL:** `https://mobilityrobot.co.uk`  
+**Legacy domain:** `https://xsto.co.uk` (301 → canonical)  
+**Store brand:** Mobility Robot (Bentech Medical Ltd). Products remain XSTO-branded.
+
+### Shopify Admin / DNS (preferred)
+
+Do this in Shopify so redirects happen at the edge before Oxygen when possible:
+
+1. **Domains** → add `mobilityrobot.co.uk` (and optionally `www.mobilityrobot.co.uk`).
+2. Set **`mobilityrobot.co.uk` as the primary** domain for the storefront / Hydrogen channel.
+3. Point DNS for `mobilityrobot.co.uk` (and `www`) at Shopify/Oxygen as instructed in Admin.
+4. Add or keep `xsto.co.uk` as a **redirecting** domain targeting `mobilityrobot.co.uk` (Shopify “Redirect to primary domain” / domain redirect), **or** configure DNS/CDN for `xsto.co.uk` to 301 to `https://mobilityrobot.co.uk$request_uri`.
+5. Confirm `www.mobilityrobot.co.uk` → apex `mobilityrobot.co.uk` (or the reverse — match `SITE_URL` in `app/lib/const.ts`).
+6. Update any Google Search Console / Bing / GA4 property URLs to the new primary domain after cutover.
+
+### In-app fallback (Hydrogen)
+
+If the Oxygen app still receives requests on a legacy host, `app/lib/redirects.ts` 301s:
+
+| From host | To |
+|-----------|-----|
+| `xsto.co.uk` | `https://mobilityrobot.co.uk` + same path/query |
+| `www.xsto.co.uk` | same |
+| `www.mobilityrobot.co.uk` | apex `https://mobilityrobot.co.uk` |
+
+Path legacy maps (`/pages/about` → `/about`, short `/products/xsto-*` handles, etc.) still apply and are combined with host redirects into a single hop when both match.
+
+### Merchant redirect checklist
+
+- [ ] Primary domain = `mobilityrobot.co.uk` in Shopify Admin
+- [ ] `xsto.co.uk` → `mobilityrobot.co.uk` 301 (Shopify domain redirect or DNS)
+- [ ] `www` → apex (or documented preference) consistent with `SITE_URL`
+- [ ] Spot-check: `/`, `/products/buy-robot-wheelchair`, `/pages/about` from both hosts
+- [ ] Canonical tags / sitemap / OG URLs show `https://mobilityrobot.co.uk/...`
+- [ ] `shopify.app.toml` application + auth callback URLs match primary domain (redeploy app config if needed)

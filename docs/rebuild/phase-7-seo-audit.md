@@ -1,6 +1,6 @@
 # Phase 7 — On-Page SEO Audit
 
-**Site:** https://xsto.co.uk (Hydrogen rebuild)  
+**Site:** https://mobilityrobot.co.uk (Hydrogen rebuild; formerly xsto.co.uk)  
 **Audit date:** July 2026  
 **Auditor:** Cursor automated pass
 
@@ -29,7 +29,7 @@ P0 count ≤ 20 — Part B fixes proceeded without pause.
 | `/` | CWV | No hero preload | LCP poster not preloaded | P1 | `links()` preload on `_index` |
 | `/products/:handle` | title | Present | OK | — | — |
 | `/products/:handle` | meta description | Present | OK | — | — |
-| `/products/:handle` | canonical | Relative `/products/...` | Not absolute https | P0 | `buildMeta` → `https://xsto.co.uk/products/...` |
+| `/products/:handle` | canonical | Relative `/products/...` | Not absolute https | P0 | `buildMeta` → `https://mobilityrobot.co.uk/products/...` |
 | `/products/:handle` | og:* / twitter:* | Missing | No social tags | P1 | `buildMeta` with `ogType: product` |
 | `/products/:handle` | og:image | Missing | No product image in head | P1 | Use `featuredImage.url` |
 | `/products/:handle` | JSON-LD Product | Missing | Blocks rich results | P0 | `productJsonLd()` from Storefront data |

@@ -17,6 +17,9 @@ export const DEFAULT_PREORDER_WEEKS = 12;
 /**
  * Per-product pre-order ETA (weeks). Keys are Shopify product handles
  * and homepage slot aliases resolved via getHomepageProductSlot.
+ *
+ * These models always show as pre-order even when Shopify inventory
+ * reports available stock (builds are made to order / queue).
  */
 export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
   'xsto-ezgo2-carbon-fiber-power-wheelchair': 2,
@@ -26,6 +29,20 @@ export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
   'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition': 10,
   'xsto-x12-pro': 10,
 };
+
+/** Slot / Shopify handles that must never show as in-stock. */
+const FORCE_PREORDER_SLOTS = new Set([
+  'xsto-ezgo2',
+  'xsto-x12',
+  'xsto-x12-pro',
+]);
+
+export function isForcedPreorder(handle?: string | null): boolean {
+  if (!handle) return false;
+  if (handle in PREORDER_WEEKS_BY_HANDLE) return true;
+  const slot = getHomepageProductSlot(handle);
+  return slot != null && FORCE_PREORDER_SLOTS.has(slot);
+}
 
 export function getPreorderWeeks(handle?: string | null): number {
   if (!handle) return DEFAULT_PREORDER_WEEKS;
@@ -74,6 +91,19 @@ export function getDeliveryInfo({
       detail: 'This model is out of stock.',
       etaLabel: 'Contact us for availability',
       preorderWeeks: null,
+    };
+  }
+
+  // EzGo2 / X12 / X12 Pro: always pre-order regardless of Shopify qty.
+  if (isForcedPreorder(handle)) {
+    const weeks = getPreorderWeeks(handle);
+    const weeksLabel = formatPreorderWeeksLabel(weeks);
+    return {
+      status: 'preorder',
+      headline: 'Pre-order',
+      detail: `Estimated delivery ${weeksLabel}`,
+      etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
+      preorderWeeks: weeks,
     };
   }
 

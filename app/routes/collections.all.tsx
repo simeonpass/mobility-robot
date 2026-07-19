@@ -10,7 +10,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'Shop All XSTO Wheelchairs',
     description:
-      'Browse the full XSTO range — M4, M4 Pro, M4B, EzGo2, X12 and X12 Pro. Official UK distributor with free delivery.',
+      'Browse the full XSTO range — M4, M4 Pro, M4B, X12 and X12 Pro. Official UK distributor with free delivery.',
     path: '/collections/all',
   });
 

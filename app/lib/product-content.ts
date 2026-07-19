@@ -279,7 +279,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     ],
     deliveryWarranty: DELIVERY_WARRANTY,
     faqs: m4bFAQs,
-    videos: [],
+    videos: [{title: 'Watch the M4B in Action', embedUrl: YOUTUBE.m4}],
     downloads: M4_AND_M4B_DOWNLOADS,
   },
   'xsto-ezgo2': {
@@ -377,7 +377,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     specs: [
       {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
       {label: 'Range', value: '35 km', unit: '(22 miles)'},
-      {label: 'Top Speed', value: '0–12 km/h', unit: '(0–7.5 mph)'},
+      {label: 'Top Speed', value: '0–12 km/h', unit: '(7.5 mph)'},
       {label: 'Max Stair Slope', value: '40°'},
       {label: 'Weight (no battery)', value: '112.8 kg', unit: '(249 lbs)'},
       {label: 'Battery', value: '25.2V', unit: '25.6Ah × 2'},
@@ -386,11 +386,9 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
     ],
     dimensions: [
-      {label: 'Folded Dimensions', value: '1185 × 685 × 617 mm'},
-      {label: 'Unfolded Dimensions', value: '1210 × 685 × 1550 mm'},
-      {label: 'Lifting Range', value: '315–700 mm'},
-      {label: 'Seat Depth', value: '380–435 mm'},
-      {label: 'Seat Width', value: '390–440 mm'},
+      {label: 'Compact transport size', value: '1185 × 685 × 617 mm'},
+      {label: 'Operating size', value: '1210 × 685 × 1550 mm'},
+      {label: 'Lifting / seat range', value: '315–700 mm'},
       {label: 'Recline Angle', value: '90°–121°'},
     ],
     inBox: [
@@ -423,7 +421,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     specs: [
       {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
       {label: 'Range', value: '35 km', unit: '(22 miles)'},
-      {label: 'Top Speed', value: '0–12 km/h', unit: '(0–7.5 mph)'},
+      {label: 'Top Speed', value: '0–12 km/h', unit: '(7.5 mph)'},
       {label: 'Max Stair Slope', value: '40°'},
       {label: 'Weight (no battery)', value: '115.8 kg', unit: '(255 lbs)'},
       {label: 'Legrest Adjustment', value: 'Electric (Pro exclusive)'},
@@ -432,11 +430,9 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
     ],
     dimensions: [
-      {label: 'Folded Dimensions', value: '1185 × 685 × 617 mm'},
-      {label: 'Unfolded Dimensions', value: '1210 × 685 × 1550 mm'},
-      {label: 'Lifting Range', value: '315–700 mm'},
-      {label: 'Seat Depth', value: '380–435 mm'},
-      {label: 'Seat Width', value: '390–440 mm'},
+      {label: 'Compact transport size', value: '1185 × 685 × 617 mm'},
+      {label: 'Operating size', value: '1210 × 685 × 1550 mm'},
+      {label: 'Lifting / seat range', value: '315–700 mm'},
       {label: 'Recline Angle', value: '90°–121°'},
     ],
     inBox: [

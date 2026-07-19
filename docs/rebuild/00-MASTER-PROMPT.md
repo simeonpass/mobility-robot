@@ -7,7 +7,7 @@ Paste this entire file into your Hydrogen project's AI editor (Cursor, Claude Co
 - Project: Hydrogen (Remix + Oxygen) storefront named `mobility-robot`.
 - Shopify store domain: `f7vjea-hq.myshopify.com` (Bentech Medical Ltd).
 - Public brand: **XSTO** — foldable powered wheelchairs. Legal entity: **Bentech Medical Ltd**, official UK distributor of XSTO.
-- Target production URL: `https://xsto.co.uk` (DNS moved to Oxygen after cutover). Until then, use the Oxygen preview URL.
+- Target production URL: `https://mobilityrobot.co.uk` (DNS moved to Oxygen after cutover; `xsto.co.uk` 301s to this host). Until then, use the Oxygen preview URL.
 - Language: TypeScript. Styling: Tailwind v4.
 - Shopify is the single source of truth for products, variants, inventory, prices, discount codes, orders, customer accounts, and checkout.
 - The Hydrogen repo owns: all frontend, dealer locator data (JSON in-repo), redirects, SEO, blog rendering.
@@ -118,8 +118,8 @@ Referral codes: `JENNI10` (10% off) is a Shopify discount code — apply via `di
    - FAQ route: `FAQPage`.
    - Blog post: `Article` + `BreadcrumbList`.
 - `app/routes/sitemap[.]xml.tsx` — generate from Shopify Storefront API (products, collections, blog posts) plus static routes.
-- `app/routes/robots[.]txt.tsx` — `Allow: /`, `Disallow: /account`, `Disallow: /cart`, `Sitemap: https://xsto.co.uk/sitemap.xml`.
-- Canonical URLs on every page pointing at `https://xsto.co.uk<path>`.
+- `app/routes/robots[.]txt.tsx` — `Allow: /`, `Disallow: /account`, `Disallow: /cart`, `Sitemap: https://mobilityrobot.co.uk/sitemap.xml`.
+- Canonical URLs on every page pointing at `https://mobilityrobot.co.uk<path>`.
 - Open Graph + Twitter card tags per route.
 - Image alt text: use values from `product-copy-*.ts` files.
 

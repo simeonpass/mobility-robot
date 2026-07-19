@@ -32,9 +32,9 @@ Everything you need to have your Hydrogen project's AI editor rebuild the XSTO s
 ## After the rebuild
 
 - Deploy to Oxygen (Shopify admin → Hydrogen channel → deploy).
-- Point `xsto.co.uk` DNS at Oxygen when you're ready to cut over.
-- The current Lovable site keeps running at xsto.co.uk until then — no downtime.
-
+- Point **`mobilityrobot.co.uk`** DNS at Oxygen / Shopify and set it as the primary domain.
+- Configure **`xsto.co.uk` → `mobilityrobot.co.uk` 301** (Shopify domain redirect or DNS). See `phase-8-deploy.md` domain cutover section.
+- Until cutover, the previous Lovable site can keep serving `xsto.co.uk` — no downtime.
 ## Things the AI will need you to provide
 
 - GA4 measurement ID (`G-…`).

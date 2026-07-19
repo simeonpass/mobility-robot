@@ -268,7 +268,7 @@ export function ProductPurchasePanel({
 
         {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
 
-        <ProductTrustBadges />
+        <ProductTrustBadges productHandle={productHandle} />
 
         {accessoryAddons.length ? (
           <ProductAccessoryAddons
