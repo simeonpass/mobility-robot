@@ -1,8 +1,8 @@
 export const HEADER_LOGO = {
   dark: {
     src: '/images/xsto-bentech-header.png',
-    width: 800,
-    height: 250,
+    width: 1000,
+    height: 300,
     alt: 'Mobility Robot — Official UK XSTO distributor, Bentech Medical Ltd',
   },
   light: {
