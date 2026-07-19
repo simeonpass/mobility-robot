@@ -10,7 +10,8 @@
 | `PUBLIC_STOREFRONT_ID` | Hydrogen analytics + Shop |
 | `PUBLIC_CHECKOUT_DOMAIN` | Shopify checkout host |
 | `SESSION_SECRET` | Cookie signing |
-| `SHOPIFY_ADMIN_API_ACCESS_TOKEN` | VAT relief customer sync (optional) |
+| `SHOPIFY_ADMIN_API_ACCESS_TOKEN` | VAT relief customer sync (legacy `shpat_`) |
+| `XSTO_VAT_RELIEF_CLIENT_ID` / `XSTO_VAT_RELIEF_CLIENT_SECRET` | Preferred VAT taxExempt sync (`write_customers`) |
 | `PUBLIC_GA4_ID` | Google Analytics 4 (`G-QMXNFNFTS0`) |
 | `PUBLIC_SHOP_ID` | Shop Chat widget (numeric shop ID) |
 

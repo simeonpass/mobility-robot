@@ -14,6 +14,7 @@ import {
   isVatDeclarationComplete,
   type VatDeclaration,
 } from '~/lib/vat-relief-types';
+import {registerVatReliefCustomer} from '~/lib/vat-relief-register';
 import {saveVatReliefRegistration} from '~/lib/vat-relief-session';
 import type {AttributeInput} from '@shopify/hydrogen/storefront-api-types';
 
@@ -85,6 +86,7 @@ export function VatReliefModal({
         ...declaration,
         registeredAt: new Date().toISOString(),
       });
+      void registerVatReliefCustomer(declaration);
     }
     onProductConfirm?.(vatReliefEnabled, declaration);
     onClose();
@@ -179,9 +181,9 @@ export function VatReliefModal({
                     under HMRC rules (Notice 701/7).
                   </p>
                   <p>
-                    We remove the exact VAT amount automatically at checkout —
-                    no discount code needed. Your declaration is stored with your
-                    order for HMRC compliance.
+                    We waive VAT at checkout for your declaration email (sign in
+                    with that account) — no discount code needed. Your declaration
+                    is stored with your order for HMRC compliance.
                   </p>
                 </div>
               </div>
@@ -381,6 +383,7 @@ function VatReliefCartApplyButton({
         ...declaration,
         registeredAt: new Date().toISOString(),
       });
+      void registerVatReliefCustomer(declaration);
     }
 
     onClose();

@@ -165,8 +165,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
         {totals?.hasVatRelief ? (
           <p className="mb-2 text-xs text-muted-foreground">
-            VAT relief applied — no VAT charged when you check out with your
-            declaration email (sign in if you have an account).
+            VAT relief applied — checkout total is the ex-VAT catalog price only
+            when you are signed in with your declaration email (tax-exempt
+            account). Guest checkout still charges VAT.
           </p>
         ) : null}
 
@@ -226,15 +227,15 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <div className="rounded-lg border border-border bg-secondary/30 p-3 text-sm">
             <p className="font-medium text-foreground">VAT relief on eligible items</p>
             <p className="mt-1 text-muted-foreground">
-              You pay the ex-VAT catalog price. At checkout, tax is waived for
-              your declaration email —{' '}
+              You pay the ex-VAT catalog price. Sign in at checkout with your
+              declaration email —{' '}
               <Link
                 className="font-medium text-foreground hover:underline"
                 to="/account/login"
               >
                 sign in
               </Link>{' '}
-              with that email if you have an account.
+              — so Shopify can waive VAT (guest checkout still includes 20% VAT).
             </p>
           </div>
         ) : (

@@ -76,13 +76,38 @@ export async function action({request, context}: Route.ActionArgs) {
       throw new Error(`${action} cart action is not defined`);
   }
 
-  const cartId = result?.cart?.id;
-  const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
-  const {cart: cartResult, errors, warnings} = result;
+  let cartResult = result.cart;
+  const errors = result.errors;
+  const warnings = result.warnings;
 
   if (cartResult?.lines?.nodes?.length) {
-    await syncVatExemptionCustomersFromCart(env, cartResult.lines.nodes);
+    const declarationEmail = await syncVatExemptionCustomersFromCart(
+      env,
+      cartResult.lines.nodes,
+    );
+
+    // Link checkout identity to the tax-exempt customer so Shopify can waive VAT
+    // (customer taxExempt only applies when the buyer is that customer).
+    if (
+      declarationEmail &&
+      cartResult.buyerIdentity?.email?.toLowerCase() !== declarationEmail
+    ) {
+      try {
+        const identityResult = await cart.updateBuyerIdentity({
+          email: declarationEmail,
+        });
+        if (identityResult.cart) {
+          cartResult = identityResult.cart;
+          result = identityResult;
+        }
+      } catch (error) {
+        console.error('VAT relief buyerIdentity update failed', error);
+      }
+    }
   }
+
+  const cartId = result?.cart?.id;
+  const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
 
   const redirectTo = formData.get('redirectTo') ?? null;
   if (typeof redirectTo === 'string') {

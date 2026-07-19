@@ -59,6 +59,11 @@ shopify app deploy --config shopify.app.xsto-vat-relief.toml
 Build from the **repo root** (not only inside the extension folder). Redeploy after
 this change so the live function stops applying catalog/6 discounts.
 
+After changing scopes, open **Shopify Admin → Settings → Apps and sales channels →
+XSTO VAT Relief** and accept the updated permissions (`write_customers`). Until
+that grant is active, client-credentials tokens stay on `write_discounts` only
+and taxExempt upserts will fail (Access denied for customers).
+
 ### 2. Automatic discount (optional keep)
 
 The **VAT Relief (exact)** automatic discount can stay **Active**; the function now
@@ -75,7 +80,20 @@ returns no product discount candidates. Or deactivate it — taxExempt alone is 
 ## Admin API
 
 `/api/vat-relief` and cart-line sync call `upsertTaxExemptCustomer` with
-`taxExempt: true`. Requires `SHOPIFY_ADMIN_API_ACCESS_TOKEN` with `write_customers`.
+`taxExempt: true`.
+
+Auth (first match):
+
+1. `SHOPIFY_ADMIN_API_ACCESS_TOKEN` (`shpat_…`) with `write_customers`, or
+2. `XSTO_VAT_RELIEF_CLIENT_ID` + `XSTO_VAT_RELIEF_CLIENT_SECRET` (client
+   credentials). App scopes must include **`write_customers`** (and
+   `write_discounts` for the function). Redeploy/reinstall the XSTO VAT Relief
+   app after changing scopes.
+
+Also set these on Oxygen so production can upsert tax-exempt customers.
+
+Cart actions set `buyerIdentity.email` to the declaration email. Customers
+should **sign in** with that email at checkout so Shopify applies `taxExempt`.
 
 ## Files
 

@@ -1,8 +1,10 @@
 /**
  * Shopify Admin API helpers for VAT exemption customer records.
  *
- * Requires a custom app with `write_customers` scope and env:
- *   SHOPIFY_ADMIN_API_ACCESS_TOKEN
+ * Auth (first match wins):
+ *   1. SHOPIFY_ADMIN_API_ACCESS_TOKEN (legacy shpat_ custom app)
+ *   2. XSTO_VAT_RELIEF_CLIENT_ID + XSTO_VAT_RELIEF_CLIENT_SECRET
+ *      (Dev Dashboard app — client_credentials; needs write_customers)
  *
  * Catalog prices are tax-exclusive. VAT relief is applied by marking the
  * declarant `taxExempt: true` so Shopify does not add 20% VAT — payable =
@@ -25,7 +27,11 @@ type AdminGraphqlResponse<T> = {
 
 type CustomerUpsertResult =
   | {ok: true; customerId: string; created: boolean}
-  | {ok: false; reason: 'missing_token' | 'invalid_email' | 'admin_error'; message?: string};
+  | {
+      ok: false;
+      reason: 'missing_token' | 'invalid_email' | 'admin_error';
+      message?: string;
+    };
 
 // Not tagged #graphql — Admin API docs must not run through Storefront codegen.
 const CUSTOMER_SEARCH_QUERY = `
@@ -72,11 +78,77 @@ const CUSTOMER_UPDATE_MUTATION = `
   }
 `;
 
-function getAdminConfig(env: Env): {token: string; storeDomain: string} | null {
-  const token = env.SHOPIFY_ADMIN_API_ACCESS_TOKEN?.trim();
+type AdminAuth =
+  | {kind: 'static'; token: string; storeDomain: string}
+  | {
+      kind: 'client_credentials';
+      clientId: string;
+      clientSecret: string;
+      storeDomain: string;
+    };
+
+function getAdminAuth(env: Env): AdminAuth | null {
   const storeDomain = env.PUBLIC_STORE_DOMAIN?.trim();
-  if (!token || !storeDomain) return null;
-  return {token, storeDomain};
+  if (!storeDomain) return null;
+
+  const staticToken = env.SHOPIFY_ADMIN_API_ACCESS_TOKEN?.trim();
+  if (staticToken?.startsWith('shpat_')) {
+    return {kind: 'static', token: staticToken, storeDomain};
+  }
+
+  const clientId = env.XSTO_VAT_RELIEF_CLIENT_ID?.trim();
+  const clientSecret = env.XSTO_VAT_RELIEF_CLIENT_SECRET?.trim();
+  if (clientId && clientSecret) {
+    return {kind: 'client_credentials', clientId, clientSecret, storeDomain};
+  }
+
+  return null;
+}
+
+async function resolveAdminToken(
+  auth: AdminAuth,
+): Promise<{token: string; storeDomain: string} | null> {
+  if (auth.kind === 'static') {
+    return {token: auth.token, storeDomain: auth.storeDomain};
+  }
+
+  const response = await fetch(
+    `https://${auth.storeDomain}/admin/oauth/access_token`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: auth.clientId,
+        client_secret: auth.clientSecret,
+      }),
+    },
+  );
+
+  const payload = (await response.json()) as {
+    access_token?: string;
+    scope?: string;
+    error?: string;
+    error_description?: string;
+  };
+
+  if (!response.ok || !payload.access_token) {
+    console.error('VAT Admin client_credentials failed', {
+      status: response.status,
+      error: payload.error,
+      error_description: payload.error_description,
+    });
+    return null;
+  }
+
+  if (payload.scope && !payload.scope.split(/[,\s]+/).includes('write_customers')) {
+    console.error(
+      'VAT Admin token missing write_customers scope — taxExempt upsert will fail',
+      {scope: payload.scope},
+    );
+  }
+
+  return {token: payload.access_token, storeDomain: auth.storeDomain};
 }
 
 async function adminGraphql<T>(
@@ -84,9 +156,14 @@ async function adminGraphql<T>(
   query: string,
   variables: Record<string, unknown>,
 ): Promise<AdminGraphqlResponse<T>> {
-  const config = getAdminConfig(env);
-  if (!config) {
+  const auth = getAdminAuth(env);
+  if (!auth) {
     return {errors: [{message: 'Admin API not configured'}]};
+  }
+
+  const config = await resolveAdminToken(auth);
+  if (!config) {
+    return {errors: [{message: 'Admin API token unavailable'}]};
   }
 
   const response = await fetch(
@@ -141,7 +218,7 @@ export async function upsertTaxExemptCustomer(
   env: Env,
   input: VatExemptionCustomerInput,
 ): Promise<CustomerUpsertResult> {
-  if (!getAdminConfig(env)) {
+  if (!getAdminAuth(env)) {
     return {ok: false, reason: 'missing_token'};
   }
 
@@ -243,22 +320,29 @@ export async function syncVatExemptionCustomersFromCart(
   lines: Array<{
     attributes?: Array<{key: string; value?: string | null}> | null;
   }>,
-): Promise<void> {
+): Promise<string | null> {
   const seenEmails = new Set<string>();
+  let primaryEmail: string | null = null;
 
   for (const line of lines) {
     const declaration = parseVatExemptionFromAttributes(line.attributes);
     if (!declaration || seenEmails.has(declaration.email)) continue;
     seenEmails.add(declaration.email);
+    if (!primaryEmail) primaryEmail = declaration.email.trim().toLowerCase();
 
     try {
-      await upsertTaxExemptCustomer(env, declaration);
+      const result = await upsertTaxExemptCustomer(env, declaration);
+      if (!result.ok) {
+        console.error('VAT exemption customer sync failed', result);
+      }
     } catch (error) {
       console.error('VAT exemption customer sync failed', error);
     }
   }
+
+  return primaryEmail;
 }
 
 export function adminApiConfigured(env: Env): boolean {
-  return Boolean(getAdminConfig(env));
+  return Boolean(getAdminAuth(env));
 }
