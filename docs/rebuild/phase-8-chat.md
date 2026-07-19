@@ -4,9 +4,9 @@ The Hydrogen storefront uses **Shop Chat** (Shopify `shop-js`) as the headless-f
 
 ## Primary path — Shop Chat
 
-1. Set `PUBLIC_SHOP_ID` in Oxygen to your numeric Shopify shop ID.
-   - Shopify Admin → Settings → Apps and sales channels → **Shop**
-   - Or inspect the Shop channel embed / `shop.app` configuration
+1. Set `PUBLIC_SHOP_ID` in Oxygen to your numeric Shopify shop ID (`90445414778` for `f7vjea-hq.myshopify.com`).
+   - Also available from `https://f7vjea-hq.myshopify.com/meta.json` → `id`
+   - The app falls back to this ID when the env var is empty
 2. The widget loads from `https://cdn.shopify.com/shopifycloud/shop-js/client.js` with `data-shop-id`.
 3. Mounted in `app/components/ShopChat.tsx`, gated by cookie consent (`marketing` preference).
 4. Hidden on `/account/*`, `/checkout`, and `/vat-relief?registered=1`.
