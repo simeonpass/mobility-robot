@@ -2,10 +2,19 @@ import {useLoaderData} from 'react-router';
 import type {Route} from './+types/blogs.$blogHandle.$articleHandle';
 import {Image} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {pageMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.article.title ?? ''} article`}];
-};
+export const meta: Route.MetaFunction = ({data, params}) =>
+  pageMeta({
+    title: data?.article.title ?? 'Article',
+    description:
+      data?.article.seo?.description ||
+      'XSTO article from Bentech Medical Ltd.',
+    path: `/blogs/${params.blogHandle ?? ''}/${params.articleHandle ?? ''}`,
+    robots: 'noindex, follow',
+    ogType: 'article',
+    image: data?.article.image?.url,
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -85,7 +94,14 @@ export default function Article() {
         </div>
       </h1>
 
-      {image && <Image data={image} sizes="90vw" loading="eager" />}
+      {image && (
+        <Image
+          alt={image.altText || title}
+          data={image}
+          loading="eager"
+          sizes="90vw"
+        />
+      )}
       <div
         dangerouslySetInnerHTML={{__html: contentHtml}}
         className="article"

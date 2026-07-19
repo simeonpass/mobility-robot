@@ -23,9 +23,9 @@ export function FooterNewsletter() {
     <div className="border-b border-border bg-secondary/60 py-4 md:py-5">
       <div className="xsto-container flex flex-col items-center justify-between gap-3 sm:flex-row">
         <div className="text-center sm:text-left">
-          <h4 className="text-base font-semibold text-foreground md:text-lg">
+          <p className="text-base font-semibold text-foreground md:text-lg">
             Stay Updated
-          </h4>
+          </p>
           <p className="mt-0.5 text-sm text-muted-foreground">
             Get exclusive offers and be first to hear about new products.
           </p>

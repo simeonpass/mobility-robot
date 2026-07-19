@@ -43,7 +43,7 @@ export const PRODUCT_NAV_GROUPS: NavGroup[] = [
       {
         title: 'EzGo2',
         url: productUrl('xsto-ezgo2'),
-        description: 'Ultra-light carbon fiber',
+        description: 'Ultra-light carbon fibre',
       },
     ],
   },
@@ -110,6 +110,7 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
 ];
 
 export const FOOTER_SUPPORT_LINKS: NavItem[] = [
+  {title: 'About', url: '/about'},
   {title: 'FAQ', url: '/faq'},
   {title: 'Warranty Information', url: '/warranty'},
   {title: 'Returns Policy', url: '/returns'},

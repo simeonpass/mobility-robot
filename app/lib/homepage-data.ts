@@ -121,8 +121,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': true,
       'xsto-m4b': true,
       'xsto-ezgo2': true,
-      'xsto-x12': false,
-      'xsto-x12-pro': false,
+      'xsto-x12': true,
+      'xsto-x12-pro': true,
     },
   },
   {
@@ -137,7 +137,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
     },
   },
   {
-    label: 'Carbon Fiber',
+    label: 'Carbon Fibre',
     values: {
       'xsto-m4': false,
       'xsto-m4-pro': false,
@@ -220,8 +220,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '60.1 kg',
       'xsto-m4b': '55.5 kg',
       'xsto-ezgo2': '11.5 kg',
-      'xsto-x12': '115 kg',
-      'xsto-x12-pro': '116 kg',
+      'xsto-x12': '112.8 kg',
+      'xsto-x12-pro': '115.8 kg',
     },
   },
 ];
@@ -295,7 +295,7 @@ export function getHomepageProductSlot(
 }
 
 /** Homepage hero YouTube video — X12 stair-climbing / all-terrain film. */
-export const HOMEPAGE_HERO_YOUTUBE_ID = '4KFMBL5jX20';
+export const HOMEPAGE_HERO_YOUTUBE_ID = 'ihXdzLuNz2s';
 
 export function heroYoutubePosterUrl(videoId = HOMEPAGE_HERO_YOUTUBE_ID): string {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
@@ -341,7 +341,7 @@ export const HOMEPAGE_PRODUCT_BULLETS: Record<
     'Electric height adjustment 347–650 mm',
   ],
   'xsto-ezgo2': [
-    'Aerospace-grade carbon fiber frame',
+    'Aerospace-grade carbon fibre frame',
     'Only 11.5 kg without battery',
     '3-step fold · 15 km range',
   ],
@@ -409,7 +409,7 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
     model: 'X12',
     handle: 'xsto-x12',
     shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12'],
-    weight: '115 kg',
+    weight: '112.8 kg',
     capacity: '136 kg',
     range: '35 km',
     foldedSize: '1185 × 685 × 617 mm',
@@ -418,7 +418,7 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
     model: 'X12 Pro',
     handle: 'xsto-x12-pro',
     shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro'],
-    weight: '116 kg',
+    weight: '115.8 kg',
     capacity: '136 kg',
     range: '35 km',
     foldedSize: '1185 × 685 × 617 mm',

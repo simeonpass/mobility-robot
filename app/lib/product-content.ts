@@ -1,5 +1,11 @@
 import type {ProductFAQ} from '~/lib/product-faqs';
-import {m4FAQs, m4ProFAQs, x12FAQs, ezgo2FAQs} from '~/lib/product-faqs';
+import {
+  m4FAQs,
+  m4bFAQs,
+  m4ProFAQs,
+  x12FAQs,
+  ezgo2FAQs,
+} from '~/lib/product-faqs';
 import {
   getHomepageProductSlot,
   type HomepageProductHandle,
@@ -198,7 +204,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       '450–730 mm electric seat height',
     ],
     specs: [
-      {label: 'Max Load Capacity', value: '150 kg', unit: '(330 lbs)'},
+      {label: 'Max Load Capacity', value: '150 kg', unit: '(331 lbs)'},
       {label: 'Range', value: '26 km', unit: '(16.2 miles)'},
       {label: 'Top Speed', value: '6 km/h', unit: '(3.7 mph)'},
       {label: 'Max Slope', value: '15°'},
@@ -272,29 +278,29 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'Tool Kit',
     ],
     deliveryWarranty: DELIVERY_WARRANTY,
-    faqs: m4FAQs,
-    videos: [{title: 'Watch the M4 in Action', embedUrl: YOUTUBE.m4}],
+    faqs: m4bFAQs,
+    videos: [],
     downloads: M4_AND_M4B_DOWNLOADS,
   },
   'xsto-ezgo2': {
     displayName: 'XSTO EzGo2',
-    tagline: 'Carbon Fiber · Ultra-Lightweight · Fold With Ease',
+    tagline: 'Carbon Fibre · Ultra-Lightweight · Fold With Ease',
     overview:
-      'The XSTO EzGo2 is an aerospace-grade carbon fiber power wheelchair weighing just 11.5 kg without battery. Three-step folding to a 26 cm packed width, dual 150W motors, and a 24V 10Ah battery make it ideal for indoor mobility, travel, and effortless lifting into a car boot.',
+      'The XSTO EzGo2 is an aerospace-grade carbon fibre power wheelchair weighing just 11.5 kg without battery. Three-step folding to a 26 cm packed width, dual 150W motors, and a 24V 10Ah battery make it ideal for indoor mobility, travel, and effortless lifting into a car boot.',
     highlights: [
       'Only 11.5 kg without battery',
-      'High-strength full carbon fiber frame',
+      'High-strength full carbon fibre frame',
       'Three-step quick fold · 26 cm folded width',
       '15 km range · 136 kg capacity',
     ],
     features: [
       {
-        title: 'Aerospace-Grade Carbon Fiber',
+        title: 'Aerospace-Grade Carbon Fibre',
         description:
-          'A full carbon fiber frame delivers exceptional strength at ultra-low weight — light enough for many users to lift with one hand.',
+          'A full carbon fibre frame delivers exceptional strength at ultra-low weight — light enough for many users to lift with one hand.',
         highlights: [
           '11.5 kg frame weight (no battery)',
-          'High-strength carbon fiber construction',
+          'High-strength carbon fibre construction',
           'Battery approx. 2.2 kg',
           'Easy boot and travel packing',
         ],
@@ -332,7 +338,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Usage Type', value: 'Indoor'},
       {label: 'Battery', value: '24V', unit: '10Ah'},
       {label: 'Motor Power', value: '150W × 2'},
-      {label: 'Frame Material', value: 'Carbon fiber'},
+      {label: 'Frame Material', value: 'Carbon fibre'},
       {label: 'Obstacle Clearance', value: '≥ 25 mm'},
       {label: 'Gap Crossing', value: '100 mm'},
       {label: 'Turning Diameter', value: '≤ 1800 mm'},
@@ -348,7 +354,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Rear Wheel', value: '12 inch'},
     ],
     inBox: [
-      'XSTO EzGo2 Carbon Fiber Power Wheelchair',
+      'XSTO EzGo2 Carbon Fibre Power Wheelchair',
       '24V 10Ah Lithium Battery',
       'Battery Charger',
       'Joystick Controller',
@@ -371,16 +377,20 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     specs: [
       {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
       {label: 'Range', value: '35 km', unit: '(22 miles)'},
+      {label: 'Top Speed', value: '0–12 km/h', unit: '(0–7.5 mph)'},
       {label: 'Max Stair Slope', value: '40°'},
-      {label: 'Weight (no battery)', value: '115 kg', unit: '(254 lbs)'},
+      {label: 'Weight (no battery)', value: '112.8 kg', unit: '(249 lbs)'},
       {label: 'Battery', value: '25.2V', unit: '25.6Ah × 2'},
+      {label: 'Charge Time', value: '6.5 hours × 2'},
       {label: 'Max Pit Width', value: '300 mm', unit: '(tracked)'},
       {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
     ],
     dimensions: [
       {label: 'Folded Dimensions', value: '1185 × 685 × 617 mm'},
       {label: 'Unfolded Dimensions', value: '1210 × 685 × 1550 mm'},
-      {label: 'Seat Height Range', value: '490–762 mm'},
+      {label: 'Lifting Range', value: '315–700 mm'},
+      {label: 'Seat Depth', value: '380–435 mm'},
+      {label: 'Seat Width', value: '390–440 mm'},
       {label: 'Recline Angle', value: '90°–121°'},
     ],
     inBox: [
@@ -413,16 +423,20 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     specs: [
       {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
       {label: 'Range', value: '35 km', unit: '(22 miles)'},
+      {label: 'Top Speed', value: '0–12 km/h', unit: '(0–7.5 mph)'},
       {label: 'Max Stair Slope', value: '40°'},
-      {label: 'Weight (no battery)', value: '116 kg', unit: '(256 lbs)'},
+      {label: 'Weight (no battery)', value: '115.8 kg', unit: '(255 lbs)'},
       {label: 'Legrest Adjustment', value: 'Electric (Pro exclusive)'},
       {label: 'Battery', value: '25.2V', unit: '25.6Ah × 2'},
+      {label: 'Charge Time', value: '6.5 hours × 2'},
       {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
     ],
     dimensions: [
       {label: 'Folded Dimensions', value: '1185 × 685 × 617 mm'},
       {label: 'Unfolded Dimensions', value: '1210 × 685 × 1550 mm'},
-      {label: 'Seat Height Range', value: '490–762 mm'},
+      {label: 'Lifting Range', value: '315–700 mm'},
+      {label: 'Seat Depth', value: '380–435 mm'},
+      {label: 'Seat Width', value: '390–440 mm'},
       {label: 'Recline Angle', value: '90°–121°'},
     ],
     inBox: [

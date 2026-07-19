@@ -1,7 +1,9 @@
 import type {ProductFAQ} from '~/lib/product-faqs';
 import {
+  ezgo2FAQs,
   generalFAQs,
   m4FAQs,
+  m4bFAQs,
   m4ProFAQs,
   x12FAQs,
 } from '~/lib/product-faqs';
@@ -16,7 +18,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
   {
     id: 'product',
     title: 'Product',
-    items: [...m4FAQs, ...m4ProFAQs, ...x12FAQs],
+    items: [...m4FAQs, ...m4bFAQs, ...m4ProFAQs, ...ezgo2FAQs, ...x12FAQs],
   },
   {
     id: 'ordering-delivery',

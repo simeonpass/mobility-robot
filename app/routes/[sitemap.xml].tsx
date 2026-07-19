@@ -8,6 +8,7 @@ export async function loader({
   const response = await getSitemapIndex({
     storefront,
     request,
+    customChildSitemaps: ['/sitemap.content.xml'],
   });
 
   response.headers.set('Cache-Control', `max-age=${60 * 60 * 24}`);
