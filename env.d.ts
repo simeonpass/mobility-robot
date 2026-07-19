@@ -14,8 +14,10 @@ declare global {
     SHOPIFY_ADMIN_API_ACCESS_TOKEN?: string;
     /** Google Analytics 4 measurement ID (e.g. G-QMXNFNFTS0) */
     PUBLIC_GA4_ID?: string;
-    /** Numeric Shopify shop ID for Shop Chat widget */
+    /** Numeric Shopify shop ID (meta.json) */
     PUBLIC_SHOP_ID?: string;
+    /** Inbox data-external-identifier from Liquid theme embed */
+    PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID?: string;
     /** Judge.me shop domain (defaults to PUBLIC_STORE_DOMAIN) */
     JUDGEME_SHOP_DOMAIN?: string;
     /** Judge.me public token — required to enable widgets */

@@ -105,6 +105,8 @@ export async function loader(args: Route.LoaderArgs) {
     ga4Id: env.PUBLIC_GA4_ID ?? null,
     shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,
+    inboxExternalId:
+      env.PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID || undefined,
     judgeme: getJudgemeConfig(env),
     shop: getShopAnalytics({
       storefront,
@@ -172,7 +174,10 @@ export default function App() {
       <ConsentProvider ga4Id={data.ga4Id}>
         <VatReliefProvider>
           <Ga4Tracker ga4Id={data.ga4Id} />
-          <ShopChat shopDomain={data.shopDomain} shopId={data.shopId} />
+          <ShopChat
+            shopDomain={data.shopDomain}
+            inboxExternalId={data.inboxExternalId}
+          />
           <JudgemeBootstrap config={data.judgeme} />
           <PageLayout {...data}>
             <Outlet />
