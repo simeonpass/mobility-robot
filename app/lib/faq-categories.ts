@@ -50,7 +50,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       {
         question: 'Who handles warranty claims in the UK?',
         answer:
-          'Bentech Medical Ltd, as the official UK distributor, manages all warranty claims directly with the manufacturer. Contact support@xsto.co.uk or call 0208 050 4849.',
+          'Bentech Medical Ltd, as the official UK distributor, manages all warranty claims directly with the manufacturer. Contact support@mobilityrobot.co.uk or call 0208 050 4849.',
       },
     ],
   },
@@ -83,7 +83,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       {
         question: 'Can I become an authorised stockist?',
         answer:
-          'Bentech Medical Ltd appoints authorised UK and Ireland stockists. Email support@xsto.co.uk with your company details and territory to discuss partnership.',
+          'Bentech Medical Ltd appoints authorised UK and Ireland stockists. Email support@mobilityrobot.co.uk with your company details and territory to discuss partnership.',
       },
     ],
   },

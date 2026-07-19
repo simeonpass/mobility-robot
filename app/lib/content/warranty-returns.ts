@@ -48,7 +48,7 @@ export const warrantySections: ContentSection[] = [
     id: 'claims',
     title: 'Making a claim',
     paragraphs: [
-      'Contact support@xsto.co.uk or call 0208 050 4849 with your order number, serial number and a description of the issue. Photos or video help us assess claims quickly. Do not attempt repairs that may void your warranty.',
+      'Contact support@mobilityrobot.co.uk or call 0208 050 4849 with your order number, serial number and a description of the issue. Photos or video help us assess claims quickly. Do not attempt repairs that may void your warranty.',
     ],
   },
 ];
@@ -97,7 +97,7 @@ export const returnsSections: ContentSection[] = [
     id: 'process',
     title: 'How to start a return',
     paragraphs: [
-      'Email support@xsto.co.uk with your order number and reason for return. We will confirm eligibility and arrange collection where applicable. Refunds are processed within 14 days of receiving and inspecting the returned item.',
+      'Email support@mobilityrobot.co.uk with your order number and reason for return. We will confirm eligibility and arrange collection where applicable. Refunds are processed within 14 days of receiving and inspecting the returned item.',
     ],
   },
 ];

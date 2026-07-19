@@ -32,7 +32,7 @@ export async function action({request, context}: Route.ActionArgs) {
         {
           ok: false,
           error:
-            'VAT registration is temporarily unavailable. Please contact support@xsto.co.uk and we will set up your account manually.',
+            'VAT registration is temporarily unavailable. Please contact support@mobilityrobot.co.uk and we will set up your account manually.',
         },
         {status: 503},
       );

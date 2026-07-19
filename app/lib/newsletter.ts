@@ -86,7 +86,7 @@ export async function subscribeNewsletter(
   } catch {
     return {
       error:
-        'Something went wrong. Please try again or contact support@xsto.co.uk.',
+        'Something went wrong. Please try again or contact support@mobilityrobot.co.uk.',
     };
   }
 }
