@@ -60,6 +60,20 @@ export default async function handleRequest(
       'https://cdn.judge.me',
       'https://js.hcaptcha.com',
       'https://*.hcaptcha.com',
+      'https://js.pusher.com',
+    ],
+    // Inbox injects inline + third-party scripts without our nonce. With a nonce
+    // present, browsers ignore 'unsafe-inline' on script-src — override
+    // script-src-elem so the widget can load (see hydrogen#878).
+    scriptSrcElem: [
+      "'self'",
+      "'unsafe-inline'",
+      'https://www.googletagmanager.com',
+      'https://cdn.shopify.com',
+      'https://cdn.judge.me',
+      'https://js.hcaptcha.com',
+      'https://*.hcaptcha.com',
+      'https://js.pusher.com',
     ],
     connectSrc: [
       'https://nominatim.openstreetmap.org',
@@ -73,10 +87,14 @@ export default async function handleRequest(
       // Shopify Inbox
       'https://shopify-chat.shopifyapps.com',
       'https://messaging-api.shopifyapps.com',
+      'https://pusher.com',
       'https://*.pusher.com',
       'wss://*.pusher.com',
       'https://*.hcaptcha.com',
+      'https://sentry.hcaptcha.com',
       'https://notify.bugsnag.com',
+      'https://sessions.bugsnag.com',
+      'https://monorail-edge-ca.shopifycloud.com',
       'https://otlp-http-production.shopifysvc.com',
       'https://error-analytics-sessions-production.shopifysvc.com',
     ],
@@ -119,6 +137,7 @@ export default async function handleRequest(
       'https://shopify-chat.shopifyapps.com',
       'https://*.hcaptcha.com',
       'https://newassets.hcaptcha.com',
+      'https://www.hcaptcha.com',
     ],
   });
 

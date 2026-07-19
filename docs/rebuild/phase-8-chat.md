@@ -11,7 +11,10 @@ Hydrogen cannot use the Online Store Inbox **app embed**. The storefront loads
 3. Set Oxygen / `.env`:
    - `PUBLIC_SHOP_ID=90445414778` (from `https://f7vjea-hq.myshopify.com/meta.json` → `id`)
    - `PUBLIC_STORE_DOMAIN=f7vjea-hq.myshopify.com`
-4. CSP for Inbox domains is configured in `app/entry.server.tsx`.
+4. CSP for Inbox domains is configured in `app/entry.server.tsx`
+   (`scriptSrcElem` must allow `'unsafe-inline'` + `js.pusher.com` — Hydrogen’s
+   script nonce otherwise blocks the widget and shows
+   “A technical problem occurred”).
 
 ## Behaviour
 
