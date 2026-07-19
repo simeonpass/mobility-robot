@@ -49,7 +49,8 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   // Lovable xsto.co.uk sitemap paths (pre-Hydrogen)
   '/accessories': '/collections/accessories',
   '/find-dealer': '/stockists',
-  '/videos': '/blog',
+  '/pages/videos': '/videos',
+  '/pages/how-to': '/videos',
   '/reviews': '/',
   '/trade': '/quote',
   '/official-uk-distributor': '/about',

@@ -2,7 +2,9 @@ from,to,status
 /,/,301
 /accessories,/collections/accessories,301
 /find-dealer,/stockists,301
-/videos,/blog,301
+/videos,/videos,200
+/pages/videos,/videos,301
+/pages/how-to,/videos,301
 /reviews,/,301
 /trade,/quote,301
 /official-uk-distributor,/about,301
