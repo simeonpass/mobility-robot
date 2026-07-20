@@ -29,11 +29,11 @@ export function ReviewsSection() {
         <div className="xsto-container">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <SectionIntro
-              accent="reviews."
+              accent="fantastic reviews."
               align="left"
-              description="Verified customer feedback collected through Judge.me."
-              label="Customer stories"
-              title="Verified"
+              description="So many happy customers — real experiences from people who chose XSTO."
+              label="Happy customers"
+              title="Look at our"
             />
             <div className="min-h-[2.5rem] shrink-0 md:pb-1 md:text-right">
               <JudgemeAllReviewsRating />
@@ -63,11 +63,11 @@ export function ReviewsSection() {
       <div className="xsto-container">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionIntro
-            accent="reviews."
+            accent="fantastic reviews."
             align="left"
-            description="Real feedback from M4 customers on our previous storefront."
-            label="Customer stories"
-            title="Verified"
+            description="So many happy customers — real experiences from people who chose XSTO."
+            label="Happy customers"
+            title="Look at our"
           />
           <div className="shrink-0 md:pb-1 md:text-right">
             <div className="flex items-center gap-2 md:justify-end">
