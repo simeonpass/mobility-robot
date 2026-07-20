@@ -71,6 +71,35 @@ export function getPreorderDeliveryDate(
   }).format(deliveryDate);
 }
 
+/** Default in-stock lead time when a product has no per-handle override. */
+export const DEFAULT_IN_STOCK_DELIVERY_DAYS = '5–7 working days';
+
+/**
+ * In-stock delivery ETA for M-series chairs (Shopify handles + slot aliases).
+ */
+export const M_SERIES_IN_STOCK_DELIVERY_DAYS = '3–4 working days';
+
+const M_SERIES_IN_STOCK_SLOTS = new Set([
+  'xsto-m4',
+  'xsto-m4b',
+  'xsto-m4-pro',
+]);
+
+export function getInStockDeliveryDays(handle?: string | null): string {
+  if (!handle) return DEFAULT_IN_STOCK_DELIVERY_DAYS;
+
+  const slot = getHomepageProductSlot(handle);
+  if (slot && M_SERIES_IN_STOCK_SLOTS.has(slot)) {
+    return M_SERIES_IN_STOCK_DELIVERY_DAYS;
+  }
+
+  return DEFAULT_IN_STOCK_DELIVERY_DAYS;
+}
+
+export function formatInStockEtaLabel(handle?: string | null): string {
+  return `Delivers in ${getInStockDeliveryDays(handle)}`;
+}
+
 export function formatPreorderWeeksLabel(weeks: number): string {
   return weeks === 1 ? '~1 week' : `~${weeks} weeks`;
 }
@@ -115,7 +144,7 @@ export function getDeliveryInfo({
       status: 'in_stock',
       headline: 'In stock',
       detail: 'Free UK mainland delivery',
-      etaLabel: 'Delivers in 5–7 working days',
+      etaLabel: formatInStockEtaLabel(handle),
       preorderWeeks: null,
     };
   }

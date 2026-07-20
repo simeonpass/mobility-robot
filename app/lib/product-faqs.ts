@@ -32,7 +32,7 @@ export const m4FAQs: ProductFAQ[] = [
   {
     question: 'How soon can I receive the M4 after ordering?',
     answer:
-      'Within the UK: 5–7 working days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
+      'Within the UK: 3–4 working days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
   },
   {
     question: 'What warranty is included with the M4?',
@@ -75,7 +75,7 @@ export const m4bFAQs: ProductFAQ[] = [
   {
     question: 'How soon can I receive the M4B after ordering?',
     answer:
-      'Within the UK: 5–7 working days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
+      'Within the UK: 3–4 working days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
   },
   {
     question: 'What warranty is included with the M4B?',
@@ -109,6 +109,11 @@ export const m4ProFAQs: ProductFAQ[] = [
     question: 'Is the M4 Pro foldable for transport?',
     answer:
       'Yes. The M4 Pro features one-button electric folding and can be disassembled into modules for car transport. The heaviest single part weighs approximately 28 kg, making it manageable for most people to lift into a vehicle boot.',
+  },
+  {
+    question: 'How soon can I receive the M4 Pro after ordering?',
+    answer:
+      'Within the UK: 3–4 working days with free delivery to mainland addresses. For Scottish Highlands, Northern Ireland, and offshore islands, please contact us for delivery timescales. A tracking number will be emailed after dispatch.',
   },
   {
     question: 'What warranty comes with the M4 Pro?',
@@ -257,7 +262,7 @@ export const generalFAQs: ProductFAQ[] = [
   {
     question: 'How soon will my order arrive?',
     answer:
-      'In-stock models: free UK mainland delivery in 5–7 working days. Pre-order items (such as the X12 range) ship when available — estimated delivery is shown on each product page.',
+      'In-stock M4, M4B and M4 Pro: free UK mainland delivery in 3–4 working days. Other in-stock models typically arrive in 5–7 working days. Pre-order items (such as the X12 range) ship when available — estimated delivery is shown on each product page.',
   },
   {
     question: 'Who provides UK customer support?',

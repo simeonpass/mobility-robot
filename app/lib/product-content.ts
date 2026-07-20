@@ -84,6 +84,10 @@ const DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. In
 
 Warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts, and 1 year on the battery. Bentech Medical Ltd manages all UK warranty claims as the official distributor.`;
 
+const M_SERIES_DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. Typically arrives within 3–4 working days.
+
+Warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts, and 1 year on the battery. Bentech Medical Ltd manages all UK warranty claims as the official distributor.`;
+
 const YOUTUBE = {
   m4: 'https://www.youtube-nocookie.com/embed/D-7Pt3OUdQg',
   m4Pro: 'https://www.youtube-nocookie.com/embed/R2eyc-2uYNQ',
@@ -188,7 +192,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: DELIVERY_WARRANTY,
+    deliveryWarranty: M_SERIES_DELIVERY_WARRANTY,
     faqs: m4FAQs,
     videos: [{title: 'Watch the M4 in Action', embedUrl: YOUTUBE.m4}],
     downloads: M4_AND_M4B_DOWNLOADS,
@@ -233,7 +237,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: DELIVERY_WARRANTY,
+    deliveryWarranty: M_SERIES_DELIVERY_WARRANTY,
     faqs: m4ProFAQs,
     videos: [{title: 'Watch the M4 Pro in Action', embedUrl: YOUTUBE.m4Pro}],
     downloads: M4_PRO_DOWNLOADS,
@@ -277,7 +281,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: DELIVERY_WARRANTY,
+    deliveryWarranty: M_SERIES_DELIVERY_WARRANTY,
     faqs: m4bFAQs,
     videos: [{title: 'Watch the M4B in Action', embedUrl: YOUTUBE.m4}],
     downloads: M4_AND_M4B_DOWNLOADS,

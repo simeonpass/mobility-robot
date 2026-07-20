@@ -67,7 +67,17 @@ describe('getDeliveryInfo', () => {
       handle: 'buy-robot-wheelchair',
     });
     expect(info.status).toBe('in_stock');
+    expect(info.etaLabel).toBe('Delivers in 3–4 working days');
     expect(info.preorderWeeks).toBeNull();
+  });
+
+  it('uses default in-stock ETA for non M-series products', () => {
+    const info = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 1,
+      handle: 'some-other-product',
+    });
+    expect(info.etaLabel).toBe('Delivers in 5–7 working days');
   });
 
   it('marks unavailable as sold_out', () => {
