@@ -1,6 +1,7 @@
 import {Link} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
 import type {HomeProductFragment} from 'storefrontapi.generated';
+import {getProductDisplayName} from '~/lib/product-content';
 
 type RelatedProductsProps = {
   products: HomeProductFragment[];
@@ -30,6 +31,7 @@ export function RelatedProducts({
         {related.map((product) => {
           const image = product.featuredImage;
           const price = product.priceRange.minVariantPrice;
+          const name = getProductDisplayName(product.handle, product.title);
 
           return (
             <li key={product.id}>
@@ -41,7 +43,7 @@ export function RelatedProducts({
                 <div className="flex aspect-square items-center justify-center overflow-hidden bg-white p-3">
                   {image ? (
                     <Image
-                      alt={image.altText || product.title}
+                      alt={image.altText || name}
                       aspectRatio="1/1"
                       className="max-h-full w-full object-contain transition-transform group-hover:scale-[1.03]"
                       data={image}
@@ -52,7 +54,7 @@ export function RelatedProducts({
 
                 <div className="border-t border-border/60 px-3 py-3">
                   <h3 className="text-sm font-semibold leading-snug text-navy group-hover:text-primary">
-                    {product.title}
+                    {name}
                   </h3>
                   {price ? (
                     <p className="mt-1 text-xs text-slate">

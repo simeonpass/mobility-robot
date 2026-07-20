@@ -1,5 +1,4 @@
 import {Link} from 'react-router';
-import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight} from 'lucide-react';
 import {SectionIntro} from '~/components/home/SectionIntro';
 import type {HomeProductFragment} from 'storefrontapi.generated';
@@ -11,12 +10,26 @@ import {
   SHOPIFY_HOME_PRODUCT_HANDLES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
+import {getProductDisplayName} from '~/lib/product-content';
 
 export type HomeProduct = HomeProductFragment;
 
 type ProductRangeGridProps = {
   products: HomeProduct[];
 };
+
+/** Shopify CDN URL scaled by width only — never height/crop. */
+function productImageSrc(url: string, width = 800): string {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.set('width', String(width));
+    parsed.searchParams.delete('height');
+    parsed.searchParams.delete('crop');
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
 
 export function ProductRangeGrid({products}: ProductRangeGridProps) {
   const flagshipProducts = HOMEPAGE_FLAGSHIP_HANDLES.map((slot) => {
@@ -65,15 +78,17 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
               | HomepageFlagshipHandle
               | undefined;
             const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
+            const name = getProductDisplayName(product.handle, product.title);
             const exVatPrice = formatHomepageFromPrice(
               slot,
               product.priceRange.minVariantPrice.amount,
               product.priceRange.minVariantPrice.currencyCode,
             );
+            const image = product.featuredImage;
 
             return (
               <article
-                className="group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-background shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-medium animate-fade-in-up"
+                className="group flex flex-col rounded-2xl border border-border/40 bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-medium animate-fade-in-up"
                 key={product.id}
                 style={{animationDelay: `${index * 80}ms`}}
               >
@@ -83,29 +98,37 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                   to={`/products/${product.handle}`}
                 >
                   {meta ? (
-                    <span className="absolute left-3 top-3 z-10 rounded-full bg-background/90 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:text-xs">
+                    <span className="absolute left-3 top-3 z-10 rounded-full border border-border/50 bg-white/95 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:text-xs">
                       {meta.badge}
                     </span>
                   ) : null}
 
                   {/*
-                    Flat image well (no cream panel) so white-backed and
-                    transparent product shots sit on the same surface.
+                    Plain <img> + flex center (not Hydrogen Image).
+                    Hydrogen Image sets width/height attrs that overflow-clip
+                    chairs on mobile. max-width/max-height keep the full product.
                   */}
-                  <div className="flex aspect-[16/11] items-center justify-center px-5 pt-8 pb-2 sm:aspect-[4/3] sm:px-8 sm:pt-10 sm:pb-3">
-                    {product.featuredImage ? (
-                      <Image
-                        alt={product.featuredImage.altText || product.title}
-                        className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-                        data={product.featuredImage}
+                  <div className="flex aspect-[5/4] w-full items-center justify-center overflow-hidden bg-white p-5 sm:aspect-[4/3] sm:p-7">
+                    {image ? (
+                      <img
+                        alt={image.altText || name}
+                        className="max-h-full max-w-full object-contain object-center transition-transform duration-500 group-hover:scale-[1.03]"
+                        decoding="async"
+                        loading={index < 2 ? 'eager' : 'lazy'}
+                        src={productImageSrc(image.url, 900)}
+                        srcSet={[
+                          `${productImageSrc(image.url, 400)} 400w`,
+                          `${productImageSrc(image.url, 600)} 600w`,
+                          `${productImageSrc(image.url, 900)} 900w`,
+                        ].join(', ')}
                         sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                       />
                     ) : null}
                   </div>
 
-                  <div className="flex flex-1 flex-col border-t border-border/40 px-4 py-4 sm:px-5 sm:py-5">
+                  <div className="flex flex-1 flex-col border-t border-border/30 px-4 py-4 sm:px-5 sm:py-5">
                     <h3 className="text-base font-semibold text-foreground sm:text-lg">
-                      {meta?.shortName ?? product.title}
+                      {meta?.shortName ?? name}
                     </h3>
                     <p className="mt-1.5 text-lg font-semibold text-gold sm:mt-2 sm:text-xl">
                       From {exVatPrice}

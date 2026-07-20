@@ -35,6 +35,7 @@ import {buildMeta, productJsonLd} from '~/lib/seo';
 import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
+import {getProductDisplayName} from '~/lib/product-content';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -161,6 +162,7 @@ export default function Product() {
   );
 
   const staticContent = getProductSpecs(product.handle);
+  const displayName = getProductDisplayName(product.handle, product.title);
 
   const galleryItems = collectGalleryMedia({
     productImages: product.images.nodes,
@@ -169,7 +171,7 @@ export default function Product() {
       metafieldEmbedUrl,
       ...(staticContent?.videos.map((video) => video.embedUrl) ?? []),
     ],
-    productTitle: product.title,
+    productTitle: displayName,
   });
 
   const tabContent = buildProductTabContent({
@@ -182,7 +184,7 @@ export default function Product() {
 
   const seo = resolveProductSeo({
     handle: product.handle,
-    productTitle: product.title,
+    productTitle: displayName,
     productDescription: product.description,
     seoTitle: product.seo?.title,
     seoDescription: product.seo?.description,
@@ -192,7 +194,7 @@ export default function Product() {
   const reviewSummary = summarizeReviews(productReviews);
 
   const productSchema = productJsonLd({
-    name: staticContent?.displayName || product.title,
+    name: displayName,
     description: seo.description,
     handle: product.handle,
     sku: selectedVariant?.sku,
@@ -210,34 +212,34 @@ export default function Product() {
         currencyCode={selectedVariant?.price.currencyCode ?? 'GBP'}
         id={selectedVariant?.id ?? product.id}
         price={selectedVariant?.price.amount ?? '0'}
-        title={product.title}
+        title={displayName}
         vendor={product.vendor}
       />
       <JsonLd data={productSchema} />
       <div className="xsto-container py-3 md:py-6">
-        <ProductBreadcrumbs title={staticContent?.displayName ?? product.title} />
+        <ProductBreadcrumbs title={displayName} />
 
         <div className="product grid gap-5 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,400px)] lg:items-start lg:gap-10 xl:gap-12">
           <div className="min-w-0">
-            <ProductGallery items={galleryItems} productTitle={product.title} />
+            <ProductGallery items={galleryItems} productTitle={displayName} />
           </div>
 
           <div className="product-main min-w-0">
             <ProductPurchasePanel
               accessoryAddons={accessoryAddons}
-              displayName={staticContent?.displayName}
+              displayName={displayName}
               productHandle={product.handle}
               productId={product.id}
               productOptions={productOptions}
               selectedVariant={selectedVariant}
               tagline={staticContent?.tagline}
-              title={product.title}
+              title={displayName}
             />
           </div>
         </div>
 
         {featuredVideo ? (
-          <ProductVideoHero productName={product.title} video={featuredVideo} />
+          <ProductVideoHero productName={displayName} video={featuredVideo} />
         ) : null}
 
         <ProductSpecTabs content={tabContent} shopifyHandle={product.handle} />
@@ -245,7 +247,7 @@ export default function Product() {
         <ProductReviews
           productHandle={product.handle}
           productId={product.id}
-          productTitle={staticContent?.displayName ?? product.title}
+          productTitle={displayName}
         />
 
         <RelatedProducts
@@ -261,7 +263,7 @@ export default function Product() {
           products: [
             {
               id: product.id,
-              title: product.title,
+              title: displayName,
               price: selectedVariant?.price.amount || '0',
               vendor: product.vendor,
               variantId: selectedVariant?.id || '',

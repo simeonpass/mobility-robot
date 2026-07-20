@@ -198,6 +198,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     downloads: M4_AND_M4B_DOWNLOADS,
   },
   'xsto-m4-pro': {
+    displayName: 'XSTO M4 Pro',
     tagline: 'Premium Smart Wheelchair — Safe, Comfortable, Ergonomic Design',
     overview:
       'The XSTO M4 Pro delivers uncompromised comfort and absolute safety. Electric seat height, 0–20° seat tilt with synchronous legrest, and 135° backrest recline for total customisation. Integrated LED lighting, 150 kg capacity, 26 km range, and 15° slope capability.',
@@ -243,6 +244,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     downloads: M4_PRO_DOWNLOADS,
   },
   'xsto-m4b': {
+    displayName: 'XSTO M4B',
     tagline: 'New Front Wheels · Folding Footrest',
     overview:
       'The XSTO M4B builds on the award-winning M4 platform with redesigned front wheels and a brand new folding footrest for easier transfers and a tidier folded footprint. Self-balancing, electric height adjustment and omnidirectional movement — all in a chair that folds into any car boot.',
@@ -369,6 +371,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     videos: [],
   },
   'xsto-x12': {
+    displayName: 'XSTO X12',
     tagline: 'AI-Powered All-Terrain Mobility Robot',
     overview:
       'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries with gyroscopic self-balancing.',
@@ -413,6 +416,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     downloads: X12_SERIES_DOWNLOADS,
   },
   'xsto-x12-pro': {
+    displayName: 'XSTO X12 Pro',
     tagline: 'AI Stair Climbing Mobility Wheelchair — Pro Edition',
     overview:
       'The X12 Pro adds an electric legrest and electric seat adjustment over the standard X12. Same 136 kg capacity, 40° stair capability, dual batteries, and 35 km range — with enhanced comfort and Pro-exclusive adjustments.',
@@ -463,6 +467,30 @@ export function getProductContent(
 ): ProductContent | undefined {
   const slot = getHomepageProductSlot(shopifyHandle);
   return slot ? CONTENT[slot] : undefined;
+}
+
+/** Clean storefront name — prefers curated displayName over long Shopify titles. */
+export function getProductDisplayName(
+  shopifyHandle: string,
+  fallbackTitle?: string | null,
+): string {
+  const content = getProductContent(shopifyHandle);
+  if (content?.displayName) return content.displayName;
+
+  const slot = getHomepageProductSlot(shopifyHandle);
+  if (slot) {
+    const fromBadges = {
+      'xsto-m4': 'XSTO M4',
+      'xsto-m4-pro': 'XSTO M4 Pro',
+      'xsto-m4b': 'XSTO M4B',
+      'xsto-ezgo2': 'XSTO EzGo2',
+      'xsto-x12': 'XSTO X12',
+      'xsto-x12-pro': 'XSTO X12 Pro',
+    } as const;
+    return fromBadges[slot];
+  }
+
+  return fallbackTitle?.trim() || 'XSTO';
 }
 
 export function mergeProductVideos(

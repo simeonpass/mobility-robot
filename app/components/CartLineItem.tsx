@@ -15,6 +15,7 @@ import {
 } from '~/lib/selling-plans';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
+import {getProductDisplayName} from '~/lib/product-content';
 
 export type CartLine = OptimisticCartLine<CartApiQueryFragment>;
 
@@ -36,6 +37,7 @@ export function CartLineItem({
   const lineItemChildren = childrenMap[id];
   const vatRelief = lineHasVatRelief(attributes);
   const accessory = isAccessoryProduct(product.handle);
+  const displayName = getProductDisplayName(product.handle, product.title);
   const {openCartModal} = useVatRelief();
   const vatEligible = !accessory;
   const isAside = layout === 'aside';
@@ -96,7 +98,7 @@ export function CartLineItem({
                   prefetch="intent"
                   to={lineItemUrl}
                 >
-                  {product.title}
+                  {displayName}
                 </Link>
                 {title !== product.title && title !== 'Default Title' ? (
                   <p className="mt-0.5 text-xs text-muted-foreground">{title}</p>
