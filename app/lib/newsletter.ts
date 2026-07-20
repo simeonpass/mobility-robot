@@ -1,3 +1,8 @@
+import {
+  sendFormNotification,
+  type FormNotificationEnv,
+} from '~/lib/form-notifications';
+
 const NEWSLETTER_SUBSCRIBE_MUTATION = `#graphql
   mutation NewsletterSubscribe($input: CustomerCreateInput!) {
     customerCreate(input: $input) {
@@ -20,31 +25,34 @@ export type NewsletterResult = {
   message?: string;
 };
 
+type StorefrontMutate = {
+  mutate: (
+    query: string,
+    options?: {variables?: Record<string, unknown>},
+  ) => Promise<{
+    customerCreate?: {
+      customer?: {id?: string | null} | null;
+      customerUserErrors?: Array<{
+        code?: string | null;
+        message?: string | null;
+      }> | null;
+    } | null;
+  }>;
+};
+
 export async function subscribeNewsletter(
-  storefront: {
-    query: (
-      query: string,
-      options?: {variables?: Record<string, unknown>},
-    ) => Promise<{
-      customerCreate?: {
-        customer?: {id?: string | null} | null;
-        customerUserErrors?: Array<{
-          code?: string | null;
-          message?: string | null;
-        }> | null;
-      } | null;
-    }>;
-  },
+  storefront: StorefrontMutate,
   email: string,
+  env?: FormNotificationEnv,
 ): Promise<NewsletterResult> {
   const normalizedEmail = email.trim().toLowerCase();
 
-  if (!normalizedEmail.includes('@')) {
+  if (!normalizedEmail.includes('@') || normalizedEmail.length < 5) {
     return {error: 'Please enter a valid email address.'};
   }
 
   try {
-    const result = await storefront.query(NEWSLETTER_SUBSCRIBE_MUTATION, {
+    const result = await storefront.mutate(NEWSLETTER_SUBSCRIBE_MUTATION, {
       variables: {
         input: {
           email: normalizedEmail,
@@ -58,10 +66,16 @@ export async function subscribeNewsletter(
     const userErrors = payload?.customerUserErrors ?? [];
 
     if (userErrors.length > 0) {
-      const alreadyRegistered = userErrors.some(
-        (error) =>
-          error.code === 'TAKEN' || error.code === 'UNIDENTIFIED_CUSTOMER',
-      );
+      const alreadyRegistered = userErrors.some((error) => {
+        const code = (error.code || '').toUpperCase();
+        const message = (error.message || '').toLowerCase();
+        return (
+          code === 'TAKEN' ||
+          code === 'CUSTOMER_DISABLED' ||
+          message.includes('already') ||
+          message.includes('taken')
+        );
+      });
 
       if (alreadyRegistered) {
         return {
@@ -70,23 +84,43 @@ export async function subscribeNewsletter(
         };
       }
 
+      console.error('[newsletter] customerCreate userErrors', userErrors);
+      // Fall through to email notification fallback below.
+    } else if (payload?.customer?.id) {
       return {
-        error: userErrors[0]?.message ?? 'Unable to subscribe. Please try again.',
+        success: true,
+        message: 'Thank you for subscribing.',
       };
     }
+  } catch (error) {
+    console.error('[newsletter] Storefront customerCreate failed', error);
+  }
 
-    if (payload?.customer?.id) {
+  // Fallback: notify sales via Resend when Storefront customerCreate is
+  // unavailable (common with New Customer Accounts / disabled legacy signup).
+  if (env) {
+    const notified = await sendFormNotification(env, {
+      formType: 'newsletter',
+      subject: `Newsletter signup: ${normalizedEmail}`,
+      replyTo: normalizedEmail,
+      fields: {
+        Email: normalizedEmail,
+        Source: 'Footer Stay Updated',
+      },
+    });
+
+    if (notified.ok) {
       return {
         success: true,
         message: 'Thank you for subscribing.',
       };
     }
 
-    return {error: 'Unable to subscribe. Please try again.'};
-  } catch {
-    return {
-      error:
-        'Something went wrong. Please try again or contact sales@bentechmeduk.com.',
-    };
+    console.error('[newsletter] Resend fallback failed', notified);
   }
+
+  return {
+    error:
+      'Something went wrong. Please try again or contact sales@bentechmeduk.com.',
+  };
 }

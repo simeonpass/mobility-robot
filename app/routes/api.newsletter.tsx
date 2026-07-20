@@ -13,7 +13,11 @@ export async function action({request, context}: Route.ActionArgs) {
     return Response.json({error: 'Email is required.'}, {status: 400});
   }
 
-  const result = await subscribeNewsletter(context.storefront, email);
+  const result = await subscribeNewsletter(
+    context.storefront,
+    email,
+    context.env,
+  );
 
   if (result.error) {
     return Response.json(result, {status: 400});
