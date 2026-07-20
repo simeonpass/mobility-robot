@@ -1,4 +1,3 @@
-import {data} from 'react-router';
 import type {z} from 'zod';
 import {formatZodErrors} from '~/lib/form-schemas';
 import {
@@ -11,6 +10,13 @@ type FormActionArgs = {
   request: Request;
   context: {env: FormNotificationEnv};
 };
+
+function json(body: unknown, status = 200) {
+  return Response.json(body, {
+    status,
+    headers: {'Cache-Control': 'no-store'},
+  });
+}
 
 /**
  * Shared JSON form action: validate → email sales → {ok} / fieldErrors.
@@ -40,9 +46,9 @@ export async function handleValidatedFormAction<T extends z.ZodType>({
   const parsed = schema.safeParse(body);
 
   if (!parsed.success) {
-    return data(
+    return json(
       {ok: false as const, fieldErrors: formatZodErrors(parsed.error)},
-      {status: 400},
+      400,
     );
   }
 
@@ -55,11 +61,11 @@ export async function handleValidatedFormAction<T extends z.ZodType>({
   });
 
   if (!result.ok) {
-    return data(
+    return json(
       {ok: false as const, error: result.error},
-      {status: result.configured ? 502 : 503},
+      result.configured ? 502 : 503,
     );
   }
 
-  return data({ok: true as const});
+  return json({ok: true as const});
 }

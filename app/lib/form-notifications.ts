@@ -23,11 +23,41 @@ export type FormNotificationResult =
   | {ok: false; error: string; configured: boolean};
 
 const DEFAULT_TO = COMPANY.email;
-/** Verified Resend domain — do not use onboarding@resend.dev in production. */
+/** Verified Resend domain — never use onboarding@resend.dev in production. */
 const DEFAULT_FROM = 'XSTO UK <noreply@mobilityrobot.co.uk>';
+const VERIFIED_FROM_EMAIL = 'noreply@mobilityrobot.co.uk';
 
 export function isFormEmailConfigured(env: FormNotificationEnv): boolean {
   return Boolean(env.RESEND_API_KEY?.trim() || env.FORMSPREE_ENDPOINT?.trim());
+}
+
+/**
+ * Normalise Resend "from" values. Oxygen/admin pastes sometimes mangle
+ * angle brackets; onboarding@resend.dev only allows mail to the account owner.
+ */
+export function resolveResendFrom(raw?: string | null): string {
+  const value = (raw || '').trim();
+  if (!value || /onboarding@resend\.dev/i.test(value)) {
+    return DEFAULT_FROM;
+  }
+
+  const angle = value.match(/<([^>]+)>/);
+  const email = (angle?.[1] || value).trim().replace(/^["']|["']$/g, '');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return DEFAULT_FROM;
+  }
+
+  // Always send from our verified domain in production.
+  if (!/@mobilityrobot\.co\.uk$/i.test(email)) {
+    return DEFAULT_FROM;
+  }
+
+  if (angle) {
+    const name = value.slice(0, value.indexOf('<')).trim() || 'XSTO UK';
+    return `${name} <${email}>`;
+  }
+
+  return email.includes(VERIFIED_FROM_EMAIL) ? DEFAULT_FROM : email;
 }
 
 export function formatFormFieldsHtml(
@@ -95,7 +125,7 @@ async function sendViaResend(
   payload: FormNotificationPayload,
 ): Promise<FormNotificationResult> {
   const to = env.FORMS_TO_EMAIL?.trim() || DEFAULT_TO;
-  const from = env.FORMS_FROM_EMAIL?.trim() || DEFAULT_FROM;
+  const from = resolveResendFrom(env.FORMS_FROM_EMAIL);
   const html = `
     <p style="font-family:system-ui,sans-serif;font-size:14px;color:#111">
       New <strong>${escapeHtml(payload.formType)}</strong> submission from mobilityrobot.co.uk
@@ -122,7 +152,14 @@ async function sendViaResend(
 
     if (!response.ok) {
       const detail = await response.text().catch(() => '');
-      console.error('[forms] Resend failed', response.status, detail);
+      console.error('[forms] Resend failed', {
+        status: response.status,
+        from,
+        to,
+        formType: payload.formType,
+        detail: detail.slice(0, 500),
+        keyPrefix: env.RESEND_API_KEY!.trim().slice(0, 8),
+      });
       return {
         ok: false,
         configured: true,
