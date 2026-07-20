@@ -1,12 +1,24 @@
-import {data} from 'react-router';
 import type {Route} from './+types/api.contact';
+import {handleValidatedFormAction} from '~/lib/form-action';
+import {contactFormSchema} from '~/lib/form-schemas';
 
-export async function action({request}: Route.ActionArgs) {
-  if (request.method !== 'POST') {
-    return new Response('Method Not Allowed', {status: 405});
-  }
-  await request.json().catch(() => null);
-  return data({ok: true});
+export async function action({request, context}: Route.ActionArgs) {
+  return handleValidatedFormAction({
+    request,
+    context,
+    schema: contactFormSchema,
+    formType: 'contact',
+    subject: (values) => `Contact form: ${values.topic}`,
+    getReplyTo: (values) => values.email,
+    buildFields: (values) => ({
+      Name: values.name,
+      Email: values.email,
+      Phone: values.phone,
+      Topic: values.topic,
+      'Order reference': values.orderRef,
+      Message: values.message,
+    }),
+  });
 }
 
 export default function ContactApiRoute() {

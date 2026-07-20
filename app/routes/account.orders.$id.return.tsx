@@ -3,6 +3,7 @@ import type {Route} from './+types/account.orders.$id.return';
 import {Money} from '@shopify/hydrogen';
 import type {OrderQuery} from 'customer-accountapi.generated';
 import {
+  FormErrorBanner,
   FormField,
   FormSuccess,
   SelectInput,
@@ -52,7 +53,7 @@ export async function loader({params, context}: Route.LoaderArgs) {
 
 export default function OrderReturnRoute() {
   const {order, encodedId} = useLoaderData<typeof loader>();
-  const {errors, loading, success, handleSubmit} = useValidatedApiForm({
+  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
     schema: returnRequestSchema,
     action: '/api/return-request',
   });
@@ -157,11 +158,7 @@ export default function OrderReturnRoute() {
             ) : null}
           </fieldset>
 
-          {errors.form ? (
-            <p className="text-sm text-destructive" role="alert">
-              {errors.form}
-            </p>
-          ) : null}
+          {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
 
           <SubmitButton loading={loading}>Submit return request</SubmitButton>
         </form>

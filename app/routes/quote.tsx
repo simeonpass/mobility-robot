@@ -1,6 +1,7 @@
 import type {Route} from './+types/quote';
 import {PageHeader, PageShell} from '~/components/content/PageShell';
 import {
+  FormErrorBanner,
   FormField,
   FormSuccess,
   SelectInput,
@@ -31,7 +32,7 @@ const MODEL_OPTIONS = [
 ] as const;
 
 export default function QuotePage() {
-  const {errors, loading, success, handleSubmit} = useValidatedApiForm({
+  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
     schema: quoteRequestSchema,
     action: '/api/quote-request',
   });
@@ -93,11 +94,7 @@ export default function QuotePage() {
           <FormField error={errors.notes} id="notes" label="Notes (optional)">
             <TextArea id="notes" name="notes" />
           </FormField>
-          {errors.form ? (
-            <p className="text-sm text-destructive" role="alert">
-              {errors.form}
-            </p>
-          ) : null}
+          {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
           <SubmitButton loading={loading}>Request quote</SubmitButton>
         </form>
       )}

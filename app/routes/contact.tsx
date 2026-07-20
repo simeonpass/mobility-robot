@@ -11,6 +11,7 @@ import {
 import {FaqList} from '~/components/content/FaqAccordion';
 import {JsonLd, PageShell} from '~/components/content/PageShell';
 import {
+  FormErrorBanner,
   FormField,
   FormSuccess,
   SelectInput,
@@ -43,7 +44,7 @@ const breadcrumbs = [
 ] as const;
 
 export default function ContactPage() {
-  const {errors, loading, success, handleSubmit} = useValidatedApiForm({
+  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
     schema: contactFormSchema,
     action: '/api/contact',
   });
@@ -349,11 +350,7 @@ export default function ContactPage() {
                 </FormField>
               </fieldset>
 
-              {errors.form ? (
-                <p className="text-sm text-destructive" role="alert">
-                  {errors.form}
-                </p>
-              ) : null}
+              {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <SubmitButton loading={loading}>Send message</SubmitButton>

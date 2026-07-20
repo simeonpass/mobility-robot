@@ -1,12 +1,23 @@
-import {data} from 'react-router';
 import type {Route} from './+types/api.warranty-register';
+import {handleValidatedFormAction} from '~/lib/form-action';
+import {warrantyRegisterSchema} from '~/lib/form-schemas';
 
-export async function action({request}: Route.ActionArgs) {
-  if (request.method !== 'POST') {
-    return new Response('Method Not Allowed', {status: 405});
-  }
-  await request.json().catch(() => null);
-  return data({ok: true});
+export async function action({request, context}: Route.ActionArgs) {
+  return handleValidatedFormAction({
+    request,
+    context,
+    schema: warrantyRegisterSchema,
+    formType: 'warranty-register',
+    subject: (values) => `Warranty registration: ${values.orderRef}`,
+    getReplyTo: (values) => values.email,
+    buildFields: (values) => ({
+      Name: values.name,
+      Email: values.email,
+      'Order reference': values.orderRef,
+      'Serial number': values.serial,
+      'Purchase date': values.purchaseDate,
+    }),
+  });
 }
 
 export default function WarrantyRegisterApiRoute() {

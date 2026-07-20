@@ -24,6 +24,14 @@ declare global {
     JUDGEME_PUBLIC_TOKEN?: string;
     /** Judge.me CDN host */
     JUDGEME_CDN_HOST?: string;
+    /** Resend API key — preferred provider for form notification emails */
+    RESEND_API_KEY?: string;
+    /** Formspree form endpoint URL — used when Resend is not configured */
+    FORMSPREE_ENDPOINT?: string;
+    /** Inbox address for form notifications (default: sales@bentchmeduk.com) */
+    FORMS_TO_EMAIL?: string;
+    /** Verified Resend from address, e.g. "XSTO UK <noreply@mobilityrobot.co.uk>" */
+    FORMS_FROM_EMAIL?: string;
   }
 }
 

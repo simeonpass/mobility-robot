@@ -3,6 +3,7 @@ import type {Route} from './+types/demo';
 import {CalendarCheck, MapPin, MessageSquare} from 'lucide-react';
 import {JsonLd, PageShell} from '~/components/content/PageShell';
 import {
+  FormErrorBanner,
   FormField,
   FormSuccess,
   SelectInput,
@@ -51,7 +52,7 @@ const breadcrumbs = [
 ] as const;
 
 export default function DemoPage() {
-  const {errors, loading, success, handleSubmit} = useValidatedApiForm({
+  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
     schema: demoRequestSchema,
     action: '/api/demo-request',
   });
@@ -240,11 +241,7 @@ export default function DemoPage() {
                 </FormField>
               </fieldset>
 
-              {errors.form ? (
-                <p className="text-sm text-destructive" role="alert">
-                  {errors.form}
-                </p>
-              ) : null}
+              {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
 
               <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">

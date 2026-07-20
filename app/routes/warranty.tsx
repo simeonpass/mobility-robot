@@ -3,6 +3,7 @@ import type {Route} from './+types/warranty';
 import {ContentWithToc} from '~/components/content/ContentWithToc';
 import {JsonLd, PageHeader, PageShell} from '~/components/content/PageShell';
 import {
+  FormErrorBanner,
   FormField,
   FormSuccess,
   SubmitButton,
@@ -22,7 +23,7 @@ export const meta: Route.MetaFunction = () =>
   });
 
 export default function WarrantyPage() {
-  const {errors, loading, success, handleSubmit} = useValidatedApiForm({
+  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
     schema: warrantyRegisterSchema,
     action: '/api/warranty-register',
   });
@@ -80,11 +81,7 @@ export default function WarrantyPage() {
               <FormField error={errors.purchaseDate} id="purchaseDate" label="Purchase date">
                 <TextInput id="purchaseDate" name="purchaseDate" required type="date" />
               </FormField>
-              {errors.form ? (
-                <p className="text-sm text-destructive" role="alert">
-                  {errors.form}
-                </p>
-              ) : null}
+              {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
               <SubmitButton loading={loading}>Register warranty</SubmitButton>
             </form>
           )}

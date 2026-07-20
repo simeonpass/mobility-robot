@@ -73,4 +73,15 @@ export function FormSuccess({children}: {children: React.ReactNode}) {
   );
 }
 
+export function FormErrorBanner({children}: {children: React.ReactNode}) {
+  return (
+    <div
+      className="rounded-lg border border-destructive/30 bg-destructive/5 px-3.5 py-3 text-sm text-destructive"
+      role="alert"
+    >
+      {children}
+    </div>
+  );
+}
+
 export {inputClassName, labelClassName, errorClassName};
