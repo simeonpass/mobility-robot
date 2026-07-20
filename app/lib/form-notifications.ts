@@ -23,7 +23,8 @@ export type FormNotificationResult =
   | {ok: false; error: string; configured: boolean};
 
 const DEFAULT_TO = COMPANY.email;
-const DEFAULT_FROM = 'XSTO UK <onboarding@resend.dev>';
+/** Verified Resend domain — do not use onboarding@resend.dev in production. */
+const DEFAULT_FROM = 'XSTO UK <noreply@mobilityrobot.co.uk>';
 
 export function isFormEmailConfigured(env: FormNotificationEnv): boolean {
   return Boolean(env.RESEND_API_KEY?.trim() || env.FORMSPREE_ENDPOINT?.trim());
