@@ -104,15 +104,15 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                   ) : null}
 
                   {/*
-                    Plain <img> + flex center (not Hydrogen Image).
-                    Hydrogen Image sets width/height attrs that overflow-clip
-                    chairs on mobile. max-width/max-height keep the full product.
+                    Relative box + absolute img so the chair always fits inside
+                    the frame. Flex + min-width:auto lets wide product photos
+                    overflow and get clipped on the right on mobile.
                   */}
-                  <div className="flex aspect-[5/4] w-full items-center justify-center overflow-hidden bg-white p-5 sm:aspect-[4/3] sm:p-7">
+                  <div className="relative aspect-[5/4] w-full bg-white sm:aspect-[4/3]">
                     {image ? (
                       <img
                         alt={image.altText || name}
-                        className="max-h-full max-w-full object-contain object-center transition-transform duration-500 group-hover:scale-[1.03]"
+                        className="absolute inset-0 m-auto box-border h-auto w-auto max-h-full max-w-full object-contain object-center p-5 transition-transform duration-500 group-hover:scale-[1.03] sm:p-7"
                         decoding="async"
                         loading={index < 2 ? 'eager' : 'lazy'}
                         src={productImageSrc(image.url, 900)}
