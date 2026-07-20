@@ -94,22 +94,34 @@ export function getPreorderDeliveryDate(
 export const DEFAULT_IN_STOCK_DELIVERY_DAYS = '5–7 working days';
 
 /**
- * In-stock delivery ETA for M-series chairs (Shopify handles + slot aliases).
+ * In-stock delivery ETA for chairs that ship in 3–4 working days
+ * (M-series + X12 when available).
  */
-export const M_SERIES_IN_STOCK_DELIVERY_DAYS = '3–4 working days';
+export const FAST_IN_STOCK_DELIVERY_DAYS = '3–4 working days';
 
-const M_SERIES_IN_STOCK_SLOTS = new Set([
+/** @deprecated Use FAST_IN_STOCK_DELIVERY_DAYS */
+export const M_SERIES_IN_STOCK_DELIVERY_DAYS = FAST_IN_STOCK_DELIVERY_DAYS;
+
+const FAST_IN_STOCK_SLOTS = new Set([
   'xsto-m4',
   'xsto-m4b',
   'xsto-m4-pro',
+  'xsto-x12',
 ]);
 
 export function getInStockDeliveryDays(handle?: string | null): string {
   if (!handle) return DEFAULT_IN_STOCK_DELIVERY_DAYS;
 
   const slot = getHomepageProductSlot(handle);
-  if (slot && M_SERIES_IN_STOCK_SLOTS.has(slot)) {
-    return M_SERIES_IN_STOCK_DELIVERY_DAYS;
+  if (slot && FAST_IN_STOCK_SLOTS.has(slot)) {
+    return FAST_IN_STOCK_DELIVERY_DAYS;
+  }
+
+  if (
+    handle === 'x12-all-terrain-mobility-robot' ||
+    handle === 'xsto-x12'
+  ) {
+    return FAST_IN_STOCK_DELIVERY_DAYS;
   }
 
   return DEFAULT_IN_STOCK_DELIVERY_DAYS;

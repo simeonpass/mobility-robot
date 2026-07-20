@@ -50,7 +50,7 @@ describe('getDeliveryInfo', () => {
     });
     expect(x12.status).toBe('low_stock');
     expect(x12.headline).toBe('Very low stock');
-    expect(x12.etaLabel).toBe('Delivers in 5–7 working days');
+    expect(x12.etaLabel).toBe('Delivers in 3–4 working days');
     expect(x12.preorderWeeks).toBeNull();
   });
 
