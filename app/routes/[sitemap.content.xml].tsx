@@ -1,4 +1,4 @@
-import type {Route} from './+types/sitemap.content[.xml]';
+import type {Route} from './+types/[sitemap.content.xml]';
 import {BLOG_ARTICLE_HANDLES_QUERY, BLOG_HANDLE} from '~/lib/blog-queries';
 import {STATIC_SITEMAP_ROUTES} from '~/lib/static-routes';
 import {SITE_URL} from '~/lib/seo';
