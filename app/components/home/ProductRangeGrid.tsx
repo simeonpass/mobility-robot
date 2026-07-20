@@ -104,15 +104,15 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                   ) : null}
 
                   {/*
-                    Relative box + absolute img so the chair always fits inside
-                    the frame. Flex + min-width:auto lets wide product photos
-                    overflow and get clipped on the right on mobile.
+                    size-full + object-contain is the reliable mobile fit:
+                    the img box fills the aspect frame, and object-contain
+                    letterboxes the photo so nothing is clipped on the right.
                   */}
                   <div className="relative aspect-[5/4] w-full bg-white sm:aspect-[4/3]">
                     {image ? (
                       <img
                         alt={image.altText || name}
-                        className="absolute inset-0 m-auto box-border h-auto w-auto max-h-full max-w-full object-contain object-center p-5 transition-transform duration-500 group-hover:scale-[1.03] sm:p-7"
+                        className="absolute inset-0 box-border size-full object-contain object-center p-5 transition-transform duration-500 group-hover:scale-[1.03] sm:p-7"
                         decoding="async"
                         loading={index < 2 ? 'eager' : 'lazy'}
                         src={productImageSrc(image.url, 900)}
