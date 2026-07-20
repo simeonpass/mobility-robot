@@ -1,4 +1,4 @@
-import {CalendarClock, Package, Truck} from 'lucide-react';
+import {AlertTriangle, CalendarClock, Package, Truck} from 'lucide-react';
 import type {DeliveryInfo} from '~/lib/product-delivery';
 
 type ProductDeliveryEtaProps = {
@@ -11,6 +11,12 @@ const STATUS_STYLES = {
     ring: 'ring-emerald-500/20',
     icon: Truck,
     container: 'border-emerald-200/80 bg-emerald-50/60',
+  },
+  low_stock: {
+    dot: 'bg-orange-500',
+    ring: 'ring-orange-500/25',
+    icon: AlertTriangle,
+    container: 'border-orange-300/90 bg-orange-50/80',
   },
   preorder: {
     dot: 'bg-amber-500',

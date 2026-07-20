@@ -42,13 +42,15 @@ describe('getDeliveryInfo', () => {
     expect(info.preorderWeeks).toBe(10);
   });
 
-  it('shows X12 as in stock when Shopify has quantity', () => {
+  it('shows X12 as very low stock when Shopify has quantity', () => {
     const x12 = getDeliveryInfo({
       availableForSale: true,
       quantityAvailable: 1,
       handle: 'x12-all-terrain-mobility-robot',
     });
-    expect(x12.status).toBe('in_stock');
+    expect(x12.status).toBe('low_stock');
+    expect(x12.headline).toBe('Very low stock');
+    expect(x12.etaLabel).toBe('Delivers in 5–7 working days');
     expect(x12.preorderWeeks).toBeNull();
   });
 

@@ -13,7 +13,7 @@ import {
   HOMEPAGE_PRODUCT_BADGES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
-import {isForcedPreorder} from '~/lib/product-delivery';
+import {isForcedLowStock, isForcedPreorder} from '~/lib/product-delivery';
 import {type ShopAllProduct} from '~/lib/shop-all';
 
 type ShopAllCatalogProps = {
@@ -123,6 +123,7 @@ function ChairCard({
     | undefined;
   const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
   const preorder = isForcedPreorder(product.handle);
+  const lowStock = !preorder && isForcedLowStock(product.handle);
   const exVatPrice = formatHomepageFromPrice(
     slot,
     product.priceRange.minVariantPrice.amount,
@@ -148,6 +149,11 @@ function ChairCard({
           {preorder ? (
             <span className="rounded-full bg-navy px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white shadow-soft sm:px-3 sm:text-xs">
               Pre-order · 10% deposit
+            </span>
+          ) : null}
+          {lowStock ? (
+            <span className="rounded-full bg-orange-600 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white shadow-soft sm:px-3 sm:text-xs">
+              Very low stock
             </span>
           ) : null}
         </div>

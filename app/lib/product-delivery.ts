@@ -1,6 +1,10 @@
 import {getHomepageProductSlot} from '~/lib/homepage-data';
 
-export type DeliveryStatus = 'in_stock' | 'preorder' | 'sold_out';
+export type DeliveryStatus =
+  | 'in_stock'
+  | 'low_stock'
+  | 'preorder'
+  | 'sold_out';
 
 export type DeliveryInfo = {
   status: DeliveryStatus;
@@ -35,6 +39,9 @@ export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
  */
 const FORCE_PREORDER_SLOTS = new Set(['xsto-ezgo2', 'xsto-x12-pro']);
 
+/** Slot handles that show a "Very low stock" urgency alert when available. */
+const FORCE_LOW_STOCK_SLOTS = new Set(['xsto-x12']);
+
 export function isForcedPreorder(handle?: string | null): boolean {
   if (!handle) return false;
   const slot = getHomepageProductSlot(handle);
@@ -47,6 +54,13 @@ export function isForcedPreorder(handle?: string | null): boolean {
     return true;
   }
   return false;
+}
+
+export function isForcedLowStock(handle?: string | null): boolean {
+  if (!handle) return false;
+  const slot = getHomepageProductSlot(handle);
+  if (slot != null && FORCE_LOW_STOCK_SLOTS.has(slot)) return true;
+  return handle === 'x12-all-terrain-mobility-robot';
 }
 
 export function getPreorderWeeks(handle?: string | null): number {
@@ -145,6 +159,16 @@ export function getDeliveryInfo({
     availableForSale && (quantityAvailable == null || quantityAvailable > 0);
 
   if (inStock) {
+    if (isForcedLowStock(handle)) {
+      return {
+        status: 'low_stock',
+        headline: 'Very low stock',
+        detail: 'Limited availability — order soon',
+        etaLabel: formatInStockEtaLabel(handle),
+        preorderWeeks: null,
+      };
+    }
+
     return {
       status: 'in_stock',
       headline: 'In stock',
