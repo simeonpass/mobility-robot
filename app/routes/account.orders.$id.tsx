@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {Link, redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/account.orders.$id';
 import {Money, Image} from '@shopify/hydrogen';
 import type {
@@ -184,6 +184,15 @@ export default function OrderRoute() {
           </div>
         </div>
       </div>
+      <br />
+      <p>
+        <Link
+          className="btn-secondary inline-flex min-h-10 items-center px-4"
+          to={`/account/orders/${btoa(order.id)}/return`}
+        >
+          Request a return
+        </Link>
+      </p>
       <br />
       <p>
         <a target="_blank" href={order.statusPageUrl} rel="noreferrer">

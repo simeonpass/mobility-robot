@@ -215,6 +215,10 @@ function OrderItem({order}: {order: OrderItemFragment}) {
         {fulfillmentStatus && <p>{fulfillmentStatus}</p>}
         <Money data={order.totalPrice} />
         <Link to={`/account/orders/${btoa(order.id)}`}>View Order →</Link>
+        {' · '}
+        <Link to={`/account/orders/${btoa(order.id)}/return`}>
+          Request return →
+        </Link>
       </fieldset>
       <br />
     </>

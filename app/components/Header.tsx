@@ -6,7 +6,8 @@ import {
   useState,
   type CSSProperties,
 } from 'react';
-import {Await, NavLink, useAsyncValue, useLocation} from 'react-router';
+import {Await, Link, NavLink, useAsyncValue, useLocation} from 'react-router';
+import {ArrowRight} from 'lucide-react';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -27,6 +28,11 @@ import {
   PRODUCT_NAV_ITEMS,
   type NavItem,
 } from '~/lib/site-navigation';
+import {
+  getHomepageProductSlot,
+  HOMEPAGE_PRODUCT_BADGES,
+  type HomepageFlagshipHandle,
+} from '~/lib/homepage-data';
 
 interface HeaderProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -152,6 +158,20 @@ export function HeaderMenu({
   );
 }
 
+function getProductNavMeta(url: string) {
+  const handle = url.replace(/^\/products\//, '');
+  const slot = getHomepageProductSlot(handle);
+  if (!slot || !(slot in HOMEPAGE_PRODUCT_BADGES)) return null;
+  return HOMEPAGE_PRODUCT_BADGES[slot as HomepageFlagshipHandle];
+}
+
+function modelIconLabel(title: string) {
+  if (title === 'EzGo2') return 'EZ';
+  if (title === 'M4 Pro') return 'M4P';
+  if (title === 'X12 Pro') return 'X12P';
+  return title.replace(/\s+/g, '').slice(0, 4);
+}
+
 function ModelsDropdown() {
   const {pathname} = useLocation();
   const [open, setOpen] = useState(false);
@@ -209,53 +229,107 @@ function ModelsDropdown() {
           id={menuId}
           role="menu"
         >
+          <div className="site-header-dropdown-intro">
+            <p className="site-header-dropdown-eyebrow">Shop XSTO</p>
+            <p className="site-header-dropdown-tagline">
+              Foldable powered wheelchairs — from ultra-light carbon fibre to
+              all-terrain stair climbers.
+            </p>
+          </div>
+
           <div className="site-header-dropdown-grid">
             {PRODUCT_NAV_GROUPS.map((group) => (
-              <div className="site-header-dropdown-group" key={group.title}>
+              <div
+                className="site-header-dropdown-group"
+                data-series={group.title}
+                key={group.title}
+              >
                 <p className="site-header-dropdown-label">{group.title}</p>
                 <ul className="site-header-dropdown-list">
-                  {group.items.map((item) => (
-                    <li key={item.url}>
-                      <NavLink
-                        className={({isActive}) =>
-                          [
-                            'site-header-dropdown-item',
-                            isActive
-                              ? 'site-header-dropdown-item--active'
-                              : '',
-                          ]
-                            .filter(Boolean)
-                            .join(' ')
-                        }
-                        onClick={() => setOpen(false)}
-                        prefetch="intent"
-                        role="menuitem"
-                        to={item.url}
-                      >
-                        <span className="site-header-dropdown-item-title">
-                          {item.title}
-                        </span>
-                        {item.description ? (
-                          <span className="site-header-dropdown-item-desc">
-                            {item.description}
+                  {group.items.map((item) => {
+                    const meta = getProductNavMeta(item.url);
+                    return (
+                      <li key={item.url}>
+                        <NavLink
+                          className={({isActive}) =>
+                            [
+                              'site-header-dropdown-item',
+                              isActive
+                                ? 'site-header-dropdown-item--active'
+                                : '',
+                            ]
+                              .filter(Boolean)
+                              .join(' ')
+                          }
+                          onClick={() => setOpen(false)}
+                          prefetch="intent"
+                          role="menuitem"
+                          to={item.url}
+                        >
+                          <span
+                            aria-hidden
+                            className="site-header-dropdown-item-icon"
+                          >
+                            {modelIconLabel(item.title)}
                           </span>
-                        ) : null}
-                      </NavLink>
-                    </li>
-                  ))}
+                          <span className="site-header-dropdown-item-body">
+                            <span className="site-header-dropdown-item-row">
+                              <span className="site-header-dropdown-item-title">
+                                {meta?.shortName ?? item.title}
+                              </span>
+                              {meta?.badge ? (
+                                <span className="site-header-dropdown-item-badge">
+                                  {meta.badge}
+                                </span>
+                              ) : null}
+                            </span>
+                            {item.description ? (
+                              <span className="site-header-dropdown-item-desc">
+                                {item.description}
+                              </span>
+                            ) : null}
+                          </span>
+                          <ArrowRight
+                            aria-hidden
+                            className="site-header-dropdown-item-arrow"
+                            strokeWidth={2}
+                          />
+                        </NavLink>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}
           </div>
+
           <div className="site-header-dropdown-footer">
-            <NavLink
-              className="site-header-dropdown-footer-link"
-              onClick={() => setOpen(false)}
-              prefetch="intent"
-              to="/collections/all"
-            >
-              View all chairs
-            </NavLink>
+            <div className="site-header-dropdown-footer-links">
+              <Link
+                className="site-header-dropdown-footer-link site-header-dropdown-footer-link--primary"
+                onClick={() => setOpen(false)}
+                prefetch="intent"
+                to="/collections/all"
+              >
+                View all chairs
+              </Link>
+              <Link
+                className="site-header-dropdown-footer-link"
+                onClick={() => setOpen(false)}
+                prefetch="intent"
+                to="/collections/accessories"
+              >
+                Accessories
+              </Link>
+              <Link
+                className="site-header-dropdown-footer-link"
+                onClick={() => setOpen(false)}
+                prefetch="intent"
+                to="/demo"
+              >
+                Book a demo
+              </Link>
+            </div>
           </div>
         </div>
       ) : null}

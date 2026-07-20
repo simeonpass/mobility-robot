@@ -2,19 +2,38 @@ import {COMPANY} from '~/lib/site-navigation';
 
 export const ABOUT_VALUE_PROPS = [
   {
-    title: 'Clinical Quality',
+    title: 'Clinical-grade engineering',
     description:
-      'XSTO wheelchairs meet rigorous engineering standards with self-balancing technology, comprehensive safety systems and CE-certified components.',
+      'XSTO chairs combine self-balancing technology, comprehensive safety systems and CE-certified components built for everyday independence.',
   },
   {
-    title: 'UK Support',
+    title: 'UK-based support',
     description:
-      'Bentech Medical Ltd provides free UK-based phone and email support, warranty management and after-sales service — no overseas returns required.',
+      'Phone and email support from Wimborne, Dorset — warranty, parts and after-sales handled in the UK, not sent overseas.',
   },
   {
-    title: 'Expert Fitting',
+    title: 'Try before you buy',
     description:
-      'Our authorised stockists and in-house team help you choose the right model, configure accessories and arrange demonstrations across the UK and Ireland.',
+      'Book a demo in Dorset or London, or visit an authorised stockist for fitting advice, accessories and local aftercare.',
+  },
+] as const;
+
+export const ABOUT_FACTS = [
+  {
+    label: 'Distributor',
+    value: 'Official UK & Ireland partner for XSTO',
+  },
+  {
+    label: 'Based in',
+    value: `${COMPANY.city}`,
+  },
+  {
+    label: 'Coverage',
+    value: 'Nationwide delivery & stockist network',
+  },
+  {
+    label: 'Support hours',
+    value: 'Mon–Fri, 9:00am–5:30pm',
   },
 ] as const;
 
@@ -22,17 +41,10 @@ export const DISTRIBUTOR_DISCLAIMER =
   'This site is operated by Bentech Medical Ltd, the Official UK Distributor of XSTO. XSTO is a trademark of its manufacturer. Bentech Medical Ltd is not affiliated with XSTO Robot Technology Co., Ltd.';
 
 export const ABOUT_INTRO = [
-  `${COMPANY.name} is the official UK and Ireland distributor of XSTO powered wheelchairs — foldable, portable mobility robots designed for modern independent living.`,
-  'From our base in Wimborne, Dorset, we supply the XSTO range including the M4, M4 Pro, M4B, X12 and X12 Pro, with free UK delivery, VAT relief eligibility and comprehensive warranty support.',
-  'We work with a network of authorised stockists across the UK and Ireland, offering demonstrations, expert advice and local after-sales service.',
-];
+  `${COMPANY.name} runs Mobility Robot — the official UK and Ireland storefront for XSTO powered wheelchairs. Foldable, portable mobility robots designed for modern independent living.`,
+  'From our base in Wimborne, Dorset, we supply the full XSTO range — EzGo2, M4, M4B, M4 Pro, X12 and X12 Pro — with free UK delivery, VAT relief for eligible customers, and manufacturer warranty managed locally.',
+  'Alongside online ordering we work with authorised stockists across the UK and Ireland, so you can see a chair in person, arrange a demonstration, and get expert advice close to home.',
+] as const;
 
-export const CONTACT_INFO = {
-  email: COMPANY.email,
-  phone: COMPANY.phone,
-  phoneHref: COMPANY.phoneHref,
-  address: `${COMPANY.address}, ${COMPANY.city}, ${COMPANY.postcode}`,
-  hours: 'Monday–Friday, 9:00am–5:30pm (UK time)',
-  mapEmbed:
-    'https://www.openstreetmap.org/export/embed.html?bbox=-1.995%2C50.795%2C-1.970%2C50.810&layer=mapnik&marker=50.802%2C-1.983',
-};
+/** @deprecated Import from `~/lib/content/contact` */
+export {CONTACT_INFO} from '~/lib/content/contact';

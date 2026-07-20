@@ -1,6 +1,7 @@
 import {
   data as remixData,
   Form,
+  Link,
   NavLink,
   Outlet,
   useLoaderData,
@@ -85,6 +86,8 @@ function AccountMenu() {
       <NavLink to="/account/orders" style={isActiveStyle}>
         Orders &nbsp;
       </NavLink>
+      &nbsp;|&nbsp;
+      <Link to="/returns">Returns policy</Link>
       &nbsp;|&nbsp;
       <NavLink to="/account/profile" style={isActiveStyle}>
         &nbsp; Profile &nbsp;

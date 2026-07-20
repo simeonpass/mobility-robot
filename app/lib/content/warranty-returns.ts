@@ -94,10 +94,25 @@ export const returnsSections: ContentSection[] = [
     ],
   },
   {
-    id: 'process',
-    title: 'How to start a return',
+    id: 'online-returns',
+    title: 'Request a return online',
     paragraphs: [
-      'Email sales@bentchmeduk.com with your order number and reason for return. We will confirm eligibility and arrange collection where applicable. Refunds are processed within 14 days of receiving and inspecting the returned item.',
+      'Signed-in customers can submit a return request from their order history. Sign in, open the order, and choose Request a return. We review each request against this policy and confirm next steps by email — including specialist collection for large items where applicable.',
+      'Shopify does not provide a built-in self-serve returns flow for custom Hydrogen storefronts. We use a return request system: your submission creates a case for our team, who process the return in Shopify Admin and arrange collection.',
+      'If you checked out as a guest, email sales@bentchmeduk.com with your order number and reason for return.',
+    ],
+  },
+  {
+    id: 'process',
+    title: 'What happens next',
+    paragraphs: [
+      'Once your return is approved we arrange collection (pallet or courier as appropriate). Refunds are processed within 14 days of receiving and inspecting the returned item. The £250 collection fee applies to large mobility returns unless the return is due to our error or a manufacturing defect.',
+    ],
+    listItems: [
+      'Submit your return request online or by email within 14 days of delivery',
+      'Wait for written confirmation before arranging your own courier',
+      'Keep the product unused and in resalable condition until collection',
+      'Include accessories, manuals and packaging where possible',
     ],
   },
 ];

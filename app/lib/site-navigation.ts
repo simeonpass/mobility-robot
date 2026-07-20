@@ -118,6 +118,7 @@ export const FOOTER_SUPPORT_LINKS: NavItem[] = [
   {title: 'About', url: '/about'},
   {title: 'FAQ', url: '/faq'},
   {title: 'Warranty Information', url: '/warranty'},
+  {title: 'Delivery', url: '/delivery'},
   {title: 'Returns Policy', url: '/returns'},
   {title: 'Track Order', url: '/account/orders'},
   {title: 'Contact Us', url: '/contact'},

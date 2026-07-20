@@ -4,11 +4,15 @@ import {
   useRouteError,
   isRouteErrorResponse,
   type ShouldRevalidateFunction,
+  Form,
   Links,
   Meta,
   Scripts,
   ScrollRestoration,
+  useActionData,
   useRouteLoaderData,
+  redirect,
+  data,
 } from 'react-router';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.png';
@@ -28,6 +32,8 @@ import {getJudgemeConfig} from '~/lib/judgeme';
 import {DEFAULT_SHOP_ID, HTML_LANG} from '~/lib/const';
 
 export type RootLoader = typeof loader;
+
+const SITE_PASSWORD_SESSION_KEY = 'sitePasswordVerified';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -98,10 +104,20 @@ export async function loader(args: Route.LoaderArgs) {
   legacyRedirect(args.request);
 
   const deferredData = loadDeferredData(args);
-  const {storefront, env} = args.context;
+  const {storefront, env, session} = args.context;
+  const url = new URL(args.request.url);
+  const isLocalhost =
+    url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  const configuredPassword = env.SITE_PASSWORD?.trim() || '';
+  const sitePasswordEnabled = !isLocalhost && configuredPassword.length > 0;
+  const sitePasswordVerified = session.get(SITE_PASSWORD_SESSION_KEY) === true;
 
   return {
     ...deferredData,
+    sitePassword: {
+      enabled: sitePasswordEnabled,
+      verified: sitePasswordVerified,
+    },
     ga4Id: env.PUBLIC_GA4_ID ?? null,
     shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,
@@ -121,6 +137,43 @@ export async function loader(args: Route.LoaderArgs) {
       language: args.context.storefront.i18n.language,
     },
   };
+}
+
+export async function action({request, context}: Route.ActionArgs) {
+  const formData = await request.formData();
+  const intent = String(formData.get('intent') ?? '');
+
+  if (intent !== 'unlock-site') {
+    return data({ok: false});
+  }
+
+  const submittedPassword = String(formData.get('password') ?? '');
+  const configuredPassword = context.env.SITE_PASSWORD?.trim() || '';
+
+  if (!configuredPassword) {
+    return redirect(new URL(request.url).pathname);
+  }
+
+  if (submittedPassword !== configuredPassword) {
+    return data(
+      {
+        ok: false,
+        passwordError: 'Incorrect password. Please try again.',
+      },
+      {status: 401},
+    );
+  }
+
+  context.session.set(SITE_PASSWORD_SESSION_KEY, true);
+
+  return redirect(
+    `${new URL(request.url).pathname}${new URL(request.url).search}`,
+    {
+      headers: {
+        'Set-Cookie': await context.session.commit(),
+      },
+    },
+  );
 }
 
 function loadDeferredData({context, request}: Route.LoaderArgs) {
@@ -160,9 +213,14 @@ export function Layout({children}: {children?: React.ReactNode}) {
 
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
+  const actionData = useActionData<typeof action>();
 
   if (!data) {
     return <Outlet />;
+  }
+
+  if (data.sitePassword?.enabled && !data.sitePassword.verified) {
+    return <SitePasswordGate error={actionData?.passwordError} />;
   }
 
   return (
@@ -185,6 +243,52 @@ export default function App() {
         </VatReliefProvider>
       </ConsentProvider>
     </Analytics.Provider>
+  );
+}
+
+function SitePasswordGate({error}: {error?: string}) {
+  return (
+    <main className="xsto-container flex min-h-screen items-center justify-center py-10">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-white p-6 shadow-soft md:p-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold">
+          Private preview
+        </p>
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground">
+          Site temporarily locked
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          This Hydrogen storefront is currently behind a password while updates
+          are being finished.
+        </p>
+
+        <Form className="mt-6 space-y-4" method="post">
+          <input name="intent" type="hidden" value="unlock-site" />
+          <label className="block text-sm" htmlFor="password">
+            <span className="mb-1.5 block text-sm font-medium text-foreground">
+              Password
+            </span>
+            <input
+              autoComplete="current-password"
+              className="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base text-foreground transition-colors placeholder:text-muted-foreground/80 focus-visible:border-navy/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy/15 sm:text-sm"
+              id="password"
+              name="password"
+              required
+              type="password"
+            />
+          </label>
+
+          {error ? (
+            <p className="text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          ) : null}
+
+          <button className="btn-atc w-full" type="submit">
+            Enter site
+          </button>
+        </Form>
+      </div>
+    </main>
   );
 }
 

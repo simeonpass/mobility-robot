@@ -24,6 +24,12 @@ declare global {
     JUDGEME_PUBLIC_TOKEN?: string;
     /** Judge.me CDN host */
     JUDGEME_CDN_HOST?: string;
+    /**
+     * When set (Oxygen env), the Hydrogen storefront requires this password
+     * before any page loads. Does not apply on localhost. Shopify Online Store
+     * password protection does not cover headless/Oxygen deployments.
+     */
+    SITE_PASSWORD?: string;
   }
 }
 

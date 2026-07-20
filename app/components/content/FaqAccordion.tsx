@@ -19,7 +19,7 @@ export function FaqAccordion({categories}: {categories: FaqCategory[]}) {
   );
 }
 
-function FaqList({items}: {items: ProductFAQ[]}) {
+export function FaqList({items}: {items: ProductFAQ[]}) {
   return (
     <div className="divide-y divide-border rounded-xl border border-border">
       {items.map((item) => (

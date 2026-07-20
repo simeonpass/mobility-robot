@@ -32,6 +32,9 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/pages/faq': '/faq',
   '/pages/contact': '/contact',
   '/pages/returns': '/returns',
+  '/pages/delivery': '/delivery',
+  '/pages/shipping': '/delivery',
+  '/pages/shipping-policy': '/delivery',
   '/pages/privacy': '/privacy',
   '/pages/privacy-policy': '/privacy',
   '/pages/terms': '/terms',
@@ -56,6 +59,8 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/official-uk-distributor': '/about',
   '/warranty-registration': '/warranty',
   '/returns-policy': '/returns',
+  '/shipping': '/delivery',
+  '/shipping-policy': '/delivery',
   '/privacy-policy': '/privacy',
   '/terms-of-service': '/terms',
 
