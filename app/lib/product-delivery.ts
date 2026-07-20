@@ -17,9 +17,8 @@ export const DEFAULT_PREORDER_WEEKS = 12;
 /**
  * Per-product pre-order ETA (weeks). Keys are Shopify product handles
  * and homepage slot aliases resolved via getHomepageProductSlot.
- *
- * These models always show as pre-order even when Shopify inventory
- * reports available stock (builds are made to order / queue).
+ * Used when a product is available for sale but qty is 0 (continue selling),
+ * or when the handle is in FORCE_PREORDER_SLOTS.
  */
 export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
   'xsto-ezgo2-carbon-fiber-power-wheelchair': 2,
@@ -30,18 +29,24 @@ export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
   'xsto-x12-pro': 10,
 };
 
-/** Slot / Shopify handles that must never show as in-stock. */
-const FORCE_PREORDER_SLOTS = new Set([
-  'xsto-ezgo2',
-  'xsto-x12',
-  'xsto-x12-pro',
-]);
+/**
+ * Slot handles that always show as pre-order, even with Shopify stock.
+ * X12 is inventory-driven (in stock when qty > 0); X12 Pro stays forced.
+ */
+const FORCE_PREORDER_SLOTS = new Set(['xsto-ezgo2', 'xsto-x12-pro']);
 
 export function isForcedPreorder(handle?: string | null): boolean {
   if (!handle) return false;
-  if (handle in PREORDER_WEEKS_BY_HANDLE) return true;
   const slot = getHomepageProductSlot(handle);
-  return slot != null && FORCE_PREORDER_SLOTS.has(slot);
+  if (slot != null && FORCE_PREORDER_SLOTS.has(slot)) return true;
+  // Direct Shopify handles that map to forced slots but may not resolve via slot
+  if (
+    handle === 'xsto-ezgo2-carbon-fiber-power-wheelchair' ||
+    handle === 'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export function getPreorderWeeks(handle?: string | null): number {
@@ -123,7 +128,7 @@ export function getDeliveryInfo({
     };
   }
 
-  // EzGo2 / X12 / X12 Pro: always pre-order regardless of Shopify qty.
+  // EzGo2 / X12 Pro: always pre-order regardless of Shopify qty.
   if (isForcedPreorder(handle)) {
     const weeks = getPreorderWeeks(handle);
     const weeksLabel = formatPreorderWeeksLabel(weeks);

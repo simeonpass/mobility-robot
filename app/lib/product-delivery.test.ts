@@ -30,7 +30,7 @@ describe('getPreorderWeeks', () => {
 });
 
 describe('getDeliveryInfo', () => {
-  it('marks continue-selling OOS as preorder with product ETA', () => {
+  it('marks continue-selling OOS X12 as preorder with product ETA', () => {
     const info = getDeliveryInfo({
       availableForSale: true,
       quantityAvailable: 0,
@@ -42,14 +42,25 @@ describe('getDeliveryInfo', () => {
     expect(info.preorderWeeks).toBe(10);
   });
 
-  it('forces X12 / EzGo2 preorder even when Shopify reports stock', () => {
+  it('shows X12 as in stock when Shopify has quantity', () => {
     const x12 = getDeliveryInfo({
       availableForSale: true,
-      quantityAvailable: 5,
+      quantityAvailable: 1,
       handle: 'x12-all-terrain-mobility-robot',
     });
-    expect(x12.status).toBe('preorder');
-    expect(x12.detail).toContain('~10 weeks');
+    expect(x12.status).toBe('in_stock');
+    expect(x12.preorderWeeks).toBeNull();
+  });
+
+  it('forces X12 Pro / EzGo2 preorder even when Shopify reports stock', () => {
+    const x12Pro = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 5,
+      handle:
+        'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
+    });
+    expect(x12Pro.status).toBe('preorder');
+    expect(x12Pro.detail).toContain('~10 weeks');
 
     const ezgo = getDeliveryInfo({
       availableForSale: true,
@@ -102,7 +113,7 @@ describe('getCartDeliveryInfo', () => {
       {
         merchandise: {
           availableForSale: true,
-          quantityAvailable: 3,
+          quantityAvailable: 0,
           product: {handle: 'x12-all-terrain-mobility-robot'},
         },
       },

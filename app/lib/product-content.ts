@@ -404,7 +404,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 models are available by pre-order (estimated ~10 weeks). Pay in full or place a 10% deposit to join the build queue; balance due before dispatch.`,
+    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nWhen the X12 is in stock, free UK mainland delivery typically takes 5–7 working days. If currently out of stock with pre-order enabled, estimated build time is ~10 weeks (pay in full or place a 10% deposit; balance due before dispatch).`,
     faqs: x12FAQs,
     videos: [
       {title: 'Watch the X12 in Action', embedUrl: YOUTUBE.x12},

@@ -161,7 +161,7 @@ export const x12FAQs: ProductFAQ[] = [
   {
     question: 'Is the X12 available to buy now?',
     answer:
-      'The X12 is available by pre-order due to high demand. You can pay in full or place a 10% deposit to join the build queue, with an estimated delivery of approximately 10 weeks. The remaining balance (if you chose a deposit) is due before dispatch.',
+      'When the X12 is in stock, you can buy it for delivery in about 5–7 working days (UK mainland). If it is temporarily out of stock, pre-order is available with an estimated build time of around 10 weeks — pay in full or place a 10% deposit; the remaining balance is due before dispatch. Availability is shown on the product page.',
   },
   {
     question: "What's included in the box with the X12?",
