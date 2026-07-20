@@ -122,7 +122,6 @@ export const FOOTER_SUPPORT_LINKS: NavItem[] = [
   {title: 'Track Order', url: '/account/orders'},
   {title: 'Contact Us', url: '/contact'},
   {title: 'VAT Relief', url: '/vat-relief'},
-  {title: 'Trade Login', url: '/account/login'},
   {title: 'Privacy', url: '/privacy'},
   {title: 'Terms', url: '/terms'},
 ];
