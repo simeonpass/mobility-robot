@@ -19,7 +19,7 @@ function product(
 }
 
 describe('partitionShopAllProducts', () => {
-  it('orders chairs cheapest to most expensive and separates accessories', () => {
+  it('orders chairs M series → X series → EzGo2 and separates accessories', () => {
     const products = [
       product('xsto-m4-pro', 'M4 Pro'),
       product('armrest-bag', 'Armrest Bag', {productType: 'Accessories'}),
@@ -39,12 +39,12 @@ describe('partitionShopAllProducts', () => {
     const {chairs, accessories} = partitionShopAllProducts(products);
 
     expect(chairs.map((p) => p.handle)).toEqual([
-      'xsto-ezgo2-carbon-fiber-power-wheelchair',
       'buy-robot-wheelchair',
       'xsto-m4b-1',
       'xsto-m4-pro',
       'x12-all-terrain-mobility-robot',
       'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
+      'xsto-ezgo2-carbon-fiber-power-wheelchair',
     ]);
     expect(accessories.map((p) => p.handle)).toEqual([
       'armrest-bag',

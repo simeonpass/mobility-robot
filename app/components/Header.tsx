@@ -232,7 +232,7 @@ function ModelsDropdown() {
           <div className="site-header-dropdown-intro">
             <p className="site-header-dropdown-eyebrow">Shop XSTO</p>
             <p className="site-header-dropdown-tagline">
-              Foldable powered wheelchairs — from ultra-light carbon fibre to
+              Foldable powered wheelchairs — from everyday self-levelling to
               all-terrain stair climbers.
             </p>
           </div>
@@ -266,12 +266,29 @@ function ModelsDropdown() {
                           role="menuitem"
                           to={item.url}
                         >
-                          <span
-                            aria-hidden
-                            className="site-header-dropdown-item-icon"
-                          >
-                            {modelIconLabel(item.title)}
-                          </span>
+                          {item.imageUrl ? (
+                            <span
+                              aria-hidden
+                              className="site-header-dropdown-item-thumb"
+                            >
+                              <img
+                                alt=""
+                                className="site-header-dropdown-item-thumb-img"
+                                decoding="async"
+                                height={56}
+                                loading="lazy"
+                                src={`${item.imageUrl}?width=112&height=112`}
+                                width={56}
+                              />
+                            </span>
+                          ) : (
+                            <span
+                              aria-hidden
+                              className="site-header-dropdown-item-icon"
+                            >
+                              {modelIconLabel(item.title)}
+                            </span>
+                          )}
                           <span className="site-header-dropdown-item-body">
                             <span className="site-header-dropdown-item-row">
                               <span className="site-header-dropdown-item-title">
@@ -406,16 +423,38 @@ function MobileNavLink({
   return (
     <NavLink
       className={({isActive}) =>
-        navLinkClass(isActive, 'site-header-mobile-link')
+        navLinkClass(
+          isActive,
+          item.imageUrl
+            ? 'site-header-mobile-link site-header-mobile-link--product'
+            : 'site-header-mobile-link',
+        )
       }
       onClick={close}
       prefetch="intent"
       to={item.url}
     >
-      <span>{item.title}</span>
-      {item.description ? (
-        <span className="site-header-mobile-link-desc">{item.description}</span>
+      {item.imageUrl ? (
+        <span aria-hidden className="site-header-mobile-link-thumb">
+          <img
+            alt=""
+            className="site-header-mobile-link-thumb-img"
+            decoding="async"
+            height={48}
+            loading="lazy"
+            src={`${item.imageUrl}?width=96&height=96`}
+            width={48}
+          />
+        </span>
       ) : null}
+      <span className="site-header-mobile-link-text">
+        <span>{item.title}</span>
+        {item.description ? (
+          <span className="site-header-mobile-link-desc">
+            {item.description}
+          </span>
+        ) : null}
+      </span>
     </NavLink>
   );
 }

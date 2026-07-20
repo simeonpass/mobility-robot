@@ -1,9 +1,17 @@
-import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
+import {
+  HOMEPAGE_PRODUCT_THUMBS,
+  SHOPIFY_HOME_PRODUCT_HANDLES,
+  type HomepageFlagshipHandle,
+} from '~/lib/homepage-data';
 
 export type NavItem = {
   title: string;
   url: string;
   description?: string;
+  /** Optional product thumb for mega menu / mobile models list. */
+  imageUrl?: string;
+  /** Canonical homepage slot when this item is a flagship chair. */
+  productSlot?: HomepageFlagshipHandle;
 };
 
 export type NavGroup = {
@@ -11,58 +19,48 @@ export type NavGroup = {
   items: NavItem[];
 };
 
-function productUrl(handle: keyof typeof SHOPIFY_HOME_PRODUCT_HANDLES) {
+function productUrl(handle: HomepageFlagshipHandle) {
   return `/products/${SHOPIFY_HOME_PRODUCT_HANDLES[handle]}`;
+}
+
+function chairItem(
+  slot: HomepageFlagshipHandle,
+  title: string,
+  description: string,
+): NavItem {
+  return {
+    title,
+    url: productUrl(slot),
+    description,
+    imageUrl: HOMEPAGE_PRODUCT_THUMBS[slot],
+    productSlot: slot,
+  };
 }
 
 /**
  * Product series shown in the Models dropdown / mobile menu.
- * Ordered cheapest → most expensive (EzGo2 → M series → X series).
+ * Ordered M series → X series → EzGo2.
  */
 export const PRODUCT_NAV_GROUPS: NavGroup[] = [
   {
-    title: 'EzGo2',
-    items: [
-      {
-        title: 'EzGo2',
-        url: productUrl('xsto-ezgo2'),
-        description: 'Ultra-light carbon fibre',
-      },
-    ],
-  },
-  {
     title: 'M Series',
     items: [
-      {
-        title: 'M4',
-        url: productUrl('xsto-m4'),
-        description: 'Self-levelling everyday chair',
-      },
-      {
-        title: 'M4B',
-        url: productUrl('xsto-m4b'),
-        description: 'Updated wheels & footrest',
-      },
-      {
-        title: 'M4 Pro',
-        url: productUrl('xsto-m4-pro'),
-        description: 'Premium comfort & capacity',
-      },
+      chairItem('xsto-m4', 'M4', 'Self-levelling everyday chair'),
+      chairItem('xsto-m4b', 'M4B', 'Updated wheels & footrest'),
+      chairItem('xsto-m4-pro', 'M4 Pro', 'Premium comfort & capacity'),
     ],
   },
   {
     title: 'X Series',
     items: [
-      {
-        title: 'X12',
-        url: productUrl('xsto-x12'),
-        description: 'All-terrain stair climber',
-      },
-      {
-        title: 'X12 Pro',
-        url: productUrl('xsto-x12-pro'),
-        description: 'Fully configurable X12',
-      },
+      chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
+      chairItem('xsto-x12-pro', 'X12 Pro', 'Fully configurable X12'),
+    ],
+  },
+  {
+    title: 'EzGo2',
+    items: [
+      chairItem('xsto-ezgo2', 'EzGo2', 'Ultra-light carbon fibre'),
     ],
   },
 ];
@@ -102,12 +100,12 @@ export const MAIN_NAV: NavItem[] = [
 
 export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'Shop All', url: '/collections/all'},
-  {title: 'EzGo2', url: productUrl('xsto-ezgo2')},
   {title: 'M4', url: productUrl('xsto-m4')},
   {title: 'M4B', url: productUrl('xsto-m4b')},
   {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
   {title: 'X12', url: productUrl('xsto-x12')},
   {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
+  {title: 'EzGo2', url: productUrl('xsto-ezgo2')},
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Videos', url: '/videos'},
   {title: 'Find a Dealer', url: '/stockists'},

@@ -20,7 +20,7 @@ export function HeroSection() {
   return (
     <section
       aria-label="Hero"
-      className="home-hero relative min-h-[100svh] overflow-hidden bg-navy !p-0"
+      className="home-hero relative min-h-[min(85svh,30rem)] overflow-hidden bg-navy !p-0 md:min-h-[100svh]"
     >
       <div aria-hidden className="absolute inset-0">
         <HeroVideoBackground />
@@ -39,7 +39,7 @@ export function HeroSection() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[55%] bg-gradient-to-t from-black/80 via-black/40 to-transparent"
       />
 
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-end px-4 pb-[7.5rem] pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:px-8 md:pb-20 md:pt-36 lg:pb-24">
+      <div className="relative z-10 mx-auto flex min-h-[min(85svh,30rem)] w-full max-w-[1400px] flex-col justify-end px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:min-h-[100svh] md:px-8 md:pb-20 md:pt-36 lg:pb-24">
         <div className="home-hero-copy w-full max-w-2xl text-left text-white">
           <motion.h1
             className="home-hero-title font-display text-white"

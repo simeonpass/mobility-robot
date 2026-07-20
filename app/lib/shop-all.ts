@@ -60,7 +60,7 @@ function isDepositOrNonRetailSku(handle: string): boolean {
 }
 
 /**
- * Split the catalogue into flagship chairs (price order) and accessories.
+ * Split the catalogue into flagship chairs (M → X → EzGo2) and accessories.
  * Prefer the accessories collection when available; otherwise fall back to
  * handle / productType / tag / title heuristics (excluding deposit SKUs).
  */

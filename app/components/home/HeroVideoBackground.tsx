@@ -22,7 +22,7 @@ export function HeroVideoBackground({
       <img
         alt=""
         aria-hidden
-        className="size-full object-cover object-center"
+        className="hero-video-poster size-full object-cover"
         decoding="async"
         fetchPriority="high"
         src={posterUrl}
@@ -40,7 +40,7 @@ export function HeroVideoBackground({
       <img
         alt=""
         aria-hidden
-        className="hero-video-poster size-full object-cover object-center"
+        className="hero-video-poster size-full object-cover"
         decoding="async"
         fetchPriority="high"
         src={posterUrl}

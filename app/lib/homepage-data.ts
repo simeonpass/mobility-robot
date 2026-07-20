@@ -1,14 +1,14 @@
 /**
  * Flagship models shown on the homepage grid and comparison table.
- * Ordered cheapest → most expensive (ex-VAT marketing / display prices).
+ * Ordered M series → X series → EzGo2 (premium range first).
  */
 export const HOMEPAGE_FLAGSHIP_HANDLES = [
-  'xsto-ezgo2',
   'xsto-m4',
   'xsto-m4b',
   'xsto-m4-pro',
   'xsto-x12',
   'xsto-x12-pro',
+  'xsto-ezgo2',
 ] as const satisfies readonly HomepageProductHandle[];
 
 export type HomepageFlagshipHandle =
@@ -233,6 +233,25 @@ export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = 
   'xsto-ezgo2': 'EzGo2',
   'xsto-x12': 'X12',
   'xsto-x12-pro': 'X12 Pro',
+};
+
+/**
+ * Product thumbs for mega menu / nav (Shopify Files CDN).
+ * Prefer transparent or clean cutouts when available.
+ */
+export const HOMEPAGE_PRODUCT_THUMBS: Record<HomepageFlagshipHandle, string> = {
+  'xsto-m4':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m4-01.jpg',
+  'xsto-m4b':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/M4B.png',
+  'xsto-m4-pro':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/xsto-m4-pro-mobility-wheelchair-adjustable-seat-backrest-9425362.jpg',
+  'xsto-x12':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-all-terrain-mobility-robot-8874875.jpg',
+  'xsto-x12-pro':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-pro-hero.webp',
+  'xsto-ezgo2':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/Ezgo2.png',
 };
 
 /** Canonical product slots used for specs, comparison data, and bullets. */

@@ -697,7 +697,7 @@
   }
 
   .site-header-dropdown-panel {
-    @apply absolute left-1/2 top-[calc(100%+0.625rem)] z-50 w-[min(46rem,calc(100vw-1.5rem))] -translate-x-1/2 overflow-hidden rounded-2xl border bg-white;
+    @apply absolute left-1/2 top-[calc(100%+0.625rem)] z-50 w-[min(52rem,calc(100vw-1.5rem))] -translate-x-1/2 overflow-hidden rounded-2xl border bg-white;
     border-color: hsl(var(--navy) / 0.1);
     box-shadow:
       0 4px 6px hsl(var(--navy) / 0.04),
@@ -753,7 +753,7 @@
   }
 
   .site-header-dropdown-item {
-    @apply flex items-center gap-3 rounded-xl border border-transparent px-2 py-2.5 no-underline transition-all duration-200 hover:no-underline;
+    @apply flex items-center gap-3 rounded-xl border border-transparent px-2 py-2 no-underline transition-all duration-200 hover:no-underline;
   }
 
   .site-header-dropdown-item:hover {
@@ -765,6 +765,15 @@
   .site-header-dropdown-item--active {
     border-color: hsl(var(--gold) / 0.25);
     background: hsl(var(--gold) / 0.06);
+  }
+
+  .site-header-dropdown-item-thumb {
+    @apply flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl;
+    background: transparent;
+  }
+
+  .site-header-dropdown-item-thumb-img {
+    @apply size-full object-contain;
   }
 
   .site-header-dropdown-item-icon {
@@ -872,6 +881,22 @@
     @apply min-h-11 w-full flex-col items-start justify-center gap-0.5 py-2.5;
   }
 
+  .site-header-mobile-link--product {
+    @apply flex-row items-center gap-3;
+  }
+
+  .site-header-mobile-link-thumb {
+    @apply flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg;
+  }
+
+  .site-header-mobile-link-thumb-img {
+    @apply size-full object-contain;
+  }
+
+  .site-header-mobile-link-text {
+    @apply flex min-w-0 flex-col items-start gap-0.5;
+  }
+
   .site-header-mobile-link-desc {
     @apply text-xs font-normal text-muted-foreground;
   }
@@ -898,22 +923,47 @@
 
   .hero-youtube-embed {
     @apply pointer-events-none absolute inset-0 overflow-hidden;
+    container-type: size;
   }
 
+  /*
+   * Cover a 16:9 YouTube iframe inside the hero using container units so
+   * sizing tracks the hero box — not the viewport. Viewport vh/vw made the
+   * iframe ~3–4× wider than the phone and cropped the subject hard.
+   */
   .hero-youtube-iframe {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: max(100vw, 177.78vh);
-    height: max(56.25vw, 100vh);
+    /* Fallback when container query units are unavailable */
+    width: max(100%, 177.78vh);
+    height: max(56.25vw, 100%);
     min-width: 100%;
     min-height: 100%;
     transform: translate(-50%, -50%);
     border: 0;
   }
 
+  @supports (height: 100cqh) {
+    .hero-youtube-iframe {
+      aspect-ratio: 16 / 9;
+      height: 100cqh;
+      width: auto;
+      min-width: 100cqw;
+      min-height: 100cqh;
+    }
+  }
+
   .hero-video-poster {
-    @apply absolute inset-0 z-[1] transition-opacity duration-1000;
+    @apply absolute inset-0 z-[1] object-cover transition-opacity duration-1000;
+    /* Keep the X12 + rider in frame on tall phones (landscape poster). */
+    object-position: 42% 40%;
+  }
+
+  @media (min-width: 768px) {
+    .hero-video-poster {
+      object-position: center;
+    }
   }
 
   .hero-video-layer--playing .hero-video-poster {

@@ -30,11 +30,11 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
         <div className="xsto-container">
           <SectionIntro
             accent="XSTO"
-          description="Flagship models across the XSTO range — from ultra-light carbon fibre to stair-climbing. Every chair ships with full UK warranty and free delivery."
-          label="Shop the range"
-          suffix="for you."
-          title="Find the"
-        />
+            description="Flagship models across the XSTO range — from ultra-light carbon fibre to stair-climbing. Every chair ships with full UK warranty and free delivery."
+            label="Shop the range"
+            suffix="for you."
+            title="Find the"
+          />
           <p className="text-center text-muted-foreground">
             Product details are loading. Please check back shortly.
           </p>
@@ -59,7 +59,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
           title="Find the"
         />
 
-        <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {flagshipProducts.map((product, index) => {
             const slot = getHomepageProductSlot(product.handle) as
               | HomepageFlagshipHandle
@@ -73,7 +73,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
 
             return (
               <article
-                className="group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium animate-fade-in-up"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-background shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-medium animate-fade-in-up"
                 key={product.id}
                 style={{animationDelay: `${index * 80}ms`}}
               >
@@ -83,12 +83,16 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                   to={`/products/${product.handle}`}
                 >
                   {meta ? (
-                    <span className="absolute left-3 top-3 z-10 rounded-full bg-background/95 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:text-xs">
+                    <span className="absolute left-3 top-3 z-10 rounded-full bg-background/90 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:text-xs">
                       {meta.badge}
                     </span>
                   ) : null}
 
-                  <div className="flex aspect-[16/11] items-center justify-center bg-gradient-cream p-4 sm:aspect-[4/3] sm:p-6">
+                  {/*
+                    Flat image well (no cream panel) so white-backed and
+                    transparent product shots sit on the same surface.
+                  */}
+                  <div className="flex aspect-[16/11] items-center justify-center px-5 pt-8 pb-2 sm:aspect-[4/3] sm:px-8 sm:pt-10 sm:pb-3">
                     {product.featuredImage ? (
                       <Image
                         alt={product.featuredImage.altText || product.title}
@@ -99,7 +103,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                     ) : null}
                   </div>
 
-                  <div className="flex flex-1 flex-col p-4 sm:p-5">
+                  <div className="flex flex-1 flex-col border-t border-border/40 px-4 py-4 sm:px-5 sm:py-5">
                     <h3 className="text-base font-semibold text-foreground sm:text-lg">
                       {meta?.shortName ?? product.title}
                     </h3>
