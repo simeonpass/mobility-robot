@@ -658,11 +658,14 @@
   }
 
   .site-header-cart-count {
-    @apply inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-gold px-1.5 py-0.5 text-[0.6875rem] font-semibold leading-none text-white;
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1.5 text-[0.75rem] font-semibold leading-none text-white sm:h-6 sm:min-w-6;
   }
 
   .site-header-cart-btn {
-    @apply gap-1 sm:gap-1.5;
+    /* Override fixed icon size so hover covers “Cart” + count badge */
+    @apply h-auto min-h-9 w-auto gap-1.5 px-2.5 sm:min-h-11 sm:gap-2 sm:px-3;
+    width: auto;
+    height: auto;
   }
 
   .site-header-cta {
