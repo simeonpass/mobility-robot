@@ -133,7 +133,7 @@ export const m4ProFAQs: ProductFAQ[] = [
   {
     question: 'How do I make a warranty claim?',
     answer:
-      'Contact our UK support team at sales@bentchmeduk.com or call 0208 050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.',
+      'Contact our UK support team at sales@bentechmeduk.com or call 0208 050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.',
   },
 ];
 
@@ -267,6 +267,6 @@ export const generalFAQs: ProductFAQ[] = [
   {
     question: 'Who provides UK customer support?',
     answer:
-      'Bentech Medical Ltd provides free UK-based phone and email support on 0208 050 4849 and sales@bentchmeduk.com. Our team handles sales, delivery, warranty and after-sales support for all XSTO products in the UK.',
+      'Bentech Medical Ltd provides free UK-based phone and email support on 0208 050 4849 and sales@bentechmeduk.com. Our team handles sales, delivery, warranty and after-sales support for all XSTO products in the UK.',
   },
 ];

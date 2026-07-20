@@ -86,7 +86,7 @@ export async function subscribeNewsletter(
   } catch {
     return {
       error:
-        'Something went wrong. Please try again or contact sales@bentchmeduk.com.',
+        'Something went wrong. Please try again or contact sales@bentechmeduk.com.',
     };
   }
 }

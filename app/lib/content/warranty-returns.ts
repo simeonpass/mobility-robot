@@ -48,7 +48,7 @@ export const warrantySections: ContentSection[] = [
     id: 'claims',
     title: 'Making a claim',
     paragraphs: [
-      'Contact sales@bentchmeduk.com or call 0208 050 4849 with your order number, serial number and a description of the issue. Photos or video help us assess claims quickly. Do not attempt repairs that may void your warranty.',
+      'Contact sales@bentechmeduk.com or call 0208 050 4849 with your order number, serial number and a description of the issue. Photos or video help us assess claims quickly. Do not attempt repairs that may void your warranty.',
     ],
   },
 ];
@@ -99,7 +99,7 @@ export const returnsSections: ContentSection[] = [
     paragraphs: [
       'Signed-in customers can submit a return request from their order history. Sign in, open the order, and choose Request a return. We review each request against this policy and confirm next steps by email — including specialist collection for large items where applicable.',
       'Shopify does not provide a built-in self-serve returns flow for custom Hydrogen storefronts. We use a return request system: your submission creates a case for our team, who process the return in Shopify Admin and arrange collection.',
-      'If you checked out as a guest, email sales@bentchmeduk.com with your order number and reason for return.',
+      'If you checked out as a guest, email sales@bentechmeduk.com with your order number and reason for return.',
     ],
   },
   {

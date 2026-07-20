@@ -42,7 +42,7 @@ export function useValidatedApiForm<T extends z.ZodType>({
       setFormError(fetcher.data.error);
     } else if (!fetcher.data.fieldErrors) {
       setFormError(
-        'Something went wrong. Please try again or email sales@bentchmeduk.com.',
+        'Something went wrong. Please try again or email sales@bentechmeduk.com.',
       );
     }
   }, [fetcher.data]);

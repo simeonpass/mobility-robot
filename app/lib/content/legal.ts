@@ -6,7 +6,7 @@ export const privacySections: ContentSection[] = [
     title: '1. Data controller',
     paragraphs: [
       'Bentech Medical Ltd is the data controller for personal data collected through mobilityrobot.co.uk. Registered address: Unit 2 Old Forge Road, Wimborne, Dorset BH21 7RR, United Kingdom.',
-      'Contact: sales@bentchmeduk.com · 0208 050 4849',
+      'Contact: sales@bentechmeduk.com · 0208 050 4849',
     ],
   },
   {
@@ -51,7 +51,7 @@ export const privacySections: ContentSection[] = [
     title: '6. Your rights',
     paragraphs: [
       'Under UK GDPR you have the right to access, rectify, erase, restrict processing, object, and data portability where applicable. You may withdraw consent and lodge a complaint with the Information Commissioner\'s Office (ico.org.uk).',
-      'To exercise your rights, email sales@bentchmeduk.com with sufficient detail for us to identify your records.',
+      'To exercise your rights, email sales@bentechmeduk.com with sufficient detail for us to identify your records.',
     ],
   },
   {

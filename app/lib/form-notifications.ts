@@ -109,7 +109,7 @@ export async function sendFormNotification(
       ok: false,
       configured: false,
       error:
-        'Form email is not configured on the server. Please email sales@bentchmeduk.com directly or call 0208 050 4849.',
+        'Form email is not configured on the server. Please email sales@bentechmeduk.com directly or call 0208 050 4849.',
     };
   }
 
@@ -164,7 +164,7 @@ async function sendViaResend(
         ok: false,
         configured: true,
         error:
-          'We could not send your message just now. Please try again or email sales@bentchmeduk.com.',
+          'We could not send your message just now. Please try again or email sales@bentechmeduk.com.',
       };
     }
 
@@ -175,7 +175,7 @@ async function sendViaResend(
       ok: false,
       configured: true,
       error:
-        'We could not send your message just now. Please try again or email sales@bentchmeduk.com.',
+        'We could not send your message just now. Please try again or email sales@bentechmeduk.com.',
     };
   }
 }
@@ -208,7 +208,7 @@ async function sendViaFormspree(
         ok: false,
         configured: true,
         error:
-          'We could not send your message just now. Please try again or email sales@bentchmeduk.com.',
+          'We could not send your message just now. Please try again or email sales@bentechmeduk.com.',
       };
     }
 
@@ -219,7 +219,7 @@ async function sendViaFormspree(
       ok: false,
       configured: true,
       error:
-        'We could not send your message just now. Please try again or email sales@bentchmeduk.com.',
+        'We could not send your message just now. Please try again or email sales@bentechmeduk.com.',
     };
   }
 }

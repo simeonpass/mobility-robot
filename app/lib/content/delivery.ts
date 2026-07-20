@@ -83,7 +83,7 @@ export const DELIVERY_REGIONS = [
 export const DELIVERY_ON_ARRIVAL = [
   'Check the outer packaging for damage before signing — note any issues on the carrier’s paperwork.',
   'Photograph damage to packaging and product if visible.',
-  'Report transit damage to sales@bentchmeduk.com within 48 hours with photos and your order number.',
+  'Report transit damage to sales@bentechmeduk.com within 48 hours with photos and your order number.',
   'Retain all packaging until you are satisfied the product is correct and undamaged.',
   'Do not register your warranty or use the chair outdoors until you are sure you are keeping it.',
 ] as const;

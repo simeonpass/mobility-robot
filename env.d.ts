@@ -28,7 +28,7 @@ declare global {
     RESEND_API_KEY?: string;
     /** Formspree form endpoint URL — used when Resend is not configured */
     FORMSPREE_ENDPOINT?: string;
-    /** Inbox address for form notifications (default: sales@bentchmeduk.com) */
+    /** Inbox address for form notifications (default: sales@bentechmeduk.com) */
     FORMS_TO_EMAIL?: string;
     /** Verified Resend from address, e.g. "XSTO UK <noreply@mobilityrobot.co.uk>" */
     FORMS_FROM_EMAIL?: string;

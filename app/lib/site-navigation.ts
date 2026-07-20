@@ -149,7 +149,7 @@ export const COMPANY = {
   postcode: 'BH21 7RR',
   phone: '0208 050 4849',
   phoneHref: 'tel:+442080504849',
-  email: 'sales@bentchmeduk.com',
+  email: 'sales@bentechmeduk.com',
   disclaimer:
     'Official UK Distributor of XSTO. XSTO is a registered trademark of its manufacturer.',
 } as const;

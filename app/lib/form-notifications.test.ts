@@ -2,6 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {
   formatFormFieldsText,
   isFormEmailConfigured,
+  resolveResendFrom,
 } from './form-notifications';
 
 describe('isFormEmailConfigured', () => {
@@ -17,6 +18,20 @@ describe('isFormEmailConfigured', () => {
         FORMSPREE_ENDPOINT: 'https://formspree.io/f/abc',
       }),
     ).toBe(true);
+  });
+});
+
+describe('resolveResendFrom', () => {
+  it('falls back away from onboarding@resend.dev', () => {
+    expect(resolveResendFrom('XSTO UK <onboarding@resend.dev>')).toBe(
+      'XSTO UK <noreply@mobilityrobot.co.uk>',
+    );
+  });
+
+  it('keeps verified domain addresses', () => {
+    expect(resolveResendFrom('XSTO UK <noreply@mobilityrobot.co.uk>')).toBe(
+      'XSTO UK <noreply@mobilityrobot.co.uk>',
+    );
   });
 });
 
