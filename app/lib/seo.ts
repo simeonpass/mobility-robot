@@ -183,7 +183,7 @@ export function organizationJsonLd() {
       '@type': 'ContactPoint',
       telephone: '+44-208-050-4849',
       contactType: 'customer service',
-      email: 'support@mobilityrobot.co.uk',
+      email: 'sales@bentchmeduk.com',
       areaServed: 'GB',
       availableLanguage: 'English',
     },
