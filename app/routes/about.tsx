@@ -200,7 +200,7 @@ export default function AboutPage() {
               Next step
             </p>
             <h2
-              className="mt-3 font-display text-2xl font-bold tracking-tight md:text-3xl"
+              className="mt-3 font-display text-2xl font-bold tracking-tight text-white md:text-3xl"
               id="about-next-heading"
             >
               See an XSTO in person
