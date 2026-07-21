@@ -1,0 +1,58 @@
+{
+  "id": "gid://shopify/DeliveryProfile/123915567482",
+  "profile": {
+    "locationGroupsToUpdate": [
+      {
+        "id": "gid://shopify/DeliveryLocationGroup/125515006330",
+        "zonesToUpdate": [
+          {
+            "id": "gid://shopify/DeliveryZone/576796000634",
+            "methodDefinitionsToCreate": [
+              {
+                "name": "Standard",
+                "active": true,
+                "rateDefinition": {
+                  "price": {
+                    "amount": "10.00",
+                    "currencyCode": "GBP"
+                  }
+                },
+                "priceConditionsToCreate": [
+                  {
+                    "criteria": {
+                      "amount": "99.99",
+                      "currencyCode": "GBP"
+                    },
+                    "operator": "LESS_THAN_OR_EQUAL_TO"
+                  }
+                ]
+              },
+              {
+                "name": "Free UK delivery",
+                "active": true,
+                "rateDefinition": {
+                  "price": {
+                    "amount": "0.00",
+                    "currencyCode": "GBP"
+                  }
+                },
+                "priceConditionsToCreate": [
+                  {
+                    "criteria": {
+                      "amount": "100.00",
+                      "currencyCode": "GBP"
+                    },
+                    "operator": "GREATER_THAN_OR_EQUAL_TO"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "methodDefinitionsToDelete": [
+      "gid://shopify/DeliveryMethodDefinition/982871277946"
+    ]
+  }
+}

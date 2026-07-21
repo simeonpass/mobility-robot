@@ -1,0 +1,52 @@
+mutation UpdateUkShippingThreshold(
+  $id: ID!
+  $profile: DeliveryProfileInput!
+) {
+  deliveryProfileUpdate(id: $id, profile: $profile) {
+    profile {
+      id
+      name
+      profileLocationGroups {
+        locationGroupZones(first: 10) {
+          nodes {
+            zone {
+              id
+              name
+            }
+            methodDefinitions(first: 10) {
+              nodes {
+                id
+                name
+                active
+                rateProvider {
+                  __typename
+                  ... on DeliveryRateDefinition {
+                    price {
+                      amount
+                      currencyCode
+                    }
+                  }
+                }
+                methodConditions {
+                  field
+                  operator
+                  conditionCriteria {
+                    __typename
+                    ... on MoneyV2 {
+                      amount
+                      currencyCode
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

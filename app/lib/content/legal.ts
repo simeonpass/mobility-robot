@@ -106,7 +106,7 @@ export const termsSections: ContentSection[] = [
     id: 'delivery',
     title: '4. Delivery',
     paragraphs: [
-      'Delivery methods, lead times and regional coverage are described on our Delivery page. Free UK mainland delivery applies to in-stock products unless stated otherwise on the product page.',
+      'Delivery methods, lead times and regional coverage are described on our Delivery page. Free UK mainland delivery applies to orders of £100 or more; orders under £100 incur a £10 shipping charge unless stated otherwise on the product page.',
       'Delivery times are estimates only. You must inspect goods on delivery and report transit damage within 48 hours with photographs.',
       'Engineer delivery and setup is available in selected areas only, by prior arrangement and may incur additional charges.',
     ],

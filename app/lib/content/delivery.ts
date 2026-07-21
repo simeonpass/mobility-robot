@@ -21,6 +21,7 @@ export const DELIVERY_METHODS = [
     details: [
       'Usually dispatched within 1–2 working days when in stock.',
       'Standard parcel service with tracking emailed after dispatch.',
+      'UK mainland: £10 shipping on orders under £100; free from £100.',
       'May be combined with a chair order or purchased separately.',
     ],
   },
@@ -64,7 +65,8 @@ export const DELIVERY_STEPS = [
 export const DELIVERY_REGIONS = [
   {
     region: 'UK mainland',
-    detail: 'Free delivery on in-stock chairs unless stated otherwise. M4, M4B and M4 Pro typically 3–4 working days; other in-stock models 5–7 working days.',
+    detail:
+      'Free delivery on orders of £100 or more (all XSTO chairs qualify). Orders under £100: £10 UK mainland shipping. M4, M4B and M4 Pro typically 3–4 working days; other in-stock models 5–7 working days.',
   },
   {
     region: 'Scottish Highlands & islands',
