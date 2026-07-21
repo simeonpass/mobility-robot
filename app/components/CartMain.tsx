@@ -48,22 +48,24 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
     return (
       <section
         aria-label="Cart drawer"
-        className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]"
+        className="cart-drawer flex h-full min-h-0 flex-col bg-background"
       >
-        <div className="flex items-center gap-3 border-b border-border px-4 py-3">
-          <div className="flex size-10 items-center justify-center rounded-full bg-gold/10">
+        <div className="cart-drawer-header flex shrink-0 items-center gap-3 border-b border-border bg-secondary/50 px-4 py-3.5">
+          <div className="flex size-10 items-center justify-center rounded-full bg-gold/15 ring-1 ring-gold/25">
             <CartIcon />
           </div>
-          <h2 className="text-xl font-semibold text-foreground">Your Cart</h2>
-          <div className="ml-auto flex items-center gap-3">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            Your Cart
+          </h2>
+          <div className="ml-auto flex items-center gap-2.5">
             {cartHasItems ? (
-              <span className="rounded-full bg-secondary px-3 py-1 text-sm font-medium text-foreground">
+              <span className="rounded-full bg-navy px-3 py-1 text-xs font-semibold text-white">
                 {itemCount} {itemCount === 1 ? 'item' : 'items'}
               </span>
             ) : null}
             <button
               aria-label="Close cart"
-              className="inline-flex size-9 items-center justify-center rounded-lg text-xl text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="inline-flex size-10 items-center justify-center rounded-lg text-2xl leading-none text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               onClick={close}
               type="button"
             >
@@ -76,8 +78,12 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
           <CartEmpty onContinue={close} variant="drawer" />
         ) : (
           <>
-            <div className="overflow-y-auto overscroll-contain px-4 py-3">
-              <ul className="space-y-2" aria-label="Cart line items">
+            {/*
+              Single touch-scroll region for lines + totals/VAT.
+              Checkout stays pinned so the body can always be flicked on mobile.
+            */}
+            <div className="cart-drawer-scroll min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 py-3">
+              <ul className="space-y-3" aria-label="Cart line items">
                 {lines.map((line) => {
                   if (
                     'parentRelationship' in line &&
@@ -95,9 +101,14 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
                   );
                 })}
               </ul>
+              {cartHasItems && cart ? (
+                <div className="mt-4 pb-2">
+                  <CartSummary cart={cart} layout={layout} section="body" />
+                </div>
+              ) : null}
             </div>
             {cartHasItems && cart ? (
-              <CartSummary cart={cart} layout={layout} />
+              <CartSummary cart={cart} layout={layout} section="footer" />
             ) : null}
           </>
         )}
@@ -170,7 +181,7 @@ function CartEmpty({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
-      <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-secondary">
+      <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-secondary ring-1 ring-border">
         <CartIcon />
       </div>
       <h3 className="text-xl font-semibold text-foreground">

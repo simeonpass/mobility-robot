@@ -57,8 +57,8 @@ export function CartLineItem({
     <li className="list-none">
       <div
         className={[
-          'rounded-lg border border-border/70 bg-card',
-          isAside ? 'p-2.5' : 'rounded-xl p-4 shadow-sm',
+          'rounded-xl border border-border bg-card',
+          isAside ? 'p-3 shadow-sm' : 'p-4 shadow-sm',
         ].join(' ')}
       >
         <div className="flex items-start gap-2.5">
@@ -121,8 +121,8 @@ export function CartLineItem({
 
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
               {vatRelief ? (
-                <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-foreground">
-                  VAT relief
+                <span className="rounded-full bg-vat-price/15 px-2 py-0.5 text-[10px] font-semibold text-vat-price">
+                  VAT relief applied
                 </span>
               ) : null}
               {isDepositLine ? (
@@ -183,7 +183,11 @@ export function CartLineItem({
 
             {vatEligible ? (
               <button
-                className="mt-2 text-xs font-medium text-foreground underline-offset-2 hover:underline"
+                className={
+                  vatRelief
+                    ? 'mt-2 text-xs font-medium text-vat-price underline-offset-2 hover:underline'
+                    : 'mt-2 inline-flex items-center rounded-md border border-vat-price/35 bg-vat-price/10 px-2.5 py-1 text-xs font-semibold text-vat-price transition-colors hover:bg-vat-price/15'
+                }
                 onClick={() =>
                   openCartModal({
                     lines: [
@@ -199,7 +203,7 @@ export function CartLineItem({
                 }
                 type="button"
               >
-                {vatRelief ? 'Edit VAT declaration' : 'Claim VAT relief'}
+                {vatRelief ? 'Edit VAT declaration' : 'Claim VAT relief — save 20%'}
               </button>
             ) : null}
 

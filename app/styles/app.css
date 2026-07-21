@@ -1228,6 +1228,9 @@ html:has(.overlay.expanded) {
   right: calc(-1 * var(--cart-aside-width));
   display: flex;
   flex-direction: column;
+  background: hsl(var(--background));
+  /* Prevent iOS rubber-band from trapping scroll on the page behind */
+  overscroll-behavior: contain;
 }
 
 .overlay--cart .close-outside {
@@ -1250,6 +1253,29 @@ html:has(.overlay.expanded) {
 
 .overlay--cart aside main > section {
   min-height: 0;
+  height: 100%;
+}
+
+/* Mobile cart: reliable finger scroll for line items + totals */
+.cart-drawer-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+@media (max-width: 639px) {
+  .overlay--cart aside {
+    width: 100vw;
+    right: -100vw;
+  }
+
+  .overlay--cart .close-outside {
+    width: 0;
+  }
+
+  .overlay--cart.expanded aside {
+    transform: translateX(-100vw);
+  }
 }
 
 button.reset {

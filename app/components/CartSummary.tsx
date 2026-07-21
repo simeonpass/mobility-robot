@@ -3,6 +3,7 @@ import type {CartLayout} from '~/components/CartMain';
 import {CartForm, type OptimisticCart} from '@shopify/hydrogen';
 import {useId} from 'react';
 import {Link} from 'react-router';
+import {BadgePercent} from 'lucide-react';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackBeginCheckout} from '~/lib/analytics';
 import {withOnlineStoreChannel, isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
@@ -14,9 +15,18 @@ import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
   layout: CartLayout;
+  /**
+   * Aside drawer can split scrollable body (VAT + totals) from a sticky
+   * checkout footer so the cart always scrolls on mobile.
+   */
+  section?: 'body' | 'footer' | 'all';
 };
 
-export function CartSummary({cart, layout}: CartSummaryProps) {
+export function CartSummary({
+  cart,
+  layout,
+  section = 'all',
+}: CartSummaryProps) {
   const isAside = layout === 'aside';
   const summaryId = useId();
   const discountCodeInputId = useId();
@@ -66,23 +76,36 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   const vatReliefPrompt = showCartVatPrompt ? (
     <button
-      className="mb-3 w-full rounded-lg border border-border bg-secondary/40 px-3 py-2.5 text-left text-sm transition-colors hover:border-foreground/20"
+      className="group mb-3 w-full rounded-xl border-2 border-vat-price/40 bg-vat-price/10 px-3.5 py-3.5 text-left shadow-sm transition-colors hover:border-vat-price hover:bg-vat-price/15"
       onClick={openBulkVatModal}
       type="button"
     >
-      <span className="block font-medium text-foreground">
-        Claim HMRC VAT relief
-      </span>
-      <span className="mt-0.5 block text-xs text-muted-foreground">
-        Eligible on {linesWithoutVatRelief.length}{' '}
-        {linesWithoutVatRelief.length === 1 ? 'item' : 'items'} — save 20% VAT
+      <span className="flex items-start gap-3">
+        <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-vat-price text-white">
+          <BadgePercent aria-hidden className="size-4" strokeWidth={2} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-vat-price">
+              Claim HMRC VAT relief
+            </span>
+            <span className="rounded-full bg-vat-price px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+              Save 20%
+            </span>
+          </span>
+          <span className="mt-1 block text-xs leading-snug text-foreground/80">
+            Eligible on {linesWithoutVatRelief.length}{' '}
+            {linesWithoutVatRelief.length === 1 ? 'item' : 'items'} — tap to
+            declare and remove VAT.
+          </span>
+        </span>
       </span>
     </button>
   ) : null;
 
   const totalsSection = totals ? (
-    <div className="space-y-1.5 text-sm">
-      <div className="flex justify-between">
+    <div className="space-y-2 text-sm">
+      <div className="flex justify-between gap-3">
         <span className="text-muted-foreground">
           {totals.hasDeposit
             ? 'Due today'
@@ -90,7 +113,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
               ? 'Subtotal (inc. VAT)'
               : 'Subtotal'}
         </span>
-        <span className="font-medium text-foreground">
+        <span className="font-semibold tabular-nums text-foreground">
           {formatProductPrice(totals.subtotalIncVat, currencyCode, {
             fractionDigits: 2,
           })}
@@ -104,9 +127,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
       ) : null}
 
       {totals.hasVatRelief && totals.vatRemoved > 0 ? (
-        <div className="flex justify-between text-foreground">
-          <span>VAT relief</span>
-          <span>
+        <div className="flex justify-between gap-3 rounded-lg bg-vat-price/10 px-2.5 py-2 text-vat-price">
+          <span className="font-medium">VAT relief</span>
+          <span className="font-semibold tabular-nums">
             −
             {formatProductPrice(totals.vatRemoved, currencyCode, {
               fractionDigits: 2,
@@ -116,15 +139,15 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
       ) : null}
 
       {applicableCodes.length > 0 ? (
-        <div className="flex justify-between text-muted-foreground">
+        <div className="flex justify-between gap-3 text-muted-foreground">
           <span>Discount{applicableCodes.length > 1 ? 's' : ''}</span>
           <span>{applicableCodes.join(', ')}</span>
         </div>
       ) : null}
 
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-3">
         <span className="text-muted-foreground">Shipping</span>
-        <span className="font-medium text-foreground">FREE</span>
+        <span className="font-semibold text-foreground">FREE</span>
       </div>
     </div>
   ) : null;
@@ -156,10 +179,40 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   ) : null;
 
   if (isAside) {
+    if (section === 'footer') {
+      return (
+        <div className="cart-drawer-footer shrink-0 border-t border-border bg-background px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.18)]">
+          <div className="mb-2.5 flex items-center justify-between gap-3">
+            <span className="text-sm font-semibold text-foreground">
+              {totals?.hasDeposit
+                ? 'Due today'
+                : totals?.hasVatRelief && !totals.vatReliefApplied
+                  ? 'Estimated total'
+                  : 'Total'}
+            </span>
+            <span className="text-lg font-bold tabular-nums text-foreground">
+              {totals
+                ? formatProductPrice(totals.total, currencyCode, {
+                    fractionDigits: 2,
+                  })
+                : '—'}
+            </span>
+          </div>
+          <div className="space-y-2">
+            {checkoutSection}
+            <p className="text-center text-[11px] text-muted-foreground">
+              Secure Shopify checkout
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // section === 'body' (or default for aside body usage)
     return (
       <div
         aria-labelledby={summaryId}
-        className="shrink-0 border-t border-border bg-background px-4 py-3"
+        className="rounded-xl border border-border bg-secondary/35 p-3.5"
       >
         <h3 className="sr-only" id={summaryId}>
           Cart totals
@@ -168,35 +221,15 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         {vatReliefPrompt}
 
         {totals?.hasVatRelief ? (
-          <p className="mb-2 text-xs text-muted-foreground">
+          <p className="mb-3 rounded-lg border border-vat-price/25 bg-vat-price/10 px-3 py-2 text-xs font-medium text-vat-price">
             VAT relief applied to eligible items.
-            {!totals.vatReliefApplied ? ' Exact amount confirmed at checkout.' : null}
+            {!totals.vatReliefApplied
+              ? ' Exact amount confirmed at checkout.'
+              : null}
           </p>
         ) : null}
 
         {totalsSection}
-
-        <div className="mt-3 flex justify-between border-t border-border pt-3">
-          <span className="text-base font-semibold text-foreground">
-            {totals?.hasDeposit
-              ? 'Due today'
-              : totals?.hasVatRelief && !totals.vatReliefApplied
-                ? 'Estimated total'
-                : 'Total'}
-          </span>
-          <span className="text-base font-semibold text-foreground">
-            {totals
-              ? formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})
-              : '—'}
-          </span>
-        </div>
-
-        <div className="mt-3 space-y-2">
-          {checkoutSection}
-          <p className="text-center text-[11px] text-muted-foreground">
-            Secure Shopify checkout
-          </p>
-        </div>
       </div>
     );
   }
@@ -204,14 +237,14 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   return (
     <aside
       aria-labelledby={summaryId}
-      className="h-fit rounded-xl border border-border bg-card p-6"
+      className="h-fit rounded-xl border border-border bg-card p-6 shadow-soft"
     >
       <h3 className="mb-4 text-lg font-semibold text-foreground" id={summaryId}>
         Order summary
       </h3>
 
       <div className="space-y-4">
-        <div className="rounded-lg border border-border/60 bg-secondary/40 p-4">
+        <div className="rounded-lg border border-border bg-secondary/50 p-4">
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Estimated UK delivery
           </p>
@@ -220,9 +253,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         </div>
 
         {totals?.hasVatRelief ? (
-          <div className="rounded-lg border border-border bg-secondary/30 p-3 text-sm">
-            <p className="font-medium text-foreground">VAT relief on eligible items</p>
-            <p className="mt-1 text-muted-foreground">
+          <div className="rounded-lg border border-vat-price/30 bg-vat-price/10 p-3 text-sm">
+            <p className="font-semibold text-vat-price">VAT relief on eligible items</p>
+            <p className="mt-1 text-foreground/80">
               The exact VAT amount is removed automatically at checkout.
               <Link
                 className="ml-1 font-medium text-foreground hover:underline"
@@ -234,20 +267,30 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
             </p>
           </div>
         ) : (
-          <div className="rounded-lg border border-border bg-secondary/30 p-3">
-            <p className="text-sm font-medium text-foreground">VAT relief available</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Claim HMRC VAT relief on eligible mobility products in your cart.
-            </p>
-            {showCartVatPrompt ? (
-              <button
-                className="mt-2 text-sm font-medium text-foreground underline-offset-2 hover:underline"
-                onClick={openBulkVatModal}
-                type="button"
-              >
-                Open VAT relief declaration
-              </button>
-            ) : null}
+          <div className="rounded-xl border-2 border-vat-price/35 bg-vat-price/10 p-3.5">
+            <div className="flex items-start gap-3">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-vat-price text-white">
+                <BadgePercent aria-hidden className="size-4" strokeWidth={2} />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-vat-price">
+                  VAT relief available
+                </p>
+                <p className="mt-0.5 text-xs text-foreground/80">
+                  Claim HMRC VAT relief on eligible mobility products and save
+                  20%.
+                </p>
+                {showCartVatPrompt ? (
+                  <button
+                    className="mt-2.5 inline-flex rounded-lg bg-vat-price px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:brightness-110"
+                    onClick={openBulkVatModal}
+                    type="button"
+                  >
+                    Claim VAT relief
+                  </button>
+                ) : null}
+              </div>
+            </div>
           </div>
         )}
 
@@ -266,7 +309,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
                 ? 'Estimated total'
                 : 'Total'}
           </span>
-          <span className="text-lg font-semibold text-foreground">
+          <span className="text-lg font-semibold tabular-nums text-foreground">
             {totals
               ? formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})
               : '—'}
@@ -293,7 +336,7 @@ function CartDiscounts({
   return (
     <section aria-label="Discount code">
       {applicableCodes.length > 0 ? (
-        <div className="mb-2 flex items-center justify-between rounded-lg border border-border bg-secondary/40 px-3 py-2 text-sm">
+        <div className="mb-2 flex items-center justify-between rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm">
           <span>
             Code applied:{' '}
             <code className="font-medium text-foreground">
