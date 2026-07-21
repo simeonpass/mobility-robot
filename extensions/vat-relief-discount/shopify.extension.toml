@@ -13,4 +13,4 @@ description = "Removes the exact VAT portion from cart lines with a HMRC VAT rel
   export = "cart-lines-discounts-generate-run"
 
   [extensions.capabilities]
-  discount_classes = ["PRODUCT"]
+  discount_classes = ["ORDER"]

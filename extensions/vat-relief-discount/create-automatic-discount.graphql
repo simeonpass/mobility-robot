@@ -3,14 +3,25 @@ mutation CreateVatReliefDiscount {
     automaticAppDiscount: {
       title: "VAT Relief (exact)"
       functionHandle: "vat-relief-discount"
-      discountClasses: [PRODUCT]
+      discountClasses: [ORDER]
       startsAt: "2026-07-18T00:00:00"
+      combinesWith: {
+        orderDiscounts: true
+        productDiscounts: true
+        shippingDiscounts: true
+      }
     }
   ) {
     automaticAppDiscount {
       discountId
       title
       status
+      discountClasses
+      combinesWith {
+        orderDiscounts
+        productDiscounts
+        shippingDiscounts
+      }
     }
     userErrors {
       field

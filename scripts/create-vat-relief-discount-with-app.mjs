@@ -115,8 +115,13 @@ const variables = {
   input: {
     title: 'VAT Relief (exact)',
     functionHandle: 'vat-relief-discount',
-    discountClasses: ['PRODUCT'],
+    discountClasses: ['ORDER'],
     startsAt: new Date().toISOString(),
+    combinesWith: {
+      orderDiscounts: true,
+      productDiscounts: true,
+      shippingDiscounts: true,
+    },
   },
 };
 

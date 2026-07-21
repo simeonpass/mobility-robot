@@ -84,8 +84,13 @@ mutation {
     automaticAppDiscount: {
       title: "VAT Relief (exact)"
       functionHandle: "vat-relief-discount"
-      discountClasses: [PRODUCT]
+      discountClasses: [ORDER]
       startsAt: "2026-07-18T00:00:00"
+      combinesWith: {
+        orderDiscounts: true
+        productDiscounts: true
+        shippingDiscounts: true
+      }
     }
   ) {
     automaticAppDiscount { discountId title status }
@@ -93,6 +98,8 @@ mutation {
   }
 }
 ```
+
+> **Combining with discount codes:** VAT relief is an **ORDER** discount so it can stack with product codes (e.g. `JENNI10`) on non-Plus plans. It removes ~16.67% (the UK VAT share) from declared lines after product discounts. If you recreate the discount, keep `combinesWith.productDiscounts: true`. To update a live discount: `node scripts/enable-vat-relief-discount-combinations.mjs`.
 
 3. In **Discounts**, confirm **VAT Relief (exact)** is **Active**
 4. **Deactivate** the old **VAT Exemption** automatic discount

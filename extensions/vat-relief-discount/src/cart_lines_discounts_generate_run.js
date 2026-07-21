@@ -1,11 +1,11 @@
 // @ts-check
 import {
   DiscountClass,
-  ProductDiscountSelectionStrategy,
+  OrderDiscountSelectionStrategy,
 } from '../generated/api';
 import {
   lineQualifiesForVatRelief,
-  vatPortionFromGross,
+  UK_VAT_ORDER_PERCENT,
 } from './vat-math.js';
 
 /**
@@ -14,52 +14,60 @@ import {
  */
 
 /**
+ * VAT relief as an ORDER-class percentage (~16.6667% = VAT share of a UK
+ * inc-VAT price). That lets product discount codes (e.g. JENNI10) stack on
+ * Basic Shopify plans, and the % applies to the post–product-discount
+ * subtotal so HMRC-style VAT removal stays correct after promos.
+ *
  * @param {RunInput} input
  * @returns {CartLinesDiscountsGenerateRunResult}
  */
 export function cartLinesDiscountsGenerateRun(input) {
-  const hasProductDiscountClass = input.discount.discountClasses.includes(
-    DiscountClass.Product,
+  const hasOrderDiscountClass = input.discount.discountClasses.includes(
+    DiscountClass.Order,
   );
 
-  if (!hasProductDiscountClass) {
+  if (!hasOrderDiscountClass) {
     return {operations: []};
   }
 
-  /** @type {NonNullable<CartLinesDiscountsGenerateRunResult['operations'][number]['productDiscountsAdd']>['candidates']} */
-  const candidates = [];
+  const excludedCartLineIds = [];
+  let hasQualifyingLine = false;
 
   for (const line of input.cart.lines) {
-    if (!lineQualifiesForVatRelief(line)) continue;
-
-    const gross = Number(line.cost?.subtotalAmount?.amount ?? 0);
-    if (gross <= 0) continue;
-
-    const vatAmount = vatPortionFromGross(gross);
-    if (vatAmount <= 0) continue;
-
-    candidates.push({
-      message: 'VAT relief',
-      targets: [{cartLine: {id: line.id}}],
-      value: {
-        fixedAmount: {
-          amount: vatAmount.toFixed(2),
-          appliesToEachItem: false,
-        },
-      },
-    });
+    if (lineQualifiesForVatRelief(line)) {
+      hasQualifyingLine = true;
+    } else {
+      excludedCartLineIds.push(line.id);
+    }
   }
 
-  if (!candidates.length) {
+  if (!hasQualifyingLine) {
     return {operations: []};
   }
 
   return {
     operations: [
       {
-        productDiscountsAdd: {
-          candidates,
-          selectionStrategy: ProductDiscountSelectionStrategy.All,
+        orderDiscountsAdd: {
+          candidates: [
+            {
+              message: 'VAT relief',
+              targets: [
+                {
+                  orderSubtotal: {
+                    excludedCartLineIds,
+                  },
+                },
+              ],
+              value: {
+                percentage: {
+                  value: UK_VAT_ORDER_PERCENT,
+                },
+              },
+            },
+          ],
+          selectionStrategy: OrderDiscountSelectionStrategy.First,
         },
       },
     ],
