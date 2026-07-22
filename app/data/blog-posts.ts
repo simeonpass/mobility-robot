@@ -14,6 +14,64 @@ export type BlogPostSource = {
 
 export const BLOG_POSTS = [
   {
+    "slug": "flying-with-power-wheelchair-uk",
+    "title": "Flying with a Power Wheelchair from the UK: Battery & Travel Checklist",
+    "excerpt": "UK checklist for flying with a power wheelchair — lithium battery rules, airline notification, folding chairs, and how to prepare an XSTO for air travel.",
+    "author": "XSTO Team",
+    "publishedAt": "2026-07-02",
+    "readTime": 8,
+    "category": "accessibility",
+    "categoryLabel": "Accessibility",
+    "featuredImage": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&auto=format&fit=crop",
+    "tags": [
+      "flying",
+      "power wheelchair",
+      "battery",
+      "travel",
+      "UK",
+      "airline"
+    ],
+    "contentMarkdown": "**Flying with a power wheelchair** is doable from UK airports when you plan battery rules, airline notice periods and how the chair will be handled. Airlines treat mobility devices as essential medical equipment — but lithium batteries still follow strict carriage rules. Use this checklist alongside your airline’s latest policy.\n\n## 1. Notify the Airline Early\n\nContact the airline (and any codeshare partner) as soon as you book:\n\n- Declare you are travelling with a powered wheelchair\n- Confirm battery type (usually lithium-ion) and watt-hour (Wh) rating if known\n- Ask whether the battery must remain installed, be removed, or travel in the cabin\n- Request aisle chairs / assistance for boarding if needed\n\nKeep written confirmation in your phone and printed hand luggage.\n\n## 2. Know Your Battery Basics\n\nMost modern power wheelchairs use **lithium-ion** packs. Airlines and the CAA/IATA framework care about:\n\n- Watt-hour rating (Wh)\n- Whether spare batteries are allowed (often cabin only, terminals protected)\n- Whether the chair can be accepted as checked mobility equipment\n\nIf you are unsure of Wh, check the battery label or ask us before you travel. Never assume a previous flight’s process will repeat on a different airline.\n\n## 3. Prefer Travel-Friendly Chairs When You Fly Often\n\nFrequent flyers often prefer chairs that:\n\n- Fold or dismantle into manageable sections\n- Have removable batteries with clear labels\n- Come with a soft cover or padding plan for baggage handling\n\nSee our [foldable power wheelchair UK guide](/blog/foldable-power-wheelchair-uk-guide) and the ultra-light [EzGo2](/blog/lightweight-carbon-fibre-wheelchair-ezgo2). For day-to-day UK travel without flying, also read [wheelchair-accessible travel in the UK](/blog/wheelchair-accessible-travel-uk).\n\n## 4. Airport Day Checklist\n\n- Arrive earlier than standard assistance recommendations\n- Carry charger, essential tools, and spare fuses if your manual advises it\n- Photograph the chair from all sides before handover\n- Attach a laminated card with your name, flight number and mobile\n- Confirm where to collect the chair on arrival (aircraft door vs oversize belt)\n\n## 5. What Families Often Forget\n\n- Hotel accessible rooms and taxi ramps at the destination\n- Voltage differences for chargers abroad (UK 230V vs destination)\n- Travel insurance that explicitly covers mobility equipment\n- A backup mobility plan if the chair is delayed\n\n## 6. VAT Relief Does Not Change Airline Rules\n\nBuying VAT-free in the UK does not alter airline battery policy. Keep purchase and disability documentation for your own records, and follow [VAT relief guidance](/blog/vat-relief-explained) only for the purchase itself.\n\n## Need Model-Specific Advice?\n\nTell us which XSTO you fly with — [M4 / M4 Pro](/blog/m4-vs-m4-pro-comparison), EzGo2 or another model — and we can help you locate battery labels and fold procedure notes. [Contact support](/contact) or [book a demo](/demo) before a first trip abroad.\n\nAlways double-check the operating airline’s current mobility and dangerous-goods pages; policies change."
+  },
+  {
+    "slug": "power-wheelchair-for-elderly-uk",
+    "title": "Power Wheelchair for Elderly Users in the UK: How to Choose",
+    "excerpt": "A calm UK guide for families choosing a power wheelchair for an older relative — comfort, safety, home fit, VAT relief and when to book a demo.",
+    "author": "XSTO Team",
+    "publishedAt": "2026-06-28",
+    "readTime": 7,
+    "category": "lifestyle",
+    "categoryLabel": "Lifestyle",
+    "featuredImage": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1200&auto=format&fit=crop",
+    "tags": [
+      "elderly",
+      "power wheelchair",
+      "UK",
+      "family",
+      "buying guide"
+    ],
+    "contentMarkdown": "Choosing a **power wheelchair for an elderly** parent or partner is often about confidence as much as specification. Families want something safe indoors, usable outdoors, and realistic to store, charge and travel with. This guide focuses on practical UK decisions — not medical advice.\n\n## Start With Daily Life, Not Model Names\n\nWrite down a typical week:\n\n- How many rooms and doorways must the chair pass through?\n- Are there steps at the front door, or only thresholds and kerbs?\n- Will the chair go in a car boot for GP visits or family trips?\n- Who will charge the battery and fold or stow the chair?\n- Is the user comfortable with a joystick, or do they need simpler controls?\n\nThose answers usually narrow the field faster than any brochure.\n\n## Comfort and Safety Priorities\n\nFor older users, prioritise:\n\n1. **Stable, supportive seating** — depth, back support and easy transfers\n2. **Predictable controls** — smooth acceleration beats top speed\n3. **Clear visibility lighting** on outdoor-capable models\n4. **Reliable brakes and anti-tip behaviour** within the chair’s rated use\n5. **Manageable weight** for carers who lift folded sections into cars\n\nIf stairs inside the home are the main barrier, a stair climbing model such as the [X12](/blog/x12-stair-climbing-wheelchair-uk-guide) may matter more than a lightweight travel chair.\n\n## Common UK Scenarios\n\n| Situation | Often a good fit |\n|-----------|------------------|\n| Flat home, car travel, shopping trips | Foldable everyday chair (M4 / M4B) |\n| Longer days out, more comfort features | [M4 Pro](/blog/m4-vs-m4-pro-comparison) |\n| Ultra-light lifts for holidays / indoors | [EzGo2 carbon fibre](/blog/lightweight-carbon-fibre-wheelchair-ezgo2) |\n| Steps and outdoor uneven ground | X12 series stair climber |\n\n## Money: VAT Relief and Realistic Budgets\n\nEligible disabled customers in the UK can often purchase qualifying mobility products **VAT-free**, saving 20%. Families should read [VAT relief explained](/blog/vat-relief-explained) before checkout. Factor in accessories, spare batteries if needed, and who will handle servicing.\n\n## Involve the User Early\n\nDemos reduce returns and regret. Sit in the chair, practise transfers, and try a short outdoor loop if mobility allows. [Book a demo](/demo) or [contact us](/contact) with doorway measurements and photos of problem steps — that helps us recommend sensibly.\n\n## Next Reading\n\n- [How to choose the right power wheelchair](/blog/choosing-right-power-wheelchair)\n- [Foldable power wheelchair UK guide](/blog/foldable-power-wheelchair-uk-guide)\n- [Maintaining a power wheelchair](/blog/maintaining-power-wheelchair)\n\nMobility Robot supplies official XSTO chairs in the UK with local support from Bentech Medical Ltd."
+  },
+  {
+    "slug": "self-balancing-vs-traditional-power-wheelchair",
+    "title": "Self-Balancing vs Traditional Power Wheelchair: What’s the Difference?",
+    "excerpt": "Compare self-balancing power wheelchairs with traditional four-wheel power chairs — turning space, slopes, portability and which suits UK homes and travel.",
+    "author": "XSTO Team",
+    "publishedAt": "2026-06-25",
+    "readTime": 7,
+    "category": "product-guides",
+    "categoryLabel": "Product Guides",
+    "featuredImage": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1200&auto=format&fit=crop",
+    "tags": [
+      "self-balancing",
+      "power wheelchair",
+      "comparison",
+      "M4",
+      "UK"
+    ],
+    "contentMarkdown": "Many UK buyers comparing **self-balancing power wheelchairs** with traditional mid-wheel or rear-drive chairs want a clear answer: is the new technology worth it for everyday life? Here is a practical comparison focused on homes, pavements and travel — not marketing buzzwords.\n\n## Traditional Power Wheelchairs\n\nClassic powered chairs usually have a fixed base with four or six wheels:\n\n- Stable on flat indoor floors and many outdoor paths\n- Wide choice of seating and clinical configurations\n- Often larger turning circles and heavier frames\n- Less likely to fold into a compact car-boot package\n\nThey remain an excellent choice when seating assessment, attendant controls or specialist positioning come first.\n\n## Self-Balancing Power Wheelchairs\n\nSelf-balancing designs (such as the XSTO M4 series) use sensors and motor control to keep the chair upright and responsive:\n\n- Tight manoeuvring in narrow UK hallways and lifts\n- Stronger confidence on moderate slopes within the rated limit\n- Foldable everyday models that travel more easily\n- A different learning curve — short practice usually helps\n\nRead more in [self-balancing technology explained](/blog/self-balancing-technology-explained).\n\n## Side-by-Side Comparison\n\n| Factor | Self-balancing (e.g. M4) | Traditional power chair |\n|--------|--------------------------|-------------------------|\n| Turning in small homes | Often excellent | Varies; can be bulky |\n| Portability / folding | Strong on foldable models | Often limited |\n| Clinical seating options | Growing, still model-specific | Very broad |\n| Outdoor kerbs & rough ground | Model-dependent | Model-dependent |\n| Learning time | Short familiarisation | Familiar to many users |\n| Best first step | Demo the balance feel | Assess seating needs |\n\n## Which Should You Choose?\n\n**Consider self-balancing if you want:**\n\n- A foldable chair for car boots, trains and day trips\n- Better movement in tight domestic spaces\n- An everyday outdoor-capable chair without a large clinical base\n\n**Consider a traditional power chair if you need:**\n\n- Highly specialised seating or postural support\n- A setup already prescribed by a clinician\n- Features only available on a specific clinical chassis\n\nMany households also mix solutions — for example a lightweight travel chair plus a stair climber for the home. See our [foldable power wheelchair UK guide](/blog/foldable-power-wheelchair-uk-guide) and [X12 stair climbing guide](/blog/x12-stair-climbing-wheelchair-uk-guide).\n\n## Try Before You Decide\n\nSpec sheets rarely capture how a chair *feels*. Book a [demo](/demo), compare the [M4 and M4 Pro](/blog/m4-vs-m4-pro-comparison), and check [VAT relief](/blog/vat-relief-explained) if you are eligible. UK sales and support are through Mobility Robot / Bentech Medical Ltd."
+  },
+  {
     "slug": "lightweight-carbon-fibre-wheelchair-ezgo2",
     "title": "Ultra-Light Carbon Fibre Power Wheelchair: Is the XSTO EzGo2 Right for You?",
     "excerpt": "Why UK buyers choose an ultra-light carbon fibre power wheelchair like the XSTO EzGo2 — weight, folding width, indoor use, and when to pick the M4 series instead.",
@@ -31,6 +89,25 @@ export const BLOG_POSTS = [
       "UK"
     ],
     "contentMarkdown": "If lifting a chair into a car boot is the hardest part of your day, an **ultra-light carbon fibre power wheelchair** may be the answer. The XSTO EzGo2 weighs just **11.5 kg without battery**, folds to a narrow packed width, and is built for indoor agility and easy travel packing.\n\n## Who the EzGo2 Suits Best\n\n- Users who regularly lift the chair into a car or onto public transport\n- Flats, offices and indoor-focused routines\n- Travellers who need a compact folded footprint (about 26 cm folded width)\n- Anyone who wants a lighter alternative to outdoor self-balancing chairs\n\n## Key Specs at a Glance\n\n- **Frame weight:** 11.5 kg (battery ~2.2 kg)\n- **Capacity:** 136 kg\n- **Range:** up to 15 km (typical indoor use)\n- **Top speed:** up to 4.5 km/h\n- **Climbing:** about 3° — indoor-focused\n- **Folded size:** 630 × 260 × 700 mm\n\n## EzGo2 vs M4 Series\n\n| | EzGo2 | M4 / M4B / M4 Pro |\n|--|-------|-------------------|\n| Primary use | Indoor / light travel | Outdoor + indoor |\n| Self-balancing slopes | No | Yes (10–15°) |\n| Frame weight | 11.5 kg | 51.5–60.1 kg |\n| Best strength | Liftability | Terrain & comfort |\n\nPick the **EzGo2** when weight is everything. Pick the **M4 series** when you need slope stability, longer outdoor days or premium seating (M4 Pro).\n\n## VAT Relief and UK Support\n\nEligible buyers can purchase VAT-free under HMRC rules — see [VAT relief](/vat-relief). Bentech Medical Ltd provides UK sales, delivery and warranty support as the official XSTO distributor.\n\n## Next Steps\n\n- View the [EzGo2 product page](/products/xsto-ezgo2-carbon-fiber-power-wheelchair)\n- Compare the wider [range](/collections/all)\n- [Request a quote](/quote) or [book a demo](/demo)"
+  },
+  {
+    "slug": "x12-stair-climbing-wheelchair-uk-guide",
+    "title": "XSTO X12 Stair Climbing Wheelchair UK: Buyer’s Guide",
+    "excerpt": "What UK buyers need to know about the XSTO X12 and X12 Pro stair climbing power wheelchairs — stairs, outdoors, capacity, configuration and VAT relief.",
+    "author": "XSTO Team",
+    "publishedAt": "2026-06-22",
+    "readTime": 8,
+    "category": "product-guides",
+    "categoryLabel": "Product Guides",
+    "featuredImage": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1200&auto=format&fit=crop",
+    "tags": [
+      "X12",
+      "stair climbing wheelchair",
+      "UK",
+      "X12 Pro",
+      "all-terrain"
+    ],
+    "contentMarkdown": "If you are searching for a **stair climbing wheelchair in the UK**, the XSTO X12 series is designed for homes and outdoors where steps, kerbs and uneven ground block a standard power chair. This guide explains who the X12 suits, how it differs from the X12 Pro, and what to check before you buy from the official UK distributor.\n\n## Who the X12 Is For\n\nThe X12 is aimed at people who need more than a flat-pavement foldable chair:\n\n- Multi-level homes where a stairlift is impractical or unwanted\n- Outdoor routes with kerbs, gravel, grass or gentle rough ground\n- Users who want one chair for indoors and outdoors rather than two devices\n- Buyers comparing stair climbers against stairlifts or tracked evacuation chairs\n\nIf your priority is car-boot portability and light indoor use, start with the [M4 series](/blog/m4-vs-m4-pro-comparison) or [EzGo2](/blog/lightweight-carbon-fibre-wheelchair-ezgo2) instead.\n\n## X12 vs X12 Pro\n\n| Feature | X12 | X12 Pro |\n|---------|-----|---------|\n| Role | All-terrain stair climber | Fully configurable X12 platform |\n| Stairs & kerbs | Designed for stair climbing use | Same core capability, more options |\n| Best for | Buyers who want the stair-climbing platform out of the box | Users needing tailored seating, controls or accessories |\n| UK support | Warranty & parts via Bentech Medical Ltd | Same UK distributor support |\n\nChoose the **X12** when the standard configuration matches your needs. Choose the **X12 Pro** when assessment shows you need specific seating, control or accessory options.\n\n## Practical Checks Before You Buy\n\n1. **Stair geometry** — measure rise, going, width and landings; not every staircase suits every climber\n2. **Doorways and turning** — confirm the chair can enter rooms and turn on landings\n3. **User weight and posture** — match capacity and seating to the primary user\n4. **Storage and charging** — plan a dry indoor charge point and overnight parking space\n5. **Training** — stair climbing needs confident practice; book a demo where possible\n6. **VAT relief** — eligible disabled customers can often buy VAT-free under HMRC rules\n\n## Stairs vs Stairlift: Quick Context\n\nA stair climbing wheelchair keeps mobility with you — useful if you leave the house often and want one device. A stairlift only solves one staircase. For a deeper comparison, see our guide on [stair climbing wheelchairs vs stairlifts](/blog/electric-stair-climbing-wheelchair-vs-stairlift).\n\n## VAT Relief and UK Buying\n\nEligible UK customers can typically claim **VAT relief** on qualifying mobility products when buying for personal use due to disability. That can save 20% at checkout. Read our [VAT relief explained](/blog/vat-relief-explained) guide, or start a claim during checkout on this site.\n\n## Next Steps\n\n- Browse the [X12](/products/xsto-x12) and [X12 Pro](/products/xsto-x12-pro)\n- [Book a demo](/demo) or [request a quote](/quote)\n- Read [how stair climbing wheelchairs work](/blog/how-stair-climbing-wheelchairs-work) and our [stair climbing FAQs](/blog/stair-climbing-wheelchair-faqs)\n\nMobility Robot is the official UK store for XSTO, operated by Bentech Medical Ltd — UK delivery, warranty and aftercare."
   },
   {
     "slug": "m4-vs-m4-pro-comparison",
