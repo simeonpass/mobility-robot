@@ -24,7 +24,7 @@ export function ReviewsSection() {
     return (
       <section
         aria-label="Customer reviews"
-        className="xsto-section bg-[#f7f6f4]"
+        className="xsto-section bg-[#f5f7fa]"
       >
         <div className="xsto-container">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -59,7 +59,7 @@ export function ReviewsSection() {
   if (summary.count === 0) return null;
 
   return (
-    <section aria-label="Customer reviews" className="xsto-section bg-[#f7f6f4]">
+    <section aria-label="Customer reviews" className="xsto-section bg-[#f5f7fa]">
       <div className="xsto-container">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionIntro
