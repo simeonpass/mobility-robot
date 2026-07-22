@@ -9,11 +9,17 @@ import {
 describe('local-blog', () => {
   it('loads exported and new SEO posts', () => {
     const posts = getAllLocalBlogPosts();
-    expect(posts.length).toBeGreaterThanOrEqual(14);
+    expect(posts.length).toBeGreaterThanOrEqual(18);
     expect(getLocalBlogPost('vat-relief-explained')?.title).toMatch(/VAT Relief/i);
     expect(getLocalBlogPost('foldable-power-wheelchair-uk-guide')).toBeTruthy();
     expect(getLocalBlogPost('m4-vs-m4-pro-comparison')).toBeTruthy();
     expect(getLocalBlogPost('lightweight-carbon-fibre-wheelchair-ezgo2')).toBeTruthy();
+    expect(getLocalBlogPost('x12-stair-climbing-wheelchair-uk-guide')).toBeTruthy();
+    expect(
+      getLocalBlogPost('self-balancing-vs-traditional-power-wheelchair'),
+    ).toBeTruthy();
+    expect(getLocalBlogPost('power-wheelchair-for-elderly-uk')).toBeTruthy();
+    expect(getLocalBlogPost('flying-with-power-wheelchair-uk')).toBeTruthy();
   });
 
   it('sorts newest first and filters by category', () => {
