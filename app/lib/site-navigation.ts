@@ -77,6 +77,23 @@ export const HEADER_SECONDARY_NAV: NavItem[] = [
   {title: 'FAQ', url: '/faq'},
 ];
 
+/**
+ * Primary shop links shown near the top of the mobile hamburger menu
+ * (after Models) so Accessories is easy to find without scrolling past Explore.
+ */
+export const HEADER_MOBILE_SHOP_NAV: NavItem[] = [
+  {
+    title: 'Accessories',
+    url: '/collections/accessories',
+    description: 'Batteries, chargers, comfort add-ons',
+  },
+  {
+    title: 'Shop all',
+    url: '/collections/all',
+    description: 'Full wheelchair & accessory range',
+  },
+];
+
 /** Extra links shown in the mobile menu under Explore. */
 export const HEADER_MOBILE_EXTRA_NAV: NavItem[] = [
   {title: 'Videos', url: '/videos'},

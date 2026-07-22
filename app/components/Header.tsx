@@ -23,6 +23,7 @@ import {
 import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
+  HEADER_MOBILE_SHOP_NAV,
   HEADER_SECONDARY_NAV,
   PRODUCT_NAV_GROUPS,
   PRODUCT_NAV_ITEMS,
@@ -395,8 +396,20 @@ function MobileNav({
       </div>
 
       <div className="site-header-mobile-section">
+        <p className="site-header-mobile-label">Shop</p>
+        {HEADER_MOBILE_SHOP_NAV.map((item) => (
+          <MobileNavLink close={close} item={item} key={item.url} />
+        ))}
+      </div>
+
+      <div className="site-header-mobile-section">
         <p className="site-header-mobile-label">Explore</p>
-        {[...HEADER_SECONDARY_NAV, ...HEADER_MOBILE_EXTRA_NAV].map((item) => (
+        {[
+          ...HEADER_SECONDARY_NAV.filter(
+            (item) => item.url !== '/collections/accessories',
+          ),
+          ...HEADER_MOBILE_EXTRA_NAV,
+        ].map((item) => (
           <MobileNavLink close={close} item={item} key={item.url} />
         ))}
       </div>
