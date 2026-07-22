@@ -74,13 +74,13 @@ export const PRODUCT_NAV_ITEMS: NavItem[] = PRODUCT_NAV_GROUPS.flatMap(
 export const HEADER_SECONDARY_NAV: NavItem[] = [
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Stockists', url: '/stockists'},
+  {title: 'Blog', url: '/blog'},
   {title: 'FAQ', url: '/faq'},
 ];
 
 /** Extra links shown in the mobile menu under Explore. */
 export const HEADER_MOBILE_EXTRA_NAV: NavItem[] = [
   {title: 'Videos', url: '/videos'},
-  {title: 'Blog', url: '/blog'},
   {title: 'Request a quote', url: '/quote'},
 ];
 
@@ -93,7 +93,6 @@ export const HEADER_CTA: NavItem = {
 export const MAIN_NAV: NavItem[] = [
   ...PRODUCT_NAV_ITEMS,
   ...HEADER_SECONDARY_NAV,
-  {title: 'Blog', url: '/blog'},
   HEADER_CTA,
   {title: 'Quote', url: '/quote'},
 ];
@@ -108,6 +107,7 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'EzGo2', url: productUrl('xsto-ezgo2')},
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Videos', url: '/videos'},
+  {title: 'Blog', url: '/blog'},
   {title: 'Find a Dealer', url: '/stockists'},
   {title: 'Book Demo', url: '/demo'},
 ];
