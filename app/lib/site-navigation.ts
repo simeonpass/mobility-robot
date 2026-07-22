@@ -93,7 +93,6 @@ export const HEADER_CTA: NavItem = {
 export const MAIN_NAV: NavItem[] = [
   ...PRODUCT_NAV_ITEMS,
   ...HEADER_SECONDARY_NAV,
-  {title: 'Blog', url: '/blog'},
   HEADER_CTA,
   {title: 'Quote', url: '/quote'},
 ];
