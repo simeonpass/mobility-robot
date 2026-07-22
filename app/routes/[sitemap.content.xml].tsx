@@ -1,20 +1,13 @@
 import type {Route} from './+types/[sitemap.content.xml]';
-import {BLOG_ARTICLE_HANDLES_QUERY, BLOG_HANDLE} from '~/lib/blog-queries';
+import {getAllLocalBlogPosts} from '~/lib/local-blog';
 import {STATIC_SITEMAP_ROUTES} from '~/lib/static-routes';
 import {SITE_URL} from '~/lib/seo';
 
-export async function loader({context}: Route.LoaderArgs) {
-  const {storefront} = context;
-
-  let blogArticles: Array<{handle: string; publishedAt?: string | null}> = [];
-  try {
-    const {blog} = await storefront.query(BLOG_ARTICLE_HANDLES_QUERY, {
-      variables: {blogHandle: BLOG_HANDLE},
-    });
-    blogArticles = blog?.articles?.nodes ?? [];
-  } catch {
-    blogArticles = [];
-  }
+export async function loader(_args: Route.LoaderArgs) {
+  const blogArticles = getAllLocalBlogPosts().map((post) => ({
+    handle: post.slug,
+    publishedAt: post.publishedAt,
+  }));
 
   const urls: Array<{
     loc: string;
@@ -31,7 +24,7 @@ export async function loader({context}: Route.LoaderArgs) {
       loc: `${SITE_URL}/blog/${article.handle}`,
       changefreq: 'monthly',
       priority: 0.6,
-      lastmod: article.publishedAt ?? undefined,
+      lastmod: article.publishedAt,
     })),
   ];
 
