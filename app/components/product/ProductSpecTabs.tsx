@@ -99,10 +99,41 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
       <div className="py-6 md:py-8">
         {active === 'overview' ? (
           <TabPanel id={`${baseId}-panel-overview`} labelledBy={`${baseId}-tab-overview`}>
-            {content.overview ? (
-              <p className="max-w-3xl text-base leading-relaxed text-foreground md:text-lg">
-                {content.overview}
-              </p>
+            {content.compatibilityChairs?.length ? (
+              <div className="mb-8 rounded-2xl border border-border bg-secondary/40 px-5 py-4 md:px-6">
+                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Compatibility
+                </p>
+                <p className="mt-1 text-base font-semibold text-foreground">
+                  {content.compatibilityLabel}
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {content.compatibilityChairs.map((chair) => (
+                    <li key={chair.url}>
+                      <Link
+                        className="inline-flex min-h-9 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium text-navy no-underline transition-colors hover:border-navy/30 hover:bg-navy/[0.03]"
+                        prefetch="intent"
+                        to={chair.url}
+                      >
+                        {chair.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {content.overviewHtml ? (
+              <div
+                className="product-description max-w-3xl"
+                dangerouslySetInnerHTML={{__html: content.overviewHtml}}
+              />
+            ) : content.overview ? (
+              <div className="product-description max-w-3xl space-y-4">
+                {content.overview.split(/\n\n+/).map((paragraph) => (
+                  <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                ))}
+              </div>
             ) : null}
 
             {content.features && content.features.length > 0 ? (
@@ -136,7 +167,7 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
                   </article>
                 ))}
               </div>
-            ) : content.highlights.length > 0 ? (
+            ) : content.highlights.length > 0 && !content.overviewHtml?.includes('<ul') ? (
               <ul className="mt-8 grid gap-3 sm:grid-cols-2">
                 {content.highlights.map((item) => (
                   <li
@@ -162,7 +193,18 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
                 </Link>
                 .
               </p>
-            ) : null}
+            ) : (
+              <p className="mt-10 text-sm text-muted-foreground">
+                Browse more{' '}
+                <Link
+                  className="font-semibold text-gold hover:underline"
+                  to="/collections/accessories"
+                >
+                  XSTO accessories
+                </Link>
+                .
+              </p>
+            )}
           </TabPanel>
         ) : null}
 

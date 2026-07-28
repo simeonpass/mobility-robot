@@ -176,7 +176,10 @@ export default function Product() {
 
   const tabContent = buildProductTabContent({
     shopifyHandle: product.handle,
+    shopifyTitle: product.title,
     shopifyDescription: product.description,
+    shopifyDescriptionHtml: product.descriptionHtml,
+    shopifyTags: product.tags,
     metafieldEmbedUrl,
   });
 
@@ -232,7 +235,7 @@ export default function Product() {
               productId={product.id}
               productOptions={productOptions}
               selectedVariant={selectedVariant}
-              tagline={staticContent?.tagline}
+              tagline={staticContent?.tagline ?? tabContent.tagline}
               title={displayName}
             />
           </div>
@@ -392,6 +395,7 @@ const PRODUCT_FRAGMENT = `#graphql
     handle
     descriptionHtml
     description
+    tags
     encodedVariantExistence
     encodedVariantAvailability
     images(first: 50) {
