@@ -20,62 +20,62 @@ export function FooterNewsletter() {
   }, [result?.success]);
 
   return (
-    <div className="border-b border-border bg-secondary/60 py-3 md:py-3.5">
-      <div className="xsto-container flex flex-col items-center justify-between gap-2.5 sm:flex-row sm:gap-4">
-        <div className="text-center sm:text-left">
-          <p className="text-sm font-semibold text-foreground md:text-base">
-            Stay Updated
+    <div className="border-b border-white/10 bg-navy-soft">
+      <div className="xsto-container flex flex-col gap-5 py-8 md:flex-row md:items-end md:justify-between md:gap-10 md:py-10">
+        <div className="max-w-md">
+          <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-white/45">
+            Newsletter
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-            Get exclusive offers and be first to hear about new products.
+          <p className="mt-2 font-display text-xl font-semibold tracking-tight text-white md:text-2xl">
+            Stay updated
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-white/60">
+            Exclusive offers and first look at new XSTO models — straight to your
+            inbox.
           </p>
         </div>
 
-        <fetcher.Form
-          action="/api/newsletter"
-          className="flex w-full max-w-md flex-col gap-2 sm:w-auto sm:flex-row"
-          method="post"
-        >
-          <label className="sr-only" htmlFor="footer-newsletter-email">
-            Email address
-          </label>
-          <input
-            autoComplete="email"
-            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
-            id="footer-newsletter-email"
-            name="email"
-            placeholder="Your email"
-            ref={inputRef}
-            required
-            type="email"
-          />
-          <button
-            className="btn-accent shrink-0 px-4 py-2 text-sm"
-            disabled={isSubmitting}
-            type="submit"
+        <div className="w-full max-w-lg">
+          <fetcher.Form
+            action="/api/newsletter"
+            className="flex flex-col gap-3 sm:flex-row sm:items-stretch"
+            method="post"
           >
-            {isSubmitting ? 'Subscribing…' : 'Subscribe'}
-          </button>
-        </fetcher.Form>
+            <label className="sr-only" htmlFor="footer-newsletter-email">
+              Email address
+            </label>
+            <input
+              autoComplete="email"
+              className="min-h-12 min-w-0 flex-1 rounded-lg border border-white/15 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-white/40 transition-colors focus:border-white/35 focus:bg-white/8"
+              id="footer-newsletter-email"
+              name="email"
+              placeholder="Your email address"
+              ref={inputRef}
+              required
+              type="email"
+            />
+            <button
+              className="btn-checkout min-h-12 shrink-0 px-6 text-sm"
+              disabled={isSubmitting}
+              type="submit"
+            >
+              {isSubmitting ? 'Subscribing…' : 'Subscribe'}
+            </button>
+          </fetcher.Form>
+
+          {result?.success ? (
+            <p className="mt-3 text-sm text-white/65" role="status">
+              {result.message}
+            </p>
+          ) : null}
+
+          {result?.error ? (
+            <p className="mt-3 text-sm text-red-300" role="alert">
+              {result.error}
+            </p>
+          ) : null}
+        </div>
       </div>
-
-      {result?.success ? (
-        <p
-          className="xsto-container mt-3 text-center text-xs text-muted-foreground sm:text-right"
-          role="status"
-        >
-          {result.message}
-        </p>
-      ) : null}
-
-      {result?.error ? (
-        <p
-          className="xsto-container mt-3 text-center text-xs text-destructive sm:text-right"
-          role="alert"
-        >
-          {result.error}
-        </p>
-      ) : null}
     </div>
   );
 }
