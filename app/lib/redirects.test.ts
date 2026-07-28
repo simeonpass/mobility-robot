@@ -55,6 +55,39 @@ describe('resolveLegacyRedirect', () => {
     ).toBeNull();
   });
 
+  it('redirects Shopify article URLs to /blog/:handle', () => {
+    expect(
+      resolveLegacyRedirect(
+        requestFor('/articles/who-are-xsto'),
+      )?.destination,
+    ).toBe('/blog/who-are-xsto');
+  });
+
+  it('redirects thin local doorway pages to stockists', () => {
+    expect(
+      resolveLegacyRedirect(
+        requestFor('/pages/mobility-wheelchair-in-wimborne-bh21-dorset'),
+      )?.destination,
+    ).toBe('/stockists');
+    expect(
+      resolveLegacyRedirect(
+        requestFor('/pages/heavy-duty-power-chair-in-london'),
+      )?.destination,
+    ).toBe('/stockists');
+  });
+
+  it('redirects competing collections and demo/store-locator pages', () => {
+    expect(
+      resolveLegacyRedirect(requestFor('/collections/frontpage'))?.destination,
+    ).toBe('/collections/all');
+    expect(
+      resolveLegacyRedirect(requestFor('/pages/store-locator'))?.destination,
+    ).toBe('/stockists');
+    expect(
+      resolveLegacyRedirect(requestFor('/pages/request-a-demo'))?.destination,
+    ).toBe('/demo');
+  });
+
   it('returns null for unknown paths', () => {
     expect(resolveLegacyRedirect(requestFor('/collections/all'))).toBeNull();
   });
@@ -66,7 +99,7 @@ describe('resolveLegacyRedirect', () => {
 });
 
 describe('resolveHostRedirect', () => {
-  it('redirects xsto.co.uk to canonical origin', () => {
+  it('redirects xsto.co.uk to canonical origin while preserving path', () => {
     const result = resolveHostRedirect(
       requestFor('/about', 'https://xsto.co.uk'),
     );
