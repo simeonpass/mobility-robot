@@ -86,6 +86,8 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
   'auxiliary-joystick-m4-pro': ['xsto-m4-pro', 'xsto-m4', 'xsto-m4b'],
   'backrest-cushion-large-m4-pro': ['xsto-m4-pro'],
   'backrest-cushion-small-m4-pro': ['xsto-m4-pro'],
+  // Live Shopify handle (title: High Back Rest & Neck Support Cushion)
+  'ergonomic-chairs-for-back-support': M4_AND_M4B,
   'ergonomic-raised-backrest-neck-support': M4_AND_M4B,
   'flashlight-holder': M4_AND_M4B,
   'left-lateral-support-m4-pro': ['xsto-m4-pro'],
@@ -152,7 +154,7 @@ function slotsFromTitle(title: string): AccessoryChairSlot[] | null {
   if (/x12/.test(t)) return ['xsto-x12', 'xsto-x12-pro'];
 
   if (
-    /rear cover|phone holder|armrest bag|flashlight|universal wheels|raised backrest/.test(
+    /rear cover|phone holder|armrest bag|flashlight|universal wheels|raised backrest|high back|neck support/.test(
       t,
     )
   ) {

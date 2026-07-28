@@ -220,7 +220,7 @@
     --cart-aside-summary-height-with-discount: 300px;
     --cart-aside-summary-height: 250px;
     --grid-item-width: 355px;
-    --header-height: 80px;
+    --header-height: 64px;
     --announcement-bar-height: 2.5rem;
     --color-dark: hsl(var(--navy));
     --color-light: hsl(var(--background));
@@ -228,13 +228,13 @@
 
   @media (min-width: 640px) {
     :root {
-      --header-height: 84px;
+      --header-height: 72px;
     }
   }
 
   @media (min-width: 1024px) {
     :root {
-      --header-height: 88px;
+      --header-height: 84px;
     }
   }
 
@@ -290,6 +290,9 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: calc(
+      var(--announcement-bar-height, 2.5rem) + var(--header-height) + 0.75rem
+    );
   }
 
   body {
@@ -623,11 +626,11 @@
   }
 
   .site-header-logo {
-    @apply overflow-visible transition-opacity hover:opacity-90;
+    @apply relative z-0 overflow-hidden transition-opacity hover:opacity-90;
   }
 
   .site-header-link {
-    @apply inline-flex items-center gap-1 rounded-md px-2.5 py-2 text-[0.8125rem] font-medium tracking-[0.01em] no-underline transition-colors hover:no-underline md:px-3 md:text-sm;
+    @apply inline-flex items-center gap-1 rounded-md px-2 py-2 text-[0.8125rem] font-medium tracking-[0.01em] no-underline transition-colors hover:no-underline lg:px-2.5 xl:px-3 xl:text-sm;
     color: hsl(var(--navy) / 0.68);
   }
 
@@ -674,6 +677,10 @@
 
   .site-header-cta--compact {
     @apply min-h-8 px-1.5 py-1 text-[0.6875rem] font-semibold tracking-[0.02em] shadow-none sm:min-h-10 sm:px-2.5 sm:py-1.5 sm:text-xs;
+  }
+
+  .site-header-cta--desktop {
+    /* Visibility controlled outside @layer — see header responsive rules */
   }
 
   .site-header-cta--mobile {
@@ -853,7 +860,7 @@
   }
 
   .site-header-mobile {
-    @apply flex flex-col gap-1 px-1 pb-2;
+    @apply flex flex-col gap-1 px-1;
   }
 
   .site-header-mobile-account {
@@ -862,6 +869,11 @@
 
   .site-header-mobile-section {
     @apply flex flex-col gap-0.5 border-t pt-3.5 first:border-t-0 first:pt-0;
+    border-color: hsl(var(--navy) / 0.1);
+  }
+
+  .site-header-mobile-footer {
+    @apply mt-3 border-t pt-3;
     border-color: hsl(var(--navy) / 0.1);
   }
 
@@ -1097,6 +1109,48 @@ img {
 }
 
 /*
+ * Header responsive chrome (unlayered so it wins over @layer utilities).
+ * Below 1280px: hamburger + compact Demo. At 1280px+: full desktop nav.
+ */
+.site-header-nav-desktop {
+  display: none;
+}
+
+.site-header-menu-toggle {
+  display: inline-flex;
+}
+
+.site-header-cta--desktop,
+.site-header-account-link,
+.site-header-cart-label {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .site-header-nav-desktop {
+    display: flex;
+  }
+
+  .site-header-menu-toggle,
+  .site-header-cta--compact {
+    display: none;
+  }
+
+  .site-header-cta--desktop,
+  .site-header-account-link {
+    display: inline-flex;
+  }
+
+  .site-header-cart-label {
+    display: inline;
+  }
+
+  .site-header-ctas {
+    gap: 0.375rem;
+  }
+}
+
+/*
 * --------------------------------------------------
 * components/Aside
 * --------------------------------------------------
@@ -1108,8 +1162,13 @@ html:has(.overlay.expanded) {
 .overlay > aside {
   background: var(--color-light);
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
   width: min(var(--aside-width), 100vw);
   position: fixed;
   right: calc(-1 * var(--aside-width));
@@ -1121,6 +1180,7 @@ html:has(.overlay.expanded) {
   align-items: center;
   border-bottom: 1px solid var(--color-dark);
   display: flex;
+  flex-shrink: 0;
   height: var(--header-height);
   justify-content: space-between;
   padding: 0 20px;
@@ -1148,7 +1208,16 @@ html:has(.overlay.expanded) {
 }
 
 .overlay > aside main {
-  margin: 1rem;
+  flex: 1 1 auto;
+  margin: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 1rem;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  touch-action: pan-y;
 }
 
 .overlay > aside p {
@@ -1240,6 +1309,7 @@ html:has(.overlay.expanded) {
 
 .overlay--cart aside main {
   margin: 0;
+  padding: 0;
   flex: 1;
   min-height: 0;
   height: 100%;

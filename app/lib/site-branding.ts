@@ -21,7 +21,7 @@ export const FOOTER_LOGO = {
 } as const;
 
 /** Display height in the header; width scales from intrinsic aspect ratio. */
-export const HEADER_LOGO_DISPLAY_HEIGHT = 80;
+export const HEADER_LOGO_DISPLAY_HEIGHT = 64;
 
 /** Display height in the footer; compact but readable. */
 export const FOOTER_LOGO_DISPLAY_HEIGHT = 44;

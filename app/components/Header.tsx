@@ -70,7 +70,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
 
   return (
     <header className={headerClass} style={headerStyle}>
-      <div className="xsto-container flex h-20 items-center gap-0.5 sm:h-[5.25rem] sm:gap-3 lg:h-[5.5rem] lg:gap-5">
+      <div className="xsto-container flex h-16 items-center gap-1.5 sm:h-[4.5rem] sm:gap-3 lg:h-[5.25rem] lg:gap-4">
         <NavLink
           aria-label="Mobility Robot home"
           className="site-header-logo min-w-0 shrink-0"
@@ -80,7 +80,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
         >
           <img
             alt={HEADER_LOGO.dark.alt}
-            className="h-16 w-auto max-w-[min(100%,14rem)] overflow-visible rounded-none bg-transparent object-contain object-left sm:h-[4.25rem] sm:max-w-[17rem] md:h-[4.75rem] md:max-w-none lg:h-20"
+            className="h-10 w-auto max-w-[min(100%,9.75rem)] overflow-hidden rounded-none bg-transparent object-contain object-left sm:h-12 sm:max-w-[12rem] lg:h-14 lg:max-w-[14rem] xl:h-16 xl:max-w-[16rem]"
             decoding="async"
             fetchPriority="high"
             height={HEADER_LOGO_DISPLAY_HEIGHT}
@@ -140,7 +140,7 @@ export function HeaderMenu({
   return (
     <nav
       aria-label="Main navigation"
-      className="mx-auto hidden min-w-0 items-center gap-0.5 md:flex"
+      className="site-header-nav-desktop mx-auto min-w-0 flex-1 items-center justify-center gap-0.5"
       role="navigation"
     >
       <ModelsDropdown />
@@ -401,14 +401,16 @@ function MobileNav({
         ))}
       </div>
 
-      <NavLink
-        className="site-header-cta site-header-cta--mobile"
-        onClick={close}
-        prefetch="intent"
-        to={HEADER_CTA.url}
-      >
-        {HEADER_CTA.title}
-      </NavLink>
+      <div className="site-header-mobile-footer">
+        <NavLink
+          className="site-header-cta site-header-cta--mobile"
+          onClick={close}
+          prefetch="intent"
+          to={HEADER_CTA.url}
+        >
+          {HEADER_CTA.title}
+        </NavLink>
+      </div>
     </nav>
   );
 }
@@ -466,18 +468,18 @@ function HeaderCtas({
   return (
     <nav
       aria-label="Account and cart"
-      className="ml-auto flex shrink-0 items-center gap-0 sm:gap-0.5 md:gap-1.5"
+      className="site-header-ctas ml-auto flex shrink-0 items-center gap-0 sm:gap-0.5"
       role="navigation"
     >
       <NavLink
-        className="site-header-cta site-header-cta--compact md:hidden"
+        className="site-header-cta site-header-cta--compact"
         prefetch="intent"
         to={HEADER_CTA.url}
       >
         Demo
       </NavLink>
       <NavLink
-        className="site-header-cta hidden md:inline-flex"
+        className="site-header-cta site-header-cta--desktop"
         prefetch="intent"
         to={HEADER_CTA.url}
       >
@@ -485,7 +487,7 @@ function HeaderCtas({
       </NavLink>
       <HeaderMenuMobileToggle />
       <NavLink
-        className="site-header-link site-header-link--quiet hidden sm:inline-flex"
+        className="site-header-link site-header-link--quiet site-header-account-link"
         prefetch="intent"
         to="/account"
       >
@@ -507,7 +509,7 @@ function HeaderMenuMobileToggle() {
   return (
     <button
       aria-label="Open menu"
-      className="site-header-icon-btn inline-flex md:hidden"
+      className="site-header-icon-btn site-header-menu-toggle"
       onClick={() => open('mobile')}
       type="button"
     >
@@ -570,7 +572,7 @@ function CartBadge({count}: {count: number}) {
       }}
       type="button"
     >
-      <span className="hidden sm:inline">Cart</span>
+      <span className="site-header-cart-label">Cart</span>
       <span className="site-header-cart-count">{count}</span>
     </button>
   );

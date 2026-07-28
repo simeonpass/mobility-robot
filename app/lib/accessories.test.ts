@@ -24,6 +24,15 @@ describe('resolveAccessoryCompatibility', () => {
     ).toEqual(['xsto-m4', 'xsto-m4b']);
   });
 
+  it('maps high back rest / neck support to M4 and M4B only', () => {
+    expect(
+      resolveAccessoryCompatibility({
+        handle: 'ergonomic-chairs-for-back-support',
+        title: 'High Back Rest & Neck Support Cushion',
+      }),
+    ).toEqual(['xsto-m4', 'xsto-m4b']);
+  });
+
   it('detects M4 Pro from title', () => {
     expect(
       resolveAccessoryCompatibility({
