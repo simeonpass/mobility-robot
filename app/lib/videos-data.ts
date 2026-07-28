@@ -11,22 +11,19 @@ export type LibraryVideo = {
   category: VideoCategory;
 };
 
-const XSTO_LOVABLE_ORIGIN = 'https://xsto.co.uk';
-
 /**
- * Video library copied from the Lovable xsto.co.uk `/videos` page.
- * YouTube/Vimeo IDs and Shopify CDN MP4s are durable; the X12 training
- * MP4/poster currently host on the Lovable asset CDN under xsto.co.uk.
+ * Video library for /videos.
+ * Prefer YouTube/Vimeo/Shopify CDN. Local X12 training is served from public/.
  */
 export const VIDEO_LIBRARY: LibraryVideo[] = [
   {
     id: 'x12-training',
     type: 'mp4',
-    src: `${XSTO_LOVABLE_ORIGIN}/__l5e/assets-v1/f2e8b239-5de3-4259-9736-092dedf73ac2/x12-training.mp4`,
+    src: '/videos/x12/x12-training.mp4',
     title: 'XSTO X12 — Full Training Video',
     description:
       'Complete operator training walkthrough for the XSTO X12 all-terrain stair-climbing robot. Covers setup, controls, driving modes, stair climbing and safety.',
-    thumbnail: `${XSTO_LOVABLE_ORIGIN}/__l5e/assets-v1/42ff1a45-33a8-4670-97d8-514122bb93f3/x12-training-poster.jpg`,
+    thumbnail: '/videos/x12/x12-training-poster.jpg',
     category: 'tutorial',
   },
   {
