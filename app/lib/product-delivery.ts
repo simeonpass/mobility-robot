@@ -25,8 +25,6 @@ export const DEFAULT_PREORDER_WEEKS = 12;
  * or when the handle is in FORCE_PREORDER_SLOTS.
  */
 export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
-  'xsto-ezgo2-carbon-fiber-power-wheelchair': 2,
-  'xsto-ezgo2': 2,
   'x12-all-terrain-mobility-robot': 10,
   'xsto-x12': 10,
   'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition': 10,
@@ -37,7 +35,7 @@ export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
  * Slot handles that always show as pre-order, even with Shopify stock.
  * X12 is inventory-driven (in stock when qty > 0); X12 Pro stays forced.
  */
-const FORCE_PREORDER_SLOTS = new Set(['xsto-ezgo2', 'xsto-x12-pro']);
+const FORCE_PREORDER_SLOTS = new Set(['xsto-x12-pro']);
 
 /** Slot handles that show a "Very low stock" urgency alert when available. */
 const FORCE_LOW_STOCK_SLOTS = new Set(['xsto-x12']);
@@ -48,7 +46,6 @@ export function isForcedPreorder(handle?: string | null): boolean {
   if (slot != null && FORCE_PREORDER_SLOTS.has(slot)) return true;
   // Direct Shopify handles that map to forced slots but may not resolve via slot
   if (
-    handle === 'xsto-ezgo2-carbon-fiber-power-wheelchair' ||
     handle === 'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'
   ) {
     return true;
@@ -154,7 +151,7 @@ export function getDeliveryInfo({
     };
   }
 
-  // EzGo2 / X12 Pro: always pre-order regardless of Shopify qty.
+  // X12 Pro: always pre-order regardless of Shopify qty.
   if (isForcedPreorder(handle)) {
     const weeks = getPreorderWeeks(handle);
     const weeksLabel = formatPreorderWeeksLabel(weeks);

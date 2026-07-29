@@ -23,7 +23,7 @@ export const meta: Route.MetaFunction = () =>
     path: '/demo',
   });
 
-const MODEL_OPTIONS = ['M4', 'M4 Pro', 'M4B', 'EzGo2', 'X12', 'X12 Pro'] as const;
+const MODEL_OPTIONS = ['M4', 'M4 Pro', 'M4B', 'X12', 'X12 Pro'] as const;
 
 const EXPECT_STEPS = [
   {

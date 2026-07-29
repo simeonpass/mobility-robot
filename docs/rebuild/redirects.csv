@@ -37,6 +37,8 @@ from,to,status
 /products/xsto-m4,/products/buy-robot-wheelchair,301
 /products/xsto-m4-pro,/products/xsto-m4-pro,301
 /products/xsto-m4b,/products/xsto-m4b-1,301
-/products/xsto-ezgo2,/products/xsto-ezgo2-carbon-fiber-power-wheelchair,301
+/products/xsto-ezgo2,/collections/all,301
+/products/xsto-ezgo2-carbon-fiber-power-wheelchair,/collections/all,301
+/products/ezgo2-mobility-robot,/collections/all,301
 /products/xsto-x12,/products/x12-all-terrain-mobility-robot,301
 /products/xsto-x12-pro,/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition,301

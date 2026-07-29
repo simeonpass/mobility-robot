@@ -4,7 +4,6 @@ import {
   m4bFAQs,
   m4ProFAQs,
   x12FAQs,
-  ezgo2FAQs,
 } from '~/lib/product-faqs';
 import {
   getHomepageProductSlot,
@@ -292,88 +291,6 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     videos: [{title: 'Watch the M4B in Action', embedUrl: YOUTUBE.m4}],
     downloads: M4_AND_M4B_DOWNLOADS,
   },
-  'xsto-ezgo2': {
-    displayName: 'XSTO EzGo2',
-    tagline: 'Carbon Fibre · Ultra-Lightweight · Fold With Ease',
-    overview:
-      'The XSTO EzGo2 is an aerospace-grade carbon fibre power wheelchair weighing just 11.5 kg without battery. Three-step folding to a 26 cm packed width, dual 150W motors, and a 24V 10Ah battery make it ideal for indoor mobility, travel, and effortless lifting into a car boot.',
-    highlights: [
-      'Only 11.5 kg without battery',
-      'High-strength full carbon fibre frame',
-      'Three-step quick fold · 26 cm folded width',
-      '15 km range · 136 kg capacity',
-    ],
-    features: [
-      {
-        title: 'Aerospace-Grade Carbon Fibre',
-        description:
-          'A full carbon fibre frame delivers exceptional strength at ultra-low weight — light enough for many users to lift with one hand.',
-        highlights: [
-          '11.5 kg frame weight (no battery)',
-          'High-strength carbon fibre construction',
-          'Battery approx. 2.2 kg',
-          'Easy boot and travel packing',
-        ],
-      },
-      {
-        title: 'Three-Step Quick Folding',
-        description:
-          'One lift, one pull, one fold — compact storage with a folded width of just 26 cm.',
-        highlights: [
-          'Folded size 630 × 260 × 700 mm',
-          'Unfolded size 860 × 600 × 900 mm',
-          'Fits easily in most car boots',
-          'Ideal for flats and travel',
-        ],
-      },
-      {
-        title: 'Smart Everyday Comfort',
-        description:
-          'Ventilated seat cushion, smart LED controller, holding brake, anti-tip wheel, and high-brightness LED lighting for safer daily use.',
-        highlights: [
-          '24V 10Ah lithium battery',
-          '150W × 2 motors',
-          'Joystick control',
-          'Indoor-focused agility',
-        ],
-      },
-    ],
-    specs: [
-      {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
-      {label: 'Weight (no battery)', value: '11.5 kg', unit: '(25 lbs)'},
-      {label: 'Battery Weight', value: '2.2 kg', unit: '(4.9 lbs)'},
-      {label: 'Range', value: '15 km', unit: '(9.3 miles)'},
-      {label: 'Top Speed', value: '≤ 4.5 km/h', unit: '(2.8 mph)'},
-      {label: 'Climbing Capacity', value: '≥ 3°'},
-      {label: 'Usage Type', value: 'Indoor'},
-      {label: 'Battery', value: '24V', unit: '10Ah'},
-      {label: 'Motor Power', value: '150W × 2'},
-      {label: 'Frame Material', value: 'Carbon fibre'},
-      {label: 'Obstacle Clearance', value: '≥ 25 mm'},
-      {label: 'Gap Crossing', value: '100 mm'},
-      {label: 'Turning Diameter', value: '≤ 1800 mm'},
-    ],
-    dimensions: [
-      {label: 'Folded Size', value: '630 × 260 × 700 mm'},
-      {label: 'Unfolded Size', value: '860 × 600 × 900 mm'},
-      {label: 'Seat Width', value: '430 mm'},
-      {label: 'Seat Depth', value: '400 mm'},
-      {label: 'Front Seat Height', value: '490 mm'},
-      {label: 'Backrest Height', value: '400 mm'},
-      {label: 'Front Wheel', value: '6.5 inch'},
-      {label: 'Rear Wheel', value: '12 inch'},
-    ],
-    inBox: [
-      'XSTO EzGo2 Carbon Fibre Power Wheelchair',
-      '24V 10Ah Lithium Battery',
-      'Battery Charger',
-      'Joystick Controller',
-      'User Manual',
-    ],
-    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nWhen ordered as a pre-order build, estimated delivery is about 2 weeks. Pay in full or place a 10% deposit; balance due before dispatch.`,
-    faqs: ezgo2FAQs,
-    videos: [],
-  },
   'xsto-x12': {
     displayName: 'XSTO X12',
     tagline: 'AI-Powered All-Terrain Mobility Robot',
@@ -487,8 +404,7 @@ export function getProductDisplayName(
       'xsto-m4': 'XSTO M4',
       'xsto-m4-pro': 'XSTO M4 Pro',
       'xsto-m4b': 'XSTO M4B',
-      'xsto-ezgo2': 'XSTO EzGo2',
-      'xsto-x12': 'XSTO X12',
+        'xsto-x12': 'XSTO X12',
       'xsto-x12-pro': 'XSTO X12 Pro',
     } as const;
     return fromBadges[slot];

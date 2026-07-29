@@ -43,7 +43,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
         <div className="xsto-container">
           <SectionIntro
             accent="XSTO"
-            description="Flagship models across the XSTO range — from ultra-light carbon fibre to stair-climbing. Every chair ships with full UK warranty and free delivery."
+            description="Flagship models across the XSTO range — from self-levelling daily chairs to stair-climbing. Every chair ships with full UK warranty and free delivery."
             label="Shop the range"
             suffix="for you."
             title="Find the"
@@ -66,7 +66,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
       <div className="xsto-container">
         <SectionIntro
           accent="XSTO"
-          description={`${modelCountLabel} across the XSTO range — from ultra-light carbon fibre to stair-climbing. Every chair ships with full UK warranty and free delivery.`}
+          description={`${modelCountLabel} across the XSTO range — from self-levelling daily chairs to stair-climbing. Every chair ships with full UK warranty and free delivery.`}
           label="Shop the range"
           suffix="for you."
           title="Find the"

@@ -7,12 +7,6 @@ import {
 } from './product-delivery';
 
 describe('getPreorderWeeks', () => {
-  it('returns EzGo2 as 2 weeks', () => {
-    expect(
-      getPreorderWeeks('xsto-ezgo2-carbon-fiber-power-wheelchair'),
-    ).toBe(2);
-  });
-
   it('returns X12 and X12 Pro as 10 weeks', () => {
     expect(getPreorderWeeks('x12-all-terrain-mobility-robot')).toBe(10);
     expect(
@@ -54,7 +48,7 @@ describe('getDeliveryInfo', () => {
     expect(x12.preorderWeeks).toBeNull();
   });
 
-  it('forces X12 Pro / EzGo2 preorder even when Shopify reports stock', () => {
+  it('forces X12 Pro preorder even when Shopify reports stock', () => {
     const x12Pro = getDeliveryInfo({
       availableForSale: true,
       quantityAvailable: 5,
@@ -63,14 +57,6 @@ describe('getDeliveryInfo', () => {
     });
     expect(x12Pro.status).toBe('preorder');
     expect(x12Pro.detail).toContain('~10 weeks');
-
-    const ezgo = getDeliveryInfo({
-      availableForSale: true,
-      quantityAvailable: 2,
-      handle: 'xsto-ezgo2-carbon-fiber-power-wheelchair',
-    });
-    expect(ezgo.status).toBe('preorder');
-    expect(ezgo.detail).toContain('~2 weeks');
   });
 
   it('marks in-stock products as in_stock', () => {
@@ -109,7 +95,10 @@ describe('getCartDeliveryInfo', () => {
         merchandise: {
           availableForSale: true,
           quantityAvailable: 5,
-          product: {handle: 'xsto-ezgo2-carbon-fiber-power-wheelchair'},
+          product: {
+            handle:
+              'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
+          },
         },
       },
       {

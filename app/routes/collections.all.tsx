@@ -11,7 +11,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'Shop All XSTO Wheelchairs & Accessories',
     description:
-      'Browse the full XSTO range — EzGo2, M4, M4B, M4 Pro, X12 and X12 Pro — plus accessories. Official UK distributor with free delivery.',
+      'Browse the full XSTO range — M4, M4B, M4 Pro, X12 and X12 Pro — plus accessories. Official UK distributor with free delivery.',
     path: '/collections/all',
   });
 
@@ -74,7 +74,7 @@ export default function Collection() {
             Shop the XSTO range
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">
-            Power chairs first — EzGo2 through X12 Pro — then accessories for
+            Power chairs first — M4 through X12 Pro — then accessories for
             the chair you choose. Free UK delivery from Bentech Medical Ltd.
           </p>
           <nav

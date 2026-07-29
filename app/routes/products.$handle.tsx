@@ -102,7 +102,6 @@ async function loadRelatedProducts({context}: Route.LoaderArgs) {
     data?.m4,
     data?.m4Pro,
     data?.m4b,
-    data?.ezgo2,
     data?.x12,
     data?.x12Pro,
   ].filter(Boolean);
@@ -496,9 +495,6 @@ const RELATED_PRODUCTS_QUERY = `#graphql
       ...HomeProduct
     }
     m4b: product(handle: "xsto-m4b-1") {
-      ...HomeProduct
-    }
-    ezgo2: product(handle: "xsto-ezgo2-carbon-fiber-power-wheelchair") {
       ...HomeProduct
     }
     x12: product(handle: "x12-all-terrain-mobility-robot") {

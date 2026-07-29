@@ -4,7 +4,6 @@ Hydrogen already supports **pay in full** vs **pay 10% deposit** when variants e
 
 | Product | Handle | ETA |
 |---------|--------|-----|
-| EzGo2 | `xsto-ezgo2-carbon-fiber-power-wheelchair` | ~2 weeks |
 | X12 | `x12-all-terrain-mobility-robot` | ~10 weeks |
 | X12 Pro | `xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | ~10 weeks |
 
@@ -12,7 +11,7 @@ Without the Admin steps below, OOS chairs stay **Sold out**, and the deposit rad
 
 ## 1. Continue selling when out of stock (required for X12 / X12 Pro)
 
-For **X12** and **X12 Pro** (and EzGo2 if you want pre-order when stock hits 0):
+For **X12** and **X12 Pro**:
 
 1. Shopify Admin → **Products** → open the product
 2. **Inventory** → enable **Continue selling when out of stock** (per variant if multi-variant)
@@ -63,7 +62,7 @@ Auth order (first match wins):
 
 The script:
 
-1. Finds EzGo2, X12, X12 Pro by handle
+1. Finds X12 and X12 Pro by handle
 2. Sets variant `inventoryPolicy: CONTINUE` where needed
 3. Creates a **10% deposit** `PRE_ORDER` selling plan group and assigns it to those products
 
@@ -138,7 +137,6 @@ npm run dev
 
 | URL | Expect |
 |-----|--------|
-| `/products/xsto-ezgo2-carbon-fiber-power-wheelchair` | ETA ~2 weeks when preorder; payment radios if selling plan assigned |
 | `/products/x12-all-terrain-mobility-robot` | Pre-order ~10 weeks (after continue-selling); deposit option if plan assigned |
 | `/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | Same as X12 |
 | `/cart` | Pre-order ETA from longest lead-time line; deposit badge on deposit lines |

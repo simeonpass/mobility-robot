@@ -5,6 +5,7 @@ import {
 import {
   getHomepageProductSlot,
   HOMEPAGE_FLAGSHIP_HANDLES,
+  isUkUnavailableProductHandle,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 
@@ -60,16 +61,23 @@ function isDepositOrNonRetailSku(handle: string): boolean {
 }
 
 /**
- * Split the catalogue into flagship chairs (M → X → EzGo2) and accessories.
+ * Split the catalogue into flagship chairs (M → X) and accessories.
  * Prefer the accessories collection when available; otherwise fall back to
  * handle / productType / tag / title heuristics (excluding deposit SKUs).
+ * UK-unavailable models (e.g. EzGo2) are excluded from both lists.
  */
 export function partitionShopAllProducts<T extends ShopAllProduct>(
   products: T[],
   accessoriesFromCollection?: T[] | null,
 ): {chairs: T[]; accessories: T[]} {
+  const retailProducts = products.filter(
+    (product) => !isUkUnavailableProductHandle(product.handle),
+  );
+
   const chairs = HOMEPAGE_FLAGSHIP_HANDLES.map((slot) =>
-    products.find((product) => getHomepageProductSlot(product.handle) === slot),
+    retailProducts.find(
+      (product) => getHomepageProductSlot(product.handle) === slot,
+    ),
   ).filter(Boolean) as T[];
 
   const chairHandles = new Set(chairs.map((product) => product.handle));
@@ -79,12 +87,13 @@ export function partitionShopAllProducts<T extends ShopAllProduct>(
       (product) =>
         !chairHandles.has(product.handle) &&
         !getHomepageProductSlot(product.handle) &&
+        !isUkUnavailableProductHandle(product.handle) &&
         !isDepositOrNonRetailSku(product.handle),
     );
     return {chairs, accessories};
   }
 
-  const accessories = products.filter((product) => {
+  const accessories = retailProducts.filter((product) => {
     if (chairHandles.has(product.handle)) return false;
     if (getHomepageProductSlot(product.handle)) return false;
     if (isDepositOrNonRetailSku(product.handle)) return false;

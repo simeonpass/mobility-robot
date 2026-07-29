@@ -27,11 +27,6 @@ const PRODUCT_SEO: Record<
     description:
       'Buy the XSTO M4B powered wheelchair with redesigned front wheels and folding footrest. Self-balancing, free UK delivery, VAT relief eligible.',
   },
-  'xsto-ezgo2': {
-    title: 'XSTO EzGo2 Carbon Wheelchair',
-    description:
-      'Buy the ultra-light XSTO EzGo2 carbon fibre powered wheelchair. From 11.5 kg, 3-step fold, free UK delivery from Mobility Robot.',
-  },
   'xsto-x12': {
     title: 'XSTO X12 Stair Climber',
     description:
