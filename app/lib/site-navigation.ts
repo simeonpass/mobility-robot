@@ -153,3 +153,26 @@ export const COMPANY = {
   disclaimer:
     'Official UK Distributor of XSTO. XSTO is a registered trademark of its manufacturer.',
 } as const;
+
+/**
+ * Official XSTO social profiles (from the previous xsto.co.uk site).
+ * Handles are `xstomobility` — not the broken `xstouk` placeholders.
+ */
+export const SOCIAL_LINKS = [
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/xstomobility',
+  },
+  {
+    label: 'Instagram',
+    href: 'https://www.instagram.com/xstomobility',
+  },
+  {
+    label: 'YouTube',
+    href: 'https://www.youtube.com/@xstomobility',
+  },
+  {
+    label: 'TikTok',
+    href: 'https://www.tiktok.com/@xstomobility',
+  },
+] as const;

@@ -294,51 +294,63 @@ export const HOMEPAGE_PRODUCT_SLOT_BY_SHOPIFY_HANDLE: Record<
   ]),
 ) as Record<string, HomepageProductHandle>;
 
+/**
+ * Short / legacy chair handles that are exact aliases only.
+ * Never use substring/regex matching here — accessory handles often include
+ * model names (e.g. `black-backpack-for-m4-pro`) and must not resolve as chairs.
+ */
+export const CHAIR_HANDLE_EXACT_ALIASES: Record<string, HomepageProductHandle> = {
+  'xsto-m4': 'xsto-m4',
+  'xsto-m4-pro': 'xsto-m4-pro',
+  'xsto-m4b': 'xsto-m4b',
+  'xsto-x12': 'xsto-x12',
+  'xsto-x12-pro': 'xsto-x12-pro',
+  'xsto-ezgo2': 'xsto-ezgo2',
+  'buy-robot-wheelchair': 'xsto-m4',
+  'xsto-m4b-1': 'xsto-m4b',
+  'x12-all-terrain-mobility-robot': 'xsto-x12',
+  'xsto-ezgo2-carbon-fiber-power-wheelchair': 'xsto-ezgo2',
+  'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition':
+    'xsto-x12-pro',
+};
+
+/** Tokens that mean "this is an accessory / spare", not a chair PDP. */
+const ACCESSORY_HANDLE_HINT =
+  /(?:bag|backpack|battery|batteries|charger|controller|cushion|cover|holder|headrest|joystick|mirror|support|umbrella|wheels|wheel|torch|flashlight|armrest|calf|lateral|trunk|seat-cushion|backrest|accessory|spare)/i;
+
+/**
+ * Map a Shopify product handle to a flagship chair slot.
+ *
+ * IMPORTANT: matching is exact-handle only. The storefront URL is already
+ * correct (`/products/{handle}`); a false positive here used to overwrite the
+ * title/specs/SEO with a different chair's content while leaving the URL alone
+ * — which looked like "the link went to the wrong product".
+ */
 export function getHomepageProductSlot(
   shopifyHandle: string,
 ): HomepageProductHandle | undefined {
-  if (HOMEPAGE_PRODUCT_SLOT_BY_SHOPIFY_HANDLE[shopifyHandle]) {
-    return HOMEPAGE_PRODUCT_SLOT_BY_SHOPIFY_HANDLE[shopifyHandle];
+  const handle = shopifyHandle.trim();
+  if (!handle) return undefined;
+
+  // Defense in depth: never treat obvious accessory/spare handles as chairs,
+  // even if someone later reintroduces fuzzy matching.
+  if (
+    ACCESSORY_HANDLE_HINT.test(handle) &&
+    !HOMEPAGE_PRODUCT_SLOT_BY_SHOPIFY_HANDLE[handle] &&
+    !CHAIR_HANDLE_EXACT_ALIASES[handle]
+  ) {
+    return undefined;
   }
 
-  // Short / legacy chair handles only.
-  // Must be the whole handle or a known chair-product prefix — never a mid-string
-  // match. Accessory handles like
-  // `bluetooth-controller-for-m4-m4h-m4-pro-x12-x12-pro` mention models in the
-  // slug and must NOT resolve as chairs.
-  if (
-    shopifyHandle === 'xsto-x12-pro' ||
-    shopifyHandle.startsWith('xsto-x12-pro-')
-  ) {
-    return 'xsto-x12-pro';
-  }
-  if (
-    shopifyHandle === 'xsto-x12' ||
-    shopifyHandle.startsWith('x12-all-terrain-')
-  ) {
-    return 'xsto-x12';
-  }
-  if (
-    shopifyHandle === 'xsto-ezgo2' ||
-    shopifyHandle.startsWith('xsto-ezgo2-') ||
-    shopifyHandle.startsWith('ezgo2-')
-  ) {
-    return 'xsto-ezgo2';
-  }
-  if (shopifyHandle === 'xsto-m4b' || shopifyHandle.startsWith('xsto-m4b-')) {
-    return 'xsto-m4b';
-  }
-  if (
-    shopifyHandle === 'xsto-m4-pro' ||
-    shopifyHandle.startsWith('xsto-m4-pro-')
-  ) {
-    return 'xsto-m4-pro';
-  }
-  if (shopifyHandle === 'xsto-m4' || shopifyHandle === 'buy-robot-wheelchair') {
-    return 'xsto-m4';
-  }
+  return (
+    HOMEPAGE_PRODUCT_SLOT_BY_SHOPIFY_HANDLE[handle] ??
+    CHAIR_HANDLE_EXACT_ALIASES[handle]
+  );
+}
 
-  return undefined;
+/** True only for known chair product handles (exact). */
+export function isKnownChairHandle(shopifyHandle: string): boolean {
+  return Boolean(getHomepageProductSlot(shopifyHandle));
 }
 
 /** Homepage hero YouTube video — X12 stair-climbing / all-terrain film. */

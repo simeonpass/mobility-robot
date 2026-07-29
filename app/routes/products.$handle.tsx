@@ -35,7 +35,7 @@ import {buildMeta, productJsonLd} from '~/lib/seo';
 import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
-import {getProductDisplayName} from '~/lib/product-content';
+import {resolveProductIdentity} from '~/lib/product-content';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -161,8 +161,11 @@ export default function Product() {
     product.youtubeEmbed?.value ?? product.videoUrl?.value,
   );
 
-  const staticContent = getProductSpecs(product.handle);
-  const displayName = getProductDisplayName(product.handle, product.title);
+  // Exact-handle identity only — never infer a chair from model tokens in
+  // accessory handles (e.g. black-backpack-for-m4-pro).
+  const identity = resolveProductIdentity(product.handle, product.title);
+  const {displayName, isChair} = identity;
+  const staticContent = isChair ? getProductSpecs(product.handle) : undefined;
 
   const galleryItems = collectGalleryMedia({
     productImages: product.images.nodes,

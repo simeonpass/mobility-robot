@@ -4,9 +4,25 @@ import {
   ACCESSORY_COMPAT_BY_HANDLE,
   resolveAccessoryCompatibility,
 } from '~/lib/accessories';
-import {getHomepageProductSlot} from '~/lib/homepage-data';
-import {getProductContent, getProductDisplayName} from '~/lib/product-content';
+import {
+  getHomepageProductSlot,
+  SHOPIFY_HOME_PRODUCT_HANDLES,
+} from '~/lib/homepage-data';
+import {
+  getProductContent,
+  getProductDisplayName,
+  resolveProductIdentity,
+} from '~/lib/product-content';
+import {resolveProductSeo} from '~/lib/product-seo';
 import {resolveLegacyRedirect} from '~/lib/redirects';
+import {
+  FOOTER_QUICK_LINKS,
+  FOOTER_SUPPORT_LINKS,
+  HEADER_CTA,
+  HEADER_MOBILE_EXTRA_NAV,
+  HEADER_SECONDARY_NAV,
+  PRODUCT_NAV_ITEMS,
+} from '~/lib/site-navigation';
 import {SITE_URL} from '~/lib/const';
 
 /**
@@ -163,5 +179,90 @@ describe('accessory catalogue integrity', () => {
         title: 'Calf Support Set for X12/X12Pro',
       }),
     ).toEqual(['xsto-x12', 'xsto-x12-pro']);
+  });
+});
+
+describe('exact-handle guards against future regressions', () => {
+  const adversarialHandles = [
+    'something-for-m4-pro',
+    'xsto-m4-pro-headrest',
+    'xsto-x12-pro-calf-support',
+    'bag-for-xsto-m4',
+    'controller-m4-pro-x12-pro',
+    'm4-pro-backpack',
+    'x12-pro-accessory-kit',
+    'for-m4-pro-and-x12',
+  ] as const;
+
+  it('never maps accessory-like handles to chair slots', () => {
+    for (const handle of adversarialHandles) {
+      expect(getHomepageProductSlot(handle)).toBeUndefined();
+      expect(getProductContent(handle)).toBeUndefined();
+      const identity = resolveProductIdentity(handle, `Title for ${handle}`);
+      expect(identity.isChair).toBe(false);
+      expect(identity.displayName).toBe(`Title for ${handle}`);
+      expect(CHAIR_DISPLAY_NAMES).not.toContain(identity.displayName);
+    }
+  });
+
+  it('does not apply chair SEO to accessory-like handles', () => {
+    for (const handle of adversarialHandles) {
+      const seo = resolveProductSeo({
+        handle,
+        productTitle: `Accessory ${handle}`,
+        productDescription: 'Spare part description',
+      });
+      expect(seo.title).toBe(`Accessory ${handle}`);
+      expect(seo.description).toBe('Spare part description');
+      expect(seo.title).not.toMatch(/XSTO M4 Pro Wheelchair|XSTO X12 Pro/);
+    }
+  });
+
+  it('keeps chair identity only for exact known handles', () => {
+    const identity = resolveProductIdentity(
+      'xsto-m4-pro',
+      'Long Shopify Title That Should Be Replaced',
+    );
+    expect(identity.isChair).toBe(true);
+    expect(identity.slot).toBe('xsto-m4-pro');
+    expect(identity.displayName).toBe('XSTO M4 Pro');
+  });
+});
+
+describe('site navigation product URLs', () => {
+  it('points every product nav/footer chair link at the live Shopify handle', () => {
+    for (const item of PRODUCT_NAV_ITEMS) {
+      expect(item.productSlot).toBeTruthy();
+      const expected = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES[item.productSlot!]}`;
+      expect(item.url).toBe(expected);
+      expect(getHomepageProductSlot(item.productSlot!)).toBe(item.productSlot);
+      expect(
+        getHomepageProductSlot(SHOPIFY_HOME_PRODUCT_HANDLES[item.productSlot!]),
+      ).toBe(item.productSlot);
+    }
+
+    const footerProductUrls = FOOTER_QUICK_LINKS.filter((link) =>
+      link.url.startsWith('/products/'),
+    );
+    expect(footerProductUrls).toHaveLength(6);
+    for (const link of footerProductUrls) {
+      const handle = link.url.replace('/products/', '');
+      expect(getHomepageProductSlot(handle)).toBeTruthy();
+    }
+  });
+
+  it('keeps support and secondary nav on known internal paths', () => {
+    const paths = [
+      ...HEADER_SECONDARY_NAV,
+      ...HEADER_MOBILE_EXTRA_NAV,
+      HEADER_CTA,
+      ...FOOTER_SUPPORT_LINKS,
+      ...FOOTER_QUICK_LINKS.filter((link) => !link.url.startsWith('/products/')),
+    ].map((link) => link.url);
+
+    for (const path of paths) {
+      expect(path.startsWith('/')).toBe(true);
+      expect(path.includes('xstouk')).toBe(false);
+    }
   });
 });

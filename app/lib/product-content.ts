@@ -473,28 +473,55 @@ export function getProductContent(
   return slot ? CONTENT[slot] : undefined;
 }
 
-/** Clean storefront name — prefers curated displayName over long Shopify titles. */
+/**
+ * Storefront display name for a PDP.
+ * Accessories always keep the Shopify product title. Curated chair names are
+ * only used when the handle is an exact known chair handle.
+ */
 export function getProductDisplayName(
   shopifyHandle: string,
   fallbackTitle?: string | null,
 ): string {
+  const shopifyTitle = fallbackTitle?.trim() || '';
+  const slot = getHomepageProductSlot(shopifyHandle);
+
+  if (!slot) {
+    return shopifyTitle || 'XSTO';
+  }
+
   const content = getProductContent(shopifyHandle);
   if (content?.displayName) return content.displayName;
 
-  const slot = getHomepageProductSlot(shopifyHandle);
-  if (slot) {
-    const fromBadges = {
-      'xsto-m4': 'XSTO M4',
-      'xsto-m4-pro': 'XSTO M4 Pro',
-      'xsto-m4b': 'XSTO M4B',
-      'xsto-ezgo2': 'XSTO EzGo2',
-      'xsto-x12': 'XSTO X12',
-      'xsto-x12-pro': 'XSTO X12 Pro',
-    } as const;
-    return fromBadges[slot];
-  }
+  const fromBadges = {
+    'xsto-m4': 'XSTO M4',
+    'xsto-m4-pro': 'XSTO M4 Pro',
+    'xsto-m4b': 'XSTO M4B',
+    'xsto-ezgo2': 'XSTO EzGo2',
+    'xsto-x12': 'XSTO X12',
+    'xsto-x12-pro': 'XSTO X12 Pro',
+  } as const;
 
-  return fallbackTitle?.trim() || 'XSTO';
+  return fromBadges[slot];
+}
+
+/**
+ * Guard for PDP loaders: never let chair curated content attach to a handle
+ * that is not an exact known chair product.
+ */
+export function resolveProductIdentity(
+  shopifyHandle: string,
+  shopifyTitle?: string | null,
+): {
+  isChair: boolean;
+  displayName: string;
+  slot: ReturnType<typeof getHomepageProductSlot>;
+} {
+  const slot = getHomepageProductSlot(shopifyHandle);
+  return {
+    isChair: Boolean(slot),
+    slot,
+    displayName: getProductDisplayName(shopifyHandle, shopifyTitle),
+  };
 }
 
 export function mergeProductVideos(
