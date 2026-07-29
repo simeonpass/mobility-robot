@@ -1009,6 +1009,104 @@
     color: #fff;
     text-decoration: none;
   }
+
+  /* Accessory / Shopify product body HTML */
+  .product-description {
+    color: hsl(var(--foreground));
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .product-description > *:first-child {
+    margin-top: 0;
+  }
+
+  .product-description > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .product-description h2,
+  .product-description h3 {
+    margin: 0 0 0.75rem;
+    color: hsl(var(--navy));
+    font-family: var(--font-display, inherit);
+    font-size: clamp(1.2rem, 2.4vw, 1.45rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .product-description p {
+    margin: 0 0 1rem;
+    max-width: 42rem;
+    color: hsl(var(--foreground));
+  }
+
+  .product-description p:last-child {
+    margin-bottom: 0;
+  }
+
+  .product-description ul {
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  @media (min-width: 640px) {
+    .product-description ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem 1rem;
+    }
+  }
+
+  .product-description li {
+    position: relative;
+    margin: 0;
+    padding: 0.85rem 1rem 0.85rem 2.35rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.85rem;
+    background: hsl(var(--card));
+    color: hsl(var(--foreground));
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .product-description li::before {
+    content: '';
+    position: absolute;
+    top: 1.15rem;
+    left: 0.95rem;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: hsl(var(--gold));
+  }
+
+  .product-description li p {
+    margin: 0;
+  }
+
+  .product-description strong {
+    color: hsl(var(--navy));
+    font-weight: 600;
+  }
+
+  .product-description a {
+    color: hsl(var(--gold));
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+  }
+
+  @media (min-width: 768px) {
+    .product-description {
+      font-size: 1.0625rem;
+    }
+  }
+
   .text-gradient-gold {
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-gold);

@@ -301,14 +301,42 @@ export function getHomepageProductSlot(
     return HOMEPAGE_PRODUCT_SLOT_BY_SHOPIFY_HANDLE[shopifyHandle];
   }
 
-  if (/x12.*pro|x12-pro/i.test(shopifyHandle)) return 'xsto-x12-pro';
-  if (/x12-all-terrain|xsto-x12(?!-pro|-pre)/i.test(shopifyHandle)) {
+  // Short / legacy chair handles only.
+  // Must be the whole handle or a known chair-product prefix — never a mid-string
+  // match. Accessory handles like
+  // `bluetooth-controller-for-m4-m4h-m4-pro-x12-x12-pro` mention models in the
+  // slug and must NOT resolve as chairs.
+  if (
+    shopifyHandle === 'xsto-x12-pro' ||
+    shopifyHandle.startsWith('xsto-x12-pro-')
+  ) {
+    return 'xsto-x12-pro';
+  }
+  if (
+    shopifyHandle === 'xsto-x12' ||
+    shopifyHandle.startsWith('x12-all-terrain-')
+  ) {
     return 'xsto-x12';
   }
-  if (/ezgo|ez-go/i.test(shopifyHandle)) return 'xsto-ezgo2';
-  if (/m4b/i.test(shopifyHandle)) return 'xsto-m4b';
-  if (/m4.*pro|m4-pro/i.test(shopifyHandle)) return 'xsto-m4-pro';
-  if (/buy-robot-wheelchair|^xsto-m4$/i.test(shopifyHandle)) return 'xsto-m4';
+  if (
+    shopifyHandle === 'xsto-ezgo2' ||
+    shopifyHandle.startsWith('xsto-ezgo2-') ||
+    shopifyHandle.startsWith('ezgo2-')
+  ) {
+    return 'xsto-ezgo2';
+  }
+  if (shopifyHandle === 'xsto-m4b' || shopifyHandle.startsWith('xsto-m4b-')) {
+    return 'xsto-m4b';
+  }
+  if (
+    shopifyHandle === 'xsto-m4-pro' ||
+    shopifyHandle.startsWith('xsto-m4-pro-')
+  ) {
+    return 'xsto-m4-pro';
+  }
+  if (shopifyHandle === 'xsto-m4' || shopifyHandle === 'buy-robot-wheelchair') {
+    return 'xsto-m4';
+  }
 
   return undefined;
 }

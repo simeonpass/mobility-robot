@@ -82,16 +82,36 @@ const TAG_TO_SLOT: Record<string, AccessoryChairSlot> = {
  */
 export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = {
   'adjustable-headrest-m4-pro': ['xsto-m4-pro'],
+  'adjustable-headrest-for-x12-x12-pro': ['xsto-x12', 'xsto-x12-pro'],
   'armrest-bag': M4_AND_M4B,
   'auxiliary-joystick-m4-pro': ['xsto-m4-pro', 'xsto-m4', 'xsto-m4b'],
   'backrest-cushion-large-m4-pro': ['xsto-m4-pro'],
   'backrest-cushion-small-m4-pro': ['xsto-m4-pro'],
+  'batteries-lithium-battery-15-6ah-battery': ALL_M4_FAMILY,
+  'black-backpack-for-m4-pro': ['xsto-m4-pro'],
+  'bluetooth-controller-for-m4-m4h-m4-pro-x12-x12-pro': [
+    'xsto-m4',
+    'xsto-m4b',
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
+  'buy-universal-phone-holder': M4_AND_M4B,
+  'calf-support-set-for-x12-x12pro': ['xsto-x12', 'xsto-x12-pro'],
+  'cup-holder-for-all-models': [
+    'xsto-m4',
+    'xsto-m4b',
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
   // Live Shopify handle (title: High Back Rest & Neck Support Cushion)
   'ergonomic-chairs-for-back-support': M4_AND_M4B,
   'ergonomic-raised-backrest-neck-support': M4_AND_M4B,
   'flashlight-holder': M4_AND_M4B,
   'left-lateral-support-m4-pro': ['xsto-m4-pro'],
   'lithium-10-4-ah-battery': ALL_M4_FAMILY,
+  'lithium-10-4ah-battery-batteries-lithium-battery': ALL_M4_FAMILY,
   'lithium-15-6-ah-battery': ALL_M4_FAMILY,
   'phone-holder-for-m4': M4_AND_M4B,
   'power-chair-battery-charger': ALL_M4_FAMILY,
@@ -106,10 +126,12 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
   'right-lateral-support-m4-pro': ['xsto-m4-pro'],
   'seat-cushion-large-m4-pro': ['xsto-m4-pro'],
   'seat-cushion-small-m4-pro': ['xsto-m4-pro'],
+  'travel-cushion-seat-with-pump': ALL_M4_FAMILY,
   'travel-cushion-with-pump': ALL_M4_FAMILY,
   'trunk-support': ['xsto-m4-pro'],
   'umbrella-attachment': ALL_M4_FAMILY,
   'universal-wheels-for-xsto-m4': M4_AND_M4B,
+  'wheelchair-battery-charger': ALL_M4_FAMILY,
 };
 
 type CompatibilityInput = {

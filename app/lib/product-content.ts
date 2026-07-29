@@ -30,6 +30,8 @@ export type ProductContent = {
   displayName?: string;
   tagline?: string;
   overview: string;
+  /** Rich HTML overview (preferred for accessories / Shopify body_html). */
+  overviewHtml?: string;
   highlights: string[];
   features?: ProductFeatureBlock[];
   specs: ProductSpec[];
@@ -39,6 +41,8 @@ export type ProductContent = {
   faqs: ProductFAQ[];
   videos: ProductVideo[];
   downloads?: ProductDownload[];
+  compatibilityLabel?: string;
+  compatibilityChairs?: Array<{label: string; title: string; url: string}>;
 };
 
 const M4_SERIES_PRODUCT_SHEET: ProductDownload = {
