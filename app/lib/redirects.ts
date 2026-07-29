@@ -74,12 +74,14 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/products/xsto-x12-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
 
   // Lovable accessory handles → current Shopify accessory handles / catalogue
-  '/products/phone-holder': '/products/phone-holder-for-m4',
-  '/products/battery-charger': '/products/power-chair-battery-charger',
+  '/products/phone-holder': '/products/buy-universal-phone-holder',
+  '/products/battery-charger': '/products/wheelchair-battery-charger',
   '/products/headrest': '/products/adjustable-headrest-m4-pro',
   '/products/backrest-headrest': '/products/adjustable-headrest-m4-pro',
-  '/products/battery-24v': '/products/lithium-15-6-ah-battery',
-  '/products/spare-battery-24v': '/products/lithium-15-6-ah-battery',
+  '/products/battery-24v':
+    '/products/batteries-lithium-battery-15-6ah-battery',
+  '/products/spare-battery-24v':
+    '/products/batteries-lithium-battery-15-6ah-battery',
   '/products/sidebag': '/collections/accessories',
   '/products/aux-controller': '/collections/accessories',
   '/products/rearview-mirror': '/collections/accessories',

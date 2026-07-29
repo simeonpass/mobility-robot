@@ -63,6 +63,34 @@ describe('resolveLegacyRedirect', () => {
     expect(resolveLegacyRedirect(requestFor('/demo'))).toBeNull();
     expect(resolveLegacyRedirect(requestFor('/quote'))).toBeNull();
   });
+
+  it('maps legacy accessory shortcuts to live Shopify accessory handles', () => {
+    expect(LEGACY_REDIRECTS['/products/phone-holder']).toBe(
+      '/products/buy-universal-phone-holder',
+    );
+    expect(LEGACY_REDIRECTS['/products/battery-charger']).toBe(
+      '/products/wheelchair-battery-charger',
+    );
+    expect(LEGACY_REDIRECTS['/products/battery-24v']).toBe(
+      '/products/batteries-lithium-battery-15-6ah-battery',
+    );
+  });
+
+  it('does not prefix-redirect live accessory product URLs', () => {
+    for (const handle of [
+      'black-backpack-for-m4-pro',
+      'bluetooth-controller-for-m4-m4h-m4-pro-x12-x12-pro',
+      'adjustable-headrest-for-x12-x12-pro',
+      'universal-wheels-for-xsto-m4',
+      'buy-universal-phone-holder',
+      'wheelchair-battery-charger',
+      'batteries-lithium-battery-15-6ah-battery',
+    ]) {
+      expect(
+        resolveLegacyRedirect(requestFor(`/products/${handle}`)),
+      ).toBeNull();
+    }
+  });
 });
 
 describe('resolveHostRedirect', () => {
