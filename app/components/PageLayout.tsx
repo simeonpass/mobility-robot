@@ -3,6 +3,7 @@ import {Suspense, useId} from 'react';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {AnnouncementBar} from '~/components/AnnouncementBar';
 import {Aside} from '~/components/Aside';
+import {CartFeedbackProvider} from '~/components/CartFeedback';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
@@ -25,15 +26,17 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
-      <div className="flex min-h-screen flex-col">
-        <AnnouncementBar />
-        <CartAside cart={cart} />
-        <SearchAside />
-        <MobileMenuAside isLoggedIn={isLoggedIn} />
-        <Header cart={cart} isLoggedIn={isLoggedIn} />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </div>
+      <CartFeedbackProvider>
+        <div className="flex min-h-screen flex-col">
+          <AnnouncementBar />
+          <CartAside cart={cart} />
+          <SearchAside />
+          <MobileMenuAside isLoggedIn={isLoggedIn} />
+          <Header cart={cart} isLoggedIn={isLoggedIn} />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
+      </CartFeedbackProvider>
     </Aside.Provider>
   );
 }

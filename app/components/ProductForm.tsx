@@ -10,12 +10,10 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
-import {isAccessoryProduct} from '~/lib/cart-utils';
 import {withOptimisticSellingPlanAllocation} from '~/lib/selling-plans';
 import type {ProductFragment} from 'storefrontapi.generated';
 
 export function ProductForm({
-  productHandle,
   productOptions,
   selectedVariant,
   cartAttributes = [],
@@ -26,6 +24,7 @@ export function ProductForm({
   addToCartLabel = 'Add to cart',
   addToCartClassName = 'btn-accent',
 }: {
+  /** Kept for call-site compatibility; unused after silent accessory adds were removed. */
   productHandle?: string;
   productOptions: MappedProductOptions[];
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
@@ -40,7 +39,6 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
-  const silentAdd = productHandle ? isAccessoryProduct(productHandle) : false;
 
   const addDisabled =
     disabled ??
@@ -138,11 +136,7 @@ export function ProductForm({
       <AddToCartButton
         className={addToCartClassName}
         disabled={addDisabled}
-        onClick={() => {
-          if (!silentAdd) {
-            open('cart');
-          }
-        }}
+        onClick={() => open('cart')}
         lines={lines}
       >
         {!selectedVariant?.availableForSale

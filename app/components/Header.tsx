@@ -556,6 +556,18 @@ function SearchToggle() {
 function CartBadge({count}: {count: number}) {
   const {open} = useAside();
   const {publish, shop, cart, prevCart} = useAnalytics();
+  const [pulse, setPulse] = useState(false);
+  const prevCount = useRef(count);
+
+  useEffect(() => {
+    if (count > prevCount.current) {
+      setPulse(true);
+      const timer = window.setTimeout(() => setPulse(false), 700);
+      prevCount.current = count;
+      return () => window.clearTimeout(timer);
+    }
+    prevCount.current = count;
+  }, [count]);
 
   return (
     <button
@@ -573,7 +585,16 @@ function CartBadge({count}: {count: number}) {
       type="button"
     >
       <span className="site-header-cart-label">Cart</span>
-      <span className="site-header-cart-count">{count}</span>
+      <span
+        className={[
+          'site-header-cart-count',
+          pulse ? 'site-header-cart-count--pulse' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {count}
+      </span>
     </button>
   );
 }
