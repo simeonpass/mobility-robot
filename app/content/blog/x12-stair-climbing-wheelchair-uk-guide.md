@@ -24,7 +24,7 @@ The X12 is aimed at people who need more than a flat-pavement foldable chair:
 - Users who want one chair for indoors and outdoors rather than two devices
 - Buyers comparing stair climbers against stairlifts or tracked evacuation chairs
 
-If your priority is car-boot portability and light indoor use, start with the [M4 series](/blog/m4-vs-m4-pro-comparison) or [EzGo2](/blog/lightweight-carbon-fibre-wheelchair-ezgo2) instead.
+If your priority is car-boot portability and light indoor use, start with the [M4 series](/blog/m4-vs-m4-pro-comparison) instead.
 
 ## X12 vs X12 Pro
 

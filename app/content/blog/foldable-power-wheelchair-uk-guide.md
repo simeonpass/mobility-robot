@@ -13,7 +13,7 @@ tags: ["foldable power wheelchair", "UK", "buying guide", "M4", "travel"]
 
 # Foldable Power Wheelchair UK: What to Look For in 2026
 
-A **foldable power wheelchair** can transform daily life in the UK — if it genuinely fits in a car boot, handles kerbs and pavements, and still gives you a full day's range. Many chairs marketed as “portable” are still too heavy for one person to lift. This guide covers what matters for UK buyers, and where the XSTO M4 series and EzGo2 fit.
+A **foldable power wheelchair** can transform daily life in the UK — if it genuinely fits in a car boot, handles kerbs and pavements, and still gives you a full day's range. Many chairs marketed as “portable” are still too heavy for one person to lift. This guide covers what matters for UK buyers, and where the XSTO M4 series fits.
 
 ## Why Foldability Matters in the UK
 
@@ -36,12 +36,11 @@ British homes, trains and car parks reward compact chairs:
 
 | Model | Best for | Weight (no battery) | Range |
 |-------|----------|---------------------|-------|
-| **EzGo2** | Ultra-light indoor / travel lift | 11.5 kg | 15 km |
 | **M4** | Everyday outdoor foldable chair | 51.5 kg | 15 km |
 | **M4B** | M4 platform with folding footrest | 55.5 kg | 15 km |
 | **M4 Pro** | Premium comfort & capacity | 60.1 kg | 26 km |
 
-The M4 series adds self-balancing on slopes and electric seat height — useful when pavements and driveways are uneven. The EzGo2 prioritises carbon-fibre lightness for users who lift the chair often.
+The M4 series adds self-balancing on slopes and electric seat height — useful when pavements and driveways are uneven. Choose M4/M4B for everyday UK use, or M4 Pro when you need more comfort features and range.
 
 ## Travel and Airline Batteries
 

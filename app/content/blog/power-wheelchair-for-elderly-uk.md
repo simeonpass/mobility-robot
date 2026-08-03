@@ -45,7 +45,6 @@ If stairs inside the home are the main barrier, a stair climbing model such as t
 |-----------|------------------|
 | Flat home, car travel, shopping trips | Foldable everyday chair (M4 / M4B) |
 | Longer days out, more comfort features | [M4 Pro](/blog/m4-vs-m4-pro-comparison) |
-| Ultra-light lifts for holidays / indoors | [EzGo2 carbon fibre](/blog/lightweight-carbon-fibre-wheelchair-ezgo2) |
 | Steps and outdoor uneven ground | X12 series stair climber |
 
 ## Money: VAT Relief and Realistic Budgets

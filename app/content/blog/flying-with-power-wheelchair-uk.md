@@ -44,7 +44,7 @@ Frequent flyers often prefer chairs that:
 - Have removable batteries with clear labels
 - Come with a soft cover or padding plan for baggage handling
 
-See our [foldable power wheelchair UK guide](/blog/foldable-power-wheelchair-uk-guide) and the ultra-light [EzGo2](/blog/lightweight-carbon-fibre-wheelchair-ezgo2). For day-to-day UK travel without flying, also read [wheelchair-accessible travel in the UK](/blog/wheelchair-accessible-travel-uk).
+See our [foldable power wheelchair UK guide](/blog/foldable-power-wheelchair-uk-guide) and the [M4 vs M4 Pro comparison](/blog/m4-vs-m4-pro-comparison). For day-to-day UK travel without flying, also read [wheelchair-accessible travel in the UK](/blog/wheelchair-accessible-travel-uk).
 
 ## 4. Airport Day Checklist
 
@@ -67,6 +67,6 @@ Buying VAT-free in the UK does not alter airline battery policy. Keep purchase a
 
 ## Need Model-Specific Advice?
 
-Tell us which XSTO you fly with — [M4 / M4 Pro](/blog/m4-vs-m4-pro-comparison), EzGo2 or another model — and we can help you locate battery labels and fold procedure notes. [Contact support](/contact) or [book a demo](/demo) before a first trip abroad.
+Tell us which XSTO you fly with — [M4 / M4 Pro](/blog/m4-vs-m4-pro-comparison) or another model — and we can help you locate battery labels and fold procedure notes. [Contact support](/contact) or [book a demo](/demo) before a first trip abroad.
 
 Always double-check the operating airline’s current mobility and dangerous-goods pages; policies change.
