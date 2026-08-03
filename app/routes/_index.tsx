@@ -79,7 +79,6 @@ const HANDLE_QUERY_KEYS: Record<HomepageProductHandle, string> = {
   'xsto-m4': 'm4',
   'xsto-m4-pro': 'm4Pro',
   'xsto-m4b': 'm4b',
-  'xsto-ezgo2': 'ezgo2',
   'xsto-x12': 'x12',
   'xsto-x12-pro': 'x12Pro',
 };
@@ -94,7 +93,7 @@ function dedupeProducts(products: HomeProduct[]): HomeProduct[] {
 }
 
 type AliasProductData = Partial<
-  Record<'m4' | 'm4Pro' | 'm4b' | 'ezgo2' | 'x12' | 'x12Pro', HomeProduct | null>
+  Record<'m4' | 'm4Pro' | 'm4b' | 'x12' | 'x12Pro', HomeProduct | null>
 >;
 
 function resolveHomeProducts(
@@ -162,9 +161,6 @@ const HOME_PRODUCTS_ALIAS_QUERY = `#graphql
       ...HomeProduct
     }
     m4b: product(handle: "xsto-m4b-1") {
-      ...HomeProduct
-    }
-    ezgo2: product(handle: "xsto-ezgo2-carbon-fiber-power-wheelchair") {
       ...HomeProduct
     }
     x12: product(handle: "x12-all-terrain-mobility-robot") {

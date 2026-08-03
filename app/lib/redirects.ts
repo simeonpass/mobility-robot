@@ -1,6 +1,9 @@
 import {redirect} from 'react-router';
 import {LEGACY_PUBLIC_HOSTS, SITE_URL} from '~/lib/const';
-import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
+import {
+  isUkUnavailableProductHandle,
+  SHOPIFY_HOME_PRODUCT_HANDLES,
+} from '~/lib/homepage-data';
 
 /**
  * Host / domain cutover notes (merchant checklist in docs/rebuild/phase-8-deploy.md):
@@ -68,8 +71,10 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/products/xsto-m4': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`,
   '/products/xsto-m4-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4-pro']}`,
   '/products/xsto-m4b': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4b']}`,
-  '/products/xsto-ezgo2': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-ezgo2']}`,
-  '/products/ezgo2-mobility-robot': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-ezgo2']}`,
+  // EzGo2 is not authorised for UK sale — send all legacy URLs to the range page
+  '/products/xsto-ezgo2': '/collections/all',
+  '/products/xsto-ezgo2-carbon-fiber-power-wheelchair': '/collections/all',
+  '/products/ezgo2-mobility-robot': '/collections/all',
   '/products/xsto-x12': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`,
   '/products/xsto-x12-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
 
@@ -93,6 +98,10 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
 };
 
 const PRODUCT_PREFIX_REDIRECTS: Array<{prefix: string; target: string}> = [
+  {
+    prefix: '/products/xsto-ezgo2',
+    target: '/collections/all',
+  },
   {
     prefix: '/products/xsto-m4-pro',
     target: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4-pro']}`,
@@ -146,6 +155,14 @@ export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | 
   const exact = LEGACY_REDIRECTS[pathname];
   if (exact && exact !== pathname) {
     return {destination: exact, cacheControl: LEGACY_REDIRECT_CACHE_CONTROL};
+  }
+
+  const productMatch = pathname.match(/^\/products\/([^/]+)$/);
+  if (productMatch && isUkUnavailableProductHandle(productMatch[1])) {
+    return {
+      destination: '/collections/all',
+      cacheControl: LEGACY_REDIRECT_CACHE_CONTROL,
+    };
   }
 
   // Never prefix-redirect a live Shopify product URL. Handles like

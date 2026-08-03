@@ -1,6 +1,6 @@
 /**
  * Flagship models shown on the homepage grid and comparison table.
- * Ordered M series → X series → EzGo2 (premium range first).
+ * Ordered M series → X series.
  */
 export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-m4',
@@ -8,7 +8,6 @@ export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-m4-pro',
   'xsto-x12',
   'xsto-x12-pro',
-  'xsto-ezgo2',
 ] as const satisfies readonly HomepageProductHandle[];
 
 export type HomepageFlagshipHandle =
@@ -32,11 +31,6 @@ export const HOMEPAGE_PRODUCT_BADGES: Record<
     badge: 'New',
     shortName: 'XSTO M4B',
     exploreLabel: 'Explore XSTO M4B',
-  },
-  'xsto-ezgo2': {
-    badge: 'Ultra-Light',
-    shortName: 'XSTO EzGo2',
-    exploreLabel: 'Explore XSTO EzGo2',
   },
   'xsto-x12': {
     badge: 'Stair Climber',
@@ -109,7 +103,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': true,
       'xsto-m4-pro': true,
       'xsto-m4b': true,
-      'xsto-ezgo2': false,
       'xsto-x12': true,
       'xsto-x12-pro': true,
     },
@@ -120,7 +113,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': true,
       'xsto-m4-pro': true,
       'xsto-m4b': true,
-      'xsto-ezgo2': true,
       'xsto-x12': true,
       'xsto-x12-pro': true,
     },
@@ -131,20 +123,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': false,
       'xsto-m4-pro': false,
       'xsto-m4b': false,
-      'xsto-ezgo2': false,
       'xsto-x12': true,
       'xsto-x12-pro': true,
-    },
-  },
-  {
-    label: 'Carbon Fibre',
-    values: {
-      'xsto-m4': false,
-      'xsto-m4-pro': false,
-      'xsto-m4b': false,
-      'xsto-ezgo2': true,
-      'xsto-x12': false,
-      'xsto-x12-pro': false,
     },
   },
   {
@@ -153,7 +133,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': false,
       'xsto-m4-pro': true,
       'xsto-m4b': false,
-      'xsto-ezgo2': false,
       'xsto-x12': false,
       'xsto-x12-pro': true,
     },
@@ -164,7 +143,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': false,
       'xsto-m4-pro': false,
       'xsto-m4b': false,
-      'xsto-ezgo2': false,
       'xsto-x12': false,
       'xsto-x12-pro': true,
     },
@@ -175,7 +153,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': false,
       'xsto-m4-pro': false,
       'xsto-m4b': true,
-      'xsto-ezgo2': false,
       'xsto-x12': false,
       'xsto-x12-pro': false,
     },
@@ -186,7 +163,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': '10°',
       'xsto-m4-pro': '15°',
       'xsto-m4b': '10°',
-      'xsto-ezgo2': '3°',
       'xsto-x12': '40°',
       'xsto-x12-pro': '40°',
     },
@@ -197,7 +173,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': '15 km',
       'xsto-m4-pro': '26 km',
       'xsto-m4b': '15 km',
-      'xsto-ezgo2': '15 km',
       'xsto-x12': '35 km',
       'xsto-x12-pro': '35 km',
     },
@@ -208,7 +183,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': '6 km/h',
       'xsto-m4-pro': '6 km/h',
       'xsto-m4b': '6 km/h',
-      'xsto-ezgo2': '4.5 km/h',
       'xsto-x12': '12 km/h',
       'xsto-x12-pro': '12 km/h',
     },
@@ -219,7 +193,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': '51.5 kg',
       'xsto-m4-pro': '60.1 kg',
       'xsto-m4b': '55.5 kg',
-      'xsto-ezgo2': '11.5 kg',
       'xsto-x12': '112.8 kg',
       'xsto-x12-pro': '115.8 kg',
     },
@@ -230,7 +203,6 @@ export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = 
   'xsto-m4': 'M4',
   'xsto-m4-pro': 'M4 Pro',
   'xsto-m4b': 'M4B',
-  'xsto-ezgo2': 'EzGo2',
   'xsto-x12': 'X12',
   'xsto-x12-pro': 'X12 Pro',
 };
@@ -250,8 +222,6 @@ export const HOMEPAGE_PRODUCT_THUMBS: Record<HomepageFlagshipHandle, string> = {
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-all-terrain-mobility-robot-8874875.jpg',
   'xsto-x12-pro':
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-pro-hero.webp',
-  'xsto-ezgo2':
-    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/Ezgo2.png',
 };
 
 /** Canonical product slots used for specs, comparison data, and bullets. */
@@ -259,7 +229,6 @@ export const HOMEPAGE_PRODUCT_HANDLES = [
   'xsto-m4',
   'xsto-m4-pro',
   'xsto-m4b',
-  'xsto-ezgo2',
   'xsto-x12',
   'xsto-x12-pro',
 ] as const;
@@ -277,11 +246,29 @@ export const SHOPIFY_HOME_PRODUCT_HANDLES: Record<
   'xsto-m4': 'buy-robot-wheelchair',
   'xsto-m4-pro': 'xsto-m4-pro',
   'xsto-m4b': 'xsto-m4b-1',
-  'xsto-ezgo2': 'xsto-ezgo2-carbon-fiber-power-wheelchair',
   'xsto-x12': 'x12-all-terrain-mobility-robot',
   'xsto-x12-pro':
     'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
 };
+
+/**
+ * Product handles that must not appear on the UK storefront.
+ * EzGo2 carbon lightweight chair is not authorised for UK sale.
+ */
+export const UK_UNAVAILABLE_PRODUCT_HANDLES = [
+  'xsto-ezgo2',
+  'xsto-ezgo2-carbon-fiber-power-wheelchair',
+  'ezgo2-mobility-robot',
+] as const;
+
+export function isUkUnavailableProductHandle(handle: string): boolean {
+  const h = handle.trim().toLowerCase();
+  if (!h) return false;
+  if ((UK_UNAVAILABLE_PRODUCT_HANDLES as readonly string[]).includes(h)) {
+    return true;
+  }
+  return h.startsWith('xsto-ezgo2') || h.startsWith('ezgo2-');
+}
 
 /** Reverse lookup: Shopify handle → canonical slot (for bullets/specs). */
 export const HOMEPAGE_PRODUCT_SLOT_BY_SHOPIFY_HANDLE: Record<
@@ -317,13 +304,6 @@ export function getHomepageProductSlot(
     shopifyHandle.startsWith('x12-all-terrain-')
   ) {
     return 'xsto-x12';
-  }
-  if (
-    shopifyHandle === 'xsto-ezgo2' ||
-    shopifyHandle.startsWith('xsto-ezgo2-') ||
-    shopifyHandle.startsWith('ezgo2-')
-  ) {
-    return 'xsto-ezgo2';
   }
   if (shopifyHandle === 'xsto-m4b' || shopifyHandle.startsWith('xsto-m4b-')) {
     return 'xsto-m4b';
@@ -387,11 +367,6 @@ export const HOMEPAGE_PRODUCT_BULLETS: Record<
     'Self-balancing chassis · 10° slopes',
     'Electric height adjustment 347–650 mm',
   ],
-  'xsto-ezgo2': [
-    'Aerospace-grade carbon fibre frame',
-    'Only 11.5 kg without battery',
-    '3-step fold · 15 km range',
-  ],
   'xsto-x12': [
     'Climbs stairs up to 40° incline',
     '35 km range on dual batteries',
@@ -416,15 +391,6 @@ export type ComparisonRow = {
 
 /** Comparison strip data — sourced from docs/rebuild product specs. */
 export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
-  {
-    model: 'EzGo2',
-    handle: 'xsto-ezgo2',
-    shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-ezgo2'],
-    weight: '11.5 kg',
-    capacity: '136 kg',
-    range: '15 km',
-    foldedSize: '630 × 260 × 700 mm',
-  },
   {
     model: 'M4',
     handle: 'xsto-m4',
@@ -479,9 +445,7 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
  */
 export const HOMEPAGE_DISPLAY_PRICE_EX_VAT: Partial<
   Record<HomepageFlagshipHandle, {amount: number; currencyCode: string}>
-> = {
-  'xsto-ezgo2': {amount: 2000, currencyCode: 'GBP'},
-};
+> = {};
 
 export function formatExVatPrice(amount: string, currencyCode: string): string {
   const exVat = Number(amount) / 1.2;

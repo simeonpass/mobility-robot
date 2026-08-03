@@ -28,7 +28,7 @@ export function ShopAllCatalog({chairs, accessories}: ShopAllCatalogProps) {
         <SectionIntro
           accent="power chairs"
           align="left"
-          description="From ultra-light carbon fibre to self-levelling daily use and stair-climbing all-terrain — ordered from the most accessible price point upward. Free UK delivery on every model."
+          description="From self-levelling daily use to stair-climbing all-terrain — ordered from the most accessible price point upward. Free UK delivery on every model."
           label="Flagship range"
           title="XSTO"
         />

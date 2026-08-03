@@ -731,16 +731,12 @@
   }
 
   .site-header-dropdown-grid {
-    @apply grid gap-0 sm:grid-cols-3;
+    @apply grid gap-0 sm:grid-cols-2;
   }
 
   .site-header-dropdown-group {
     @apply border-b p-4 sm:border-b-0 sm:border-r sm:p-5 sm:last:border-r-0;
     border-color: hsl(var(--navy) / 0.08);
-  }
-
-  .site-header-dropdown-group[data-series='EzGo2'] .site-header-dropdown-label {
-    color: hsl(var(--gold-dark));
   }
 
   .site-header-dropdown-group[data-series='M Series'] .site-header-dropdown-label {
@@ -789,12 +785,6 @@
     color: hsl(var(--navy));
   }
 
-  .site-header-dropdown-group[data-series='EzGo2']
-    .site-header-dropdown-item-icon {
-    background: hsl(var(--gold) / 0.12);
-    color: hsl(var(--gold-dark));
-  }
-
   .site-header-dropdown-group[data-series='X Series']
     .site-header-dropdown-item-icon {
     background: hsl(var(--navy) / 0.1);
@@ -817,12 +807,6 @@
     @apply rounded-full px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em];
     background: hsl(var(--navy) / 0.07);
     color: hsl(var(--navy) / 0.72);
-  }
-
-  .site-header-dropdown-group[data-series='EzGo2']
-    .site-header-dropdown-item-badge {
-    background: hsl(var(--gold) / 0.14);
-    color: hsl(var(--gold-dark));
   }
 
   .site-header-dropdown-item-desc {

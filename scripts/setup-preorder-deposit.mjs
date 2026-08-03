@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Set continue-selling + create/assign a 10% deposit PRE_ORDER selling plan
- * for EzGo2, X12, and X12 Pro.
+ * for X12 and X12 Pro.
  *
  * Auth (first match wins):
  *   1. SHOPIFY_ADMIN_API_ACCESS_TOKEN starting with shpat_ (legacy custom app)
@@ -44,7 +44,6 @@ function loadEnv() {
 loadEnv();
 
 const PRODUCT_HANDLES = [
-  'xsto-ezgo2-carbon-fiber-power-wheelchair',
   'x12-all-terrain-mobility-robot',
   'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
 ];

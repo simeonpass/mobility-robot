@@ -39,7 +39,7 @@ function chairItem(
 
 /**
  * Product series shown in the Models dropdown / mobile menu.
- * Ordered M series → X series → EzGo2.
+ * Ordered M series → X series.
  */
 export const PRODUCT_NAV_GROUPS: NavGroup[] = [
   {
@@ -55,12 +55,6 @@ export const PRODUCT_NAV_GROUPS: NavGroup[] = [
     items: [
       chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
       chairItem('xsto-x12-pro', 'X12 Pro', 'Fully configurable X12'),
-    ],
-  },
-  {
-    title: 'EzGo2',
-    items: [
-      chairItem('xsto-ezgo2', 'EzGo2', 'Ultra-light carbon fibre'),
     ],
   },
 ];
@@ -105,7 +99,6 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
   {title: 'X12', url: productUrl('xsto-x12')},
   {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
-  {title: 'EzGo2', url: productUrl('xsto-ezgo2')},
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Videos', url: '/videos'},
   {title: 'Find a Dealer', url: '/stockists'},

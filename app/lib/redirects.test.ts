@@ -59,9 +59,15 @@ describe('resolveLegacyRedirect', () => {
     expect(resolveLegacyRedirect(requestFor('/collections/all'))).toBeNull();
   });
 
-  it('does not redirect live /demo or /quote routes', () => {
-    expect(resolveLegacyRedirect(requestFor('/demo'))).toBeNull();
-    expect(resolveLegacyRedirect(requestFor('/quote'))).toBeNull();
+  it('redirects discontinued EzGo2 product URLs to the range page', () => {
+    for (const path of [
+      '/products/xsto-ezgo2',
+      '/products/xsto-ezgo2-carbon-fiber-power-wheelchair',
+      '/products/ezgo2-mobility-robot',
+    ]) {
+      const result = resolveLegacyRedirect(requestFor(path));
+      expect(result?.destination).toBe('/collections/all');
+    }
   });
 });
 

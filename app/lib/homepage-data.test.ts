@@ -56,7 +56,6 @@ const CHAIR_DISPLAY_NAMES = [
   'XSTO M4',
   'XSTO M4 Pro',
   'XSTO M4B',
-  'XSTO EzGo2',
   'XSTO X12',
   'XSTO X12 Pro',
 ] as const;

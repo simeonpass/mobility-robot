@@ -660,16 +660,6 @@ export type HomeProductsByAliasQuery = {
       };
     }
   >;
-  ezgo2?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
-      featuredImage?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>
-      >;
-      priceRange: {
-        minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-      };
-    }
-  >;
   x12?: StorefrontAPI.Maybe<
     Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
       featuredImage?: StorefrontAPI.Maybe<
@@ -1763,16 +1753,6 @@ export type RelatedProductsQuery = {
       };
     }
   >;
-  ezgo2?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
-      featuredImage?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>
-      >;
-      priceRange: {
-        minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-      };
-    }
-  >;
   x12?: StorefrontAPI.Maybe<
     Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
       featuredImage?: StorefrontAPI.Maybe<
@@ -2072,7 +2052,7 @@ interface GeneratedQueryTypes {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
-  '#graphql\n  #graphql\n  fragment HomeProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n  query HomeProductsByAlias($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    m4: product(handle: "buy-robot-wheelchair") {\n      ...HomeProduct\n    }\n    m4Pro: product(handle: "xsto-m4-pro") {\n      ...HomeProduct\n    }\n    m4b: product(handle: "xsto-m4b-1") {\n      ...HomeProduct\n    }\n    ezgo2: product(handle: "xsto-ezgo2-carbon-fiber-power-wheelchair") {\n      ...HomeProduct\n    }\n    x12: product(handle: "x12-all-terrain-mobility-robot") {\n      ...HomeProduct\n    }\n    x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") {\n      ...HomeProduct\n    }\n  }\n': {
+  '#graphql\n  #graphql\n  fragment HomeProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n  query HomeProductsByAlias($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    m4: product(handle: "buy-robot-wheelchair") {\n      ...HomeProduct\n    }\n    m4Pro: product(handle: "xsto-m4-pro") {\n      ...HomeProduct\n    }\n    m4b: product(handle: "xsto-m4b-1") {\n      ...HomeProduct\n    }\n    x12: product(handle: "x12-all-terrain-mobility-robot") {\n      ...HomeProduct\n    }\n    x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") {\n      ...HomeProduct\n    }\n  }\n': {
     return: HomeProductsByAliasQuery;
     variables: HomeProductsByAliasQueryVariables;
   };
@@ -2132,7 +2112,7 @@ interface GeneratedQueryTypes {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };
-  '#graphql\n  #graphql\n  fragment HomeProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n  query RelatedProducts($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    m4: product(handle: "buy-robot-wheelchair") {\n      ...HomeProduct\n    }\n    m4Pro: product(handle: "xsto-m4-pro") {\n      ...HomeProduct\n    }\n    m4b: product(handle: "xsto-m4b-1") {\n      ...HomeProduct\n    }\n    ezgo2: product(handle: "xsto-ezgo2-carbon-fiber-power-wheelchair") {\n      ...HomeProduct\n    }\n    x12: product(handle: "x12-all-terrain-mobility-robot") {\n      ...HomeProduct\n    }\n    x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") {\n      ...HomeProduct\n    }\n  }\n': {
+  '#graphql\n  #graphql\n  fragment HomeProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n  query RelatedProducts($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    m4: product(handle: "buy-robot-wheelchair") {\n      ...HomeProduct\n    }\n    m4Pro: product(handle: "xsto-m4-pro") {\n      ...HomeProduct\n    }\n    m4b: product(handle: "xsto-m4b-1") {\n      ...HomeProduct\n    }\n    x12: product(handle: "x12-all-terrain-mobility-robot") {\n      ...HomeProduct\n    }\n    x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") {\n      ...HomeProduct\n    }\n  }\n': {
     return: RelatedProductsQuery;
     variables: RelatedProductsQueryVariables;
   };

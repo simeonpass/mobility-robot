@@ -19,7 +19,7 @@ function product(
 }
 
 describe('partitionShopAllProducts', () => {
-  it('orders chairs M series → X series → EzGo2 and separates accessories', () => {
+  it('orders chairs M series → X series and excludes UK-unavailable EzGo2', () => {
     const products = [
       product('xsto-m4-pro', 'M4 Pro'),
       product('armrest-bag', 'Armrest Bag', {productType: 'Accessories'}),
@@ -44,7 +44,6 @@ describe('partitionShopAllProducts', () => {
       'xsto-m4-pro',
       'x12-all-terrain-mobility-robot',
       'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
-      'xsto-ezgo2-carbon-fiber-power-wheelchair',
     ]);
     expect(accessories.map((p) => p.handle)).toEqual([
       'armrest-bag',
