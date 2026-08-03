@@ -1,5 +1,6 @@
 import {Link} from 'react-router';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
+import {LEGACY_REDIRECTS} from '~/lib/redirects';
 import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
 
 type SearchItems = RegularSearchReturn['result']['items'];
@@ -30,6 +31,11 @@ SearchResults.Pages = SearchResultsPages;
 SearchResults.Products = SearchResultsProducts;
 SearchResults.Empty = SearchResultsEmpty;
 
+function canonicalPagePath(handle: string) {
+  const legacy = `/pages/${handle}`;
+  return LEGACY_REDIRECTS[legacy] ?? legacy;
+}
+
 function SearchResultsArticles({
   term,
   articles,
@@ -44,7 +50,7 @@ function SearchResultsArticles({
       <div>
         {articles?.nodes?.map((article) => {
           const articleUrl = urlWithTrackingParams({
-            baseUrl: `/blogs/${article.handle}`,
+            baseUrl: `/blog/${article.handle}`,
             trackingParams: article.trackingParameters,
             term,
           });
@@ -74,7 +80,7 @@ function SearchResultsPages({term, pages}: PartialSearchResult<'pages'>) {
       <div>
         {pages?.nodes?.map((page) => {
           const pageUrl = urlWithTrackingParams({
-            baseUrl: `/pages/${page.handle}`,
+            baseUrl: canonicalPagePath(page.handle),
             trackingParams: page.trackingParameters,
             term,
           });

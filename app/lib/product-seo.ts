@@ -47,6 +47,11 @@ export type ResolveProductSeoInput = {
   seoDescription?: string | null;
 };
 
+/**
+ * Prefer curated flagship titles/descriptions over long Shopify Admin SEO
+ * fields that often truncate mid-phrase in SERPs. Shopify SEO still wins for
+ * accessories and non-flagship products when present.
+ */
 export function resolveProductSeo({
   handle,
   productTitle,
@@ -59,14 +64,14 @@ export function resolveProductSeo({
   const content = getProductContent(handle);
 
   const title =
-    seoTitle?.trim() ||
     curated?.title ||
+    seoTitle?.trim() ||
     content?.displayName ||
     productTitle;
 
   const description =
-    seoDescription?.trim() ||
     curated?.description ||
+    seoDescription?.trim() ||
     content?.overview ||
     productDescription?.trim() ||
     `Buy ${productTitle} from Mobility Robot, the official UK XSTO store. Free UK delivery and full warranty.`;

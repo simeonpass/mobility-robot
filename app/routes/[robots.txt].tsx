@@ -64,12 +64,9 @@ Disallow: /*/collections/*+*
 Disallow: /*/collections/*%2B*
 Disallow: /*/collections/*%2b*
 Disallow: /*/collections/*filter*&*filter*
-Disallow: /blogs/*+*
-Disallow: /blogs/*%2B*
-Disallow: /blogs/*%2b*
-Disallow: /*/blogs/*+*
-Disallow: /*/blogs/*%2B*
-Disallow: /*/blogs/*%2b*
+Disallow: /blogs/
+Disallow: /articles/
+Disallow: /pages/
 Disallow: /policies/
 Disallow: /search
 Allow: /search/

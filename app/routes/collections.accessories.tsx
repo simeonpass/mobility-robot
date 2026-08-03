@@ -11,13 +11,11 @@ import {
 } from '~/lib/accessories';
 import {buildMeta, breadcrumbJsonLd, itemListJsonLd} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  const title = data?.collection?.title || 'Wheelchair Accessories';
+export const meta: Route.MetaFunction = () => {
   return buildMeta({
-    title,
+    title: 'XSTO Wheelchair Accessories UK',
     description:
-      data?.collection?.description ||
-      'Shop XSTO wheelchair accessories by chair compatibility — M4, M4B, M4 Pro, X12 and X12 Pro. Free UK delivery from the official UK distributor.',
+      'Shop official XSTO wheelchair accessories by chair — bags, batteries, headrests, controllers and more for M4, M4B, M4 Pro, X12 and X12 Pro. Free UK delivery.',
     path: '/collections/accessories',
   });
 };

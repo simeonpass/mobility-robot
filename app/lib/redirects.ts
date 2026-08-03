@@ -11,6 +11,13 @@ import {
  * Preferred: Shopify Admin custom domains + DNS so xsto.co.uk 301s to
  * mobilityrobot.co.uk before traffic hits Oxygen.
  *
+ * Google Search Console "Page with redirect" after the cutover:
+ * - Expected for the OLD property (xsto.co.uk URLs → mobilityrobot.co.uk).
+ * - On the NEW property, avoid listing redirecting URLs in sitemaps
+ *   (/pages/*, /articles/*, /blogs/*, duplicate collections). Use Change of
+ *   Address from xsto.co.uk → mobilityrobot.co.uk and submit the cleaned
+ *   sitemap.xml.
+ *
  * Fallback: if this Hydrogen app still receives a legacy host below,
  * `resolveHostRedirect` / `legacyRedirect` issue a 301 to SITE_URL.
  *
@@ -22,8 +29,10 @@ import {
  *   /pages/returns → /returns
  *   /pages/privacy → /privacy
  *   /pages/terms → /terms
- *   /pages/stockists|/pages/dealers → /stockists
+ *   /pages/stockists|/pages/dealers|/pages/store-locator → /stockists
+ *   /pages/request-a-demo → /demo
  *   /blogs/news → /blog
+ *   /articles/:handle → /blog/:handle
  *   /products/xsto-* short handles → current Shopify product handles
  */
 
@@ -45,12 +54,18 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/pages/stockists': '/stockists',
   '/pages/dealers': '/stockists',
   '/pages/find-a-dealer': '/stockists',
+  '/pages/store-locator': '/stockists',
+  '/pages/request-a-demo': '/demo',
   '/pages/distributor-disclaimer': '/terms',
   '/collections/mobility-scooters': '/collections/all',
   '/collections/all-products': '/collections/all',
+  '/collections/frontpage': '/collections/all',
+  '/collections/our-products': '/collections/all',
+  '/collections/vat-relief-eligible': '/vat-relief',
   '/blogs/news': '/blog',
   '/track-order': '/account/orders',
   '/index.html': '/',
+  '/products/test-product': '/collections/all',
 
   // Lovable xsto.co.uk sitemap paths (pre-Hydrogen)
   '/accessories': '/collections/accessories',
@@ -148,6 +163,27 @@ export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | 
   if (blogMatch) {
     return {
       destination: `/blog/${blogMatch[1]}`,
+      cacheControl: LEGACY_REDIRECT_CACHE_CONTROL,
+    };
+  }
+
+  // Shopify Online Store article URLs → Hydrogen /blog/:handle
+  const articleMatch = pathname.match(/^\/articles\/([^/]+)$/);
+  if (articleMatch) {
+    return {
+      destination: `/blog/${articleMatch[1]}`,
+      cacheControl: LEGACY_REDIRECT_CACHE_CONTROL,
+    };
+  }
+
+  // Thin local SEO doorway pages from the previous Online Store
+  if (
+    /^\/pages\/(?:mobility-wheelchair-in-|heavy-duty-power-chair-in-|electric-wheelchair-with-elevating-seat-in-)/.test(
+      pathname,
+    )
+  ) {
+    return {
+      destination: '/stockists',
       cacheControl: LEGACY_REDIRECT_CACHE_CONTROL,
     };
   }

@@ -6,7 +6,13 @@ import {
   urlWithTrackingParams,
   type PredictiveSearchReturn,
 } from '~/lib/search';
+import {LEGACY_REDIRECTS} from '~/lib/redirects';
 import {useAside} from './Aside';
+
+function canonicalPagePath(handle: string) {
+  const legacy = `/pages/${handle}`;
+  return LEGACY_REDIRECTS[legacy] ?? legacy;
+}
 
 type PredictiveSearchItems = PredictiveSearchReturn['result']['items'];
 
@@ -93,7 +99,7 @@ function SearchResultsPredictiveArticles({
       <ul>
         {articles.map((article) => {
           const articleUrl = urlWithTrackingParams({
-            baseUrl: `/blogs/${article.blog.handle}/${article.handle}`,
+            baseUrl: `/blog/${article.handle}`,
             trackingParams: article.trackingParameters,
             term: term.current ?? '',
           });
@@ -175,7 +181,7 @@ function SearchResultsPredictivePages({
       <ul>
         {pages.map((page) => {
           const pageUrl = urlWithTrackingParams({
-            baseUrl: `/pages/${page.handle}`,
+            baseUrl: canonicalPagePath(page.handle),
             trackingParams: page.trackingParameters,
             term: term.current,
           });
