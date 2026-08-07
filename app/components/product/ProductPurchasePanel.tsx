@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {Link} from 'react-router';
 import {BadgePercent, Check, Pencil} from 'lucide-react';
 import type {MappedProductOptions, OptimisticCartLineInput} from '@shopify/hydrogen';
@@ -17,7 +17,7 @@ import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions'
 import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
-import {getDeliveryInfo} from '~/lib/product-delivery';
+import {getDeliveryInfo, isForcedPreorder} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
   getExVatDisplay,
@@ -66,8 +66,9 @@ export function ProductPurchasePanel({
     () => new Set(),
   );
   const [paymentChoice, setPaymentChoice] = useState<'full' | 'deposit'>(
-    'full',
+    () => (isForcedPreorder(productHandle) ? 'deposit' : 'full'),
   );
+  const paymentChoiceTouched = useRef(false);
 
   const price = selectedVariant?.price;
   const compareAtPrice = selectedVariant?.compareAtPrice;
@@ -98,10 +99,24 @@ export function ProductPurchasePanel({
   const hasDepositOption = Boolean(depositOption);
 
   useEffect(() => {
-    if (!hasDepositOption && paymentChoice === 'deposit') {
-      setPaymentChoice('full');
+    if (!hasDepositOption) {
+      if (paymentChoice === 'deposit') setPaymentChoice('full');
+      return;
     }
-  }, [hasDepositOption, paymentChoice]);
+    // Prefer deposit for forced pre-order chairs until the shopper picks otherwise.
+    if (
+      !paymentChoiceTouched.current &&
+      isForcedPreorder(productHandle) &&
+      paymentChoice !== 'deposit'
+    ) {
+      setPaymentChoice('deposit');
+    }
+  }, [hasDepositOption, paymentChoice, productHandle]);
+
+  const handlePaymentChoiceChange = (value: 'full' | 'deposit') => {
+    paymentChoiceTouched.current = true;
+    setPaymentChoice(value);
+  };
 
   const selectedSellingPlanId =
     paymentChoice === 'deposit' ? depositOption?.sellingPlanId : null;
@@ -254,7 +269,7 @@ export function ProductPurchasePanel({
                 ? depositOption.name
                 : 'Pay 10% deposit'
             }
-            onChange={setPaymentChoice}
+            onChange={handlePaymentChoiceChange}
             remainingAmountLabel={depositOption.remainingDisplay}
             value={paymentChoice}
           />

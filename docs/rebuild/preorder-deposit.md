@@ -4,20 +4,21 @@ Hydrogen already supports **pay in full** vs **pay 10% deposit** when variants e
 
 | Product | Handle | ETA |
 |---------|--------|-----|
-| X12 | `x12-all-terrain-mobility-robot` | ~10 weeks |
-| X12 Pro | `xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | ~10 weeks |
+| X12 | `x12-all-terrain-mobility-robot` | 8–10 weeks (forced pre-order) |
+| X12 Pro | `xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | 8–10 weeks (forced pre-order) |
 
-Without the Admin steps below, OOS chairs stay **Sold out**, and the deposit radio stays hidden.
+Without the Admin steps below, OOS chairs stay **Sold out**, and the deposit radio stays hidden. Storefront messaging still shows **Pre-order** for both models even if Shopify still has inventory.
 
 ## 1. Continue selling when out of stock (required for X12 / X12 Pro)
 
 For **X12** and **X12 Pro**:
 
 1. Shopify Admin → **Products** → open the product
-2. **Inventory** → enable **Continue selling when out of stock** (per variant if multi-variant)
-3. Save
+2. **Inventory** → set quantity to **0** (so checkout cannot ship from phantom stock)
+3. Enable **Continue selling when out of stock** (per variant if multi-variant)
+4. Save
 
-Storefront rule: `availableForSale && quantityAvailable === 0` → **Pre-order**. If continue-selling is off, ATC stays sold out.
+Storefront rule: forced pre-order slots (X12 + X12 Pro) always show **Pre-order · 8–10 weeks**. `availableForSale && quantityAvailable === 0` also maps other products to pre-order. If continue-selling is off and qty is 0, ATC stays sold out.
 
 ## 2. Create a 10% deposit selling plan group
 
@@ -137,7 +138,7 @@ npm run dev
 
 | URL | Expect |
 |-----|--------|
-| `/products/x12-all-terrain-mobility-robot` | Pre-order ~10 weeks (after continue-selling); deposit option if plan assigned |
+| `/products/x12-all-terrain-mobility-robot` | Pre-order 8–10 weeks (forced); deposit option if plan assigned |
 | `/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | Same as X12 |
 | `/cart` | Pre-order ETA from longest lead-time line; deposit badge on deposit lines |
 

@@ -19,8 +19,8 @@ export type DeliveryInfo = {
 export const DEFAULT_PREORDER_WEEKS = 12;
 
 /**
- * Per-product pre-order ETA (weeks). Keys are Shopify product handles
- * and homepage slot aliases resolved via getHomepageProductSlot.
+ * Per-product pre-order ETA (upper-bound weeks for date estimates / cart sorting).
+ * Keys are Shopify product handles and homepage slot aliases.
  * Used when a product is available for sale but qty is 0 (continue selling),
  * or when the handle is in FORCE_PREORDER_SLOTS.
  */
@@ -31,14 +31,23 @@ export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
   'xsto-x12-pro': 10,
 };
 
+/** Customer-facing lead-time labels (prefer ranges over a single week count). */
+export const PREORDER_WEEKS_LABEL_BY_HANDLE: Record<string, string> = {
+  'x12-all-terrain-mobility-robot': '8–10 weeks',
+  'xsto-x12': '8–10 weeks',
+  'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition':
+    '8–10 weeks',
+  'xsto-x12-pro': '8–10 weeks',
+};
+
 /**
  * Slot handles that always show as pre-order, even with Shopify stock.
- * X12 is inventory-driven (in stock when qty > 0); X12 Pro stays forced.
+ * X12 and X12 Pro are both build-to-order (~8–10 weeks, 10% deposit).
  */
-const FORCE_PREORDER_SLOTS = new Set(['xsto-x12-pro']);
+const FORCE_PREORDER_SLOTS = new Set(['xsto-x12', 'xsto-x12-pro']);
 
 /** Slot handles that show a "Very low stock" urgency alert when available. */
-const FORCE_LOW_STOCK_SLOTS = new Set(['xsto-x12']);
+const FORCE_LOW_STOCK_SLOTS = new Set<string>();
 
 export function isForcedPreorder(handle?: string | null): boolean {
   if (!handle) return false;
@@ -46,6 +55,7 @@ export function isForcedPreorder(handle?: string | null): boolean {
   if (slot != null && FORCE_PREORDER_SLOTS.has(slot)) return true;
   // Direct Shopify handles that map to forced slots but may not resolve via slot
   if (
+    handle === 'x12-all-terrain-mobility-robot' ||
     handle === 'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'
   ) {
     return true;
@@ -57,7 +67,7 @@ export function isForcedLowStock(handle?: string | null): boolean {
   if (!handle) return false;
   const slot = getHomepageProductSlot(handle);
   if (slot != null && FORCE_LOW_STOCK_SLOTS.has(slot)) return true;
-  return handle === 'x12-all-terrain-mobility-robot';
+  return false;
 }
 
 export function getPreorderWeeks(handle?: string | null): number {
@@ -72,6 +82,20 @@ export function getPreorderWeeks(handle?: string | null): number {
   }
 
   return DEFAULT_PREORDER_WEEKS;
+}
+
+export function getPreorderWeeksLabel(handle?: string | null): string {
+  if (handle) {
+    const direct = PREORDER_WEEKS_LABEL_BY_HANDLE[handle];
+    if (direct) return direct;
+
+    const slot = getHomepageProductSlot(handle);
+    if (slot && PREORDER_WEEKS_LABEL_BY_HANDLE[slot]) {
+      return PREORDER_WEEKS_LABEL_BY_HANDLE[slot];
+    }
+  }
+
+  return formatPreorderWeeksLabel(getPreorderWeeks(handle));
 }
 
 export function getPreorderDeliveryDate(
@@ -92,32 +116,20 @@ export const DEFAULT_IN_STOCK_DELIVERY_DAYS = '5–7 working days';
 
 /**
  * In-stock delivery ETA for chairs that ship in 3–4 working days
- * (M-series + X12 when available).
+ * (M-series only — X12 range is pre-order).
  */
 export const FAST_IN_STOCK_DELIVERY_DAYS = '3–4 working days';
 
 /** @deprecated Use FAST_IN_STOCK_DELIVERY_DAYS */
 export const M_SERIES_IN_STOCK_DELIVERY_DAYS = FAST_IN_STOCK_DELIVERY_DAYS;
 
-const FAST_IN_STOCK_SLOTS = new Set([
-  'xsto-m4',
-  'xsto-m4b',
-  'xsto-m4-pro',
-  'xsto-x12',
-]);
+const FAST_IN_STOCK_SLOTS = new Set(['xsto-m4', 'xsto-m4b', 'xsto-m4-pro']);
 
 export function getInStockDeliveryDays(handle?: string | null): string {
   if (!handle) return DEFAULT_IN_STOCK_DELIVERY_DAYS;
 
   const slot = getHomepageProductSlot(handle);
   if (slot && FAST_IN_STOCK_SLOTS.has(slot)) {
-    return FAST_IN_STOCK_DELIVERY_DAYS;
-  }
-
-  if (
-    handle === 'x12-all-terrain-mobility-robot' ||
-    handle === 'xsto-x12'
-  ) {
     return FAST_IN_STOCK_DELIVERY_DAYS;
   }
 
@@ -151,14 +163,14 @@ export function getDeliveryInfo({
     };
   }
 
-  // X12 Pro: always pre-order regardless of Shopify qty.
+  // X12 / X12 Pro: always pre-order regardless of Shopify qty.
   if (isForcedPreorder(handle)) {
     const weeks = getPreorderWeeks(handle);
-    const weeksLabel = formatPreorderWeeksLabel(weeks);
+    const weeksLabel = getPreorderWeeksLabel(handle);
     return {
       status: 'preorder',
       headline: 'Pre-order',
-      detail: `Estimated delivery ${weeksLabel}`,
+      detail: `Estimated delivery ${weeksLabel} · 10% deposit available`,
       etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
       preorderWeeks: weeks,
     };
@@ -188,7 +200,7 @@ export function getDeliveryInfo({
   }
 
   const weeks = getPreorderWeeks(handle);
-  const weeksLabel = formatPreorderWeeksLabel(weeks);
+  const weeksLabel = getPreorderWeeksLabel(handle);
 
   return {
     status: 'preorder',

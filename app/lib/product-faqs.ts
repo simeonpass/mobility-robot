@@ -161,7 +161,7 @@ export const x12FAQs: ProductFAQ[] = [
   {
     question: 'Is the X12 available to buy now?',
     answer:
-      'When the X12 is in stock, you can buy it for delivery in about 3–4 working days (UK mainland). If it is temporarily out of stock, pre-order is available with an estimated build time of around 10 weeks — pay in full or place a 10% deposit; the remaining balance is due before dispatch. Availability is shown on the product page.',
+      'The X12 and X12 Pro are currently available by pre-order only. Estimated delivery is about 8–10 weeks. You can pay in full or place a 10% deposit to reserve your place in the build queue; the remaining balance is due before dispatch.',
   },
   {
     question: "What's included in the box with the X12?",
@@ -230,7 +230,7 @@ export const generalFAQs: ProductFAQ[] = [
   {
     question: 'How soon will my order arrive?',
     answer:
-      'In-stock M4, M4B and M4 Pro: free UK mainland delivery in 3–4 working days. Other in-stock models typically arrive in 5–7 working days. Pre-order items (such as the X12 range) ship when available — estimated delivery is shown on each product page.',
+      'In-stock M4, M4B and M4 Pro: free UK mainland delivery in 3–4 working days. Other in-stock models typically arrive in 5–7 working days. X12 and X12 Pro are pre-order only (about 8–10 weeks) with an optional 10% deposit — details are shown on each product page.',
   },
   {
     question: 'Who provides UK customer support?',
