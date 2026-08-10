@@ -26,3 +26,16 @@ Hydrogen cannot use the Online Store Inbox **app embed** automatically.
 
 - Hidden on `/account/*` and `/checkout`.
 - Not gated by the cookie banner.
+
+## Merchant notification links
+
+Inbox / “new customer message” emails often include product URLs on the permanent
+shop host (`https://f7vjea-hq.myshopify.com/products/...`). That host still
+serves the **old Liquid Online Store**, not Hydrogen.
+
+Until Online Store is password-protected (or redirected), open the same path on
+the canonical site instead:
+
+`https://mobilityrobot.co.uk/products/<handle>`
+
+See `phase-8-deploy.md` → “Kill the old Online Store on `*.myshopify.com`”.
