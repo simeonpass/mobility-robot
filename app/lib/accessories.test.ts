@@ -24,6 +24,15 @@ describe('resolveAccessoryCompatibility', () => {
     ).toEqual(['xsto-m4', 'xsto-m4b']);
   });
 
+  it('maps rear covers to M4 and M4B', () => {
+    expect(
+      resolveAccessoryCompatibility({
+        handle: 'rear-cover-barbie-pink',
+        title: 'XSTO M4 / M4B Rear Cover — Barbie Pink',
+      }),
+    ).toEqual(['xsto-m4', 'xsto-m4b']);
+  });
+
   it('maps high back rest / neck support to M4 and M4B only', () => {
     expect(
       resolveAccessoryCompatibility({

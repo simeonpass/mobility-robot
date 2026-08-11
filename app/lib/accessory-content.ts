@@ -76,6 +76,76 @@ export const ACCESSORY_DESCRIPTION_FALLBACKS: Record<
       'Complements the X12 seating package',
     ],
   },
+  'rear-cover-tiffany-blue': {
+    overview:
+      'Snap-on Tiffany Blue rear cover (colour backplate) for the XSTO M4 and M4B. A simple way to personalise the back of the chair without changing the frame.',
+    highlights: [
+      'Colour: Tiffany Blue',
+      'Fits XSTO M4 and M4B',
+      'Snap-on colour backplate',
+      'Lightweight personalisation accessory',
+    ],
+  },
+  'rear-cover-sparkling-yellow': {
+    overview:
+      'Snap-on Sparkling Yellow rear cover (colour backplate) for the XSTO M4 and M4B. Brighten the chair’s rear profile with an official colour shell.',
+    highlights: [
+      'Colour: Sparkling Yellow',
+      'Fits XSTO M4 and M4B',
+      'Snap-on colour backplate',
+      'Lightweight personalisation accessory',
+    ],
+  },
+  'rear-cover-barbie-pink': {
+    overview:
+      'Snap-on Barbie Pink rear cover (colour backplate) for the XSTO M4 and M4B. A bold colour option for customers who want a distinctive finish.',
+    highlights: [
+      'Colour: Barbie Pink',
+      'Fits XSTO M4 and M4B',
+      'Snap-on colour backplate',
+      'Lightweight personalisation accessory',
+    ],
+  },
+  'rear-cover-pearl-white': {
+    overview:
+      'Snap-on Pearl White rear cover (colour backplate) for the XSTO M4 and M4B. A clean, bright finish that keeps the chair looking sharp.',
+    highlights: [
+      'Colour: Pearl White',
+      'Fits XSTO M4 and M4B',
+      'Snap-on colour backplate',
+      'Lightweight personalisation accessory',
+    ],
+  },
+  'rear-cover-burgundy-red': {
+    overview:
+      'Snap-on Burgundy Red rear cover (colour backplate) for the XSTO M4 and M4B. A deep red accent for everyday personalisation.',
+    highlights: [
+      'Colour: Burgundy Red',
+      'Fits XSTO M4 and M4B',
+      'Snap-on colour backplate',
+      'Lightweight personalisation accessory',
+    ],
+  },
+  'rear-cover-blue-enamel': {
+    overview:
+      'Snap-on Blue Enamel rear cover (colour backplate) for the XSTO M4 and M4B. Classic blue personalisation for the M4-platform rear shell.',
+    highlights: [
+      'Colour: Blue Enamel',
+      'Fits XSTO M4 and M4B',
+      'Snap-on colour backplate',
+      'Lightweight personalisation accessory',
+    ],
+  },
+  'rear-cover-superior-purple': {
+    overview:
+      'Snap-on Superior Purple rear cover (colour backplate) for the XSTO M4 and M4B. A distinctive purple finish for the rear of the chair.',
+    highlights: [
+      'Colour: Superior Purple',
+      'Fits XSTO M4 and M4B',
+      'Snap-on colour backplate',
+      'Lightweight personalisation accessory',
+    ],
+  },
 };
 
 const ACCESSORY_DELIVERY = `Accessories typically ship with free UK mainland delivery when ordered with an XSTO wheelchair, or as a standalone spare.
