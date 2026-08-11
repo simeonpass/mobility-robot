@@ -24,6 +24,16 @@ describe('resolveAccessoryCompatibility', () => {
     ).toEqual(['xsto-m4', 'xsto-m4b']);
   });
 
+  it('maps rear covers to M4 and M4B even when Shopify only tags m4', () => {
+    expect(
+      resolveAccessoryCompatibility({
+        handle: 'rear-cover-m4',
+        title: 'Rear Cover — M4',
+        tags: ['rear-cover', 'm4', 'colour', 'accessory'],
+      }),
+    ).toEqual(['xsto-m4', 'xsto-m4b']);
+  });
+
   it('maps high back rest / neck support to M4 and M4B only', () => {
     expect(
       resolveAccessoryCompatibility({

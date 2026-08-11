@@ -28,6 +28,7 @@ export const LIVE_ACCESSORY_HANDLES = [
   'lithium-10-4ah-battery-batteries-lithium-battery',
   'batteries-lithium-battery-15-6ah-battery',
   'calf-support-set-for-x12-x12pro',
+  'rear-cover-m4',
 ] as const;
 
 const LIVE_ACCESSORY_TITLES: Record<(typeof LIVE_ACCESSORY_HANDLES)[number], string> =
@@ -50,6 +51,7 @@ const LIVE_ACCESSORY_TITLES: Record<(typeof LIVE_ACCESSORY_HANDLES)[number], str
       'Airline Compliant 10.4AH Lithium Battery',
     'batteries-lithium-battery-15-6ah-battery': '15.6Ah Lithium Battery Pack',
     'calf-support-set-for-x12-x12pro': 'Calf Support Set for X12/X12Pro',
+    'rear-cover-m4': 'Rear Cover — M4',
   };
 
 const CHAIR_DISPLAY_NAMES = [

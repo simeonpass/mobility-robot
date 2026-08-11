@@ -19,6 +19,7 @@ import {ProductReviews} from '~/components/product/ProductReviews';
 import {
   ACCESSORIES_COLLECTION_HANDLE,
   isAccessoryCompatibleWithChair,
+  mergeAccessoryProducts,
 } from '~/lib/accessories';
 import {isAccessoryProduct} from '~/lib/cart-utils';
 import {
@@ -116,11 +117,18 @@ async function loadAccessoryAddons(
   if (isAccessoryProduct(productHandle)) return [];
 
   const {storefront} = context;
-  const data = await storefront.query(ACCESSORY_ADDONS_QUERY, {
-    variables: {handle: ACCESSORIES_COLLECTION_HANDLE},
-  });
+  const [collectionData, forcedData] = await Promise.all([
+    storefront.query(ACCESSORY_ADDONS_QUERY, {
+      variables: {handle: ACCESSORIES_COLLECTION_HANDLE},
+    }),
+    storefront.query(FORCED_ADDON_PRODUCTS_QUERY),
+  ]);
 
-  const nodes = data?.collection?.products?.nodes ?? [];
+  const nodes = mergeAccessoryProducts(
+    collectionData?.collection?.products?.nodes ?? [],
+    [forcedData?.rearCoverM4],
+  );
+
   return nodes
     .filter(
       (product: (typeof nodes)[number]) =>
@@ -548,6 +556,47 @@ const ACCESSORY_ADDONS_QUERY = `#graphql
               handle
             }
           }
+        }
+      }
+    }
+  }
+` as const;
+
+const FORCED_ADDON_PRODUCTS_QUERY = `#graphql
+  query ForcedAddonProducts($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    rearCoverM4: product(handle: "rear-cover-m4") {
+      id
+      handle
+      title
+      tags
+      featuredImage {
+        id
+        url
+        altText
+        width
+        height
+      }
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      selectedOrFirstAvailableVariant {
+        id
+        availableForSale
+        price {
+          amount
+          currencyCode
+        }
+        image {
+          url
+          altText
+        }
+        product {
+          title
+          handle
         }
       }
     }

@@ -76,6 +76,16 @@ export const ACCESSORY_DESCRIPTION_FALLBACKS: Record<
       'Complements the X12 seating package',
     ],
   },
+  'rear-cover-m4': {
+    overview:
+      'Interchangeable rear cover for the XSTO M4 and M4B — personalise your chair with a splash of colour. Choose from seven finishes including Barbie Pink, Tiffany Blue, Pearl White, Burgundy Red, Blue Enamel, Sparkling Yellow and Superior Purple.',
+    highlights: [
+      'Fits XSTO M4 and M4B',
+      'Seven colour finishes to choose from',
+      'Snap-on colour backplate for everyday personalisation',
+      'Lightweight accessory — ships as a spare / add-on',
+    ],
+  },
 };
 
 const ACCESSORY_DELIVERY = `Accessories typically ship with free UK mainland delivery when ordered with an XSTO wheelchair, or as a standalone spare.
