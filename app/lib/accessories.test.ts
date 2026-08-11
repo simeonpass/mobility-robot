@@ -1,11 +1,22 @@
 import {describe, expect, it} from 'vitest';
 import {
   formatCompatibilityLabel,
+  prioritizeAccessoryAddons,
   resolveAccessoryCompatibility,
 } from '~/lib/accessories';
 
 describe('resolveAccessoryCompatibility', () => {
-  it('prefers Shopify tags when present', () => {
+  it('prefers curated handle map over incomplete tags', () => {
+    expect(
+      resolveAccessoryCompatibility({
+        handle: 'rear-cover-m4',
+        title: 'Rear Cover — M4',
+        tags: ['rear-cover', 'm4', 'colour', 'accessory'],
+      }),
+    ).toEqual(['xsto-m4', 'xsto-m4b']);
+  });
+
+  it('uses Shopify tags when no curated handle match', () => {
     expect(
       resolveAccessoryCompatibility({
         handle: 'mystery-part',
@@ -20,16 +31,6 @@ describe('resolveAccessoryCompatibility', () => {
       resolveAccessoryCompatibility({
         handle: 'armrest-bag',
         title: 'Armrest Bag',
-      }),
-    ).toEqual(['xsto-m4', 'xsto-m4b']);
-  });
-
-  it('maps rear covers to M4 and M4B even when Shopify only tags m4', () => {
-    expect(
-      resolveAccessoryCompatibility({
-        handle: 'rear-cover-m4',
-        title: 'Rear Cover — M4',
-        tags: ['rear-cover', 'm4', 'colour', 'accessory'],
       }),
     ).toEqual(['xsto-m4', 'xsto-m4b']);
   });
@@ -56,5 +57,17 @@ describe('resolveAccessoryCompatibility', () => {
     expect(
       formatCompatibilityLabel(['xsto-m4', 'xsto-m4b', 'xsto-m4-pro']),
     ).toBe('Fits M4, M4B & M4 Pro');
+  });
+});
+
+describe('prioritizeAccessoryAddons', () => {
+  it('puts featured addons first', () => {
+    expect(
+      prioritizeAccessoryAddons([
+        {handle: 'armrest-bag'},
+        {handle: 'rear-cover-m4'},
+        {handle: 'flashlight-holder'},
+      ]).map((product) => product.handle),
+    ).toEqual(['rear-cover-m4', 'armrest-bag', 'flashlight-holder']);
   });
 });
