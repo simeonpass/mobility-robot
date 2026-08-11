@@ -136,8 +136,13 @@ export function ProductPurchasePanel({
   const addonLines = useMemo(() => {
     const lines: OptimisticCartLineInput[] = [];
     for (const product of accessoryAddons) {
-      const variant = product.selectedOrFirstAvailableVariant;
-      if (!variant?.id || !selectedAddonIds.has(variant.id)) continue;
+      const variants =
+        product.variants?.nodes?.filter((variant) => variant.availableForSale) ??
+        (product.selectedOrFirstAvailableVariant?.availableForSale
+          ? [product.selectedOrFirstAvailableVariant]
+          : []);
+      const variant = variants.find((item) => selectedAddonIds.has(item.id));
+      if (!variant?.id) continue;
       lines.push({
         merchandiseId: variant.id,
         quantity: 1,
@@ -215,6 +220,18 @@ export function ProductPurchasePanel({
     });
   };
 
+  const selectAddonVariant = (
+    previousVariantId: string | null,
+    nextVariantId: string,
+  ) => {
+    setSelectedAddonIds((prev) => {
+      const next = new Set(prev);
+      if (previousVariantId) next.delete(previousVariantId);
+      next.add(nextVariantId);
+      return next;
+    });
+  };
+
   return (
     <div className="product-buy-box lg:sticky lg:top-24">
       <header className="mb-3 border-b border-border/70 pb-3 sm:mb-4 sm:pb-4">
@@ -288,18 +305,19 @@ export function ProductPurchasePanel({
           soldOutLabel={soldOutLabel}
         />
 
-        {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
-
-        <ProductTrustBadges productHandle={productHandle} />
-
         {accessoryAddons.length ? (
           <ProductAccessoryAddons
             chairLabel={displayName ?? title}
+            onSelectVariant={selectAddonVariant}
             onToggle={toggleAddon}
             products={accessoryAddons}
             selectedIds={selectedAddonIds}
           />
         ) : null}
+
+        {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
+
+        <ProductTrustBadges productHandle={productHandle} />
 
         <ProductCheckoutTrust
           klarnaInstallment={

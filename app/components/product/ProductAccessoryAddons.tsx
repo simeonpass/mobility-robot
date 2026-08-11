@@ -1,9 +1,35 @@
-import {useId, useState} from 'react';
+import {useId, useMemo, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {Link} from 'react-router';
 import {Check, ChevronDown} from 'lucide-react';
-import {formatCompatibilityLabel, resolveAccessoryCompatibility} from '~/lib/accessories';
+import {
+  FEATURED_ADDON_HANDLES,
+  formatCompatibilityLabel,
+  resolveAccessoryCompatibility,
+} from '~/lib/accessories';
 import {formatExVatPrice} from '~/lib/homepage-data';
+
+export type AddonVariant = {
+  id: string;
+  title: string;
+  availableForSale: boolean;
+  price: {
+    amount: string;
+    currencyCode: string;
+  };
+  image?: {
+    url: string;
+    altText?: string | null;
+  } | null;
+  selectedOptions?: Array<{
+    name: string;
+    value: string;
+  }> | null;
+  product?: {
+    title: string;
+    handle: string;
+  };
+};
 
 export type AddonProduct = {
   id: string;
@@ -23,44 +49,56 @@ export type AddonProduct = {
       currencyCode: string;
     };
   };
-  selectedOrFirstAvailableVariant?: {
-    id: string;
-    availableForSale: boolean;
-    price: {
-      amount: string;
-      currencyCode: string;
-    };
-    image?: {
-      url: string;
-      altText?: string | null;
-    } | null;
-    product?: {
-      title: string;
-      handle: string;
-    };
+  variants?: {
+    nodes: AddonVariant[];
   } | null;
+  selectedOrFirstAvailableVariant?: AddonVariant | null;
 };
 
 type ProductAccessoryAddonsProps = {
   products: AddonProduct[];
   selectedIds: Set<string>;
   onToggle: (variantId: string) => void;
+  onSelectVariant: (previousVariantId: string | null, nextVariantId: string) => void;
   chairLabel?: string;
 };
 
-const INITIAL_VISIBLE = 4;
+const INITIAL_VISIBLE = 5;
+
+function colourLabel(variant: AddonVariant): string {
+  const colourOption = variant.selectedOptions?.find((option) =>
+    /colour|color/i.test(option.name),
+  );
+  if (colourOption?.value) return colourOption.value;
+  if (variant.title && variant.title !== 'Default Title') return variant.title;
+  return 'Standard';
+}
+
+function availableVariants(product: AddonProduct): AddonVariant[] {
+  const nodes = product.variants?.nodes?.filter(
+    (variant) => variant.availableForSale,
+  );
+  if (nodes?.length) return nodes;
+  const fallback = product.selectedOrFirstAvailableVariant;
+  return fallback?.availableForSale ? [fallback] : [];
+}
 
 export function ProductAccessoryAddons({
   products,
   selectedIds,
   onToggle,
+  onSelectVariant,
   chairLabel,
 }: ProductAccessoryAddonsProps) {
   const headingId = useId();
   const [expanded, setExpanded] = useState(false);
+  const [colourByProduct, setColourByProduct] = useState<Record<string, string>>(
+    {},
+  );
 
-  const available = products.filter(
-    (product) => product.selectedOrFirstAvailableVariant?.availableForSale,
+  const available = useMemo(
+    () => products.filter((product) => availableVariants(product).length > 0),
+    [products],
   );
 
   if (!available.length) return null;
@@ -83,8 +121,8 @@ export function ProductAccessoryAddons({
           </h2>
           <p className="mt-0.5 text-[0.7rem] text-slate">
             {chairLabel
-              ? `Optional extras that fit ${chairLabel}`
-              : 'Optional extras for this chair'}
+              ? `Add a colour cover or other extras that fit ${chairLabel}`
+              : 'Add a colour cover or other optional extras'}
           </p>
         </div>
         {selectedIds.size > 0 ? (
@@ -96,26 +134,43 @@ export function ProductAccessoryAddons({
 
       <ul className="divide-y divide-border/60">
         {visible.map((product) => {
-          const variant = product.selectedOrFirstAvailableVariant;
+          const variants = availableVariants(product);
+          const selectedVariantFromSet = variants.find((variant) =>
+            selectedIds.has(variant.id),
+          );
+          const preferredVariantId =
+            colourByProduct[product.id] ??
+            selectedVariantFromSet?.id ??
+            variants[0]?.id;
+          const variant =
+            variants.find((item) => item.id === preferredVariantId) ??
+            variants[0];
           if (!variant?.id) return null;
 
           const checked = selectedIds.has(variant.id);
+          const isFeatured = FEATURED_ADDON_HANDLES.includes(
+            product.handle as (typeof FEATURED_ADDON_HANDLES)[number],
+          );
+          const hasColours = variants.length > 1;
           const exVat = formatExVatPrice(
             variant.price.amount,
             variant.price.currencyCode,
           );
           const slots = resolveAccessoryCompatibility(product);
-          const image = product.featuredImage ?? variant.image;
+          const image = variant.image ?? product.featuredImage;
 
           return (
-            <li key={product.id}>
-              <label
+            <li
+              className={isFeatured ? 'bg-navy/[0.02]' : undefined}
+              key={product.id}
+            >
+              <div
                 className={[
-                  'flex cursor-pointer items-center gap-2.5 px-3 py-2.5 transition-colors',
+                  'flex items-start gap-2.5 px-3 py-2.5 transition-colors',
                   checked ? 'bg-navy/[0.03]' : 'hover:bg-secondary/40',
                 ].join(' ')}
               >
-                <span className="relative flex size-4 shrink-0 items-center justify-center">
+                <label className="relative mt-0.5 flex size-4 shrink-0 cursor-pointer items-center justify-center">
                   <input
                     checked={checked}
                     className="peer sr-only"
@@ -135,10 +190,10 @@ export function ProductAccessoryAddons({
                       <Check className="size-2.5" strokeWidth={3} />
                     ) : null}
                   </span>
-                </span>
+                </label>
 
                 {image?.url ? (
-                  <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded bg-white ring-1 ring-border/70">
+                  <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center overflow-hidden rounded bg-white ring-1 ring-border/70">
                     <Image
                       alt={image.altText || product.title}
                       className="max-h-full w-full object-contain p-0.5"
@@ -153,29 +208,61 @@ export function ProductAccessoryAddons({
                   </span>
                 ) : null}
 
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[0.8125rem] font-medium leading-snug text-navy">
-                    {product.title}
-                  </span>
-                  <span className="mt-0.5 block truncate text-[0.65rem] text-slate">
-                    {formatCompatibilityLabel(slots)}
-                  </span>
-                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-[0.8125rem] font-medium leading-snug text-navy">
+                        {product.title}
+                      </p>
+                      <p className="mt-0.5 truncate text-[0.65rem] text-slate">
+                        {isFeatured
+                          ? 'Popular colour upgrade · '
+                          : ''}
+                        {formatCompatibilityLabel(slots)}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-[0.8125rem] font-semibold tabular-nums text-navy">
+                        {exVat}
+                      </p>
+                      <Link
+                        className="mt-0.5 block text-[0.65rem] font-medium text-slate underline-offset-2 hover:text-navy hover:underline"
+                        prefetch="intent"
+                        to={`/products/${product.handle}`}
+                      >
+                        Details
+                      </Link>
+                    </div>
+                  </div>
 
-                <span className="shrink-0 text-right">
-                  <span className="block text-[0.8125rem] font-semibold tabular-nums text-navy">
-                    {exVat}
-                  </span>
-                  <Link
-                    className="mt-0.5 block text-[0.65rem] font-medium text-slate underline-offset-2 hover:text-navy hover:underline"
-                    onClick={(event) => event.stopPropagation()}
-                    prefetch="intent"
-                    to={`/products/${product.handle}`}
-                  >
-                    Details
-                  </Link>
-                </span>
-              </label>
+                  {hasColours ? (
+                    <label className="mt-2 block">
+                      <span className="sr-only">Colour for {product.title}</span>
+                      <select
+                        className="w-full rounded-md border border-border bg-white px-2 py-1.5 text-[0.75rem] font-medium text-navy outline-none focus:border-navy"
+                        onChange={(event) => {
+                          const nextId = event.target.value;
+                          const previousId = selectedVariantFromSet?.id ?? null;
+                          setColourByProduct((prev) => ({
+                            ...prev,
+                            [product.id]: nextId,
+                          }));
+                          if (checked) {
+                            onSelectVariant(previousId, nextId);
+                          }
+                        }}
+                        value={variant.id}
+                      >
+                        {variants.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {colourLabel(option)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : null}
+                </div>
+              </div>
             </li>
           );
         })}

@@ -279,3 +279,30 @@ export function groupAccessoriesByChair<T extends CompatibilityInput>(
 }
 
 export const ACCESSORIES_COLLECTION_HANDLE = 'accessories';
+
+/** Handles shown first in “Frequently bought with” on chair PDPs. */
+export const FEATURED_ADDON_HANDLES = ['rear-cover-m4'] as const;
+
+/**
+ * Put featured accessories first, then the remaining compatible list.
+ */
+export function prioritizeAccessoryAddons<T extends {handle: string}>(
+  products: T[],
+  featuredHandles: readonly string[] = FEATURED_ADDON_HANDLES,
+): T[] {
+  const featured: T[] = [];
+  const rest: T[] = [];
+  const featuredSet = new Set(featuredHandles);
+
+  for (const product of products) {
+    if (featuredSet.has(product.handle)) featured.push(product);
+    else rest.push(product);
+  }
+
+  featured.sort(
+    (a, b) =>
+      featuredHandles.indexOf(a.handle) - featuredHandles.indexOf(b.handle),
+  );
+
+  return [...featured, ...rest];
+}

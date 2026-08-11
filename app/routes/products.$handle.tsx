@@ -20,6 +20,7 @@ import {
   ACCESSORIES_COLLECTION_HANDLE,
   isAccessoryCompatibleWithChair,
   mergeAccessoryProducts,
+  prioritizeAccessoryAddons,
 } from '~/lib/accessories';
 import {isAccessoryProduct} from '~/lib/cart-utils';
 import {
@@ -124,14 +125,12 @@ async function loadAccessoryAddons(
     storefront.query(FORCED_ADDON_PRODUCTS_QUERY),
   ]);
 
-  const nodes = mergeAccessoryProducts(
-    collectionData?.collection?.products?.nodes ?? [],
-    [forcedData?.rearCoverM4],
-  );
-
-  return nodes
-    .filter(
-      (product: (typeof nodes)[number]) =>
+  const nodes = prioritizeAccessoryAddons(
+    mergeAccessoryProducts(
+      collectionData?.collection?.products?.nodes ?? [],
+      [forcedData?.rearCoverM4],
+    ).filter(
+      (product: {handle: string; title: string; tags?: string[]}) =>
         isAccessoryCompatibleWithChair(
           {
             handle: product.handle,
@@ -140,12 +139,19 @@ async function loadAccessoryAddons(
           },
           productHandle,
         ),
-    )
+    ),
+  );
+
+  return nodes
     .filter(
       (product: (typeof nodes)[number]) =>
-        product.selectedOrFirstAvailableVariant?.availableForSale,
+        product.selectedOrFirstAvailableVariant?.availableForSale ||
+        product.variants?.nodes?.some(
+          (variant: {availableForSale?: boolean | null}) =>
+            variant.availableForSale,
+        ),
     )
-    .slice(0, 8);
+    .slice(0, 10);
 }
 
 export default function Product() {
@@ -514,77 +520,29 @@ const RELATED_PRODUCTS_QUERY = `#graphql
   }
 ` as const;
 
-const ACCESSORY_ADDONS_QUERY = `#graphql
-  query AccessoryAddons(
-    $handle: String!
-    $country: CountryCode
-    $language: LanguageCode
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      products(first: 50, sortKey: BEST_SELLING) {
-        nodes {
-          id
-          handle
-          title
-          tags
-          featuredImage {
-            id
-            url
-            altText
-            width
-            height
-          }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          selectedOrFirstAvailableVariant {
-            id
-            availableForSale
-            price {
-              amount
-              currencyCode
-            }
-            image {
-              url
-              altText
-            }
-            product {
-              title
-              handle
-            }
-          }
-        }
+const ADDON_PRODUCT_FIELDS = `#graphql
+  fragment AddonProductFields on Product {
+    id
+    handle
+    title
+    tags
+    featuredImage {
+      id
+      url
+      altText
+      width
+      height
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
       }
     }
-  }
-` as const;
-
-const FORCED_ADDON_PRODUCTS_QUERY = `#graphql
-  query ForcedAddonProducts($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    rearCoverM4: product(handle: "rear-cover-m4") {
-      id
-      handle
-      title
-      tags
-      featuredImage {
+    variants(first: 25) {
+      nodes {
         id
-        url
-        altText
-        width
-        height
-      }
-      priceRange {
-        minVariantPrice {
-          amount
-          currencyCode
-        }
-      }
-      selectedOrFirstAvailableVariant {
-        id
+        title
         availableForSale
         price {
           amount
@@ -594,11 +552,63 @@ const FORCED_ADDON_PRODUCTS_QUERY = `#graphql
           url
           altText
         }
+        selectedOptions {
+          name
+          value
+        }
         product {
           title
           handle
         }
       }
     }
+    selectedOrFirstAvailableVariant {
+      id
+      title
+      availableForSale
+      price {
+        amount
+        currencyCode
+      }
+      image {
+        url
+        altText
+      }
+      selectedOptions {
+        name
+        value
+      }
+      product {
+        title
+        handle
+      }
+    }
   }
+` as const;
+
+const ACCESSORY_ADDONS_QUERY = `#graphql
+  query AccessoryAddons(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      products(first: 50, sortKey: BEST_SELLING) {
+        nodes {
+          ...AddonProductFields
+        }
+      }
+    }
+  }
+  ${ADDON_PRODUCT_FIELDS}
+` as const;
+
+const FORCED_ADDON_PRODUCTS_QUERY = `#graphql
+  query ForcedAddonProducts($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    rearCoverM4: product(handle: "rear-cover-m4") {
+      ...AddonProductFields
+    }
+  }
+  ${ADDON_PRODUCT_FIELDS}
 ` as const;

@@ -14,6 +14,8 @@ There is already **one** Active product with 7 colour variants:
 
 Hydrogen maps this handle to **M4 + M4B** and injects it into Accessories / chair add-ons even if the product is not yet in the Accessories collection.
 
+On M4 and M4B product detail pages, **Rear Cover — M4** is pinned first in “Frequently bought with”, with a colour dropdown so shoppers can add a chosen colour with the chair.
+
 ## Optional Admin polish
 
 1. Shopify Admin → product **Rear Cover — M4** → **Collections** → add **Accessories**
