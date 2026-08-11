@@ -95,6 +95,14 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/products/seat-cushion-l': '/collections/accessories',
   '/products/backrest-cushion-m': '/collections/accessories',
   '/products/backrest-cushion-l': '/collections/accessories',
+  // Colour-specific rear-cover URLs → single Shopify product with colour variants
+  '/products/rear-cover-barbie-pink': '/products/rear-cover-m4',
+  '/products/rear-cover-blue-enamel': '/products/rear-cover-m4',
+  '/products/rear-cover-burgundy-red': '/products/rear-cover-m4',
+  '/products/rear-cover-pearl-white': '/products/rear-cover-m4',
+  '/products/rear-cover-sparkling-yellow': '/products/rear-cover-m4',
+  '/products/rear-cover-superior-purple': '/products/rear-cover-m4',
+  '/products/rear-cover-tiffany-blue': '/products/rear-cover-m4',
 };
 
 const PRODUCT_PREFIX_REDIRECTS: Array<{prefix: string; target: string}> = [

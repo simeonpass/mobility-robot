@@ -115,6 +115,8 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
   'lithium-15-6-ah-battery': ALL_M4_FAMILY,
   'phone-holder-for-m4': M4_AND_M4B,
   'power-chair-battery-charger': ALL_M4_FAMILY,
+  /** Live Shopify product: one listing with 7 colour variants. */
+  'rear-cover-m4': M4_AND_M4B,
   'rear-cover-barbie-pink': M4_AND_M4B,
   'rear-cover-blue-enamel': M4_AND_M4B,
   'rear-cover-burgundy-red': M4_AND_M4B,
@@ -192,21 +194,45 @@ function slotsFromTitle(title: string): AccessoryChairSlot[] | null {
   return null;
 }
 
+/** Handles that must appear in accessories UI even if missing from the collection. */
+export const FORCED_ACCESSORY_HANDLES = ['rear-cover-m4'] as const;
+
 /** Resolve which chairs an accessory fits. */
 export function resolveAccessoryCompatibility(
   product: CompatibilityInput,
 ): AccessoryChairSlot[] {
-  const fromTags = product.tags?.length ? slotsFromTags(product.tags) : [];
-  if (fromTags.length) return fromTags;
-
+  // Curated handles win over incomplete Shopify tags (e.g. tag "m4" alone).
   const fromHandle = ACCESSORY_COMPAT_BY_HANDLE[product.handle];
   if (fromHandle?.length) return uniqueSlots(fromHandle);
+
+  const fromTags = product.tags?.length ? slotsFromTags(product.tags) : [];
+  if (fromTags.length) return fromTags;
 
   const fromTitle = slotsFromTitle(product.title);
   if (fromTitle?.length) return uniqueSlots(fromTitle);
 
   // Catalogue default — most current accessories are M4-family.
   return ALL_M4_FAMILY;
+}
+
+/**
+ * Merge collection products with forced accessory handles (deduped by handle).
+ */
+export function mergeAccessoryProducts<T extends {handle: string}>(
+  collectionProducts: T[],
+  forcedProducts: Array<T | null | undefined>,
+): T[] {
+  const byHandle = new Map<string, T>();
+  for (const product of collectionProducts) {
+    byHandle.set(product.handle, product);
+  }
+  for (const product of forcedProducts) {
+    if (!product?.handle) continue;
+    if (!byHandle.has(product.handle)) {
+      byHandle.set(product.handle, product);
+    }
+  }
+  return Array.from(byHandle.values());
 }
 
 export function formatCompatibilityLabel(slots: AccessoryChairSlot[]): string {

@@ -7,6 +7,7 @@ import {Ga4CollectionView} from '~/components/Ga4CollectionView';
 import {
   ACCESSORIES_COLLECTION_HANDLE,
   ACCESSORY_CHAIR_SECTIONS,
+  mergeAccessoryProducts,
   type AccessoryChairSlot,
 } from '~/lib/accessories';
 import {buildMeta, breadcrumbJsonLd, itemListJsonLd} from '~/lib/seo';
@@ -29,17 +30,27 @@ export async function loader({context, request}: Route.LoaderArgs) {
 
   const activeSlot = resolveChairFilter(chairParam);
 
-  const {collection} = await storefront.query(ACCESSORIES_COLLECTION_QUERY, {
-    variables: {handle: ACCESSORIES_COLLECTION_HANDLE},
-  });
+  const [{collection}, forced] = await Promise.all([
+    storefront.query(ACCESSORIES_COLLECTION_QUERY, {
+      variables: {handle: ACCESSORIES_COLLECTION_HANDLE},
+    }),
+    storefront.query(FORCED_ACCESSORIES_QUERY),
+  ]);
 
   if (!collection) {
     throw new Response('Accessories collection not found', {status: 404});
   }
 
+  const forcedProducts = [forced?.rearCoverM4];
+
+  const products = mergeAccessoryProducts(
+    collection.products.nodes,
+    forcedProducts,
+  );
+
   return {
     collection,
-    products: collection.products.nodes,
+    products,
     activeSlot,
   };
 }
@@ -143,6 +154,31 @@ const ACCESSORIES_COLLECTION_QUERY = `#graphql
               currencyCode
             }
           }
+        }
+      }
+    }
+  }
+` as const;
+
+const FORCED_ACCESSORIES_QUERY = `#graphql
+  query ForcedAccessories($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    rearCoverM4: product(handle: "rear-cover-m4") {
+      id
+      handle
+      title
+      tags
+      featuredImage {
+        id
+        altText
+        url
+        width
+        height
+      }
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
         }
       }
     }
