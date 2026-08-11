@@ -15,6 +15,22 @@ export function formatProductPrice(
   }).format(amount);
 }
 
+export function sumMoneyV2(
+  amounts: Array<Pick<MoneyV2, 'amount' | 'currencyCode'> | null | undefined>,
+): MoneyV2 | null {
+  let total = 0;
+  let currencyCode: string | null = null;
+
+  for (const money of amounts) {
+    if (!money?.amount || !money.currencyCode) continue;
+    currencyCode ??= money.currencyCode;
+    total = roundMoney(total + Number(money.amount));
+  }
+
+  if (!currencyCode) return null;
+  return {amount: total.toFixed(2), currencyCode};
+}
+
 export function getIncVatDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
   return formatProductPrice(Number(price.amount), price.currencyCode);

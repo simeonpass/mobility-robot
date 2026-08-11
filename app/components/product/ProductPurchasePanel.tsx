@@ -20,10 +20,12 @@ import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import {getDeliveryInfo, isForcedPreorder} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
+  formatProductPrice,
   getExVatDisplay,
   getIncVatDisplay,
   getKlarnaInstallmentDisplay,
   getVatSavingsDisplay,
+  sumMoneyV2,
 } from '~/lib/product-pricing';
 import {
   buildPurchaseOptions,
@@ -31,6 +33,7 @@ import {
   withOptimisticSellingPlanAllocation,
   type SellingPlanAllocationNode,
 } from '~/lib/selling-plans';
+import {exVatFromGross} from '~/lib/vat-math';
 import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
 
 type ProductPurchasePanelProps = {
@@ -72,10 +75,6 @@ export function ProductPurchasePanel({
 
   const price = selectedVariant?.price;
   const compareAtPrice = selectedVariant?.compareAtPrice;
-  const incVatDisplay = getIncVatDisplay(price);
-  const exVatDisplay = getExVatDisplay(price);
-  const vatSavings = getVatSavingsDisplay(price);
-  const klarnaInstallment = getKlarnaInstallmentDisplay(price);
 
   const delivery = selectedVariant
     ? getDeliveryInfo({
@@ -153,12 +152,73 @@ export function ProductPurchasePanel({
   }, [accessoryAddons, selectedAddonIds]);
 
   const addonCount = addonLines.length;
+
+  const packagePrice = useMemo(
+    () =>
+      sumMoneyV2([
+        price,
+        ...addonLines.map(
+          (line) =>
+            (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
+              ?.price,
+        ),
+      ]),
+    [addonLines, price],
+  );
+
+  const dueTodayPrice = useMemo(() => {
+    if (paymentChoice === 'deposit' && depositOption?.checkoutCharge) {
+      return sumMoneyV2([
+        {
+          amount: depositOption.checkoutCharge.amount,
+          currencyCode:
+            depositOption.checkoutCharge.currencyCode ??
+            price?.currencyCode ??
+            'GBP',
+        },
+        ...addonLines.map(
+          (line) =>
+            (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
+              ?.price,
+        ),
+      ]);
+    }
+    return packagePrice;
+  }, [
+    addonLines,
+    depositOption,
+    packagePrice,
+    paymentChoice,
+    price?.currencyCode,
+  ]);
+
+  const incVatDisplay = getIncVatDisplay(packagePrice);
+  const exVatDisplay = getExVatDisplay(packagePrice);
+  const vatSavings = getVatSavingsDisplay(packagePrice);
+  const klarnaInstallment = getKlarnaInstallmentDisplay(packagePrice);
+  const activePriceDisplay =
+    productVatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
+
+  const dueTodayDisplay = useMemo(() => {
+    if (!dueTodayPrice) return null;
+    if (productVatReliefEnabled) {
+      return formatProductPrice(
+        exVatFromGross(dueTodayPrice.amount),
+        dueTodayPrice.currencyCode,
+        {fractionDigits: 2},
+      );
+    }
+    return paymentChoice === 'deposit'
+      ? formatProductPrice(
+          Number(dueTodayPrice.amount),
+          dueTodayPrice.currencyCode,
+          {fractionDigits: 2},
+        )
+      : getIncVatDisplay(dueTodayPrice);
+  }, [dueTodayPrice, paymentChoice, productVatReliefEnabled]);
+
   const priceForLabel =
-    paymentChoice === 'deposit' && depositOption
-      ? depositOption.depositDisplay
-      : productVatReliefEnabled && exVatDisplay
-        ? exVatDisplay
-        : incVatDisplay;
+    paymentChoice === 'deposit' ? dueTodayDisplay : activePriceDisplay;
   const baseLabel = priceForLabel
     ? paymentChoice === 'deposit'
       ? `Reserve with deposit — ${priceForLabel}`
@@ -168,7 +228,7 @@ export function ProductPurchasePanel({
       : 'Add to cart';
   const addToCartLabel =
     addonCount > 0
-      ? `${baseLabel} + ${addonCount} add-on${addonCount === 1 ? '' : 's'}`
+      ? `${baseLabel} · ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'}`
       : baseLabel;
 
   const soldOutLabel = selectedVariant?.availableForSale
@@ -198,18 +258,19 @@ export function ProductPurchasePanel({
       ]
     : [];
 
-  const stickyPrice =
-    paymentChoice === 'deposit' && depositOption
-      ? depositOption.depositDisplay
-      : productVatReliefEnabled && exVatDisplay
-        ? exVatDisplay
-        : incVatDisplay;
+  const stickyPrice = priceForLabel;
   const stickyPriceHint =
     paymentChoice === 'deposit'
-      ? '10% deposit due today'
-      : productVatReliefEnabled
-        ? 'VAT relief price'
-        : 'inc. VAT';
+      ? addonCount > 0
+        ? 'Deposit + accessories due today'
+        : '10% deposit due today'
+      : addonCount > 0
+        ? productVatReliefEnabled
+          ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · VAT relief`
+          : `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · inc. VAT`
+        : productVatReliefEnabled
+          ? 'VAT relief price'
+          : 'inc. VAT';
 
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
@@ -254,6 +315,7 @@ export function ProductPurchasePanel({
 
       <section aria-label="Pricing" className="product-price-card mb-3 sm:mb-4">
         <ProductPriceDisplay
+          addonCount={addonCount}
           compareAtPrice={compareAtPrice}
           exVatDisplay={exVatDisplay}
           incVatDisplay={incVatDisplay}
@@ -267,7 +329,7 @@ export function ProductPurchasePanel({
         exVatDisplay={exVatDisplay}
         onOpen={() =>
           openProductModal({
-            price: price ?? undefined,
+            price: packagePrice ?? price ?? undefined,
             initialEnabled: productVatReliefEnabled,
             initialDeclaration: declaration,
             onComplete: setProductVatRelief,
@@ -384,12 +446,14 @@ function ProductPriceDisplay({
   compareAtPrice,
   vatSavings,
   vatReliefEnabled,
+  addonCount,
 }: {
   incVatDisplay: string | null;
   exVatDisplay: string | null;
   compareAtPrice?: MoneyV2 | null;
   vatSavings: string | null;
   vatReliefEnabled: boolean;
+  addonCount: number;
 }) {
   if (!incVatDisplay) return null;
 
@@ -403,10 +467,11 @@ function ProductPriceDisplay({
             'font-display text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.04em] sm:text-[2rem] md:text-[2.15rem]',
             vatReliefEnabled ? 'text-vat-price' : 'text-navy',
           ].join(' ')}
+          key={`${primaryPrice}-${addonCount}`}
         >
           {primaryPrice}
         </p>
-        {compareAtPrice ? (
+        {compareAtPrice && addonCount === 0 ? (
           <p className="text-right text-[0.65rem] uppercase tracking-[0.12em] text-slate">
             <span className="block">RRP</span>
             <span className="text-sm font-medium normal-case tracking-normal line-through tabular-nums">
@@ -447,6 +512,13 @@ function ProductPriceDisplay({
           </>
         )}
       </p>
+
+      {addonCount > 0 ? (
+        <p className="mt-1.5 text-[0.75rem] font-medium text-primary">
+          Includes {addonCount} selected accessor
+          {addonCount === 1 ? 'y' : 'ies'}
+        </p>
+      ) : null}
     </div>
   );
 }
