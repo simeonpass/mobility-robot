@@ -280,7 +280,7 @@ export function groupAccessoriesByChair<T extends CompatibilityInput>(
 
 export const ACCESSORIES_COLLECTION_HANDLE = 'accessories';
 
-/** Handles shown first in “Frequently bought with” on chair PDPs. */
+/** Handles shown first in “Choose accessories” on chair PDPs. */
 export const FEATURED_ADDON_HANDLES = ['rear-cover-m4'] as const;
 
 /**

@@ -1,7 +1,7 @@
 import {useId, useMemo, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {Link} from 'react-router';
-import {Check, ChevronDown} from 'lucide-react';
+import {Check} from 'lucide-react';
 import {
   FEATURED_ADDON_HANDLES,
   formatCompatibilityLabel,
@@ -59,11 +59,12 @@ type ProductAccessoryAddonsProps = {
   products: AddonProduct[];
   selectedIds: Set<string>;
   onToggle: (variantId: string) => void;
-  onSelectVariant: (previousVariantId: string | null, nextVariantId: string) => void;
+  onSelectVariant: (
+    previousVariantId: string | null,
+    nextVariantId: string,
+  ) => void;
   chairLabel?: string;
 };
-
-const INITIAL_VISIBLE = 5;
 
 function colourLabel(variant: AddonVariant): string {
   const colourOption = variant.selectedOptions?.find((option) =>
@@ -91,7 +92,6 @@ export function ProductAccessoryAddons({
   chairLabel,
 }: ProductAccessoryAddonsProps) {
   const headingId = useId();
-  const [expanded, setExpanded] = useState(false);
   const [colourByProduct, setColourByProduct] = useState<Record<string, string>>(
     {},
   );
@@ -102,9 +102,6 @@ export function ProductAccessoryAddons({
   );
 
   if (!available.length) return null;
-
-  const visible = expanded ? available : available.slice(0, INITIAL_VISIBLE);
-  const hiddenCount = Math.max(0, available.length - INITIAL_VISIBLE);
 
   return (
     <section
@@ -117,12 +114,12 @@ export function ProductAccessoryAddons({
             className="text-xs font-semibold uppercase tracking-[0.14em] text-navy"
             id={headingId}
           >
-            Frequently bought with
+            Choose accessories
           </h2>
           <p className="mt-0.5 text-[0.7rem] text-slate">
             {chairLabel
-              ? `Add a colour cover or other extras that fit ${chairLabel}`
-              : 'Add a colour cover or other optional extras'}
+              ? `Optional extras that fit ${chairLabel}. Tick any you want to add.`
+              : 'Optional extras for this chair. Tick any you want to add.'}
           </p>
         </div>
         {selectedIds.size > 0 ? (
@@ -132,8 +129,8 @@ export function ProductAccessoryAddons({
         ) : null}
       </header>
 
-      <ul className="divide-y divide-border/60">
-        {visible.map((product) => {
+      <ul className="max-h-[min(28rem,55vh)] divide-y divide-border/60 overflow-y-auto overscroll-contain">
+        {available.map((product) => {
           const variants = availableVariants(product);
           const selectedVariantFromSet = variants.find((variant) =>
             selectedIds.has(variant.id),
@@ -215,9 +212,7 @@ export function ProductAccessoryAddons({
                         {product.title}
                       </p>
                       <p className="mt-0.5 truncate text-[0.65rem] text-slate">
-                        {isFeatured
-                          ? 'Popular colour upgrade · '
-                          : ''}
+                        {hasColours ? 'Choose a colour · ' : ''}
                         {formatCompatibilityLabel(slots)}
                       </p>
                     </div>
@@ -268,22 +263,15 @@ export function ProductAccessoryAddons({
         })}
       </ul>
 
-      {hiddenCount > 0 ? (
-        <button
-          className="flex w-full items-center justify-center gap-1 border-t border-border/70 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-navy transition-colors hover:bg-secondary/50"
-          onClick={() => setExpanded((value) => !value)}
-          type="button"
+      <div className="border-t border-border/70 px-3 py-2">
+        <Link
+          className="text-[0.7rem] font-semibold text-navy underline-offset-2 hover:underline"
+          prefetch="intent"
+          to="/collections/accessories"
         >
-          {expanded ? 'Show fewer' : `Show ${hiddenCount} more`}
-          <ChevronDown
-            aria-hidden
-            className={[
-              'size-3.5 transition-transform',
-              expanded ? 'rotate-180' : '',
-            ].join(' ')}
-          />
-        </button>
-      ) : null}
+          Browse full accessories catalogue
+        </Link>
+      </div>
     </section>
   );
 }

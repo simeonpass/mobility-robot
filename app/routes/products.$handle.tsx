@@ -142,16 +142,15 @@ async function loadAccessoryAddons(
     ),
   );
 
-  return nodes
-    .filter(
-      (product: (typeof nodes)[number]) =>
-        product.selectedOrFirstAvailableVariant?.availableForSale ||
-        product.variants?.nodes?.some(
-          (variant: {availableForSale?: boolean | null}) =>
-            variant.availableForSale,
-        ),
-    )
-    .slice(0, 10);
+  // All compatible accessories for this chair (no short “frequently bought” cap).
+  return nodes.filter(
+    (product: (typeof nodes)[number]) =>
+      product.selectedOrFirstAvailableVariant?.availableForSale ||
+      product.variants?.nodes?.some(
+        (variant: {availableForSale?: boolean | null}) =>
+          variant.availableForSale,
+      ),
+  );
 }
 
 export default function Product() {
@@ -593,7 +592,7 @@ const ACCESSORY_ADDONS_QUERY = `#graphql
     $language: LanguageCode
   ) @inContext(country: $country, language: $language) {
     collection(handle: $handle) {
-      products(first: 50, sortKey: BEST_SELLING) {
+      products(first: 100, sortKey: BEST_SELLING) {
         nodes {
           ...AddonProductFields
         }

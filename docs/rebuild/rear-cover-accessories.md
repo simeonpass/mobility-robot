@@ -14,7 +14,7 @@ There is already **one** Active product with 7 colour variants:
 
 Hydrogen maps this handle to **M4 + M4B** and injects it into Accessories / chair add-ons even if the product is not yet in the Accessories collection.
 
-On M4 and M4B product detail pages, **Rear Cover — M4** is pinned first in “Frequently bought with”, with a colour dropdown so shoppers can add a chosen colour with the chair.
+On M4 and M4B product detail pages, a **Choose accessories** panel lists every compatible accessory (rear cover first, with a colour dropdown) so shoppers can tick extras before Add to cart.
 
 ## Optional Admin polish
 

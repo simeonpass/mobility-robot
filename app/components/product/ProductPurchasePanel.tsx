@@ -292,6 +292,16 @@ export function ProductPurchasePanel({
           />
         ) : null}
 
+        {accessoryAddons.length ? (
+          <ProductAccessoryAddons
+            chairLabel={displayName ?? title}
+            onSelectVariant={selectAddonVariant}
+            onToggle={toggleAddon}
+            products={accessoryAddons}
+            selectedIds={selectedAddonIds}
+          />
+        ) : null}
+
         <ProductForm
           addToCartClassName="btn-atc hidden w-full lg:inline-flex"
           addToCartLabel={addToCartLabel}
@@ -304,16 +314,6 @@ export function ProductPurchasePanel({
           sellingPlanId={selectedSellingPlanId}
           soldOutLabel={soldOutLabel}
         />
-
-        {accessoryAddons.length ? (
-          <ProductAccessoryAddons
-            chairLabel={displayName ?? title}
-            onSelectVariant={selectAddonVariant}
-            onToggle={toggleAddon}
-            products={accessoryAddons}
-            selectedIds={selectedAddonIds}
-          />
-        ) : null}
 
         {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
 
