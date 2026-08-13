@@ -60,6 +60,9 @@ export function ProductForm({
         },
         ...addonLines.map((line) => ({
           ...line,
+          attributes: line.attributes?.length
+            ? line.attributes
+            : cartAttributes,
           parent: line.parent ?? {merchandiseId: selectedVariant.id},
         })),
       ]

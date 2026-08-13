@@ -5,7 +5,7 @@ import {useId} from 'react';
 import {Link} from 'react-router';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackBeginCheckout} from '~/lib/analytics';
-import {withOnlineStoreChannel, isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
+import {withOnlineStoreChannel, lineHasVatRelief} from '~/lib/cart-utils';
 import {getCartDeliveryInfo} from '~/lib/product-delivery';
 import {formatProductPrice} from '~/lib/product-pricing';
 import {getCartTotals} from '~/lib/vat-relief';
@@ -32,12 +32,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   const cartLines = cart?.lines?.nodes ?? [];
   const delivery = getCartDeliveryInfo(cartLines);
   const {openCartModal} = useVatRelief();
-  const vatEligibleLines = cartLines.filter(
-    (line) =>
-      !isAccessoryProduct(line.merchandise.product.handle) &&
-      !('parentRelationship' in line && line.parentRelationship?.parent),
-  );
-  const linesWithoutVatRelief = vatEligibleLines.filter(
+  // Chairs and accessories both qualify for HMRC VAT relief on this store.
+  const linesWithoutVatRelief = cartLines.filter(
     (line) => !lineHasVatRelief(line.attributes),
   );
   const showCartVatPrompt = linesWithoutVatRelief.length > 0;
@@ -237,7 +233,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <div className="rounded-lg border border-border bg-secondary/30 p-3">
             <p className="text-sm font-medium text-foreground">VAT relief available</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Claim HMRC VAT relief on eligible mobility products in your cart.
+              Claim HMRC VAT relief on chairs and accessories in your cart.
             </p>
             {showCartVatPrompt ? (
               <button
