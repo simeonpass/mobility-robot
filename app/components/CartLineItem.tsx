@@ -39,7 +39,6 @@ export function CartLineItem({
   const accessory = isAccessoryProduct(product.handle);
   const displayName = getProductDisplayName(product.handle, product.title);
   const {openCartModal} = useVatRelief();
-  const vatEligible = !accessory;
   const isAside = layout === 'aside';
   const isDepositLine = Boolean(sellingPlanAllocation?.sellingPlan?.id);
   const depositPlanName = sellingPlanAllocation?.sellingPlan?.name;
@@ -51,6 +50,30 @@ export function CartLineItem({
         : getLineCatalogGross({quantity, merchandise, cost, attributes}),
     ),
     currencyCode: merchandise.price.currencyCode,
+  };
+
+  const openLineVatModal = () => {
+    const relatedLines = [
+      {id, quantity, attributes, productTitle: product.title},
+      ...(lineItemChildren ?? []).map((child) => ({
+        id: child.id,
+        quantity: child.quantity,
+        attributes: child.attributes,
+        productTitle: child.merchandise.product.title,
+      })),
+    ];
+    openCartModal({
+      lines: relatedLines,
+      price: merchandise.price,
+      title: vatRelief ? 'Edit VAT declaration' : 'Claim HMRC VAT relief',
+      subtitle:
+        relatedLines.length > 1
+          ? `${displayName} + ${relatedLines.length - 1} accessor${
+              relatedLines.length === 2 ? 'y' : 'ies'
+            }`
+          : displayName,
+      initialEnabled: vatRelief,
+    });
   };
 
   return (
@@ -181,27 +204,13 @@ export function CartLineItem({
               </p>
             ) : null}
 
-            {vatEligible ? (
-              <button
-                className="mt-2 text-xs font-medium text-foreground underline-offset-2 hover:underline"
-                onClick={() =>
-                  openCartModal({
-                    lines: [
-                      {id, quantity, attributes, productTitle: product.title},
-                    ],
-                    price: merchandise.price,
-                    title: vatRelief
-                      ? 'Edit VAT declaration'
-                      : 'Claim HMRC VAT relief',
-                    subtitle: product.title,
-                    initialEnabled: vatRelief,
-                  })
-                }
-                type="button"
-              >
-                {vatRelief ? 'Edit VAT declaration' : 'Claim VAT relief'}
-              </button>
-            ) : null}
+            <button
+              className="mt-2 text-xs font-medium text-foreground underline-offset-2 hover:underline"
+              onClick={openLineVatModal}
+              type="button"
+            >
+              {vatRelief ? 'Edit VAT declaration' : 'Claim VAT relief'}
+            </button>
 
             <CartLineQuantity
               compact={isAside}

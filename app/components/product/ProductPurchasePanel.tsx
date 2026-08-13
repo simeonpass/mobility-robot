@@ -146,10 +146,12 @@ export function ProductPurchasePanel({
         merchandiseId: variant.id,
         quantity: 1,
         selectedVariant: variant,
+        // Same VAT declaration as the chair — accessories must qualify too.
+        ...(cartAttributes.length ? {attributes: cartAttributes} : {}),
       });
     }
     return lines;
-  }, [accessoryAddons, selectedAddonIds]);
+  }, [accessoryAddons, cartAttributes, selectedAddonIds]);
 
   const addonCount = addonLines.length;
 
@@ -253,6 +255,9 @@ export function ProductPurchasePanel({
         },
         ...addonLines.map((line) => ({
           ...line,
+          attributes: line.attributes?.length
+            ? line.attributes
+            : cartAttributes,
           parent: line.parent ?? {merchandiseId: selectedVariant.id},
         })),
       ]
