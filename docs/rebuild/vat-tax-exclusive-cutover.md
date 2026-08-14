@@ -9,17 +9,15 @@ Goal: stop using a “VAT relief” **discount**, and instead:
 
 This removes the confusing Admin line where a discount + “VAT included” fight each other.
 
-## What the code does
+## Website price display
 
-| Piece | Behaviour |
-|-------|-----------|
-| `PUBLIC_SHOPIFY_PRICES_EX_VAT` | When `true`, catalog amounts are treated as net; UI ×1.2 for “inc. VAT” |
-| VAT declaration | Still collected on PDP / cart (HMRC record on line attributes) |
-| `/api/vat-relief` + cart sync | Creates/updates Shopify customer with `taxExempt: true` |
-| Cart buyer identity | Prefills checkout email from the declaration |
-| Discount function | Keep active **until** cutover complete, then **deactivate** |
+After cutover, product pages show:
 
-Default: flag is **off**. Live site stays on today’s inclusive + discount model until you finish Admin steps.
+- **Large price:** ex VAT (cheaper / VAT relief price)
+- **Secondary:** inc VAT if the buyer is not eligible
+- **Google Product schema:** ex VAT amount
+
+Set `PUBLIC_SHOPIFY_PRICES_EX_VAT=true` only after Admin net prices are live.
 
 ## Admin checklist (you must do this)
 
