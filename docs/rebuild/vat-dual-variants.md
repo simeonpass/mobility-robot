@@ -12,9 +12,11 @@ With **tax-inclusive** Shopify pricing, the customer pays the **listed** variant
 ## How the site uses it
 
 1. Product option **`VAT`**: values `Standard` and `VAT Relief` (hidden in the UI).
-2. Shopper claims relief → storefront adds the **VAT Relief** variant (same Colour, etc.).
+2. Shopper claims relief on the PDP **or cart** → storefront uses the **VAT Relief** variant (same Colour, etc.). Cart claim swaps the line’s `merchandiseId`; PDP add-to-cart picks Relief before ATC.
 3. Line still gets declaration attributes (`VAT Relief: Yes`, email, …) for HMRC records.
 4. Discount function **skips** lines that are already `VAT: VAT Relief` so price is not cut twice.
+
+**Tax setting:** Shopify must use **tax-inclusive** prices (“Include sales tax in product price” / show tax as included). If checkout adds 20% on top of the listed price, dual variants will not produce a clean net total.
 
 ## One-time Admin setup
 
@@ -60,4 +62,5 @@ For each product:
 | `scripts/setup-vat-relief-variants.mjs` | Create / price dual variants |
 | `app/lib/product-vat-variants.ts` | Resolve Standard ↔ Relief |
 | `app/components/product/ProductPurchasePanel.tsx` | ATC uses Relief SKU when claimed |
+| `app/components/vat-relief/VatReliefModal.tsx` | Cart claim swaps to Relief SKU |
 | `extensions/vat-relief-discount/` | Skips discount on Relief variants |

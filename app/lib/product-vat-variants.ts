@@ -129,6 +129,40 @@ export function resolveVatPurchaseVariant<T extends VatPricedVariant>(
   return sibling ?? selectedVariant;
 }
 
+/** Cart merchandise shape used to swap Standard ↔ VAT Relief siblings. */
+export type CartVatMerchandise = {
+  id: string;
+  selectedOptions?: VatSelectedOption[] | null;
+  product?: {
+    variants?: {
+      nodes?: Array<VatPricedVariant> | null;
+    } | null;
+  } | null;
+};
+
+/**
+ * Returns the merchandiseId to write on a cart line update when toggling
+ * VAT relief. Falls back to the current id when dual variants are absent.
+ */
+export function resolveCartMerchandiseId(
+  merchandise: CartVatMerchandise | null | undefined,
+  vatRelief: boolean,
+): string | undefined {
+  if (!merchandise?.id) return undefined;
+
+  const nodes = merchandise.product?.variants?.nodes ?? [];
+  const resolved = resolveVatPurchaseVariant(
+    {
+      id: merchandise.id,
+      selectedOptions: merchandise.selectedOptions,
+    },
+    nodes,
+    vatRelief,
+  );
+
+  return resolved?.id ?? merchandise.id;
+}
+
 export function moneyAmount(price?: Pick<MoneyV2, 'amount'> | null): number {
   return Number(price?.amount ?? 0);
 }

@@ -50,6 +50,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         quantity: line.quantity,
         attributes: line.attributes,
         productTitle: line.merchandise.product.title,
+        merchandise: line.merchandise,
       })),
       title: 'Claim HMRC VAT relief',
       subtitle:
