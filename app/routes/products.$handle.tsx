@@ -246,6 +246,17 @@ export default function Product() {
               productHandle={product.handle}
               productId={product.id}
               productOptions={productOptions}
+              productVariants={
+                (
+                  product as typeof product & {
+                    variants?: {
+                      nodes?: Array<
+                        NonNullable<typeof selectedVariant>
+                      >;
+                    };
+                  }
+                ).variants?.nodes ?? []
+              }
               selectedVariant={selectedVariant}
               tagline={staticContent?.tagline ?? tabContent.tagline}
               title={displayName}
@@ -452,6 +463,11 @@ const PRODUCT_FRAGMENT = `#graphql
     }
     adjacentVariants (selectedOptions: $selectedOptions) {
       ...ProductVariant
+    }
+    variants(first: 100) {
+      nodes {
+        ...ProductVariant
+      }
     }
     seo {
       description

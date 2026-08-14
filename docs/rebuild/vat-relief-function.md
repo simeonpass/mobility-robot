@@ -1,7 +1,9 @@
 # VAT relief — exact checkout discount (Shopify Function)
 
-> **Keep this discount Active.** Catalog prices are tax-inclusive again after the
-> exclusive-cutover rollback. See [`vat-tax-exclusive-cutover.md`](./vat-tax-exclusive-cutover.md).
+> **Keep this discount Active** for products that still use a single (inc VAT)
+> price. Products with dual **VAT** variants (`Standard` / `VAT Relief`) are
+> skipped by the function so the net SKU is not discounted twice.
+> See [`vat-dual-variants.md`](./vat-dual-variants.md).
 
 HMRC VAT relief removes **exactly** 20% VAT from inc-VAT prices (`gross ÷ 1.2`).
 Percentage discount codes cannot do this on Shopify — we use an **ORDER**

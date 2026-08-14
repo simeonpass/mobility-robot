@@ -13,12 +13,20 @@ describe('cartLinesDiscountsGenerateRun', () => {
             quantity: 1,
             cost: {subtotalAmount: {amount: '3995.00'}},
             attribute: {value: 'Yes'},
+            merchandise: {
+              __typename: 'ProductVariant',
+              selectedOptions: [{name: 'VAT', value: 'Standard'}],
+            },
           },
           {
             id: 'gid://shopify/CartLine/2',
             quantity: 1,
             cost: {subtotalAmount: {amount: '50.00'}},
             attribute: null,
+            merchandise: {
+              __typename: 'ProductVariant',
+              selectedOptions: [{name: 'Title', value: 'Default Title'}],
+            },
           },
         ],
       },
@@ -47,6 +55,28 @@ describe('cartLinesDiscountsGenerateRun', () => {
         },
       },
     ]);
+  });
+
+  it('skips lines that are already VAT Relief variants', () => {
+    const result = cartLinesDiscountsGenerateRun({
+      cart: {
+        lines: [
+          {
+            id: 'gid://shopify/CartLine/1',
+            quantity: 1,
+            cost: {subtotalAmount: {amount: '3500.00'}},
+            attribute: {value: 'Yes'},
+            merchandise: {
+              __typename: 'ProductVariant',
+              selectedOptions: [{name: 'VAT', value: 'VAT Relief'}],
+            },
+          },
+        ],
+      },
+      discount: {discountClasses: [DiscountClass.Order]},
+    });
+
+    expect(result).toEqual({operations: []});
   });
 
   it('returns no operations without a qualifying line', () => {

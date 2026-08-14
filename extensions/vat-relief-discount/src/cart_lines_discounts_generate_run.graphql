@@ -11,6 +11,15 @@ query Input {
       attribute(key: "VAT Relief") {
         value
       }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          selectedOptions {
+            name
+            value
+          }
+        }
+      }
     }
   }
   discount {
