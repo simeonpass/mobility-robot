@@ -90,7 +90,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
 
             return (
               <article
-                className="group flex flex-col rounded-2xl border border-border/40 bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-medium animate-fade-in-up"
+                className="group flex flex-col animate-fade-in-up"
                 key={product.id}
                 style={{animationDelay: `${index * 80}ms`}}
               >
@@ -100,17 +100,12 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                   to={`/products/${product.handle}`}
                 >
                   {meta ? (
-                    <span className="absolute left-3 top-3 z-10 rounded-full border border-border/50 bg-white/95 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:text-xs">
+                    <span className="mb-2 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-navy/55 sm:text-xs">
                       {meta.badge}
                     </span>
                   ) : null}
 
-                  {/*
-                    size-full + object-contain is the reliable mobile fit:
-                    the img box fills the aspect frame, and object-contain
-                    letterboxes the photo so nothing is clipped on the right.
-                  */}
-                  <div className="relative aspect-[5/4] w-full bg-white sm:aspect-[4/3]">
+                  <div className="relative aspect-[5/4] w-full bg-cream sm:aspect-[4/3]">
                     {image ? (
                       <img
                         alt={image.altText || name}
@@ -128,14 +123,14 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
                     ) : null}
                   </div>
 
-                  <div className="flex flex-1 flex-col border-t border-border/30 px-4 py-4 sm:px-5 sm:py-5">
+                  <div className="flex flex-1 flex-col pt-4 sm:pt-5">
                     <h3 className="text-base font-semibold text-foreground sm:text-lg">
                       {meta?.shortName ?? name}
                     </h3>
-                    <p className="mt-1.5 text-lg font-semibold text-gold sm:mt-2 sm:text-xl">
+                    <p className="mt-1.5 text-lg font-semibold text-primary sm:mt-2 sm:text-xl">
                       From {exVatPrice}
                     </p>
-                    <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-gold sm:mt-5 sm:min-h-0">
+                    <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:mt-4 sm:min-h-0">
                       {meta?.exploreLabel ?? 'View details'}
                       <ArrowUpRight
                         aria-hidden

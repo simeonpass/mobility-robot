@@ -42,18 +42,20 @@ export function HeroSection() {
       <div className="relative z-10 mx-auto flex min-h-[min(85svh,30rem)] w-full max-w-[1400px] flex-col justify-end px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:min-h-[100svh] md:px-8 md:pb-20 md:pt-36 lg:pb-24">
         <div className="home-hero-copy w-full max-w-2xl text-left text-white">
           <motion.h1
-            className="home-hero-title font-display text-white"
-            style={{textShadow: '0 2px 28px rgba(0,0,0,0.6)'}}
-            {...fadeUp(0.1, reducedMotion)}
+            className="home-hero-heading text-white"
+            style={{textShadow: '0 2px 32px rgba(0,0,0,0.55)'}}
+            {...fadeUp(0.08, reducedMotion)}
           >
-            Introducing the{' '}
-            <span className="home-hero-title-product">XSTO X12</span>
+            <span className="home-hero-brand font-display">XSTO</span>
+            <span className="home-hero-title font-display">
+              The <span className="home-hero-title-product">X12</span>
+            </span>
           </motion.h1>
 
           <motion.p
             className="home-hero-support font-sans"
             style={{textShadow: '0 1px 16px rgba(0,0,0,0.5)'}}
-            {...fadeUp(0.2, reducedMotion)}
+            {...fadeUp(0.22, reducedMotion)}
           >
             Stair-climbing and all-terrain mobility — climbs steps up to 40°
             with AI-powered mode switching.
@@ -61,7 +63,7 @@ export function HeroSection() {
 
           <motion.div
             className="home-hero-cta-group"
-            {...fadeUp(0.3, reducedMotion)}
+            {...fadeUp(0.32, reducedMotion)}
           >
             <Link
               className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"

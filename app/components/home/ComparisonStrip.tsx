@@ -10,7 +10,7 @@ import {
 function ComparisonCell({value}: {value: string | boolean}) {
   if (value === true) {
     return (
-      <span className="inline-flex size-6 items-center justify-center rounded-full bg-gold/10 text-gold">
+      <span className="inline-flex size-6 items-center justify-center text-primary">
         <Check aria-hidden className="size-3.5" strokeWidth={2.5} />
       </span>
     );
@@ -27,20 +27,16 @@ export function ComparisonStrip() {
   return (
     <section className="border-y border-border bg-secondary/30 py-10 md:py-14">
       <div className="xsto-container">
-        <div className="mb-6 flex flex-wrap gap-2 md:mb-8">
-          {HOMEPAGE_FLAGSHIP_HANDLES.map((slot) => (
-            <Link
-              className="rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-gold hover:text-gold"
-              key={slot}
-              prefetch="intent"
-              to={`/products/${SHOPIFY_HOME_PRODUCT_HANDLES[slot]}`}
-            >
-              {HOMEPAGE_FLAGSHIP_LABELS[slot]}
-            </Link>
-          ))}
+        <div className="mb-6 max-w-2xl md:mb-8">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-navy md:text-3xl">
+            Compare the range
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
+            Side-by-side features across M4, M4B, M4 Pro, X12 and X12 Pro.
+          </p>
         </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-border bg-background shadow-soft">
+        <div className="overflow-x-auto border-y border-border bg-background md:border md:rounded-xl">
           <table className="w-full min-w-[900px] border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-secondary/40">
@@ -53,7 +49,7 @@ export function ComparisonStrip() {
                     key={slot}
                   >
                     <Link
-                      className="hover:text-gold"
+                      className="hover:text-primary"
                       prefetch="intent"
                       to={`/products/${SHOPIFY_HOME_PRODUCT_HANDLES[slot]}`}
                     >

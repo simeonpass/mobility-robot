@@ -479,26 +479,46 @@
     padding-top: calc(var(--announcement-bar-height, 2.5rem) + var(--header-height)) !important;
   }
 
-  /* Hero copy — vertical rhythm + type hierarchy over full-bleed media */
+  /* Hero copy — brand first, then product headline over full-bleed media */
   .home-hero-copy {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .home-hero-title {
+  .home-hero-heading {
     margin: 0;
-    font-size: clamp(1.5rem, 5.2vw, 1.75rem);
-    font-weight: 600;
-    line-height: 1.18;
-    letter-spacing: 0.05em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+  }
+
+  .home-hero-brand {
+    display: block;
+    font-size: clamp(2.5rem, 11vw, 3.25rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .home-hero-title {
+    display: block;
+    margin: 0;
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     text-wrap: balance;
+    color: rgb(255 255 255 / 0.92);
   }
 
   .home-hero-title-product {
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
+    color: rgb(255 255 255 / 1);
   }
 
   .home-hero-support {
@@ -528,10 +548,19 @@
   }
 
   @media (min-width: 640px) {
+    .home-hero-brand {
+      font-size: 4rem;
+      letter-spacing: 0.16em;
+    }
+
+    .home-hero-heading {
+      gap: 0.65rem;
+    }
+
     .home-hero-title {
-      font-size: 2.125rem;
-      letter-spacing: 0.08em;
-      line-height: 1.12;
+      font-size: 1.625rem;
+      letter-spacing: 0.1em;
+      line-height: 1.15;
     }
 
     .home-hero-support {
@@ -551,10 +580,19 @@
   }
 
   @media (min-width: 768px) {
+    .home-hero-brand {
+      font-size: 5rem;
+      letter-spacing: 0.18em;
+    }
+
+    .home-hero-heading {
+      gap: 0.75rem;
+    }
+
     .home-hero-title {
-      font-size: 2.625rem;
-      letter-spacing: 0.09em;
-      line-height: 1.1;
+      font-size: 1.875rem;
+      letter-spacing: 0.12em;
+      line-height: 1.12;
     }
 
     .home-hero-support {
@@ -571,9 +609,14 @@
   }
 
   @media (min-width: 1024px) {
+    .home-hero-brand {
+      font-size: 5.75rem;
+      letter-spacing: 0.2em;
+    }
+
     .home-hero-title {
-      font-size: 3.125rem;
-      letter-spacing: 0.1em;
+      font-size: 2.125rem;
+      letter-spacing: 0.12em;
     }
 
     .home-hero-support {
