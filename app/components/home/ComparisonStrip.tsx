@@ -25,7 +25,7 @@ function ComparisonCell({value}: {value: string | boolean}) {
 
 export function ComparisonStrip() {
   return (
-    <section className="border-y border-border bg-secondary/30 py-10 md:py-14">
+    <section className="border-y border-border bg-[#f8f9fb] py-10 md:py-14">
       <div className="xsto-container">
         <div className="mb-6 flex flex-wrap gap-2 md:mb-8">
           {HOMEPAGE_FLAGSHIP_HANDLES.map((slot) => (

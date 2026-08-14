@@ -29,7 +29,7 @@ export function TrustBar() {
   return (
     <section
       aria-label="Why buy from us"
-      className="trust-bar border-b border-navy/[0.08] bg-[#f3f1ed]"
+      className="trust-bar border-b border-navy/[0.08] bg-[#f4f6f9]"
     >
       <div className="xsto-container">
         <div className="flex flex-col gap-4 py-5 md:py-6 lg:flex-row lg:items-center lg:gap-0 lg:py-5">

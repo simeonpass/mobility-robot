@@ -16,7 +16,7 @@ export function ExperienceRangeSection() {
 
   return (
     <>
-      <section className="xsto-section bg-gradient-cream" id="experience-range">
+      <section className="xsto-section bg-[#f8f9fb]" id="experience-range">
         <div className="xsto-container">
           <SectionIntro
             accent="range."
@@ -39,15 +39,15 @@ export function ExperienceRangeSection() {
                   style={{animationDelay: `${index * 80}ms`}}
                   type="button"
                 >
-                  <div className="relative aspect-video overflow-hidden bg-navy">
+                  <div className="relative aspect-video overflow-hidden bg-slate-200">
                     <img
                       alt={item.title}
-                      className="size-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+                      className="size-full object-cover opacity-95 transition-transform duration-500 group-hover:scale-105"
                       decoding="async"
                       loading="lazy"
                       src={thumbSrc}
                     />
-                    <div className="absolute inset-0 bg-navy/25 transition-colors group-hover:bg-navy/15" />
+                    <div className="absolute inset-0 bg-navy/10 transition-colors group-hover:bg-navy/5" />
                     <span className="absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary-foreground/95 text-navy shadow-luxe transition-transform group-hover:scale-105">
                       <Play
                         aria-hidden
