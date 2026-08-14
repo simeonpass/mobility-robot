@@ -6,14 +6,23 @@
  * The Hydrogen storefront hides the VAT option and selects "VAT Relief" when
  * the shopper completes the HMRC declaration.
  *
+ * Tax flags (critical for clean checkout):
+ *   - Standard  → taxable: true  ("Charge tax" ticked)
+ *   - VAT Relief → taxable: false ("Charge tax" unticked)
+ * Unticking tax on the Relief SKU stops Shopify showing "Including £X in taxes"
+ * on the net price.
+ *
  * Auth (first match wins):
  *   1. SHOPIFY_ADMIN_API_ACCESS_TOKEN (shpat_) with write_products
  *   2. SHOPIFY_DEPOSIT_CLIENT_ID + SHOPIFY_DEPOSIT_CLIENT_SECRET
  *
  * Usage:
  *   node scripts/setup-vat-relief-variants.mjs
- *   node scripts/setup-vat-relief-variants.mjs --handles=buy-robot-wheelchair,xsto-m4b-1
+ *   node scripts/setup-vat-relief-variants.mjs --accessories
+ *   node scripts/setup-vat-relief-variants.mjs --all
+ *   node scripts/setup-vat-relief-variants.mjs --handles=armrest-bag,rear-cover-m4
  *   node scripts/setup-vat-relief-variants.mjs --dry-run
+ *   node scripts/setup-vat-relief-variants.mjs --accessories --dry-run
  */
 
 import {readFileSync} from 'node:fs';
@@ -49,7 +58,7 @@ const VAT_OPTION = 'VAT';
 const VAT_STANDARD = 'Standard';
 const VAT_RELIEF = 'VAT Relief';
 
-const DEFAULT_HANDLES = [
+const CHAIR_HANDLES = [
   'buy-robot-wheelchair',
   'xsto-m4-pro',
   'xsto-m4b-1',
@@ -57,16 +66,54 @@ const DEFAULT_HANDLES = [
   'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
 ];
 
+/** Known accessory handles from the storefront catalogue map. */
+const ACCESSORY_HANDLES = [
+  'adjustable-headrest-m4-pro',
+  'adjustable-headrest-for-x12-x12-pro',
+  'armrest-bag',
+  'auxiliary-joystick-m4-pro',
+  'backrest-cushion-large-m4-pro',
+  'backrest-cushion-small-m4-pro',
+  'batteries-lithium-battery-15-6ah-battery',
+  'black-backpack-for-m4-pro',
+  'bluetooth-controller-for-m4-m4h-m4-pro-x12-x12-pro',
+  'buy-universal-phone-holder',
+  'calf-support-set-for-x12-x12pro',
+  'cup-holder-for-all-models',
+  'ergonomic-chairs-for-back-support',
+  'ergonomic-raised-backrest-neck-support',
+  'flashlight-holder',
+  'left-lateral-support-m4-pro',
+  'lithium-10-4-ah-battery',
+  'lithium-10-4ah-battery-batteries-lithium-battery',
+  'lithium-15-6-ah-battery',
+  'phone-holder-for-m4',
+  'power-chair-battery-charger',
+  'rear-cover-m4',
+  'rear-cover-barbie-pink',
+  'rear-cover-blue-enamel',
+  'rear-cover-burgundy-red',
+  'rear-cover-pearl-white',
+  'rear-cover-sparkling-yellow',
+  'rear-cover-superior-purple',
+  'rear-cover-tiffany-blue',
+  'rear-view-mirror-m4-pro',
+  'right-lateral-support-m4-pro',
+  'seat-cushion-large-m4-pro',
+  'seat-cushion-small-m4-pro',
+  'travel-cushion-seat-with-pump',
+  'travel-cushion-with-pump',
+  'trunk-support',
+  'umbrella-attachment',
+  'universal-wheels-for-xsto-m4',
+  'wheelchair-battery-charger',
+];
+
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
+const wantAccessories = args.includes('--accessories');
+const wantAll = args.includes('--all');
 const handlesArg = args.find((arg) => arg.startsWith('--handles='));
-const HANDLES = handlesArg
-  ? handlesArg
-      .slice('--handles='.length)
-      .split(',')
-      .map((value) => value.trim())
-      .filter(Boolean)
-  : DEFAULT_HANDLES;
 
 const storeDomain = process.env.PUBLIC_STORE_DOMAIN?.trim();
 const adminToken = process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN?.trim();
@@ -151,9 +198,22 @@ const PRODUCT_QUERY = `#graphql
           title
           price
           sku
+          taxable
           selectedOptions { name value }
           inventoryPolicy
         }
+      }
+    }
+  }
+`;
+
+const COLLECTION_PRODUCTS_QUERY = `#graphql
+  query AccessoriesCollection($handle: String!) {
+    collectionByHandle(handle: $handle) {
+      id
+      title
+      products(first: 100) {
+        nodes { id handle title }
       }
     }
   }
@@ -171,6 +231,7 @@ const CREATE_OPTION = `#graphql
             id
             title
             price
+            taxable
             selectedOptions { name value }
           }
         }
@@ -189,6 +250,7 @@ const BULK_UPDATE = `#graphql
             id
             title
             price
+            taxable
             selectedOptions { name value }
           }
         }
@@ -220,6 +282,82 @@ function nonVatKey(variant) {
     .toLowerCase();
 }
 
+function desiredTaxable(vatValue) {
+  if (vatValue === VAT_RELIEF) return false;
+  if (vatValue === VAT_STANDARD) return true;
+  // Pre-migration / unknown → leave taxable unless we know it's relief.
+  return true;
+}
+
+/**
+ * Build bulk updates for relief prices + Standard/Relief taxable flags.
+ */
+function buildSyncUpdates(nodes) {
+  const updates = [];
+
+  for (const variant of nodes) {
+    const vat = getVatValue(variant);
+    if (vat !== VAT_RELIEF && vat !== VAT_STANDARD) continue;
+
+    const patch = {id: variant.id};
+    let changed = false;
+
+    const wantTaxable = desiredTaxable(vat);
+    if (variant.taxable !== wantTaxable) {
+      patch.taxable = wantTaxable;
+      changed = true;
+    }
+
+    if (vat === VAT_RELIEF) {
+      const standard = nodes.find(
+        (other) =>
+          getVatValue(other) === VAT_STANDARD &&
+          nonVatKey(other) === nonVatKey(variant),
+      );
+      if (standard) {
+        const target = exVatFromGross(standard.price);
+        if (roundMoney(variant.price) !== target) {
+          patch.price = target;
+          changed = true;
+        }
+      }
+    }
+
+    if (changed) updates.push(patch);
+  }
+
+  return updates;
+}
+
+async function applyBulkUpdates(token, productId, updates, label) {
+  if (!updates.length) {
+    console.log(`  ${label}: nothing to change.`);
+    return;
+  }
+
+  for (const update of updates) {
+    const bits = [];
+    if (update.price != null) bits.push(`price=${update.price}`);
+    if (update.taxable != null) {
+      bits.push(`taxable=${update.taxable ? 'yes' : 'no'}`);
+    }
+    console.log(`  ${update.id} → ${bits.join(', ')}`);
+  }
+
+  if (dryRun) {
+    console.log(`  Dry run — not applying ${updates.length} update(s).`);
+    return;
+  }
+
+  const result = await adminGraphql(token, BULK_UPDATE, {
+    productId,
+    variants: updates,
+  });
+  const errors = result?.productVariantsBulkUpdate?.userErrors ?? [];
+  if (errors.length) console.error(errors);
+  else console.log(`  Applied ${updates.length} update(s).`);
+}
+
 async function ensureVatVariants(token, handle) {
   const data = await adminGraphql(token, PRODUCT_QUERY, {handle});
   const product = data?.productByHandle;
@@ -231,49 +369,19 @@ async function ensureVatVariants(token, handle) {
   console.log(`\n=== ${product.title} (${handle}) ===`);
 
   if (hasVatOption(product)) {
-    console.log('VAT option already exists — syncing prices only.');
-    const updates = [];
-    for (const variant of product.variants.nodes) {
-      if (getVatValue(variant) !== VAT_RELIEF) continue;
-      const standard = product.variants.nodes.find(
-        (other) =>
-          getVatValue(other) === VAT_STANDARD &&
-          nonVatKey(other) === nonVatKey(variant),
-      );
-      if (!standard) continue;
-      const target = exVatFromGross(standard.price);
-      if (roundMoney(variant.price) === target) continue;
-      updates.push({id: variant.id, price: target});
-      console.log(
-        `  Price ${variant.title}: ${variant.price} → ${target} (from Standard ${standard.price})`,
-      );
-    }
-    if (!updates.length) {
-      console.log('  Prices already correct.');
-      return;
-    }
-    if (dryRun) {
-      console.log('  Dry run — not updating.');
-      return;
-    }
-    const result = await adminGraphql(token, BULK_UPDATE, {
-      productId: product.id,
-      variants: updates,
-    });
-    const errors = result?.productVariantsBulkUpdate?.userErrors ?? [];
-    if (errors.length) console.error(errors);
-    else console.log(`  Updated ${updates.length} relief price(s).`);
+    console.log('VAT option already exists — syncing prices + taxable flags.');
+    const updates = buildSyncUpdates(product.variants.nodes);
+    await applyBulkUpdates(token, product.id, updates, 'Sync');
     return;
   }
 
-  // Create VAT option. CREATE strategy duplicates existing variants across new values.
   console.log(
     `Creating option ${VAT_OPTION}: ${VAT_STANDARD} / ${VAT_RELIEF}`,
   );
   if (dryRun) {
     for (const variant of product.variants.nodes) {
       console.log(
-        `  Would add Relief sibling for ${variant.title} @ ${exVatFromGross(variant.price)} (from ${variant.price})`,
+        `  Would add Relief sibling for ${variant.title} @ ${exVatFromGross(variant.price)} (from ${variant.price}); Standard taxable=yes, Relief taxable=no`,
       );
     }
     return;
@@ -287,7 +395,6 @@ async function ensureVatVariants(token, handle) {
         values: [{name: VAT_STANDARD}, {name: VAT_RELIEF}],
       },
     ],
-    // CREATE duplicates existing variants for each new option value.
     variantStrategy: 'CREATE',
   });
 
@@ -301,43 +408,63 @@ async function ensureVatVariants(token, handle) {
   const nodes = updated?.variants?.nodes ?? [];
   console.log(`  Now ${nodes.length} variants.`);
 
-  // After CREATE, Shopify often copies the original price onto both values.
-  // Set VAT Relief variants to net.
-  const priceUpdates = [];
-  for (const variant of nodes) {
-    if (getVatValue(variant) !== VAT_RELIEF) continue;
-    const standard = nodes.find(
-      (other) =>
-        getVatValue(other) === VAT_STANDARD &&
-        nonVatKey(other) === nonVatKey(variant),
-    );
-    const basePrice = standard?.price ?? variant.price;
-    const target = exVatFromGross(basePrice);
-    priceUpdates.push({id: variant.id, price: target});
-    console.log(
-      `  Set ${variant.title || variant.id} → ${target} (Standard ${basePrice})`,
-    );
-  }
-
-  if (priceUpdates.length) {
-    const result = await adminGraphql(token, BULK_UPDATE, {
-      productId: product.id,
-      variants: priceUpdates,
-    });
-    const errors = result?.productVariantsBulkUpdate?.userErrors ?? [];
-    if (errors.length) console.error(errors);
-    else console.log(`  Updated ${priceUpdates.length} relief price(s).`);
-  }
+  const updates = buildSyncUpdates(nodes);
+  await applyBulkUpdates(token, product.id, updates, 'Post-create sync');
 
   console.log(
     '  Next: confirm inventory / selling plans on new variants in Admin if needed.',
   );
 }
 
+async function resolveHandles(token) {
+  if (handlesArg) {
+    return handlesArg
+      .slice('--handles='.length)
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  const handles = new Set();
+  const includeChairs = wantAll || !wantAccessories;
+  const includeAccessories = wantAll || wantAccessories;
+
+  if (includeChairs) {
+    for (const handle of CHAIR_HANDLES) handles.add(handle);
+  }
+
+  if (includeAccessories) {
+    for (const handle of ACCESSORY_HANDLES) handles.add(handle);
+
+    // Also pull whatever is in the accessories collection (covers new SKUs).
+    try {
+      const data = await adminGraphql(token, COLLECTION_PRODUCTS_QUERY, {
+        handle: 'accessories',
+      });
+      const nodes = data?.collectionByHandle?.products?.nodes ?? [];
+      for (const product of nodes) {
+        if (product?.handle) handles.add(product.handle);
+      }
+      console.log(
+        `Accessories collection: ${nodes.length} product(s) (merged with known handles).`,
+      );
+    } catch (error) {
+      console.warn(
+        'Could not load accessories collection — using known handles only.',
+        error.message ?? error,
+      );
+    }
+  }
+
+  return [...handles];
+}
+
 const token = await getToken();
+const HANDLES = await resolveHandles(token);
+
 console.log(
   dryRun
-    ? 'Dry run — no Admin writes.'
+    ? `Dry run — no Admin writes (${HANDLES.length} product(s)).`
     : `Updating ${HANDLES.length} product(s) on ${storeDomain}`,
 );
 
@@ -351,8 +478,8 @@ for (const handle of HANDLES) {
 
 console.log('\nDone.');
 console.log(
-  'Storefront: claim VAT relief → ATC uses the VAT Relief variant (no checkout discount on those lines).',
+  'Tax: Standard = Charge tax ON; VAT Relief = Charge tax OFF (no “Including £X” on net).',
 );
 console.log(
-  'Optional: deactivate automatic "VAT Relief (exact)" after all products are migrated, or leave it for any unmigrated SKUs.',
+  'Storefront: claim VAT relief → ATC / cart swap uses the VAT Relief variant.',
 );
