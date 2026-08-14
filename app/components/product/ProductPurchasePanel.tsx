@@ -201,9 +201,8 @@ export function ProductPurchasePanel({
   const exVatDisplay = getExVatDisplay(packagePrice);
   const vatSavings = getVatSavingsDisplay(packagePrice);
   const klarnaInstallment = getKlarnaInstallmentDisplay(packagePrice);
-  const activePriceDisplay = productVatReliefEnabled
-    ? (exVatDisplay ?? incVatDisplay)
-    : (incVatDisplay ?? exVatDisplay);
+  const activePriceDisplay =
+    productVatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
 
   const dueTodayDisplay = useMemo(() => {
     if (!dueTodayPrice) return null;
@@ -271,19 +270,15 @@ export function ProductPurchasePanel({
   const stickyPriceHint =
     paymentChoice === 'deposit'
       ? addonCount > 0
-        ? productVatReliefEnabled
-          ? 'Deposit + accessories due today (ex VAT)'
-          : 'Deposit + accessories due today'
-        : productVatReliefEnabled
-          ? '10% deposit due today · ex VAT'
-          : '10% deposit due today'
+        ? 'Deposit + accessories due today'
+        : '10% deposit due today'
       : addonCount > 0
         ? productVatReliefEnabled
-          ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · ex VAT`
+          ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · VAT relief`
           : `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · inc. VAT`
         : productVatReliefEnabled
-          ? 'VAT relief price · ex VAT'
-          : 'inc. VAT if not eligible';
+          ? 'VAT relief price'
+          : 'inc. VAT';
 
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
@@ -468,25 +463,23 @@ function ProductPriceDisplay({
   vatReliefEnabled: boolean;
   addonCount: number;
 }) {
-  // Prefer the cheaper ex-VAT amount as the hero price (most buyers claim relief).
-  const primaryPrice = exVatDisplay ?? incVatDisplay;
-  if (!primaryPrice) return null;
+  if (!incVatDisplay) return null;
+
+  const primaryPrice =
+    vatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
 
   return (
     <div aria-label="Price" role="group">
       <div className="flex items-baseline justify-between gap-3">
-        <div className="min-w-0">
-          <p
-            className="font-display text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.04em] text-vat-price sm:text-[2rem] md:text-[2.15rem]"
-            key={`${primaryPrice}-${addonCount}`}
-          >
-            {primaryPrice}
-          </p>
-          <p className="mt-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-vat-price">
-            Ex VAT
-            {vatReliefEnabled ? ' · VAT relief selected' : ''}
-          </p>
-        </div>
+        <p
+          className={[
+            'font-display text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.04em] sm:text-[2rem] md:text-[2.15rem]',
+            vatReliefEnabled ? 'text-vat-price' : 'text-navy',
+          ].join(' ')}
+          key={`${primaryPrice}-${addonCount}`}
+        >
+          {primaryPrice}
+        </p>
         {compareAtPrice && addonCount === 0 ? (
           <p className="text-right text-[0.65rem] uppercase tracking-[0.12em] text-slate">
             <span className="block">RRP</span>
@@ -497,24 +490,36 @@ function ProductPriceDisplay({
         ) : null}
       </div>
 
-      <p className="mt-2 text-sm leading-snug text-slate">
-        {incVatDisplay ? (
+      <p className="mt-1.5 text-sm leading-snug text-slate">
+        {vatReliefEnabled ? (
+          <>
+            <span className="font-medium text-vat-price">VAT relief price</span>
+            <span className="mx-1.5 text-border" aria-hidden>
+              ·
+            </span>
+            <span className="line-through tabular-nums">{incVatDisplay}</span>
+            <span> inc. VAT</span>
+          </>
+        ) : (
           <>
             <span className="tabular-nums text-navy/80">{incVatDisplay}</span>
             <span> inc. VAT</span>
-            <span> if you are not eligible for relief</span>
-            {vatSavings ? (
+            {exVatDisplay ? (
               <>
                 <span className="mx-1.5 text-border" aria-hidden>
                   ·
                 </span>
-                <span className="text-vat-price">
-                  Save {vatSavings} with HMRC VAT relief
+                <span className="font-semibold tabular-nums text-vat-price">
+                  {exVatDisplay}
                 </span>
+                <span className="text-vat-price"> with VAT relief</span>
+                {vatSavings ? (
+                  <span className="text-vat-price"> (save {vatSavings})</span>
+                ) : null}
               </>
             ) : null}
           </>
-        ) : null}
+        )}
       </p>
 
       {addonCount > 0 ? (
