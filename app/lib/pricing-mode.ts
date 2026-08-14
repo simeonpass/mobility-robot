@@ -2,28 +2,48 @@ import {UK_VAT_MULTIPLIER, grossFromNet, roundMoney} from '~/lib/vat-math';
 
 /**
  * When true, Shopify catalog / cart amounts are net (ex VAT).
- * The storefront still shows UK VAT-inclusive prices to shoppers.
+ * The website still shows both ex-VAT (hero) and inc-VAT (secondary).
  *
- * Set PUBLIC_SHOPIFY_PRICES_EX_VAT=true in Oxygen **only after** Admin prices
- * are switched to tax-exclusive and products are repriced to net amounts.
+ * Default is ON after the Admin net-price cutover.
+ * Set PUBLIC_SHOPIFY_PRICES_EX_VAT=false only to roll back.
  * See docs/rebuild/vat-tax-exclusive-cutover.md
  */
+let runtimePricesExVat: boolean | null = null;
+
+/** Apply the Oxygen/runtime flag from the root loader (client + SSR). */
+export function setShopifyPricesExVat(value: boolean | null) {
+  runtimePricesExVat = value;
+}
+
+function parseFlag(raw: string | undefined | null): boolean | null {
+  if (raw == null) return null;
+  const value = raw.trim().toLowerCase();
+  if (value === 'true' || value === '1') return true;
+  if (value === 'false' || value === '0') return false;
+  return null;
+}
+
 export function isShopifyPricesExVat(
   env?: {PUBLIC_SHOPIFY_PRICES_EX_VAT?: string} | null,
 ): boolean {
-  const fromArg = env?.PUBLIC_SHOPIFY_PRICES_EX_VAT?.trim().toLowerCase();
-  if (fromArg === 'true' || fromArg === '1') return true;
-  if (fromArg === 'false' || fromArg === '0') return false;
+  // Explicit env argument wins (tests / server call sites).
+  const fromArg = parseFlag(env?.PUBLIC_SHOPIFY_PRICES_EX_VAT);
+  if (fromArg !== null) return fromArg;
+
+  if (runtimePricesExVat !== null) return runtimePricesExVat;
 
   try {
-    const fromMeta = (
-      import.meta as ImportMeta & {env?: Record<string, string>}
-    ).env?.PUBLIC_SHOPIFY_PRICES_EX_VAT?.trim()
-      .toLowerCase();
-    return fromMeta === 'true' || fromMeta === '1';
+    const fromMeta = parseFlag(
+      (import.meta as ImportMeta & {env?: Record<string, string>}).env
+        ?.PUBLIC_SHOPIFY_PRICES_EX_VAT,
+    );
+    if (fromMeta !== null) return fromMeta;
   } catch {
-    return false;
+    // ignore
   }
+
+  // Cutover complete: Shopify Admin prices are net.
+  return true;
 }
 
 /** Catalog unit → UK VAT-inclusive display amount. */
@@ -36,7 +56,7 @@ export function catalogToIncVatAmount(
   return exVatCatalog ? grossFromNet(amount) : roundMoney(amount);
 }
 
-/** Catalog unit → ex-VAT amount (HMRC relief / “with VAT relief” copy). */
+/** Catalog unit → ex-VAT amount (HMRC relief / hero price). */
 export function catalogToExVatAmount(
   catalogAmount: number | string,
   exVatCatalog = isShopifyPricesExVat(),
