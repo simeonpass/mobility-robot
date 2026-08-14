@@ -140,6 +140,23 @@ const PRODUCT_CARD_FIELDS = `#graphql
         amount
         currencyCode
       }
+      maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    variants(first: 50) {
+      nodes {
+        id
+        price {
+          amount
+          currencyCode
+        }
+        selectedOptions {
+          name
+          value
+        }
+      }
     }
   }
 ` as const;

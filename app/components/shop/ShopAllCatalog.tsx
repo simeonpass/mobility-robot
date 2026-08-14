@@ -14,6 +14,7 @@ import {
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 import {isForcedLowStock, isForcedPreorder} from '~/lib/product-delivery';
+import {getProductListPrice} from '~/lib/product-vat-variants';
 import {type ShopAllProduct} from '~/lib/shop-all';
 
 type ShopAllCatalogProps = {
@@ -124,10 +125,11 @@ function ChairCard({
   const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
   const preorder = isForcedPreorder(product.handle);
   const lowStock = !preorder && isForcedLowStock(product.handle);
+  const listPrice = getProductListPrice(product);
   const exVatPrice = formatHomepageFromPrice(
     slot,
-    product.priceRange.minVariantPrice.amount,
-    product.priceRange.minVariantPrice.currencyCode,
+    listPrice.amount,
+    listPrice.currencyCode,
   );
 
   return (
@@ -194,10 +196,8 @@ function ChairCard({
 
 function AccessoryCard({product}: {product: ShopAllProduct}) {
   const slots = resolveAccessoryCompatibility(product);
-  const exVat = formatExVatPrice(
-    product.priceRange.minVariantPrice.amount,
-    product.priceRange.minVariantPrice.currencyCode,
-  );
+  const listPrice = getProductListPrice(product);
+  const exVat = formatExVatPrice(listPrice.amount, listPrice.currencyCode);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-medium">

@@ -2,6 +2,7 @@ import {Link} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
 import type {HomeProductFragment} from 'storefrontapi.generated';
 import {getProductDisplayName} from '~/lib/product-content';
+import {getProductListPrice} from '~/lib/product-vat-variants';
 
 type RelatedProductsProps = {
   products: HomeProductFragment[];
@@ -30,7 +31,7 @@ export function RelatedProducts({
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {related.map((product) => {
           const image = product.featuredImage;
-          const price = product.priceRange.minVariantPrice;
+          const price = getProductListPrice(product);
           const name = getProductDisplayName(product.handle, product.title);
 
           return (

@@ -11,6 +11,7 @@ import {
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 import {getProductDisplayName} from '~/lib/product-content';
+import {getProductListPrice} from '~/lib/product-vat-variants';
 
 export type HomeProduct = HomeProductFragment;
 
@@ -79,10 +80,11 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
               | undefined;
             const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
             const name = getProductDisplayName(product.handle, product.title);
+            const listPrice = getProductListPrice(product);
             const exVatPrice = formatHomepageFromPrice(
               slot,
-              product.priceRange.minVariantPrice.amount,
-              product.priceRange.minVariantPrice.currencyCode,
+              listPrice.amount,
+              listPrice.currencyCode,
             );
             const image = product.featuredImage;
 

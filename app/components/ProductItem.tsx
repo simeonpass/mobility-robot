@@ -6,6 +6,7 @@ import type {
 } from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
 import {getProductDisplayName} from '~/lib/product-content';
+import {getProductListPrice} from '~/lib/product-vat-variants';
 
 export function ProductItem({
   product,
@@ -17,6 +18,7 @@ export function ProductItem({
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
   const name = getProductDisplayName(product.handle, product.title);
+  const listPrice = getProductListPrice(product);
   return (
     <Link
       className="product-item"
@@ -35,7 +37,7 @@ export function ProductItem({
       )}
       <h4>{name}</h4>
       <small>
-        <Money data={product.priceRange.minVariantPrice} />
+        <Money data={listPrice} />
       </small>
     </Link>
   );
