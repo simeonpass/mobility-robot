@@ -317,8 +317,20 @@ async function fetchAccessoryHandles(token) {
     return [...ACCESSORY_HANDLES_FALLBACK];
   }
 
+  // Union collection + curated catalogue so products like rear-cover-m4
+  // (published but not yet in the collection) still get dual VAT variants.
+  const seen = new Set(handles);
+  let added = 0;
+  for (const handle of ACCESSORY_HANDLES_FALLBACK) {
+    if (seen.has(handle)) continue;
+    seen.add(handle);
+    handles.push(handle);
+    added += 1;
+  }
+
   console.log(
-    `Accessories collection "${ACCESSORIES_COLLECTION_HANDLE}": ${handles.length} product(s)`,
+    `Accessories collection "${ACCESSORIES_COLLECTION_HANDLE}": ${handles.length - added} product(s)` +
+      (added ? ` + ${added} curated handle(s) not in collection` : ''),
   );
   return handles;
 }
