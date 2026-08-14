@@ -31,7 +31,7 @@ Existing M4 Pro items that were not in the Accessories collection are added by `
 
 ## Created from the CSV
 
-New Shopify products (UK RRP from the CSV, dual VAT variants via `setup-vat-relief-variants.mjs`). Images from [xstomobility.com](https://www.xstomobility.com/collections/accessories) where a matching listing exists; otherwise a closely related in-store photo, or no image for small spares.
+New Shopify products. CSV RRPs are **ex-VAT**. Standard price = CSV × 1.2, then rounded up to the next clean retail price point (£15, £20, £50, £75, £100, £120, £250, £500, £1000). VAT Relief = Standard ÷ 1.2. Images from [xstomobility.com](https://www.xstomobility.com/collections/accessories) where a matching listing exists; otherwise a closely related in-store photo, or no image for small spares.
 
 | SKU | Handle |
 |-----|--------|
@@ -50,6 +50,23 @@ New Shopify products (UK RRP from the CSV, dual VAT variants via `setup-vat-reli
 | SPA-XST-59 | `cane-holder-m4` |
 | SPA-XST-60 | `rear-push-handles-m4` |
 | SPA-XST-61 | `straight-quick-release-backboard-m4-pro` |
+
+Rounded inc-VAT list prices (CSV net × 1.2, then lifted to a round retail figure):
+
+| SKU | CSV net | Standard (inc VAT) | VAT Relief |
+|-----|--------:|-------------------:|-----------:|
+| SPA-XST-18 | £36 | £50 | £41.67 |
+| SPA-XST-19 / 20 | £10 | £15 | £12.50 |
+| SPA-XST-21 | £15 | £20 | £16.67 |
+| SPA-XST-33 | £399 | £500 | £416.67 |
+| SPA-XST-34 | £799 | £1,000 | £833.33 |
+| SPA-XST-35 / 36 / 39 / 58 | £99 | £120 | £100 |
+| SPA-XST-37 / 40 | £79 | £100 | £83.33 |
+| SPA-XST-38 / 46 / 47 | £89 | £120 | £100 |
+| SPA-XST-41 | £49 | £60 | £50 |
+| SPA-XST-45 | £39 | £50 | £41.67 |
+| SPA-XST-59 / 60 | £59 | £75 | £62.50 |
+| SPA-XST-61 | £189 | £250 | £208.33 |
 
 CSV gaps (no rows): SPA-XST-24, 31, 42, 48–51, 53–55.
 

@@ -2,6 +2,10 @@
 /**
  * Compare the XSTO accessories CSV against Shopify and create missing products.
  *
+ * CSV `price` values are ex-VAT. Standard (inc VAT) = price × 1.2,
+ * then rounded up to the next clean retail price point (£15, £20, £50,
+ * £75, £100, £120, £250, £500, £1000, …). VAT Relief = Standard ÷ 1.2.
+ *
  * Images prefer xstomobility.com (XSTO’s public catalogue). Similar in-store
  * photos are reused when the manufacturer page has no dedicated shot.
  *
@@ -12,6 +16,7 @@
  * Usage:
  *   node scripts/sync-xsto-csv-accessories.mjs --dry-run
  *   node scripts/sync-xsto-csv-accessories.mjs
+ *   node scripts/sync-xsto-csv-accessories.mjs --prices-only
  */
 
 import {readFileSync} from 'node:fs';
@@ -44,6 +49,7 @@ function loadEnv() {
 loadEnv();
 
 const dryRun = process.argv.includes('--dry-run');
+const pricesOnly = process.argv.includes('--prices-only');
 const ACCESSORIES_COLLECTION_HANDLE = 'accessories';
 
 const IMG = {
@@ -356,6 +362,43 @@ if (!storeDomain) {
   process.exit(1);
 }
 
+function money(value) {
+  return (Math.round(Number(value) * 100) / 100).toFixed(2);
+}
+
+/**
+ * Lift a raw inc-VAT amount to the next recognisable retail price
+ * (tens / classic steps such as £15, £25, £75, £250). Awkward figures
+ * like £12, £18, £45, £95, £110, £230, £480, £960 are not used.
+ */
+const RETAIL_PRICE_POINTS = [
+  5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 120, 150, 200, 250, 300, 400,
+  500, 750, 1000, 1250, 1500, 2000,
+];
+
+function roundUpRetailIncVat(rawIncVat) {
+  const n = Number(rawIncVat);
+  if (!(n > 0)) return money(n);
+  const point = RETAIL_PRICE_POINTS.find((price) => price + 1e-9 >= n);
+  if (point != null) return money(point);
+  return money(Math.ceil(n / 100) * 100);
+}
+
+function priceIncVat(item) {
+  return roundUpRetailIncVat(Number(item.price) * 1.2);
+}
+
+function priceRelief(item) {
+  return money(Number(priceIncVat(item)) / 1.2);
+}
+
+function vatOptionValue(variant) {
+  return (
+    variant.selectedOptions?.find((option) => option.name === 'VAT')?.value ??
+    null
+  );
+}
+
 function descriptionHtml(item) {
   const mpn = item.mpn ? `<li>Manufacturer part: ${item.mpn}</li>` : '';
   const chairs = item.tags
@@ -368,7 +411,7 @@ function descriptionHtml(item) {
   return `
 <p>${item.overview}</p>
 <ul>
-  <li>UK list price (inc VAT): £${item.price}</li>
+  <li>UK list price: £${priceIncVat(item)} inc VAT (£${priceRelief(item)} with VAT relief)</li>
   <li>SKU: ${item.sku}</li>
   ${mpn}
   ${fit}
@@ -455,7 +498,14 @@ async function findProductByHandle(token, handle) {
             handle
             title
             status
-            variants(first: 30) { nodes { id sku } }
+            variants(first: 30) {
+              nodes {
+                id
+                sku
+                price
+                selectedOptions { name value }
+              }
+            }
           }
         }
       }
@@ -492,7 +542,9 @@ async function createProduct(token, item) {
   }
 
   if (dryRun) {
-    console.log(`Would create: ${item.sku} ${item.handle} @ £${item.price}`);
+    console.log(
+      `Would create: ${item.sku} ${item.handle} @ £${priceIncVat(item)} inc VAT (relief £${priceRelief(item)}; CSV net £${money(item.price)})`,
+    );
     return {id: `dry-run://${item.handle}`, handle: item.handle};
   }
 
@@ -544,7 +596,7 @@ async function createProduct(token, item) {
         variants: [
           {
             id: variantId,
-            price: item.price,
+            price: priceIncVat(item),
             inventoryPolicy: 'CONTINUE',
             inventoryItem: {sku: item.sku},
           },
@@ -555,7 +607,9 @@ async function createProduct(token, item) {
       'productVariantsBulkUpdate',
       priceData?.productVariantsBulkUpdate?.userErrors,
     );
-    console.log(`  Price £${item.price} SKU ${item.sku}`);
+    console.log(
+      `  Price £${priceIncVat(item)} inc VAT (relief £${priceRelief(item)}) SKU ${item.sku}`,
+    );
   }
 
   if (item.images?.length) {
@@ -675,42 +729,121 @@ async function applySkuUpdates(token) {
   }
 }
 
+async function applyRoundedIncVatPrices(token) {
+  for (const item of NEW_PRODUCTS) {
+    const product = await findProductByHandle(token, item.handle);
+    if (!product) {
+      console.warn(`Price skip (missing): ${item.handle}`);
+      continue;
+    }
+
+    const inc = priceIncVat(item);
+    const relief = priceRelief(item);
+    const variants = product.variants?.nodes ?? [];
+    const updates = [];
+
+    for (const variant of variants) {
+      const vat = vatOptionValue(variant);
+      const target = vat === 'VAT Relief' ? relief : inc;
+      if (money(variant.price) === target) continue;
+      updates.push({id: variant.id, price: target});
+    }
+
+    if (!updates.length) {
+      console.log(`Price ok: ${item.handle} Standard £${inc} / Relief £${relief}`);
+      continue;
+    }
+
+    if (dryRun) {
+      console.log(
+        `Would set ${item.handle}: Standard £${inc}, Relief £${relief} (${updates.length} variants)`,
+      );
+      continue;
+    }
+
+    const priceData = await adminGraphql(
+      token,
+      `#graphql
+        mutation SetRoundedPrice($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+          productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+            productVariants { id price }
+            userErrors { field message }
+          }
+        }
+      `,
+      {productId: product.id, variants: updates},
+    );
+    assertNoUserErrors(
+      'productVariantsBulkUpdate price',
+      priceData?.productVariantsBulkUpdate?.userErrors,
+    );
+
+    const descData = await adminGraphql(
+      token,
+      `#graphql
+        mutation UpdateDesc($input: ProductInput!) {
+          productUpdate(input: $input) {
+            userErrors { field message }
+          }
+        }
+      `,
+      {
+        input: {
+          id: product.id,
+          descriptionHtml: descriptionHtml(item),
+        },
+      },
+    );
+    assertNoUserErrors('productUpdate', descData?.productUpdate?.userErrors);
+    console.log(`Price set: ${item.handle} Standard £${inc} / Relief £${relief}`);
+  }
+}
+
 const token = await getAccessToken();
-const collection = await findAccessoriesCollection(token);
-if (!collection) {
-  console.warn('Accessories collection not found');
+
+if (!pricesOnly) {
+  const collection = await findAccessoriesCollection(token);
+  if (!collection) {
+    console.warn('Accessories collection not found');
+  } else {
+    console.log(`Accessories collection: ${collection.title} (${collection.id})`);
+  }
+
+  console.log('\n=== Existing CSV matches (not recreated) ===');
+  for (const row of EXISTING) {
+    console.log(`  ${row.sku} → ${row.handle}${row.note ? ` (${row.note})` : ''}`);
+  }
+
+  console.log('\n=== SKU backfill ===');
+  await applySkuUpdates(token);
+
+  console.log('\n=== Create missing products ===');
+  const createdIds = [];
+  for (const item of NEW_PRODUCTS) {
+    const product = await createProduct(token, item);
+    createdIds.push(product.id);
+    await publishToAvailableChannels(token, product.id);
+  }
+
+  console.log('\n=== Round inc-VAT prices (CSV was ex-VAT) ===');
+  await applyRoundedIncVatPrices(token);
+
+  const existingIds = [];
+  for (const row of EXISTING) {
+    const product = await findProductByHandle(token, row.handle);
+    if (product?.id) existingIds.push(product.id);
+  }
+
+  if (collection?.id) {
+    console.log('\n=== Accessories collection ===');
+    await addToAccessoriesCollection(token, collection.id, [
+      ...existingIds,
+      ...createdIds,
+    ]);
+  }
 } else {
-  console.log(`Accessories collection: ${collection.title} (${collection.id})`);
-}
-
-console.log('\n=== Existing CSV matches (not recreated) ===');
-for (const row of EXISTING) {
-  console.log(`  ${row.sku} → ${row.handle}${row.note ? ` (${row.note})` : ''}`);
-}
-
-console.log('\n=== SKU backfill ===');
-await applySkuUpdates(token);
-
-console.log('\n=== Create missing products ===');
-const createdIds = [];
-for (const item of NEW_PRODUCTS) {
-  const product = await createProduct(token, item);
-  createdIds.push(product.id);
-  await publishToAvailableChannels(token, product.id);
-}
-
-const existingIds = [];
-for (const row of EXISTING) {
-  const product = await findProductByHandle(token, row.handle);
-  if (product?.id) existingIds.push(product.id);
-}
-
-if (collection?.id) {
-  console.log('\n=== Accessories collection ===');
-  await addToAccessoriesCollection(token, collection.id, [
-    ...existingIds,
-    ...createdIds,
-  ]);
+  console.log('\n=== Round inc-VAT prices (CSV was ex-VAT) ===');
+  await applyRoundedIncVatPrices(token);
 }
 
 console.log(`
