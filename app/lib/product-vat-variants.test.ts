@@ -4,6 +4,7 @@ import {
   filterVisibleProductOptions,
   filterVisibleSelectedOptions,
   isVatReliefVariant,
+  resolveCartMerchandiseId,
   resolveVatPurchaseVariant,
   VAT_OPTION_NAME,
   VAT_OPTION_RELIEF,
@@ -89,5 +90,24 @@ describe('product-vat-variants', () => {
       whiteStandard.id,
     ]);
     expect(isVatReliefVariant(blackRelief.selectedOptions)).toBe(true);
+  });
+
+  it('resolves cart merchandise id when claiming or clearing relief', () => {
+    const merchandise = {
+      id: blackStandard.id,
+      selectedOptions: blackStandard.selectedOptions,
+      product: {variants: {nodes: variants}},
+    };
+    expect(resolveCartMerchandiseId(merchandise, true)).toBe(blackRelief.id);
+    expect(
+      resolveCartMerchandiseId(
+        {
+          id: blackRelief.id,
+          selectedOptions: blackRelief.selectedOptions,
+          product: {variants: {nodes: variants}},
+        },
+        false,
+      ),
+    ).toBe(blackStandard.id);
   });
 });

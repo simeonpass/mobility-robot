@@ -55,12 +55,19 @@ export function CartLineItem({
 
   const openLineVatModal = () => {
     const relatedLines = [
-      {id, quantity, attributes, productTitle: product.title},
+      {
+        id,
+        quantity,
+        attributes,
+        productTitle: product.title,
+        merchandise,
+      },
       ...(lineItemChildren ?? []).map((child) => ({
         id: child.id,
         quantity: child.quantity,
         attributes: child.attributes,
         productTitle: child.merchandise.product.title,
+        merchandise: child.merchandise,
       })),
     ];
     openCartModal({

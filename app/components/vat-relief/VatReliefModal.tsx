@@ -11,6 +11,10 @@ import {
 } from '~/lib/product-pricing';
 import {mergeVatAttributes, stripVatAttributes} from '~/lib/vat-relief-attributes';
 import {
+  resolveCartMerchandiseId,
+  type CartVatMerchandise,
+} from '~/lib/product-vat-variants';
+import {
   isVatDeclarationComplete,
   type VatDeclaration,
 } from '~/lib/vat-relief-types';
@@ -21,6 +25,8 @@ export type VatReliefModalCartLine = {
   quantity: number;
   attributes?: Array<{key: string; value?: string | null}> | null;
   productTitle?: string;
+  /** Current line merchandise — used to swap Standard ↔ VAT Relief SKUs. */
+  merchandise?: CartVatMerchandise | null;
 };
 
 type VatReliefModalProps = {
@@ -85,13 +91,21 @@ export function VatReliefModal({
     onClose();
   };
 
-  const cartUpdateLines = cartLines.map((line) => ({
-    id: line.id,
-    quantity: line.quantity,
-    attributes: vatReliefEnabled
-      ? mergeVatAttributes(line.attributes, declaration)
-      : stripVatAttributes(line.attributes),
-  }));
+  const cartUpdateLines = cartLines.map((line) => {
+    const merchandiseId = resolveCartMerchandiseId(
+      line.merchandise,
+      vatReliefEnabled,
+    );
+
+    return {
+      id: line.id,
+      quantity: line.quantity,
+      attributes: vatReliefEnabled
+        ? mergeVatAttributes(line.attributes, declaration)
+        : stripVatAttributes(line.attributes),
+      ...(merchandiseId ? {merchandiseId} : {}),
+    };
+  });
 
   const submitDisabled = vatReliefEnabled && !complete;
 
@@ -306,6 +320,7 @@ type CartUpdateLine = {
   id: string;
   quantity: number;
   attributes: AttributeInput[];
+  merchandiseId?: string;
 };
 
 type CartActionData = {
