@@ -58,16 +58,15 @@ Oxygen / `.env` needs `SHOPIFY_ADMIN_API_ACCESS_TOKEN` with `write_customers` so
 
 ### 5. Flip the storefront flag
 
-In Oxygen environment variables:
+The storefront now **defaults to tax-exclusive mode**. Your Oxygen variable
+`PUBLIC_SHOPIFY_PRICES_EX_VAT=true` is fine to keep.
 
-```
-PUBLIC_SHOPIFY_PRICES_EX_VAT=true
-```
+Only set `PUBLIC_SHOPIFY_PRICES_EX_VAT=false` if you need to roll back.
 
-Redeploy / restart so Hydrogen shows:
+Redeploy after merging so Hydrogen uses net catalog amounts correctly:
 
-- Normal: net × 1.2 (inc VAT)
-- With relief: net (ex VAT)
+- Hero / Google: net (ex VAT)
+- Secondary: net × 1.2 (inc VAT)
 
 ### 6. Deactivate the discount
 

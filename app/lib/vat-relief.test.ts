@@ -1,8 +1,9 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, beforeEach, afterEach} from 'vitest';
 import {
   getCartTotals,
   isVatReliefDiscountApplied,
 } from '~/lib/vat-relief';
+import {setShopifyPricesExVat} from '~/lib/pricing-mode';
 
 const vatReliefAttributes = [{key: 'VAT Relief', value: 'Yes'}];
 
@@ -42,6 +43,14 @@ function makeCart({
 }
 
 describe('vat-relief cart totals', () => {
+  beforeEach(() => {
+    // Legacy discount-function tests assume tax-inclusive catalog amounts.
+    setShopifyPricesExVat(false);
+  });
+  afterEach(() => {
+    setShopifyPricesExVat(null);
+  });
+
   it('estimates ex-VAT total before Shopify applies the automatic discount', () => {
     const cart = makeCart();
     const totals = getCartTotals(cart);
@@ -133,6 +142,25 @@ describe('vat-relief cart totals', () => {
       vatReliefApplied: false,
       hasVatRelief: false,
       hasDeposit: true,
+    });
+  });
+
+  it('uses taxExempt math when catalog prices are ex VAT', () => {
+    setShopifyPricesExVat(true);
+    const cart = makeCart({
+      lineAmount: '3500.00',
+      unitPrice: '3500.00',
+      subtotalAmount: '3500.00',
+      totalAmount: '3500.00',
+    });
+
+    expect(getCartTotals(cart)).toEqual({
+      subtotalIncVat: 4200,
+      vatRemoved: 700,
+      total: 3500,
+      vatReliefApplied: true,
+      hasVatRelief: true,
+      hasDeposit: false,
     });
   });
 });

@@ -4,6 +4,7 @@ import {
   catalogToIncVatAmount,
   catalogVatPortion,
   isShopifyPricesExVat,
+  setShopifyPricesExVat,
 } from '~/lib/pricing-mode';
 import {grossFromNet, vatPortionFromNet} from '~/lib/vat-math';
 
@@ -16,18 +17,22 @@ describe('vat-math net helpers', () => {
 
 describe('pricing-mode', () => {
   afterEach(() => {
-    // Reset any env override used in tests
-    delete (import.meta as ImportMeta & {env?: Record<string, string>}).env
-      ?.PUBLIC_SHOPIFY_PRICES_EX_VAT;
+    setShopifyPricesExVat(null);
   });
 
-  it('treats catalog as gross when flag is off', () => {
+  it('defaults to ex-VAT catalog mode', () => {
+    expect(isShopifyPricesExVat()).toBe(true);
+    expect(catalogToIncVatAmount(3500)).toBe(4200);
+    expect(catalogToExVatAmount(3500)).toBe(3500);
+  });
+
+  it('respects explicit false override', () => {
     expect(isShopifyPricesExVat({PUBLIC_SHOPIFY_PRICES_EX_VAT: 'false'})).toBe(
       false,
     );
-    expect(catalogToIncVatAmount(4500, false)).toBe(4500);
-    expect(catalogToExVatAmount(4500, false)).toBe(3750);
-    expect(catalogVatPortion(4500, false)).toBe(750);
+    expect(catalogToIncVatAmount(3500, false)).toBe(3500);
+    expect(catalogToExVatAmount(3500, false)).toBe(2916.67);
+    expect(catalogVatPortion(3500, false)).toBe(583.33);
   });
 
   it('treats catalog as net when flag is on', () => {

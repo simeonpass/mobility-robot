@@ -26,6 +26,7 @@ import {JsonLd} from '~/components/content/PageShell';
 import {sitewideJsonLdGraph} from '~/lib/seo';
 import {getJudgemeConfig} from '~/lib/judgeme';
 import {DEFAULT_SHOP_ID, HTML_LANG} from '~/lib/const';
+import {setShopifyPricesExVat} from '~/lib/pricing-mode';
 
 export type RootLoader = typeof loader;
 
@@ -107,6 +108,8 @@ export async function loader(args: Route.LoaderArgs) {
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,
     inboxExternalId:
       env.PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID || undefined,
+    // Default ON after net-price cutover; set PUBLIC_SHOPIFY_PRICES_EX_VAT=false to roll back.
+    pricesExVat: env.PUBLIC_SHOPIFY_PRICES_EX_VAT !== 'false',
     judgeme: getJudgemeConfig(env),
     shop: getShopAnalytics({
       storefront,
@@ -164,6 +167,8 @@ export default function App() {
   if (!data) {
     return <Outlet />;
   }
+
+  setShopifyPricesExVat(data.pricesExVat !== false);
 
   return (
     <Analytics.Provider
