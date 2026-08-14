@@ -2,10 +2,10 @@ import {UK_VAT_MULTIPLIER, grossFromNet, roundMoney} from '~/lib/vat-math';
 
 /**
  * When true, Shopify catalog / cart amounts are net (ex VAT).
- * The website still shows both ex-VAT (hero) and inc-VAT (secondary).
  *
- * Default is ON after the Admin net-price cutover.
- * Set PUBLIC_SHOPIFY_PRICES_EX_VAT=false only to roll back.
+ * Default is OFF (tax-inclusive catalog) after rolling back the exclusive
+ * cutover. Set PUBLIC_SHOPIFY_PRICES_EX_VAT=true in Oxygen only if Admin prices
+ * are switched to net again.
  * See docs/rebuild/vat-tax-exclusive-cutover.md
  */
 let runtimePricesExVat: boolean | null = null;
@@ -42,8 +42,8 @@ export function isShopifyPricesExVat(
     // ignore
   }
 
-  // Cutover complete: Shopify Admin prices are net.
-  return true;
+  // Inclusive catalog (pre / post rollback of tax-exclusive cutover).
+  return false;
 }
 
 /** Catalog unit → UK VAT-inclusive display amount. */

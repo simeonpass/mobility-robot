@@ -20,19 +20,19 @@ describe('pricing-mode', () => {
     setShopifyPricesExVat(null);
   });
 
-  it('defaults to ex-VAT catalog mode', () => {
-    expect(isShopifyPricesExVat()).toBe(true);
-    expect(catalogToIncVatAmount(3500)).toBe(4200);
-    expect(catalogToExVatAmount(3500)).toBe(3500);
+  it('defaults to inclusive catalog mode', () => {
+    expect(isShopifyPricesExVat()).toBe(false);
+    expect(catalogToIncVatAmount(4200)).toBe(4200);
+    expect(catalogToExVatAmount(4200)).toBe(3500);
   });
 
   it('respects explicit false override', () => {
     expect(isShopifyPricesExVat({PUBLIC_SHOPIFY_PRICES_EX_VAT: 'false'})).toBe(
       false,
     );
-    expect(catalogToIncVatAmount(3500, false)).toBe(3500);
-    expect(catalogToExVatAmount(3500, false)).toBe(2916.67);
-    expect(catalogVatPortion(3500, false)).toBe(583.33);
+    expect(catalogToIncVatAmount(4200, false)).toBe(4200);
+    expect(catalogToExVatAmount(4200, false)).toBe(3500);
+    expect(catalogVatPortion(4200, false)).toBe(700);
   });
 
   it('treats catalog as net when flag is on', () => {

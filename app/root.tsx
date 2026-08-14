@@ -108,8 +108,8 @@ export async function loader(args: Route.LoaderArgs) {
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,
     inboxExternalId:
       env.PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID || undefined,
-    // Default ON after net-price cutover; set PUBLIC_SHOPIFY_PRICES_EX_VAT=false to roll back.
-    pricesExVat: env.PUBLIC_SHOPIFY_PRICES_EX_VAT !== 'false',
+    // Inclusive catalog by default. Set PUBLIC_SHOPIFY_PRICES_EX_VAT=true only for net Admin prices.
+    pricesExVat: env.PUBLIC_SHOPIFY_PRICES_EX_VAT === 'true',
     judgeme: getJudgemeConfig(env),
     shop: getShopAnalytics({
       storefront,
@@ -168,7 +168,7 @@ export default function App() {
     return <Outlet />;
   }
 
-  setShopifyPricesExVat(data.pricesExVat !== false);
+  setShopifyPricesExVat(Boolean(data.pricesExVat));
 
   return (
     <Analytics.Provider

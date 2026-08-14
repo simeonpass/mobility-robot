@@ -34,7 +34,6 @@ import {
 import {Ga4ProductView} from '~/components/Ga4ProductView';
 import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
-import {catalogToExVatAmount} from '~/lib/pricing-mode';
 import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
@@ -209,17 +208,13 @@ export default function Product() {
   const productReviews = getReviewsForProduct(product.handle);
   const reviewSummary = summarizeReviews(productReviews);
 
-  const schemaPrice = selectedVariant?.price.amount
-    ? String(catalogToExVatAmount(selectedVariant.price.amount))
-    : '0';
-
   const productSchema = productJsonLd({
     name: displayName,
     description: seo.description,
     handle: product.handle,
     sku: selectedVariant?.sku,
     image: selectedVariant?.image?.url || product.images.nodes[0]?.url,
-    price: schemaPrice,
+    price: selectedVariant?.price.amount ?? '0',
     currencyCode: selectedVariant?.price.currencyCode ?? 'GBP',
     availableForSale: selectedVariant?.availableForSale ?? false,
     ratingValue: reviewSummary.count > 0 ? reviewSummary.average : undefined,
