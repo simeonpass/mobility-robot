@@ -1,6 +1,7 @@
 import {useLocation} from 'react-router';
 import type {SelectedOption} from '@shopify/hydrogen/storefront-api-types';
 import {useMemo} from 'react';
+import {isVatOptionName} from '~/lib/product-vat-variants';
 
 export function useVariantUrl(
   handle: string,
@@ -37,6 +38,8 @@ export function getVariantUrl({
     : `/products/${handle}`;
 
   selectedOptions?.forEach((option) => {
+    // Keep VAT option out of the URL — storefront picks Standard/Relief.
+    if (isVatOptionName(option.name)) return;
     searchParams.set(option.name, option.value);
   });
 

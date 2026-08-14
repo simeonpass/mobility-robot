@@ -38,6 +38,7 @@ import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 import {getProductDisplayName} from '~/lib/product-content';
+import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -162,7 +163,9 @@ export default function Product() {
     getAdjacentAndFirstAvailableVariants(product),
   );
 
-  useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
+  useSelectedOptionInUrlParam(
+    filterVisibleSelectedOptions(selectedVariant.selectedOptions),
+  );
 
   const productOptions = getProductOptions({
     ...product,
