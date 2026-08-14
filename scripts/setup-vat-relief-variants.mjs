@@ -23,6 +23,9 @@
  *   node scripts/setup-vat-relief-variants.mjs --handles=armrest-bag,rear-cover-m4
  *   node scripts/setup-vat-relief-variants.mjs --dry-run
  *   node scripts/setup-vat-relief-variants.mjs --accessories --dry-run
+ *
+ * Also copies Standard → VAT Relief inventoryPolicy and available qty so
+ * newly created Relief SKUs are not stuck "out of stock".
  */
 
 import {readFileSync} from 'node:fs';
@@ -199,8 +202,23 @@ const PRODUCT_QUERY = `#graphql
           price
           sku
           taxable
-          selectedOptions { name value }
+          availableForSale
           inventoryPolicy
+          inventoryQuantity
+          selectedOptions { name value }
+          inventoryItem {
+            id
+            tracked
+            inventoryLevels(first: 20) {
+              nodes {
+                location { id name }
+                quantities(names: ["available"]) {
+                  name
+                  quantity
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -219,6 +237,20 @@ const COLLECTION_PRODUCTS_QUERY = `#graphql
   }
 `;
 
+const ALL_PRODUCTS_QUERY = `#graphql
+  query AllRetailProducts($cursor: String) {
+    products(first: 100, after: $cursor) {
+      pageInfo { hasNextPage endCursor }
+      nodes {
+        id
+        handle
+        title
+        status
+      }
+    }
+  }
+`;
+
 const CREATE_OPTION = `#graphql
   mutation CreateVatOption($productId: ID!, $options: [OptionCreateInput!]!, $variantStrategy: ProductOptionCreateVariantStrategy) {
     productOptionsCreate(productId: $productId, options: $options, variantStrategy: $variantStrategy) {
@@ -232,10 +264,31 @@ const CREATE_OPTION = `#graphql
             title
             price
             taxable
+            inventoryPolicy
             selectedOptions { name value }
           }
         }
       }
+    }
+  }
+`;
+
+const INVENTORY_SET = `#graphql
+  mutation SetVatReliefInventory($input: InventorySetQuantitiesInput!) {
+    inventorySetQuantities(input: $input) {
+      userErrors { field message code }
+    }
+  }
+`;
+
+const INVENTORY_ACTIVATE = `#graphql
+  mutation ActivateVatReliefInventory($inventoryItemId: ID!, $locationId: ID!, $available: Int) {
+    inventoryActivate(
+      inventoryItemId: $inventoryItemId
+      locationId: $locationId
+      available: $available
+    ) {
+      userErrors { field message }
     }
   }
 `;
@@ -320,6 +373,13 @@ function buildSyncUpdates(nodes) {
           patch.price = target;
           changed = true;
         }
+        if (
+          standard.inventoryPolicy &&
+          variant.inventoryPolicy !== standard.inventoryPolicy
+        ) {
+          patch.inventoryPolicy = standard.inventoryPolicy;
+          changed = true;
+        }
       }
     }
 
@@ -327,6 +387,129 @@ function buildSyncUpdates(nodes) {
   }
 
   return updates;
+}
+
+function availableQty(level) {
+  const row = (level.quantities ?? []).find((q) => q.name === 'available');
+  return Number(row?.quantity ?? 0);
+}
+
+/**
+ * Copy Standard inventory levels onto matching VAT Relief siblings.
+ * New Relief variants often start at qty 0 with DENY → look "out of stock".
+ */
+async function syncReliefInventory(token, nodes) {
+  const quantities = [];
+  const activates = [];
+
+  for (const relief of nodes) {
+    if (getVatValue(relief) !== VAT_RELIEF) continue;
+    const standard = nodes.find(
+      (other) =>
+        getVatValue(other) === VAT_STANDARD &&
+        nonVatKey(other) === nonVatKey(relief),
+    );
+    if (!standard?.inventoryItem?.id || !relief.inventoryItem?.id) continue;
+
+    // Untracked inventory: policy copy (in bulk update) is enough.
+    if (!standard.inventoryItem.tracked) {
+      if (relief.inventoryItem.tracked) {
+        console.log(
+          `  ${relief.title}: Standard untracked — ensure CONTINUE via policy sync`,
+        );
+      }
+      continue;
+    }
+
+    const standardLevels = standard.inventoryItem.inventoryLevels?.nodes ?? [];
+    const reliefLevels = relief.inventoryItem.inventoryLevels?.nodes ?? [];
+    const reliefByLocation = new Map(
+      reliefLevels.map((level) => [level.location.id, level]),
+    );
+
+    for (const level of standardLevels) {
+      const locationId = level.location.id;
+      const qty = availableQty(level);
+      const existing = reliefByLocation.get(locationId);
+      if (!existing) {
+        activates.push({
+          inventoryItemId: relief.inventoryItem.id,
+          locationId,
+          available: qty,
+          title: relief.title,
+          locationName: level.location.name,
+        });
+        continue;
+      }
+      const current = availableQty(existing);
+      if (current === qty) continue;
+      quantities.push({
+        inventoryItemId: relief.inventoryItem.id,
+        locationId,
+        quantity: qty,
+        title: relief.title,
+        locationName: level.location.name,
+        from: current,
+      });
+    }
+  }
+
+  if (!activates.length && !quantities.length) {
+    console.log('  Inventory: already matches Standard (or untracked).');
+    return;
+  }
+
+  for (const row of activates) {
+    console.log(
+      `  Activate ${row.title} @ ${row.locationName} → available ${row.available}`,
+    );
+  }
+  for (const row of quantities) {
+    console.log(
+      `  Qty ${row.title} @ ${row.locationName}: ${row.from} → ${row.quantity}`,
+    );
+  }
+
+  if (dryRun) {
+    console.log(
+      `  Dry run — would activate ${activates.length} and set ${quantities.length} qty row(s).`,
+    );
+    return;
+  }
+
+  for (const row of activates) {
+    const result = await adminGraphql(token, INVENTORY_ACTIVATE, {
+      inventoryItemId: row.inventoryItemId,
+      locationId: row.locationId,
+      available: row.available,
+    });
+    const errors = result?.inventoryActivate?.userErrors ?? [];
+    if (errors.length) console.error(errors);
+  }
+
+  // inventorySetQuantities accepts batches; keep them modest.
+  const chunkSize = 25;
+  for (let i = 0; i < quantities.length; i += chunkSize) {
+    const chunk = quantities.slice(i, i + chunkSize);
+    const result = await adminGraphql(token, INVENTORY_SET, {
+      input: {
+        name: 'available',
+        reason: 'correction',
+        ignoreCompareQuantity: true,
+        quantities: chunk.map((row) => ({
+          inventoryItemId: row.inventoryItemId,
+          locationId: row.locationId,
+          quantity: row.quantity,
+        })),
+      },
+    });
+    const errors = result?.inventorySetQuantities?.userErrors ?? [];
+    if (errors.length) console.error(errors);
+  }
+
+  console.log(
+    `  Inventory sync: activated ${activates.length}, updated ${quantities.length}.`,
+  );
 }
 
 async function applyBulkUpdates(token, productId, updates, label) {
@@ -340,6 +523,9 @@ async function applyBulkUpdates(token, productId, updates, label) {
     if (update.price != null) bits.push(`price=${update.price}`);
     if (update.taxable != null) {
       bits.push(`taxable=${update.taxable ? 'yes' : 'no'}`);
+    }
+    if (update.inventoryPolicy != null) {
+      bits.push(`inventoryPolicy=${update.inventoryPolicy}`);
     }
     console.log(`  ${update.id} → ${bits.join(', ')}`);
   }
@@ -369,9 +555,12 @@ async function ensureVatVariants(token, handle) {
   console.log(`\n=== ${product.title} (${handle}) ===`);
 
   if (hasVatOption(product)) {
-    console.log('VAT option already exists — syncing prices + taxable flags.');
+    console.log(
+      'VAT option already exists — syncing prices, taxable flags, inventory.',
+    );
     const updates = buildSyncUpdates(product.variants.nodes);
     await applyBulkUpdates(token, product.id, updates, 'Sync');
+    await syncReliefInventory(token, product.variants.nodes);
     return;
   }
 
@@ -404,16 +593,18 @@ async function ensureVatVariants(token, handle) {
     return;
   }
 
-  const updated = createResult?.productOptionsCreate?.product;
-  const nodes = updated?.variants?.nodes ?? [];
+  console.log(
+    `  Created VAT option — reloading product for inventory sync.`,
+  );
+
+  // Reload full variant + inventory payload (create payload is incomplete).
+  const reloaded = await adminGraphql(token, PRODUCT_QUERY, {handle});
+  const nodes = reloaded?.productByHandle?.variants?.nodes ?? [];
   console.log(`  Now ${nodes.length} variants.`);
 
   const updates = buildSyncUpdates(nodes);
   await applyBulkUpdates(token, product.id, updates, 'Post-create sync');
-
-  console.log(
-    '  Next: confirm inventory / selling plans on new variants in Admin if needed.',
-  );
+  await syncReliefInventory(token, nodes);
 }
 
 async function resolveHandles(token) {
@@ -479,6 +670,9 @@ for (const handle of HANDLES) {
 console.log('\nDone.');
 console.log(
   'Tax: Standard = Charge tax ON; VAT Relief = Charge tax OFF (no “Including £X” on net).',
+);
+console.log(
+  'Inventory: VAT Relief copies Standard inventoryPolicy + available qty per location.',
 );
 console.log(
   'Storefront: claim VAT relief → ATC / cart swap uses the VAT Relief variant.',

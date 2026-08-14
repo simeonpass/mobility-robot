@@ -59,6 +59,7 @@ The script:
 1. Creates **VAT** option (`Standard` / `VAT Relief`) when missing.
 2. Sets Relief price = `gross ÷ 1.2`.
 3. Sets **Standard taxable=true**, **VAT Relief taxable=false**.
+4. Copies **Standard → VAT Relief** `inventoryPolicy` and available qty (new Relief SKUs otherwise show as out of stock).
 
 After create:
 
