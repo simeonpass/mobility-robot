@@ -21,6 +21,7 @@ import {getDeliveryInfo, isForcedPreorder} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
   formatProductPrice,
+  getDualVariantPriceDisplays,
   getExVatDisplay,
   getIncVatDisplay,
   getKlarnaInstallmentDisplay,
@@ -41,6 +42,7 @@ import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
 import {
   filterStandardVatVariants,
   filterVisibleProductOptions,
+  isVatReliefVariant,
   resolveVatPurchaseVariant,
   variantsHaveVatOption,
 } from '~/lib/product-vat-variants';
@@ -326,37 +328,24 @@ export function ProductPurchasePanel({
     price?.currencyCode,
   ]);
 
-  const incVatDisplay = getIncVatDisplay(
-    dualVatPricing
-      ? standardPackagePrice
-      : (colourBaseVariant?.price ?? packagePrice),
+  const listedReliefIsDistinct = isVatReliefVariant(
+    resolveVatPurchaseVariant(colourBaseVariant, allChairVariants, true)
+      ?.selectedOptions,
   );
-  const exVatDisplay = dualVatPricing
-    ? reliefPackagePrice
-      ? formatProductPrice(
-          Number(reliefPackagePrice.amount),
-          reliefPackagePrice.currencyCode,
-          {fractionDigits: 2},
-        )
-      : null
-    : getExVatDisplay(colourBaseVariant?.price ?? packagePrice);
-
-  const dualSavings =
-    dualVatPricing && standardPackagePrice && reliefPackagePrice
-      ? formatProductPrice(
-          Math.max(
-            0,
-            Number(standardPackagePrice.amount) -
-              Number(reliefPackagePrice.amount),
-          ),
-          standardPackagePrice.currencyCode,
-          {fractionDigits: 2},
-        )
-      : null;
-
-  const vatSavings = dualVatPricing
-    ? dualSavings
-    : getVatSavingsDisplay(colourBaseVariant?.price ?? packagePrice);
+  const dualDisplays = dualVatPricing
+    ? getDualVariantPriceDisplays(
+        standardPackagePrice,
+        reliefPackagePrice,
+        listedReliefIsDistinct,
+      )
+    : null;
+  const catalogPrice = colourBaseVariant?.price ?? packagePrice;
+  const incVatDisplay =
+    dualDisplays?.incVatDisplay ?? getIncVatDisplay(catalogPrice);
+  const exVatDisplay =
+    dualDisplays?.exVatDisplay ?? getExVatDisplay(catalogPrice);
+  const vatSavings =
+    dualDisplays?.vatSavings ?? getVatSavingsDisplay(catalogPrice);
   const klarnaInstallment = getKlarnaInstallmentDisplay(
     dualVatPricing
       ? standardPackagePrice
@@ -514,6 +503,9 @@ export function ProductPurchasePanel({
               (dualVatPricing ? standardPackagePrice : packagePrice) ??
               price ??
               undefined,
+            listedReliefPrice: dualVatPricing
+              ? (reliefPackagePrice ?? undefined)
+              : undefined,
             initialEnabled: productVatReliefEnabled,
             initialDeclaration: declaration,
             onComplete: setProductVatRelief,
