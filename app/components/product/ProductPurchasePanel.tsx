@@ -242,6 +242,37 @@ export function ProductPurchasePanel({
     selectedAddonIds,
   ]);
 
+  // Always resolve the Relief package for display — do not reuse the active
+  // purchase variant (that is Standard until relief is claimed).
+  const reliefPackagePrice = useMemo(() => {
+    if (!dualVatPricing) return null;
+    const reliefChair =
+      resolveVatPurchaseVariant(colourBaseVariant, allChairVariants, true) ??
+      colourBaseVariant;
+    const addonReliefs: Array<MoneyV2 | null | undefined> = [];
+    for (const product of accessoryAddons) {
+      const variants = product.variants?.nodes ?? [];
+      const pickerVariants = filterStandardVatVariants(
+        variants.filter((variant) => variant.availableForSale),
+      );
+      const colourVariant = pickerVariants.find((item) =>
+        selectedAddonIds.has(item.id),
+      );
+      if (!colourVariant) continue;
+      const reliefAddon =
+        resolveVatPurchaseVariant(colourVariant, variants, true) ??
+        colourVariant;
+      addonReliefs.push(reliefAddon.price);
+    }
+    return sumMoneyV2([reliefChair?.price, ...addonReliefs]);
+  }, [
+    accessoryAddons,
+    allChairVariants,
+    colourBaseVariant,
+    dualVatPricing,
+    selectedAddonIds,
+  ]);
+
   const packagePrice = useMemo(
     () =>
       dualVatPricing
@@ -296,11 +327,10 @@ export function ProductPurchasePanel({
   ]);
 
   const incVatDisplay = getIncVatDisplay(
-    dualVatPricing ? standardPackagePrice : (colourBaseVariant?.price ?? packagePrice),
+    dualVatPricing
+      ? standardPackagePrice
+      : (colourBaseVariant?.price ?? packagePrice),
   );
-  // When dual variants exist, listed Relief price IS the ex-VAT amount.
-  // Otherwise fall back to ÷1.2 of the inclusive catalog price.
-  const reliefPackagePrice = dualVatPricing ? packagePrice : null;
   const exVatDisplay = dualVatPricing
     ? reliefPackagePrice
       ? formatProductPrice(
@@ -312,11 +342,12 @@ export function ProductPurchasePanel({
     : getExVatDisplay(colourBaseVariant?.price ?? packagePrice);
 
   const dualSavings =
-    dualVatPricing && standardPackagePrice && packagePrice
+    dualVatPricing && standardPackagePrice && reliefPackagePrice
       ? formatProductPrice(
           Math.max(
             0,
-            Number(standardPackagePrice.amount) - Number(packagePrice.amount),
+            Number(standardPackagePrice.amount) -
+              Number(reliefPackagePrice.amount),
           ),
           standardPackagePrice.currencyCode,
           {fractionDigits: 2},
