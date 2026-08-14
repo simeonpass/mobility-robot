@@ -769,27 +769,29 @@ function VatReliefCard({
             )}
           </p>
 
-          {enabled && vatFormComplete ? (
-            <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-vat-price">
-              <Check aria-hidden className="size-3.5" />
-              Ready at checkout
-            </p>
-          ) : null}
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+            {enabled && vatFormComplete ? (
+              <p className="inline-flex items-center gap-1.5 text-xs font-medium text-vat-price">
+                <Check aria-hidden className="size-3.5 shrink-0" />
+                Ready at checkout
+              </p>
+            ) : null}
 
-          <button
-            className="mt-2.5 inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-navy-light"
-            onClick={onOpen}
-            type="button"
-          >
-            {enabled ? (
-              <>
-                <Pencil aria-hidden className="size-3" />
-                {vatFormComplete ? 'Edit declaration' : 'Complete declaration'}
-              </>
-            ) : (
-              'Check eligibility & claim relief'
-            )}
-          </button>
+            <button
+              className="inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-navy-light"
+              onClick={onOpen}
+              type="button"
+            >
+              {enabled ? (
+                <>
+                  <Pencil aria-hidden className="size-3" />
+                  {vatFormComplete ? 'Edit declaration' : 'Complete declaration'}
+                </>
+              ) : (
+                'Check eligibility & claim relief'
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </section>
