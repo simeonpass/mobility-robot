@@ -5,6 +5,7 @@ import {BadgePercent, Check, ShieldCheck, X} from 'lucide-react';
 import {useEffect, useId, useRef} from 'react';
 import {Link} from 'react-router';
 import {
+  getDualVariantPriceDisplays,
   getExVatDisplay,
   getIncVatDisplay,
   getVatSavingsDisplay,
@@ -34,6 +35,7 @@ type VatReliefModalProps = {
   title: string;
   subtitle?: string;
   price?: MoneyV2 | null;
+  listedReliefPrice?: MoneyV2 | null;
   declaration: VatDeclaration;
   onDeclarationChange: (declaration: VatDeclaration) => void;
   vatReliefEnabled: boolean;
@@ -50,6 +52,7 @@ export function VatReliefModal({
   title,
   subtitle,
   price,
+  listedReliefPrice,
   declaration,
   onDeclarationChange,
   vatReliefEnabled,
@@ -63,9 +66,12 @@ export function VatReliefModal({
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
   const complete = isVatDeclarationComplete(declaration);
-  const incVatDisplay = getIncVatDisplay(price);
-  const exVatDisplay = getExVatDisplay(price);
-  const vatSavings = getVatSavingsDisplay(price);
+  const dualDisplays = listedReliefPrice
+    ? getDualVariantPriceDisplays(price, listedReliefPrice, true)
+    : null;
+  const incVatDisplay = dualDisplays?.incVatDisplay ?? getIncVatDisplay(price);
+  const exVatDisplay = dualDisplays?.exVatDisplay ?? getExVatDisplay(price);
+  const vatSavings = dualDisplays?.vatSavings ?? getVatSavingsDisplay(price);
 
   useEffect(() => {
     if (!open) return;

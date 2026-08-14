@@ -38,7 +38,10 @@ import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 import {getProductDisplayName} from '~/lib/product-content';
-import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
+import {
+  collectVatPricedVariants,
+  filterVisibleSelectedOptions,
+} from '~/lib/product-vat-variants';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -249,17 +252,23 @@ export default function Product() {
               productHandle={product.handle}
               productId={product.id}
               productOptions={productOptions}
-              productVariants={
+              productVariants={collectVatPricedVariants(
+                selectedVariant,
+                product.selectedOrFirstAvailableVariant,
+                product.adjacentVariants,
+                product.options.flatMap((option) =>
+                  option.optionValues.map(
+                    (value) => value.firstSelectableVariant,
+                  ),
+                ),
                 (
                   product as typeof product & {
                     variants?: {
-                      nodes?: Array<
-                        NonNullable<typeof selectedVariant>
-                      >;
+                      nodes?: Array<NonNullable<typeof selectedVariant>>;
                     };
                   }
-                ).variants?.nodes ?? []
-              }
+                ).variants?.nodes,
+              )}
               selectedVariant={selectedVariant}
               tagline={staticContent?.tagline ?? tabContent.tagline}
               title={displayName}

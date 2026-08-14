@@ -29,6 +29,7 @@ import {
 
 type ProductModalRequest = {
   price?: MoneyV2 | null;
+  listedReliefPrice?: MoneyV2 | null;
   initialEnabled?: boolean;
   initialDeclaration?: VatDeclaration;
   onComplete: (enabled: boolean, declaration: VatDeclaration) => void;
@@ -213,6 +214,7 @@ export function VatReliefProvider({children}: {children: ReactNode}) {
         onCartComplete={(enabled, nextDeclaration) => {
           setProductVatRelief(enabled, nextDeclaration);
         }}
+        listedReliefPrice={productRequest?.listedReliefPrice}
         onVatReliefEnabledChange={setModalEnabled}
         open={modalOpen}
         price={modalPrice}

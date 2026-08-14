@@ -65,6 +65,59 @@ export function getVatSavingsDisplay(price?: MoneyV2 | null) {
   );
 }
 
+/**
+ * PDP “inc. VAT” / “with VAT relief” copy for dual Standard + VAT Relief SKUs.
+ *
+ * Uses the listed Relief sibling when it is a distinct catalog price. Never
+ * formats the selected Standard variant as the relief amount (that produced
+ * “£4,200 with VAT relief (save £0)”). If the sibling is missing, fall back to
+ * ÷1.2 of the Standard catalog price.
+ */
+export function getDualVariantPriceDisplays(
+  standardPrice?: MoneyV2 | null,
+  listedReliefPrice?: MoneyV2 | null,
+  listedReliefIsDistinct = true,
+) {
+  if (!standardPrice) {
+    return {
+      incVatDisplay: null,
+      exVatDisplay: null,
+      vatSavings: null,
+    };
+  }
+
+  const incVatDisplay = getIncVatDisplay(standardPrice);
+  const standardAmount = Number(standardPrice.amount);
+  const reliefAmount = Number(listedReliefPrice?.amount);
+  const canUseListedRelief =
+    listedReliefIsDistinct &&
+    listedReliefPrice?.currencyCode &&
+    Number.isFinite(reliefAmount) &&
+    reliefAmount !== standardAmount;
+
+  if (canUseListedRelief && listedReliefPrice) {
+    return {
+      incVatDisplay,
+      exVatDisplay: formatProductPrice(
+        reliefAmount,
+        listedReliefPrice.currencyCode,
+        {fractionDigits: 2},
+      ),
+      vatSavings: formatProductPrice(
+        Math.max(0, standardAmount - reliefAmount),
+        standardPrice.currencyCode,
+        {fractionDigits: 2},
+      ),
+    };
+  }
+
+  return {
+    incVatDisplay,
+    exVatDisplay: getExVatDisplay(standardPrice),
+    vatSavings: getVatSavingsDisplay(standardPrice),
+  };
+}
+
 export function getKlarnaInstallmentDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
   // Klarna Pay in 3 on the UK VAT-inclusive total shoppers expect to see.

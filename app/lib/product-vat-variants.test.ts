@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {
+  collectVatPricedVariants,
   filterStandardVatVariants,
   filterVisibleProductOptions,
   filterVisibleSelectedOptions,
@@ -90,6 +91,21 @@ describe('product-vat-variants', () => {
       whiteStandard.id,
     ]);
     expect(isVatReliefVariant(blackRelief.selectedOptions)).toBe(true);
+  });
+
+  it('collects unique variants from selected, adjacent, and nodes', () => {
+    expect(
+      collectVatPricedVariants(
+        blackStandard,
+        [blackStandard, whiteStandard],
+        [blackRelief],
+        null,
+      ).map((variant) => variant.id),
+    ).toEqual([
+      blackStandard.id,
+      whiteStandard.id,
+      blackRelief.id,
+    ]);
   });
 
   it('resolves cart merchandise id when claiming or clearing relief', () => {

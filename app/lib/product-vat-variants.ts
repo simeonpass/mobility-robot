@@ -166,3 +166,27 @@ export function resolveCartMerchandiseId(
 export function moneyAmount(price?: Pick<MoneyV2, 'amount'> | null): number {
   return Number(price?.amount ?? 0);
 }
+
+/**
+ * Deduplicate variant nodes from the product query, adjacent variants, and
+ * option first-selectable variants so PDP relief pricing does not depend on a
+ * single `variants(first: N)` field.
+ */
+export function collectVatPricedVariants<T extends VatPricedVariant>(
+  ...groups: Array<T | null | undefined | Array<T | null | undefined> | null>
+): T[] {
+  const byId = new Map<string, T>();
+  const add = (variant: T | null | undefined) => {
+    if (variant?.id) byId.set(variant.id, variant);
+  };
+
+  for (const group of groups) {
+    if (Array.isArray(group)) {
+      for (const variant of group) add(variant);
+    } else {
+      add(group);
+    }
+  }
+
+  return [...byId.values()];
+}
