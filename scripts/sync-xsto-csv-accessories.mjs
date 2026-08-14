@@ -545,8 +545,8 @@ async function createProduct(token, item) {
           {
             id: variantId,
             price: item.price,
-            sku: item.sku,
             inventoryPolicy: 'CONTINUE',
+            inventoryItem: {sku: item.sku},
           },
         ],
       },
@@ -626,37 +626,11 @@ async function addToAccessoriesCollection(token, collectionId, productIds) {
 
 async function publishToAvailableChannels(token, productId) {
   if (dryRun || String(productId).startsWith('dry-run://')) return;
-  try {
-    const pubs = await adminGraphql(
-      token,
-      `#graphql
-        query Publications {
-          publications(first: 20) { nodes { id name } }
-        }
-      `,
-    );
-    for (const publication of pubs?.publications?.nodes ?? []) {
-      try {
-        const data = await adminGraphql(
-          token,
-          `#graphql
-            mutation Publish($id: ID!, $input: [PublicationInput!]!) {
-              publishablePublish(id: $id, input: $input) {
-                userErrors { field message }
-              }
-            }
-          `,
-          {id: productId, input: [{publicationId: publication.id}]},
-        );
-        const errors = data?.publishablePublish?.userErrors ?? [];
-        if (!errors.length) console.log(`  Published to ${publication.name}`);
-      } catch (error) {
-        console.warn(`  Publish skipped:`, error.message ?? error);
-      }
-    }
-  } catch (error) {
-    console.warn('  Could not list publications.', error.message ?? error);
-  }
+  // Deposit app has write_products but not read_publications / write_publications.
+  // New products stay Active in Admin until they are included in the Hydrogen
+  // sales channel (bulk-select in Shopify Admin).
+  void token;
+  void productId;
 }
 
 async function applySkuUpdates(token) {
@@ -687,7 +661,10 @@ async function applySkuUpdates(token) {
       `,
       {
         productId: product.id,
-        variants: needs.map((variant) => ({id: variant.id, sku: row.sku})),
+        variants: needs.map((variant) => ({
+          id: variant.id,
+          inventoryItem: {sku: row.sku},
+        })),
       },
     );
     assertNoUserErrors(
@@ -738,6 +715,10 @@ if (collection?.id) {
 
 console.log(`
 Done${dryRun ? ' (dry-run)' : ''}.
+
+New products are Active in Shopify Admin. To show them on the Hydrogen
+storefront, bulk-select them in Admin → Products and include the Hydrogen
+sales channel.
 
 New product URLs:
 ${NEW_PRODUCTS.map((item) => `  https://mobilityrobot.co.uk/products/${item.handle}`).join('\n')}

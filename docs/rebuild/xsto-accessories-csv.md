@@ -53,6 +53,17 @@ New Shopify products (UK RRP from the CSV, dual VAT variants via `setup-vat-reli
 
 CSV gaps (no rows): SPA-XST-24, 31, 42, 48–51, 53–55.
 
+## Hydrogen sales channel
+
+The Admin app used to create products has `write_products` but not `write_publications`. New listings are **Active in Shopify Admin** immediately; they only appear on mobilityrobot.co.uk / localhost after you include them in the **Hydrogen** sales channel:
+
+1. Shopify Admin → **Products**
+2. Filter by created today or search `SPA-XST-34`
+3. Select the new accessories
+4. **More actions** → **Include in sales channels** → Hydrogen / Headless
+
+Existing CSV matches that were already on Hydrogen were added to the Accessories collection and show on `/collections/accessories` without that step.
+
 ## Re-run
 
 ```bash
