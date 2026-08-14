@@ -38,6 +38,12 @@ import {
   type SellingPlanAllocationNode,
 } from '~/lib/selling-plans';
 import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
+import {
+  filterStandardVatVariants,
+  filterVisibleProductOptions,
+  resolveVatPurchaseVariant,
+  variantsHaveVatOption,
+} from '~/lib/product-vat-variants';
 
 type ProductPurchasePanelProps = {
   productHandle: string;
@@ -47,6 +53,19 @@ type ProductPurchasePanelProps = {
   tagline?: string;
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
   productOptions: MappedProductOptions[];
+  productVariants?: Array<{
+    id: string;
+    availableForSale?: boolean | null;
+    quantityAvailable?: number | null;
+    price?: MoneyV2 | null;
+    compareAtPrice?: MoneyV2 | null;
+    selectedOptions?: Array<{name: string; value: string}> | null;
+    sellingPlanAllocations?: ProductFragment['selectedOrFirstAvailableVariant'] extends {
+      sellingPlanAllocations?: infer A;
+    }
+      ? {nodes?: SellingPlanAllocationNode[]} | A
+      : {nodes?: SellingPlanAllocationNode[]};
+  }>;
   accessoryAddons?: AddonProduct[];
 };
 
@@ -58,6 +77,7 @@ export function ProductPurchasePanel({
   tagline,
   selectedVariant,
   productOptions,
+  productVariants = [],
   accessoryAddons = [],
 }: ProductPurchasePanelProps) {
   const {
@@ -76,13 +96,40 @@ export function ProductPurchasePanel({
   );
   const paymentChoiceTouched = useRef(false);
 
-  const price = selectedVariant?.price;
-  const compareAtPrice = selectedVariant?.compareAtPrice;
+  const allChairVariants = useMemo(() => {
+    if (productVariants.length) return productVariants;
+    return selectedVariant ? [selectedVariant] : [];
+  }, [productVariants, selectedVariant]);
 
-  const delivery = selectedVariant
+  const dualVatPricing = variantsHaveVatOption(allChairVariants);
+  const vatFormComplete = isVatDeclarationComplete(declaration);
+  const vatReliefActive = productVatReliefEnabled && vatFormComplete;
+
+  // Colour / base selection always resolves against the Standard price SKU.
+  const colourBaseVariant =
+    resolveVatPurchaseVariant(selectedVariant, allChairVariants, false) ??
+    selectedVariant;
+  const purchaseVariant =
+    resolveVatPurchaseVariant(
+      colourBaseVariant,
+      allChairVariants,
+      vatReliefActive,
+    ) ?? colourBaseVariant;
+
+  const visibleProductOptions = useMemo(
+    () => filterVisibleProductOptions(productOptions),
+    [productOptions],
+  );
+
+  const price = dualVatPricing
+    ? purchaseVariant?.price
+    : colourBaseVariant?.price;
+  const compareAtPrice = colourBaseVariant?.compareAtPrice;
+
+  const delivery = purchaseVariant
     ? getDeliveryInfo({
-        availableForSale: selectedVariant.availableForSale,
-        quantityAvailable: selectedVariant.quantityAvailable,
+        availableForSale: purchaseVariant.availableForSale,
+        quantityAvailable: purchaseVariant.quantityAvailable,
         handle: productHandle,
       })
     : null;
@@ -90,11 +137,11 @@ export function ProductPurchasePanel({
   const purchaseOptions = useMemo(
     () =>
       buildPurchaseOptions({
-        allocations: selectedVariant?.sellingPlanAllocations
+        allocations: purchaseVariant?.sellingPlanAllocations
           ?.nodes as SellingPlanAllocationNode[] | undefined,
-        vatReliefEnabled: productVatReliefEnabled,
+        vatReliefEnabled: productVatReliefEnabled && !dualVatPricing,
       }),
-    [productVatReliefEnabled, selectedVariant],
+    [dualVatPricing, productVatReliefEnabled, purchaseVariant],
   );
 
   const depositOption = purchaseOptions.find(isDepositPurchaseOption) ?? null;
@@ -123,10 +170,8 @@ export function ProductPurchasePanel({
   const selectedSellingPlanId =
     paymentChoice === 'deposit' ? depositOption?.sellingPlanId : null;
 
-  const vatFormComplete = isVatDeclarationComplete(declaration);
-
   const canAddToCart =
-    Boolean(selectedVariant?.availableForSale) &&
+    Boolean(purchaseVariant?.availableForSale) &&
     (!productVatReliefEnabled || vatFormComplete);
 
   const cartAttributes = useMemo(
@@ -138,37 +183,90 @@ export function ProductPurchasePanel({
   const addonLines = useMemo(() => {
     const lines: OptimisticCartLineInput[] = [];
     for (const product of accessoryAddons) {
-      const variants =
-        product.variants?.nodes?.filter((variant) => variant.availableForSale) ??
-        (product.selectedOrFirstAvailableVariant?.availableForSale
+      const variants = product.variants?.nodes ?? [];
+      const pickerVariants = filterStandardVatVariants(
+        variants.filter((variant) => variant.availableForSale),
+      );
+      const fallback =
+        product.selectedOrFirstAvailableVariant?.availableForSale
           ? [product.selectedOrFirstAvailableVariant]
-          : []);
-      const variant = variants.find((item) => selectedAddonIds.has(item.id));
-      if (!variant?.id) continue;
+          : [];
+      const colourChoices = pickerVariants.length ? pickerVariants : fallback;
+      const colourVariant = colourChoices.find((item) =>
+        selectedAddonIds.has(item.id),
+      );
+      if (!colourVariant?.id) continue;
+
+      const purchaseAddon =
+        resolveVatPurchaseVariant(colourVariant, variants, vatReliefActive) ??
+        colourVariant;
+
       lines.push({
-        merchandiseId: variant.id,
+        merchandiseId: purchaseAddon.id,
         quantity: 1,
-        selectedVariant: variant,
-        // Same VAT declaration as the chair — accessories must qualify too.
+        selectedVariant: purchaseAddon,
         ...(cartAttributes.length ? {attributes: cartAttributes} : {}),
       });
     }
     return lines;
-  }, [accessoryAddons, cartAttributes, selectedAddonIds]);
+  }, [accessoryAddons, cartAttributes, selectedAddonIds, vatReliefActive]);
 
   const addonCount = addonLines.length;
 
+  const standardPackagePrice = useMemo(() => {
+    if (!dualVatPricing) return null;
+    const standardChair =
+      resolveVatPurchaseVariant(colourBaseVariant, allChairVariants, false) ??
+      colourBaseVariant;
+    const addonStandards: Array<MoneyV2 | null | undefined> = [];
+    for (const product of accessoryAddons) {
+      const variants = product.variants?.nodes ?? [];
+      const pickerVariants = filterStandardVatVariants(
+        variants.filter((variant) => variant.availableForSale),
+      );
+      const colourVariant = pickerVariants.find((item) =>
+        selectedAddonIds.has(item.id),
+      );
+      if (!colourVariant) continue;
+      const standardAddon =
+        resolveVatPurchaseVariant(colourVariant, variants, false) ??
+        colourVariant;
+      addonStandards.push(standardAddon.price);
+    }
+    return sumMoneyV2([standardChair?.price, ...addonStandards]);
+  }, [
+    accessoryAddons,
+    allChairVariants,
+    colourBaseVariant,
+    dualVatPricing,
+    selectedAddonIds,
+  ]);
+
   const packagePrice = useMemo(
     () =>
-      sumMoneyV2([
-        price,
-        ...addonLines.map(
-          (line) =>
-            (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
-              ?.price,
-        ),
-      ]),
-    [addonLines, price],
+      dualVatPricing
+        ? sumMoneyV2([
+            purchaseVariant?.price,
+            ...addonLines.map(
+              (line) =>
+                (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
+                  ?.price,
+            ),
+          ])
+        : sumMoneyV2([
+            colourBaseVariant?.price,
+            ...addonLines.map(
+              (line) =>
+                (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
+                  ?.price,
+            ),
+          ]),
+    [
+      addonLines,
+      colourBaseVariant?.price,
+      dualVatPricing,
+      purchaseVariant?.price,
+    ],
   );
 
   const dueTodayPrice = useMemo(() => {
@@ -197,15 +295,54 @@ export function ProductPurchasePanel({
     price?.currencyCode,
   ]);
 
-  const incVatDisplay = getIncVatDisplay(packagePrice);
-  const exVatDisplay = getExVatDisplay(packagePrice);
-  const vatSavings = getVatSavingsDisplay(packagePrice);
-  const klarnaInstallment = getKlarnaInstallmentDisplay(packagePrice);
+  const incVatDisplay = getIncVatDisplay(
+    dualVatPricing ? standardPackagePrice : (colourBaseVariant?.price ?? packagePrice),
+  );
+  // When dual variants exist, listed Relief price IS the ex-VAT amount.
+  // Otherwise fall back to ÷1.2 of the inclusive catalog price.
+  const reliefPackagePrice = dualVatPricing ? packagePrice : null;
+  const exVatDisplay = dualVatPricing
+    ? reliefPackagePrice
+      ? formatProductPrice(
+          Number(reliefPackagePrice.amount),
+          reliefPackagePrice.currencyCode,
+          {fractionDigits: 2},
+        )
+      : null
+    : getExVatDisplay(colourBaseVariant?.price ?? packagePrice);
+
+  const dualSavings =
+    dualVatPricing && standardPackagePrice && packagePrice
+      ? formatProductPrice(
+          Math.max(
+            0,
+            Number(standardPackagePrice.amount) - Number(packagePrice.amount),
+          ),
+          standardPackagePrice.currencyCode,
+          {fractionDigits: 2},
+        )
+      : null;
+
+  const vatSavings = dualVatPricing
+    ? dualSavings
+    : getVatSavingsDisplay(colourBaseVariant?.price ?? packagePrice);
+  const klarnaInstallment = getKlarnaInstallmentDisplay(
+    dualVatPricing
+      ? standardPackagePrice
+      : (colourBaseVariant?.price ?? packagePrice),
+  );
   const activePriceDisplay =
     productVatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
 
   const dueTodayDisplay = useMemo(() => {
     if (!dueTodayPrice) return null;
+    if (dualVatPricing) {
+      return formatProductPrice(
+        Number(dueTodayPrice.amount),
+        dueTodayPrice.currencyCode,
+        {fractionDigits: 2},
+      );
+    }
     if (productVatReliefEnabled) {
       return formatProductPrice(
         catalogToExVatAmount(dueTodayPrice.amount),
@@ -220,7 +357,12 @@ export function ProductPurchasePanel({
           {fractionDigits: 2},
         )
       : getIncVatDisplay(dueTodayPrice);
-  }, [dueTodayPrice, paymentChoice, productVatReliefEnabled]);
+  }, [
+    dualVatPricing,
+    dueTodayPrice,
+    paymentChoice,
+    productVatReliefEnabled,
+  ]);
 
   const priceForLabel =
     paymentChoice === 'deposit' ? dueTodayDisplay : activePriceDisplay;
@@ -236,19 +378,19 @@ export function ProductPurchasePanel({
       ? `${baseLabel} · ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'}`
       : baseLabel;
 
-  const soldOutLabel = selectedVariant?.availableForSale
+  const soldOutLabel = purchaseVariant?.availableForSale
     ? productVatReliefEnabled && !vatFormComplete
       ? 'Complete VAT declaration'
       : 'Sold out'
     : 'Sold out';
 
-  const cartLines: OptimisticCartLineInput[] = selectedVariant
+  const cartLines: OptimisticCartLineInput[] = purchaseVariant
     ? [
         {
-          merchandiseId: selectedVariant.id,
+          merchandiseId: purchaseVariant.id,
           quantity: 1,
           selectedVariant: withOptimisticSellingPlanAllocation(
-            selectedVariant,
+            purchaseVariant,
             selectedSellingPlanId,
           ),
           attributes: cartAttributes,
@@ -261,7 +403,7 @@ export function ProductPurchasePanel({
           attributes: line.attributes?.length
             ? line.attributes
             : cartAttributes,
-          parent: line.parent ?? {merchandiseId: selectedVariant.id},
+          parent: line.parent ?? {merchandiseId: purchaseVariant.id},
         })),
       ]
     : [];
@@ -337,7 +479,10 @@ export function ProductPurchasePanel({
         exVatDisplay={exVatDisplay}
         onOpen={() =>
           openProductModal({
-            price: packagePrice ?? price ?? undefined,
+            price:
+              (dualVatPricing ? standardPackagePrice : packagePrice) ??
+              price ??
+              undefined,
             initialEnabled: productVatReliefEnabled,
             initialDeclaration: declaration,
             onComplete: setProductVatRelief,
@@ -379,8 +524,8 @@ export function ProductPurchasePanel({
           cartAttributes={cartAttributes}
           disabled={!canAddToCart}
           productHandle={productHandle}
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
+          productOptions={visibleProductOptions}
+          selectedVariant={purchaseVariant}
           sellingPlanId={selectedSellingPlanId}
           soldOutLabel={soldOutLabel}
         />

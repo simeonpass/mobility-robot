@@ -13,11 +13,23 @@ import {
  * @typedef {import('../generated/api').CartLinesDiscountsGenerateRunResult} CartLinesDiscountsGenerateRunResult
  */
 
+function isAlreadyVatReliefVariant(line) {
+  const options = line?.merchandise?.selectedOptions ?? [];
+  return options.some(
+    (option) =>
+      option?.name?.trim()?.toLowerCase() === 'vat' &&
+      option?.value === 'VAT Relief',
+  );
+}
+
 /**
  * VAT relief as an ORDER-class percentage (~16.6667% = VAT share of a UK
  * inc-VAT price). That lets product discount codes (e.g. JENNI10) stack on
  * Basic Shopify plans, and the % applies to the post–product-discount
  * subtotal so HMRC-style VAT removal stays correct after promos.
+ *
+ * Dual-variant products: when the line is already the "VAT Relief" SKU
+ * (net price), skip the discount so we do not cut twice.
  *
  * @param {RunInput} input
  * @returns {CartLinesDiscountsGenerateRunResult}
@@ -35,6 +47,12 @@ export function cartLinesDiscountsGenerateRun(input) {
   let hasQualifyingLine = false;
 
   for (const line of input.cart.lines) {
+    // Already priced as net via dual variants — no percentage discount.
+    if (isAlreadyVatReliefVariant(line)) {
+      excludedCartLineIds.push(line.id);
+      continue;
+    }
+
     if (lineQualifiesForVatRelief(line)) {
       hasQualifyingLine = true;
     } else {

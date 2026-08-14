@@ -7,6 +7,7 @@ import {useAside} from './Aside';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackRemoveFromCart} from '~/lib/analytics';
 import {isAccessoryProduct, lineHasVatRelief} from '~/lib/cart-utils';
+import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
 import {toCartAttributeInputs} from '~/lib/vat-relief-attributes';
 import {getLineCatalogGross} from '~/lib/vat-relief';
 import {
@@ -155,16 +156,14 @@ export function CartLineItem({
                     : '10% deposit'}
                 </span>
               ) : null}
-              {selectedOptions.map((option) =>
-                option.value === 'Default Title' ? null : (
+              {filterVisibleSelectedOptions(selectedOptions).map((option) => (
                   <span
                     className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground"
                     key={option.name}
                   >
                     {option.name}: {option.value}
                   </span>
-                ),
-              )}
+                ))}
             </div>
 
             {isDepositLine ? (

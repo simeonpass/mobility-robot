@@ -219,7 +219,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <div className="rounded-lg border border-border bg-secondary/30 p-3 text-sm">
             <p className="font-medium text-foreground">VAT relief on eligible items</p>
             <p className="mt-1 text-muted-foreground">
-              The exact VAT amount is removed automatically at checkout.
+              Checkout uses your declaration email. With VAT relief variants,
+              you pay the listed ex-VAT price (no tax line confusion).
               <Link
                 className="ml-1 font-medium text-foreground hover:underline"
                 to="/account/login"

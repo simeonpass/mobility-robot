@@ -71,7 +71,10 @@ export function ProductForm({
   return (
     <div className="space-y-6">
       {productOptions.map((option) => {
+        // Hide single-value options and the VAT Standard/Relief option
+        // (storefront picks the sibling when relief is claimed).
         if (option.optionValues.length === 1) return null;
+        if (option.name.trim().toLowerCase() === 'vat') return null;
 
         return (
           <fieldset className="space-y-3" key={option.name}>

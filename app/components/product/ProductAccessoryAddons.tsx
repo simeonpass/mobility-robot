@@ -67,11 +67,18 @@ type ProductAccessoryAddonsProps = {
 };
 
 function colourLabel(variant: AddonVariant): string {
-  const colourOption = variant.selectedOptions?.find((option) =>
-    /colour|color/i.test(option.name),
+  const colourOption = variant.selectedOptions?.find(
+    (option) =>
+      /colour|color/i.test(option.name) &&
+      option.name.trim().toLowerCase() !== 'vat',
   );
   if (colourOption?.value) return colourOption.value;
-  if (variant.title && variant.title !== 'Default Title') return variant.title;
+  if (variant.title && variant.title !== 'Default Title') {
+    // Avoid showing "Standard / VAT Relief" as a colour name.
+    if (!/vat relief/i.test(variant.title) && variant.title !== 'Standard') {
+      return variant.title;
+    }
+  }
   return 'Standard';
 }
 
@@ -79,9 +86,20 @@ function availableVariants(product: AddonProduct): AddonVariant[] {
   const nodes = product.variants?.nodes?.filter(
     (variant) => variant.availableForSale,
   );
-  if (nodes?.length) return nodes;
-  const fallback = product.selectedOrFirstAvailableVariant;
-  return fallback?.availableForSale ? [fallback] : [];
+  const list = nodes?.length
+    ? nodes
+    : product.selectedOrFirstAvailableVariant?.availableForSale
+      ? [product.selectedOrFirstAvailableVariant]
+      : [];
+
+  // Colour picker should only list Standard (or non-VAT) variants.
+  const standardOnly = list.filter((variant) => {
+    const vat = variant.selectedOptions?.find(
+      (option) => option.name.trim().toLowerCase() === 'vat',
+    );
+    return !vat || vat.value === 'Standard';
+  });
+  return standardOnly.length ? standardOnly : list;
 }
 
 export function ProductAccessoryAddons({

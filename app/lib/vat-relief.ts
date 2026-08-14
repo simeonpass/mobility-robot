@@ -5,6 +5,7 @@ import {
   catalogVatPortion,
   isShopifyPricesExVat,
 } from '~/lib/pricing-mode';
+import {isVatReliefVariant} from '~/lib/product-vat-variants';
 import {
   getLineAmountDueToday,
   isDepositCartLine,
@@ -23,7 +24,10 @@ export type VatReliefCartLine = {
     totalAmount?: MoneyLike;
     amountPerQuantity?: MoneyLike;
   } | null;
-  merchandise?: {price?: MoneyLike} | null;
+  merchandise?: {
+    price?: MoneyLike;
+    selectedOptions?: Array<{name: string; value: string}> | null;
+  } | null;
   attributes?: Array<{key: string; value?: string | null}> | null;
   sellingPlanAllocation?: CartLineSellingPlanSource['sellingPlanAllocation'];
 };
@@ -87,6 +91,15 @@ export function getVatReliefLineTotals(cart: VatReliefCart) {
     if (!lineHasVatRelief(line.attributes)) continue;
     const catalog = getLineCatalogAmount(line);
     if (catalog <= 0) continue;
+
+    // Dual-variant path: line is already the net "VAT Relief" SKU.
+    if (isVatReliefVariant(line.merchandise?.selectedOptions)) {
+      // Without the Standard sibling here, show net as both sides; cart UI
+      // still shows the paid price correctly as catalog.
+      grossTotal += catalog;
+      continue;
+    }
+
     const lineGross = catalogToIncVatAmount(catalog, exVatCatalog);
     grossTotal += lineGross;
     vatRemoved += catalogVatPortion(catalog, exVatCatalog);
@@ -170,6 +183,16 @@ function getDepositCartTotals(cart: VatReliefCart): CartTotals {
 
   for (const line of lines) {
     const dueCatalog = getLineAmountDueToday(line as CartLineSellingPlanSource);
+    if (
+      lineHasVatRelief(line.attributes) &&
+      isVatReliefVariant(line.merchandise?.selectedOptions)
+    ) {
+      // Dual-variant deposit: due amount is already net.
+      hasVatRelief = true;
+      subtotalIncVat += dueCatalog;
+      total += dueCatalog;
+      continue;
+    }
     const dueInc = catalogToIncVatAmount(dueCatalog, exVatCatalog);
     const dueEx = catalogToExVatAmount(dueCatalog, exVatCatalog);
     subtotalIncVat += dueInc;
@@ -202,11 +225,34 @@ export function getCartTotals(cart: VatReliefCart): CartTotals | null {
   }
 
   const hasVatRelief = cartHasVatReliefLines(cart);
+  const dualVatRelief = (cart?.lines?.nodes ?? []).some(
+    (line) =>
+      lineHasVatRelief(line.attributes) &&
+      isVatReliefVariant(line.merchandise?.selectedOptions),
+  );
   const {vatRemoved, netTotal} = getVatReliefLineTotals(cart);
   const subtotalIncVat = sumLineGrossSubtotal(cart);
   const apiTotal = Number(cart?.cost?.totalAmount?.amount ?? 0);
   const vatReliefApplied = isVatReliefDiscountApplied(cart);
   const exVatCatalog = isShopifyPricesExVat();
+
+  // Dual-variant cart: paid price is already the VAT Relief SKU amount.
+  if (dualVatRelief) {
+    const total = roundMoney(
+      (cart?.lines?.nodes ?? []).reduce(
+        (sum, line) => sum + getLineCatalogAmount(line),
+        0,
+      ),
+    );
+    return {
+      subtotalIncVat: total,
+      vatRemoved: 0,
+      total,
+      vatReliefApplied: true,
+      hasVatRelief: true,
+      hasDeposit: false,
+    };
+  }
 
   if (!hasVatRelief || vatRemoved <= 0) {
     // Tax-exclusive Storefront cart totals are often net-only; show inc-VAT.
