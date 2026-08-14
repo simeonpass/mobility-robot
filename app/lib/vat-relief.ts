@@ -126,9 +126,9 @@ function amountsMatch(a: number, b: number): boolean {
 }
 
 /**
- * True when Shopify has already applied the legacy VAT relief *discount*
- * (tax-inclusive + function mode). Not used once prices are tax-exclusive
- * and relief is via customer taxExempt.
+ * True when Shopify has already applied the VAT relief automatic discount
+ * (tax-inclusive + function mode). In tax-exclusive mode the cart UI uses
+ * net totals from attributes; checkout still relies on the same discount.
  */
 export function isVatReliefDiscountApplied(cart: VatReliefCart): boolean {
   if (isShopifyPricesExVat()) return false;
@@ -223,7 +223,8 @@ export function getCartTotals(cart: VatReliefCart): CartTotals | null {
     };
   }
 
-  // Exclusive + taxExempt: customer pays net (no discount line needed).
+  // Exclusive catalog: shopper pays net. Checkout uses the automatic VAT
+  // relief discount (and taxExempt when recognized) so the total lands here.
   if (exVatCatalog) {
     return {
       subtotalIncVat,

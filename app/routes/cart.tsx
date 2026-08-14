@@ -3,7 +3,7 @@ import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
-import {syncVatExemptionCustomersFromCart} from '~/lib/shopify-admin-vat';
+import {prepareVatReliefForCheckout} from '~/lib/vat-relief-checkout';
 import {NOINDEX_HEADERS, noindexMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
@@ -81,30 +81,13 @@ export async function action({request, context}: Route.ActionArgs) {
   let {cart: cartResult, errors, warnings} = result;
 
   if (cartResult?.lines?.nodes?.length) {
-    await syncVatExemptionCustomersFromCart(env, cartResult.lines.nodes);
-
-    // Tax-exempt checkout only applies when the buyer email matches the
-    // tax-exempt customer record — prefill cart buyer identity from the
-    // VAT declaration.
-    const vatEmail = cartResult.lines.nodes
-      .map((line) =>
-        line.attributes?.find((attr) => attr.key === 'VAT Declaration Email')
-          ?.value,
-      )
-      .find((value) => Boolean(value?.trim()));
-    if (vatEmail?.trim()) {
-      try {
-        const identityResult = await cart.updateBuyerIdentity({
-          email: vatEmail.trim().toLowerCase(),
-        });
-        if (identityResult?.cart) {
-          cartResult = identityResult.cart;
-          errors = identityResult.errors ?? errors;
-          warnings = identityResult.warnings ?? warnings;
-        }
-      } catch (error) {
-        console.error('VAT buyer identity update failed', error);
-      }
+    // Prefer declaration email + GB before checkout; taxExempt is secondary to
+    // the VAT Relief (exact) automatic discount on non-Plus.
+    const prepared = await prepareVatReliefForCheckout(env, cart, cartResult);
+    if (prepared.cart) {
+      cartResult = prepared.cart;
+      errors = prepared.errors ?? errors;
+      warnings = prepared.warnings ?? warnings;
     }
   }
 

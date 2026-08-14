@@ -5,7 +5,7 @@ import {useId} from 'react';
 import {Link} from 'react-router';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackBeginCheckout} from '~/lib/analytics';
-import {withOnlineStoreChannel, lineHasVatRelief} from '~/lib/cart-utils';
+import {lineHasVatRelief} from '~/lib/cart-utils';
 import {getCartDeliveryInfo} from '~/lib/product-delivery';
 import {formatProductPrice} from '~/lib/product-pricing';
 import {getCartTotals} from '~/lib/vat-relief';
@@ -26,9 +26,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     cart?.cost?.subtotalAmount?.currencyCode ??
     cart?.cost?.totalAmount?.currencyCode ??
     'GBP';
-  const checkoutUrl = cart?.checkoutUrl
-    ? withOnlineStoreChannel(cart.checkoutUrl)
-    : null;
+  const canCheckout = Boolean(cart?.checkoutUrl && (cart?.totalQuantity ?? 0) > 0);
   const cartLines = cart?.lines?.nodes ?? [];
   const delivery = getCartDeliveryInfo(cartLines);
   const {openCartModal} = useVatRelief();
@@ -111,6 +109,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         </div>
       ) : null}
 
+      {totals.hasVatRelief ? (
+        <p className="text-[0.7rem] leading-snug text-muted-foreground">
+          At checkout, use your declaration email. The total should be the ex-VAT
+          price (a tax line may still appear, then net out with VAT relief).
+        </p>
+      ) : null}
+
       {applicableCodes.length > 0 ? (
         <div className="flex justify-between text-muted-foreground">
           <span>Discount{applicableCodes.length > 1 ? 's' : ''}</span>
@@ -125,11 +130,12 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     </div>
   ) : null;
 
-  const checkoutSection = checkoutUrl ? (
-    <a
-      className="btn-checkout w-full flex-col gap-0.5 py-3.5 !text-white no-underline hover:!text-white"
-      href={checkoutUrl}
-      onClick={() => {
+  const checkoutSection = canCheckout ? (
+    <form
+      action="/cart/checkout"
+      className="w-full"
+      method="post"
+      onSubmit={() => {
         if (!analyticsAllowed || !cart?.lines?.nodes?.length || !totals) return;
         const items = cart.lines.nodes.map((line) =>
           toGa4Item({
@@ -142,13 +148,20 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         trackBeginCheckout(items, totals.total, currencyCode);
       }}
     >
-      <span className="text-white">Proceed to checkout</span>
-      {totals ? (
-        <span className="text-sm font-semibold text-white/95">
-          {formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})}
-        </span>
-      ) : null}
-    </a>
+      <button
+        className="btn-checkout w-full flex-col gap-0.5 py-3.5 !text-white no-underline hover:!text-white"
+        type="submit"
+      >
+        <span className="text-white">Proceed to checkout</span>
+        {totals ? (
+          <span className="text-sm font-semibold text-white/95">
+            {formatProductPrice(totals.total, currencyCode, {
+              fractionDigits: 2,
+            })}
+          </span>
+        ) : null}
+      </button>
+    </form>
   ) : null;
 
   if (isAside) {
@@ -219,7 +232,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <div className="rounded-lg border border-border bg-secondary/30 p-3 text-sm">
             <p className="font-medium text-foreground">VAT relief on eligible items</p>
             <p className="mt-1 text-muted-foreground">
-              The exact VAT amount is removed automatically at checkout.
+              Checkout uses your declaration email. Expect the ex-VAT total
+              (a tax line may still appear, then net out with VAT relief).
               <Link
                 className="ml-1 font-medium text-foreground hover:underline"
                 to="/account/login"

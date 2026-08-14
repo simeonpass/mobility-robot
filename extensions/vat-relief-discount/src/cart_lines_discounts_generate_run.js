@@ -19,6 +19,11 @@ import {
  * Basic Shopify plans, and the % applies to the post–product-discount
  * subtotal so HMRC-style VAT removal stays correct after promos.
  *
+ * Works with both catalog modes:
+ * - Tax-inclusive catalog: discount removes the VAT share; shopper pays net.
+ * - Tax-exclusive catalog + line-item VAT: discount + VAT line net out so the
+ *   shopper still pays the net catalog total (keep this discount Active).
+ *
  * @param {RunInput} input
  * @returns {CartLinesDiscountsGenerateRunResult}
  */

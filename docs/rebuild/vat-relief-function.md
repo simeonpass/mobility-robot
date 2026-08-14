@@ -1,18 +1,22 @@
 # VAT relief — exact checkout discount (Shopify Function)
 
-> **Migration:** We are moving to **tax-exclusive catalog prices + customer taxExempt** (no Shopify Plus). See [`vat-tax-exclusive-cutover.md`](./vat-tax-exclusive-cutover.md). Keep this discount active until that cutover is finished, then deactivate it.
+> **Keep this discount Active** on non-Plus stores, including after the tax-exclusive
+> cutover. Customer `taxExempt` alone is not reliable for guest checkout.
+> See [`vat-tax-exclusive-cutover.md`](./vat-tax-exclusive-cutover.md).
 
-HMRC VAT relief removes **exactly** 20% VAT from inc-VAT prices (`gross ÷ 1.2`).
-Percentage discount codes cannot do this on Shopify — we use a **Product Discount Function** instead.
+HMRC VAT relief removes **exactly** 20% VAT from UK prices.
+We use an automatic **ORDER** discount of ~16.6667% (the VAT share of a UK price).
 
 ## How it works
 
 1. Customer ticks **“I'm eligible for HMRC VAT relief”** on the product page and completes the inline declaration.
 2. Cart line attributes include `VAT Relief: Yes` plus declaration details.
 3. At checkout, the **VAT Relief (exact)** automatic app discount runs the function (`cart.lines.discounts.generate.run`).
-4. The function applies a **fixed-amount** discount per line equal to the exact VAT portion.
+4. The function applies an **ORDER** percentage (~16.6667%) to declared lines.
 
-Example: £3,995 inc VAT → **£665.83** discount → customer pays **£3,329.17**.
+**Tax-inclusive catalog example:** £3,995 → ~£665.83 discount → customer pays **£3,329.17**.
+
+**Tax-exclusive catalog example:** £3,500 net → ~£583.33 discount + £583.33 VAT → customer pays **£3,500**.
 
 ## One-time setup in Shopify
 

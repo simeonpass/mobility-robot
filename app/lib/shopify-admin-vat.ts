@@ -4,11 +4,11 @@
  * Requires a custom app with `write_customers` scope and env:
  *   SHOPIFY_ADMIN_API_ACCESS_TOKEN
  *
- * Note: On UK stores with VAT-inclusive pricing, marking a customer tax-exempt
- * may not always reduce checkout totals without Shopify Plus cart transforms,
- * dynamic tax-inclusive pricing, or a dedicated VAT app. This records the
- * customer for merchant review. Checkout uses the VAT Relief Shopify Function
- * for exact per-line VAT removal (see extensions/vat-relief-discount).
+ * On non-Plus Shopify, `taxExempt` alone is unreliable for guest checkout —
+ * keep the VAT Relief (exact) automatic discount Active (see
+ * extensions/vat-relief-discount). This still upserts a tax-exempt customer
+ * so Admin has the declaration, and so taxExempt can apply when Shopify
+ * recognizes the buyer email.
  */
 
 export type VatExemptionCustomerInput = {
@@ -161,7 +161,8 @@ export async function upsertTaxExemptCustomer(
   const search = await adminGraphql<{
     customers: {nodes: Array<{id: string; email: string}>};
   }>(env, CUSTOMER_SEARCH_QUERY, {
-    query: `email:${customerInput.email}`,
+    // Quote the email so + / special characters still match exactly.
+    query: `email:'${customerInput.email.replace(/'/g, "\\'")}'`,
   });
 
   if (search.errors?.length) {
