@@ -7,7 +7,7 @@ Clean checkout totals without the “Including £X in taxes” discount dance:
 | **Standard** | £4,200 | Default / no relief |
 | **VAT Relief** | £3,500 | After HMRC declaration on the site |
 
-With **tax-inclusive** Shopify pricing, the customer pays the **listed** variant price. Checkout shows one clear total.
+With **tax-inclusive** Shopify pricing, the customer pays the **listed** variant price. Checkout shows one clear total when **VAT Relief** variants have **Charge tax** unticked (Standard keeps Charge tax on).
 
 ## How the site uses it
 
@@ -16,27 +16,49 @@ With **tax-inclusive** Shopify pricing, the customer pays the **listed** variant
 3. Line still gets declaration attributes (`VAT Relief: Yes`, email, …) for HMRC records.
 4. Discount function **skips** lines that are already `VAT: VAT Relief` so price is not cut twice.
 
-**Tax setting:** Shopify must use **tax-inclusive** prices (“Include sales tax in product price” / show tax as included). If checkout adds 20% on top of the listed price, dual variants will not produce a clean net total.
+**Tax setting (Admin, per variant):**
+
+| Variant | Charge tax | Why |
+|---------|------------|-----|
+| **Standard** | ON (ticked) | Full price includes VAT |
+| **VAT Relief** | OFF (unticked) | Net price — stops “Including £X in taxes” |
+
+Also keep Markets / store tax display as **include in product price** (not “show as line item”).
 
 ## One-time Admin setup
 
 ```bash
-# Dry run first
+# Chairs only (default)
 node scripts/setup-vat-relief-variants.mjs --dry-run
-
-# Create / sync variants (needs write_products)
 node scripts/setup-vat-relief-variants.mjs
 
+# Accessories (creates VAT Relief + sets taxable flags)
+node scripts/setup-vat-relief-variants.mjs --accessories --dry-run
+node scripts/setup-vat-relief-variants.mjs --accessories
+
+# Chairs + accessories
+node scripts/setup-vat-relief-variants.mjs --all
+
 # Or a subset
-node scripts/setup-vat-relief-variants.mjs --handles=buy-robot-wheelchair,xsto-m4b-1
+node scripts/setup-vat-relief-variants.mjs --handles=armrest-bag,rear-cover-m4
 ```
 
-Needs `.env`:
+Needs env:
 
 ```env
 PUBLIC_STORE_DOMAIN=f7vjea-hq.myshopify.com
+# either:
 SHOPIFY_ADMIN_API_ACCESS_TOKEN=shpat_...   # write_products
+# or Dev Dashboard app:
+SHOPIFY_DEPOSIT_CLIENT_ID=...
+SHOPIFY_DEPOSIT_CLIENT_SECRET=...
 ```
+
+The script:
+
+1. Creates **VAT** option (`Standard` / `VAT Relief`) when missing.
+2. Sets Relief price = `gross ÷ 1.2`.
+3. Sets **Standard taxable=true**, **VAT Relief taxable=false**.
 
 After create:
 
@@ -51,15 +73,15 @@ After create:
 For each product:
 
 1. Add option **VAT** with values **Standard** and **VAT Relief**.
-2. Set Standard price = current inc-VAT price.
-3. Set VAT Relief price = `round(price ÷ 1.2, 2)`.
+2. Set Standard price = current inc-VAT price; **Charge tax** = on.
+3. Set VAT Relief price = `round(price ÷ 1.2, 2)`; **Charge tax** = off.
 4. Do **not** show VAT as a customer-facing swatch (the site hides it).
 
 ## Files
 
 | Path | Role |
 |------|------|
-| `scripts/setup-vat-relief-variants.mjs` | Create / price dual variants |
+| `scripts/setup-vat-relief-variants.mjs` | Create / price dual variants + taxable flags |
 | `app/lib/product-vat-variants.ts` | Resolve Standard ↔ Relief |
 | `app/components/product/ProductPurchasePanel.tsx` | ATC uses Relief SKU when claimed |
 | `app/components/vat-relief/VatReliefModal.tsx` | Cart claim swaps to Relief SKU |
