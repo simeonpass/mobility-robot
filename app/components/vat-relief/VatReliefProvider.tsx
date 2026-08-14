@@ -11,7 +11,12 @@ import {
 import {
   parseDeclarationFromAttributes,
 } from '~/lib/vat-relief-attributes';
-import {readVatReliefRegistration} from '~/lib/vat-relief-session';
+import {
+  clearVatReliefRegistration,
+  readVatReliefEnabled,
+  readVatReliefRegistration,
+  saveVatReliefRegistration,
+} from '~/lib/vat-relief-session';
 import {
   EMPTY_VAT_DECLARATION,
   isVatDeclarationComplete,
@@ -62,8 +67,42 @@ function loadStoredDeclaration(): VatDeclaration {
   };
 }
 
-function loadStoredVatReliefEnabled(): boolean {
-  return isVatDeclarationComplete(loadStoredDeclaration());
+async function syncVatReliefApi(
+  enabled: boolean,
+  declaration: VatDeclaration,
+) {
+  try {
+    if (enabled) {
+      if (!isVatDeclarationComplete(declaration)) return;
+      await fetch('/api/vat-relief', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          enabled: true,
+          email: declaration.email.trim(),
+          name: declaration.name.trim(),
+          address: declaration.address.trim(),
+          condition: declaration.condition.trim(),
+        }),
+      });
+      return;
+    }
+
+    if (!declaration.email.trim()) return;
+    await fetch('/api/vat-relief', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        enabled: false,
+        email: declaration.email.trim(),
+        name: declaration.name.trim() || undefined,
+        address: declaration.address.trim() || undefined,
+        condition: declaration.condition.trim() || undefined,
+      }),
+    });
+  } catch {
+    // Cart sync / next checkout attempt remains a fallback.
+  }
 }
 
 export function VatReliefProvider({children}: {children: ReactNode}) {
@@ -71,7 +110,7 @@ export function VatReliefProvider({children}: {children: ReactNode}) {
     EMPTY_VAT_DECLARATION,
   );
   const [productVatReliefEnabled, setProductVatReliefEnabled] = useState(
-    loadStoredVatReliefEnabled,
+    false,
   );
   const [productRequest, setProductRequest] = useState<ProductModalRequest | null>(
     null,
@@ -85,10 +124,30 @@ export function VatReliefProvider({children}: {children: ReactNode}) {
   useEffect(() => {
     const stored = loadStoredDeclaration();
     setDeclaration(stored);
-    if (isVatDeclarationComplete(stored)) {
-      setProductVatReliefEnabled(true);
-    }
+    setProductVatReliefEnabled(readVatReliefEnabled());
   }, []);
+
+  const setProductVatRelief = useCallback(
+    (enabled: boolean, nextDeclaration: VatDeclaration) => {
+      setProductVatReliefEnabled(enabled);
+      setDeclaration(nextDeclaration);
+
+      if (enabled && isVatDeclarationComplete(nextDeclaration)) {
+        saveVatReliefRegistration({
+          ...nextDeclaration,
+          registeredAt: new Date().toISOString(),
+          enabled: true,
+        });
+      } else {
+        // Keep form values in React state, but clear session so relief does not
+        // resurrect on the next page load.
+        clearVatReliefRegistration();
+      }
+
+      void syncVatReliefApi(enabled, nextDeclaration);
+    },
+    [],
+  );
 
   const openProductModal = useCallback((request: ProductModalRequest) => {
     setCartRequest(null);
@@ -113,14 +172,6 @@ export function VatReliefProvider({children}: {children: ReactNode}) {
     setProductRequest(null);
     setCartRequest(null);
   }, []);
-
-  const setProductVatRelief = useCallback(
-    (enabled: boolean, nextDeclaration: VatDeclaration) => {
-      setProductVatReliefEnabled(enabled);
-      setDeclaration(nextDeclaration);
-    },
-    [],
-  );
 
   const value = useMemo(
     () => ({
@@ -157,6 +208,9 @@ export function VatReliefProvider({children}: {children: ReactNode}) {
         onDeclarationChange={setModalDeclaration}
         onProductConfirm={(enabled, nextDeclaration) => {
           productRequest?.onComplete(enabled, nextDeclaration);
+          setProductVatRelief(enabled, nextDeclaration);
+        }}
+        onCartComplete={(enabled, nextDeclaration) => {
           setProductVatRelief(enabled, nextDeclaration);
         }}
         onVatReliefEnabledChange={setModalEnabled}

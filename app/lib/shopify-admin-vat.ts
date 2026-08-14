@@ -110,23 +110,31 @@ async function adminGraphql<T>(
   return (await response.json()) as AdminGraphqlResponse<T>;
 }
 
-function buildCustomerInput(input: VatExemptionCustomerInput) {
+function buildCustomerInput(
+  input: VatExemptionCustomerInput,
+  options?: {taxExempt?: boolean},
+) {
   const [firstName, ...rest] = input.name.trim().split(/\s+/);
   const lastName = rest.join(' ') || firstName;
+  const taxExempt = options?.taxExempt ?? true;
   const note = [
-    'HMRC VAT relief declaration (website)',
+    taxExempt
+      ? 'HMRC VAT relief declaration (website)'
+      : 'HMRC VAT relief removed by customer on website',
     `Name: ${input.name.trim()}`,
     `Address: ${input.address.trim()}`,
     `Condition: ${input.condition.trim()}`,
-    `Declared: ${new Date().toISOString()}`,
+    `Updated: ${new Date().toISOString()}`,
   ].join('\n');
 
   return {
     email: input.email.trim().toLowerCase(),
     firstName,
     lastName,
-    taxExempt: true,
-    tags: ['vat-relief', 'vat-relief-declared'],
+    taxExempt,
+    tags: taxExempt
+      ? ['vat-relief', 'vat-relief-declared']
+      : ['vat-relief-removed'],
     note,
   };
 }
@@ -138,6 +146,7 @@ export function isValidVatExemptionEmail(email: string): boolean {
 export async function upsertTaxExemptCustomer(
   env: Env,
   input: VatExemptionCustomerInput,
+  options?: {taxExempt?: boolean},
 ): Promise<CustomerUpsertResult> {
   if (!getAdminConfig(env)) {
     return {ok: false, reason: 'missing_token'};
@@ -147,7 +156,8 @@ export async function upsertTaxExemptCustomer(
     return {ok: false, reason: 'invalid_email'};
   }
 
-  const customerInput = buildCustomerInput(input);
+  const taxExempt = options?.taxExempt ?? true;
+  const customerInput = buildCustomerInput(input, {taxExempt});
   const search = await adminGraphql<{
     customers: {nodes: Array<{id: string; email: string}>};
   }>(env, CUSTOMER_SEARCH_QUERY, {
@@ -189,6 +199,11 @@ export async function upsertTaxExemptCustomer(
     }
 
     return {ok: true, customerId: existing.id, created: false};
+  }
+
+  // Nothing to clear if the customer was never created.
+  if (!taxExempt) {
+    return {ok: true, customerId: '', created: false};
   }
 
   const create = await adminGraphql<{

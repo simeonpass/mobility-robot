@@ -14,7 +14,6 @@ import {
   isVatDeclarationComplete,
   type VatDeclaration,
 } from '~/lib/vat-relief-types';
-import {saveVatReliefRegistration} from '~/lib/vat-relief-session';
 import type {AttributeInput} from '@shopify/hydrogen/storefront-api-types';
 
 export type VatReliefModalCartLine = {
@@ -37,6 +36,7 @@ type VatReliefModalProps = {
   mode: 'product' | 'cart';
   cartLines?: VatReliefModalCartLine[];
   onProductConfirm?: (enabled: boolean, declaration: VatDeclaration) => void;
+  onCartComplete?: (enabled: boolean, declaration: VatDeclaration) => void;
 };
 
 export function VatReliefModal({
@@ -52,6 +52,7 @@ export function VatReliefModal({
   mode,
   cartLines = [],
   onProductConfirm,
+  onCartComplete,
 }: VatReliefModalProps) {
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -78,30 +79,8 @@ export function VatReliefModal({
 
   if (!open) return null;
 
-  const handleProductSubmit = async () => {
+  const handleProductSubmit = () => {
     if (vatReliefEnabled && !complete) return;
-    if (vatReliefEnabled && complete) {
-      saveVatReliefRegistration({
-        ...declaration,
-        registeredAt: new Date().toISOString(),
-      });
-      // Register tax-exempt customer early so checkout can drop VAT
-      // (tax-exclusive mode) when the same email is used.
-      try {
-        await fetch('/api/vat-relief', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            email: declaration.email.trim(),
-            name: declaration.name.trim(),
-            address: declaration.address.trim(),
-            condition: declaration.condition.trim(),
-          }),
-        });
-      } catch {
-        // Cart sync remains a fallback if Admin API is briefly unavailable.
-      }
-    }
     onProductConfirm?.(vatReliefEnabled, declaration);
     onClose();
   };
@@ -311,6 +290,7 @@ export function VatReliefModal({
             <VatReliefCartApplyForm
               cartUpdateLines={cartUpdateLines}
               declaration={declaration}
+              onCartComplete={onCartComplete}
               onClose={onClose}
               submitDisabled={submitDisabled}
               vatReliefEnabled={vatReliefEnabled}
@@ -338,12 +318,14 @@ function VatReliefCartApplyForm({
   vatReliefEnabled,
   submitDisabled,
   onClose,
+  onCartComplete,
 }: {
   cartUpdateLines: CartUpdateLine[];
   declaration: VatDeclaration;
   vatReliefEnabled: boolean;
   submitDisabled: boolean;
   onClose: () => void;
+  onCartComplete?: (enabled: boolean, declaration: VatDeclaration) => void;
 }) {
   return (
     <CartForm
@@ -355,6 +337,7 @@ function VatReliefCartApplyForm({
         <VatReliefCartApplyButton
           declaration={declaration}
           fetcher={fetcher}
+          onCartComplete={onCartComplete}
           onClose={onClose}
           submitDisabled={submitDisabled}
           vatReliefEnabled={vatReliefEnabled}
@@ -370,12 +353,14 @@ function VatReliefCartApplyButton({
   vatReliefEnabled,
   submitDisabled,
   onClose,
+  onCartComplete,
 }: {
   fetcher: FetcherWithComponents<CartActionData>;
   declaration: VatDeclaration;
   vatReliefEnabled: boolean;
   submitDisabled: boolean;
   onClose: () => void;
+  onCartComplete?: (enabled: boolean, declaration: VatDeclaration) => void;
 }) {
   const wasSubmitting = useRef(false);
 
@@ -392,15 +377,16 @@ function VatReliefCartApplyButton({
     const errors = fetcher.data?.errors;
     if (errors?.length) return;
 
-    if (vatReliefEnabled && isVatDeclarationComplete(declaration)) {
-      saveVatReliefRegistration({
-        ...declaration,
-        registeredAt: new Date().toISOString(),
-      });
-    }
-
+    onCartComplete?.(vatReliefEnabled, declaration);
     onClose();
-  }, [fetcher.state, fetcher.data, declaration, onClose, vatReliefEnabled]);
+  }, [
+    fetcher.state,
+    fetcher.data,
+    declaration,
+    onClose,
+    onCartComplete,
+    vatReliefEnabled,
+  ]);
 
   return (
     <button
