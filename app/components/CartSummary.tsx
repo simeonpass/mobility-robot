@@ -111,6 +111,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         </div>
       ) : null}
 
+      {totals.hasVatRelief ? (
+        <p className="text-[0.7rem] leading-snug text-muted-foreground">
+          At checkout, use your declaration email. The total should be the ex-VAT
+          price (a tax line may still appear, then net out with VAT relief).
+        </p>
+      ) : null}
+
       {applicableCodes.length > 0 ? (
         <div className="flex justify-between text-muted-foreground">
           <span>Discount{applicableCodes.length > 1 ? 's' : ''}</span>

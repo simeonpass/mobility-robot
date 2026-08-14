@@ -1,9 +1,11 @@
 # VAT relief — exact checkout discount (Shopify Function)
 
-> **Migration:** We are moving to **tax-exclusive catalog prices + customer taxExempt** (no Shopify Plus). See [`vat-tax-exclusive-cutover.md`](./vat-tax-exclusive-cutover.md). Keep this discount active until that cutover is finished, then deactivate it.
+> **Keep this discount Active** on non-Plus stores, including after the tax-exclusive
+> cutover. Customer `taxExempt` alone is not reliable for guest checkout.
+> See [`vat-tax-exclusive-cutover.md`](./vat-tax-exclusive-cutover.md).
 
-HMRC VAT relief removes **exactly** 20% VAT from inc-VAT prices (`gross ÷ 1.2`).
-Percentage discount codes cannot do this on Shopify — we use a **Product Discount Function** instead.
+HMRC VAT relief removes **exactly** 20% VAT from UK prices.
+We use an automatic **ORDER** discount of ~16.6667% (the VAT share of a UK price).
 
 ## How it works
 
