@@ -1,5 +1,9 @@
 import {formatProductPrice} from '~/lib/product-pricing';
-import {exVatFromGross, vatPortionFromGross} from '~/lib/vat-math';
+import {
+  catalogToExVatAmount,
+  catalogToIncVatAmount,
+  catalogVatPortion,
+} from '~/lib/pricing-mode';
 import {getHomepageProductSlot} from '~/lib/homepage-data';
 
 const VAT_RELIEF_KEY = 'VAT Relief';
@@ -29,8 +33,9 @@ export function getLineDisplayAmount({
   currencyCode: string;
   vatRelief: boolean;
 }) {
-  const numeric = Number(amount);
-  const displayAmount = vatRelief ? exVatFromGross(amount) : numeric;
+  const displayAmount = vatRelief
+    ? catalogToExVatAmount(amount)
+    : catalogToIncVatAmount(amount);
   return formatProductPrice(
     displayAmount,
     currencyCode,
@@ -42,13 +47,20 @@ export function getVatSavingsAmount(
   lines: Array<{
     quantity: number;
     cost?: {totalAmount?: {amount: string} | null} | null;
+    merchandise?: {price?: {amount: string} | null} | null;
     attributes?: Array<{key: string; value?: string | null}> | null;
   }>,
 ): number {
   return lines.reduce((total, line) => {
     if (!lineHasVatRelief(line.attributes)) return total;
-    const inc = Number(line.cost?.totalAmount?.amount ?? 0);
-    return total + vatPortionFromGross(inc);
+    const unit = Number(
+      line.merchandise?.price?.amount ?? line.cost?.totalAmount?.amount ?? 0,
+    );
+    const catalog =
+      line.merchandise?.price?.amount != null
+        ? unit * line.quantity
+        : Number(line.cost?.totalAmount?.amount ?? 0);
+    return total + catalogVatPortion(catalog);
   }, 0);
 }
 

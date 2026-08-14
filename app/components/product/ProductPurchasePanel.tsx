@@ -28,12 +28,15 @@ import {
   sumMoneyV2,
 } from '~/lib/product-pricing';
 import {
+  catalogToExVatAmount,
+  catalogToIncVatAmount,
+} from '~/lib/pricing-mode';
+import {
   buildPurchaseOptions,
   isDepositPurchaseOption,
   withOptimisticSellingPlanAllocation,
   type SellingPlanAllocationNode,
 } from '~/lib/selling-plans';
-import {exVatFromGross} from '~/lib/vat-math';
 import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
 
 type ProductPurchasePanelProps = {
@@ -205,14 +208,14 @@ export function ProductPurchasePanel({
     if (!dueTodayPrice) return null;
     if (productVatReliefEnabled) {
       return formatProductPrice(
-        exVatFromGross(dueTodayPrice.amount),
+        catalogToExVatAmount(dueTodayPrice.amount),
         dueTodayPrice.currencyCode,
         {fractionDigits: 2},
       );
     }
     return paymentChoice === 'deposit'
       ? formatProductPrice(
-          Number(dueTodayPrice.amount),
+          catalogToIncVatAmount(dueTodayPrice.amount),
           dueTodayPrice.currencyCode,
           {fractionDigits: 2},
         )

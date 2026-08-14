@@ -12,6 +12,12 @@ declare global {
   interface Env extends HydrogenEnv {
     /** Custom app token with write_customers scope — enables VAT exempt customer sync */
     SHOPIFY_ADMIN_API_ACCESS_TOKEN?: string;
+    /**
+     * When "true", Shopify catalog prices are tax-exclusive (net).
+     * Storefront still shows UK VAT-inclusive prices. Enable only after
+     * Admin cutover — see docs/rebuild/vat-tax-exclusive-cutover.md
+     */
+    PUBLIC_SHOPIFY_PRICES_EX_VAT?: string;
     /** Google Analytics 4 measurement ID (e.g. G-QMXNFNFTS0) */
     PUBLIC_GA4_ID?: string;
     /** Numeric Shopify shop ID (meta.json) */

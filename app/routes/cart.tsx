@@ -78,10 +78,34 @@ export async function action({request, context}: Route.ActionArgs) {
 
   const cartId = result?.cart?.id;
   const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
-  const {cart: cartResult, errors, warnings} = result;
+  let {cart: cartResult, errors, warnings} = result;
 
   if (cartResult?.lines?.nodes?.length) {
     await syncVatExemptionCustomersFromCart(env, cartResult.lines.nodes);
+
+    // Tax-exempt checkout only applies when the buyer email matches the
+    // tax-exempt customer record — prefill cart buyer identity from the
+    // VAT declaration.
+    const vatEmail = cartResult.lines.nodes
+      .map((line) =>
+        line.attributes?.find((attr) => attr.key === 'VAT Declaration Email')
+          ?.value,
+      )
+      .find((value) => Boolean(value?.trim()));
+    if (vatEmail?.trim()) {
+      try {
+        const identityResult = await cart.updateBuyerIdentity({
+          email: vatEmail.trim().toLowerCase(),
+        });
+        if (identityResult?.cart) {
+          cartResult = identityResult.cart;
+          errors = identityResult.errors ?? errors;
+          warnings = identityResult.warnings ?? warnings;
+        }
+      } catch (error) {
+        console.error('VAT buyer identity update failed', error);
+      }
+    }
   }
 
   const redirectTo = formData.get('redirectTo') ?? null;

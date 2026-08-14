@@ -2,6 +2,8 @@
  * Flagship models shown on the homepage grid and comparison table.
  * Ordered M series → X series.
  */
+import {catalogToExVatAmount} from '~/lib/pricing-mode';
+
 export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-m4',
   'xsto-m4b',
@@ -448,7 +450,7 @@ export const HOMEPAGE_DISPLAY_PRICE_EX_VAT: Partial<
 > = {};
 
 export function formatExVatPrice(amount: string, currencyCode: string): string {
-  const exVat = Number(amount) / 1.2;
+  const exVat = catalogToExVatAmount(amount);
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency: currencyCode,
