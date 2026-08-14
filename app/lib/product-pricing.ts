@@ -1,5 +1,11 @@
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
-import {exVatFromGross, roundMoney, vatPortionFromGross} from '~/lib/vat-math';
+import {
+  catalogToExVatAmount,
+  catalogToIncVatAmount,
+  catalogVatPortion,
+  isShopifyPricesExVat,
+} from '~/lib/pricing-mode';
+import {roundMoney} from '~/lib/vat-math';
 
 export function formatProductPrice(
   amount: number,
@@ -31,15 +37,20 @@ export function sumMoneyV2(
   return {amount: total.toFixed(2), currencyCode};
 }
 
+/** UK VAT-inclusive display for a Shopify catalog money amount. */
 export function getIncVatDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
-  return formatProductPrice(Number(price.amount), price.currencyCode);
+  return formatProductPrice(
+    catalogToIncVatAmount(price.amount),
+    price.currencyCode,
+  );
 }
 
+/** Ex-VAT display for a Shopify catalog money amount. */
 export function getExVatDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
   return formatProductPrice(
-    exVatFromGross(price.amount),
+    catalogToExVatAmount(price.amount),
     price.currencyCode,
     {fractionDigits: 2},
   );
@@ -48,7 +59,7 @@ export function getExVatDisplay(price?: MoneyV2 | null) {
 export function getVatSavingsDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
   return formatProductPrice(
-    vatPortionFromGross(price.amount),
+    catalogVatPortion(price.amount),
     price.currencyCode,
     {fractionDigits: 2},
   );
@@ -56,10 +67,8 @@ export function getVatSavingsDisplay(price?: MoneyV2 | null) {
 
 export function getKlarnaInstallmentDisplay(price?: MoneyV2 | null) {
   if (!price) return null;
-  // Klarna Pay in 3 = three interest-free payments of the checkout total.
-  // Use the catalog (inc-VAT) amount — that is what Klarna finances unless VAT
-  // relief is applied at checkout.
-  const installment = roundMoney(Number(price.amount) / 3);
+  // Klarna Pay in 3 on the UK VAT-inclusive total shoppers expect to see.
+  const installment = roundMoney(catalogToIncVatAmount(price.amount) / 3);
   return formatProductPrice(installment, price.currencyCode, {
     fractionDigits: 2,
   });
@@ -87,3 +96,5 @@ export function buildVatCartAttributes(declaration: {
     {key: 'VAT Declaration Condition', value: declaration.condition.trim()},
   ];
 }
+
+export {isShopifyPricesExVat};

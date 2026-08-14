@@ -1,5 +1,9 @@
 import {formatProductPrice} from '~/lib/product-pricing';
-import {exVatFromGross, roundMoney} from '~/lib/vat-math';
+import {
+  catalogToExVatAmount,
+  catalogToIncVatAmount,
+} from '~/lib/pricing-mode';
+import {roundMoney} from '~/lib/vat-math';
 
 type MoneyLike = {
   amount: string;
@@ -144,12 +148,12 @@ function formatChargeDisplay(
   money: MoneyLike,
   vatReliefEnabled: boolean,
 ): string {
+  const catalog = Number(money.amount);
+  const currency = money.currencyCode ?? 'GBP';
   const amount = vatReliefEnabled
-    ? exVatFromGross(money.amount)
-    : Number(money.amount);
-  return formatProductPrice(amount, money.currencyCode ?? 'GBP', {
-    fractionDigits: 2,
-  });
+    ? catalogToExVatAmount(catalog)
+    : catalogToIncVatAmount(catalog);
+  return formatProductPrice(amount, currency, {fractionDigits: 2});
 }
 
 export function isDepositPurchaseOption(

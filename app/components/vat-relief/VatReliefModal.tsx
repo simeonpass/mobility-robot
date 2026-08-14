@@ -78,13 +78,29 @@ export function VatReliefModal({
 
   if (!open) return null;
 
-  const handleProductSubmit = () => {
+  const handleProductSubmit = async () => {
     if (vatReliefEnabled && !complete) return;
     if (vatReliefEnabled && complete) {
       saveVatReliefRegistration({
         ...declaration,
         registeredAt: new Date().toISOString(),
       });
+      // Register tax-exempt customer early so checkout can drop VAT
+      // (tax-exclusive mode) when the same email is used.
+      try {
+        await fetch('/api/vat-relief', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            email: declaration.email.trim(),
+            name: declaration.name.trim(),
+            address: declaration.address.trim(),
+            condition: declaration.condition.trim(),
+          }),
+        });
+      } catch {
+        // Cart sync remains a fallback if Admin API is briefly unavailable.
+      }
     }
     onProductConfirm?.(vatReliefEnabled, declaration);
     onClose();
@@ -179,9 +195,9 @@ export function VatReliefModal({
                     under HMRC rules (Notice 701/7).
                   </p>
                   <p>
-                    We remove the exact VAT amount automatically at checkout —
-                    no discount code needed. Your declaration is stored with your
-                    order for HMRC compliance.
+                    We remove VAT at checkout for eligible orders. Use the same
+                    email address at checkout as in this declaration. Your
+                    declaration is stored with the order for HMRC compliance.
                   </p>
                 </div>
               </div>
