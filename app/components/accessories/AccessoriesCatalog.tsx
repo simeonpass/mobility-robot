@@ -6,6 +6,7 @@ import {
   formatCompatibilityLabel,
   groupAccessoriesByChair,
   resolveAccessoryCompatibility,
+  ungroupedAccessories,
   type AccessoryChairSlot,
 } from '~/lib/accessories';
 import {formatExVatPrice} from '~/lib/homepage-data';
@@ -52,10 +53,12 @@ export function AccessoriesCatalog({
   activeSlot = 'all',
 }: AccessoriesCatalogProps) {
   const grouped = groupAccessoriesByChair(products);
+  const other = ungroupedAccessories(products);
   const sections =
     activeSlot === 'all'
       ? ACCESSORY_CHAIR_SECTIONS
       : ACCESSORY_CHAIR_SECTIONS.filter((section) => section.slot === activeSlot);
+  const showOther = activeSlot === 'all' && other.length > 0;
 
   return (
     <div className="space-y-14 md:space-y-16">
@@ -133,6 +136,32 @@ export function AccessoriesCatalog({
           </section>
         );
       })}
+
+      {showOther ? (
+        <section aria-labelledby="accessories-other-heading">
+          <header className="mb-6 max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Other
+            </p>
+            <h2
+              className="mt-1 text-2xl font-semibold tracking-tight text-foreground md:text-3xl"
+              id="accessories-other-heading"
+            >
+              Spares &amp; other kit
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
+              Parts that are not tied to a specific wheelchair model.
+            </p>
+          </header>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {other.map((product) => (
+              <li key={`other-${product.id}`}>
+                <AccessoryCard product={product} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </div>
   );
 }
