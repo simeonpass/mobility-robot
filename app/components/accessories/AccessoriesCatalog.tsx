@@ -9,6 +9,7 @@ import {
   type AccessoryChairSlot,
 } from '~/lib/accessories';
 import {formatExVatPrice} from '~/lib/homepage-data';
+import {getProductListPrice} from '~/lib/product-vat-variants';
 
 export type AccessoryListProduct = {
   id: string;
@@ -27,7 +28,18 @@ export type AccessoryListProduct = {
       amount: string;
       currencyCode: string;
     };
+    maxVariantPrice?: {
+      amount: string;
+      currencyCode: string;
+    } | null;
   };
+  variants?: {
+    nodes?: Array<{
+      id: string;
+      price?: {amount: string; currencyCode: string} | null;
+      selectedOptions?: Array<{name: string; value: string}> | null;
+    }> | null;
+  } | null;
 };
 
 type AccessoriesCatalogProps = {
@@ -163,10 +175,8 @@ function FilterChip({
 
 function AccessoryCard({product}: {product: AccessoryListProduct}) {
   const slots = resolveAccessoryCompatibility(product);
-  const exVat = formatExVatPrice(
-    product.priceRange.minVariantPrice.amount,
-    product.priceRange.minVariantPrice.currencyCode,
-  );
+  const listPrice = getProductListPrice(product);
+  const exVat = formatExVatPrice(listPrice.amount, listPrice.currencyCode);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-medium">

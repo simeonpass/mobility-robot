@@ -27,7 +27,18 @@ export type ShopAllProduct = {
       amount: string;
       currencyCode: string;
     };
+    maxVariantPrice?: {
+      amount: string;
+      currencyCode: string;
+    } | null;
   };
+  variants?: {
+    nodes?: Array<{
+      id: string;
+      price?: {amount: string; currencyCode: string} | null;
+      selectedOptions?: Array<{name: string; value: string}> | null;
+    }> | null;
+  } | null;
 };
 
 function looksLikeAccessory(product: ShopAllProduct): boolean {

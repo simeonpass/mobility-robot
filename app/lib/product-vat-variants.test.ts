@@ -4,6 +4,7 @@ import {
   filterVisibleProductOptions,
   filterVisibleSelectedOptions,
   isVatReliefVariant,
+  getProductListPrice,
   resolveCartMerchandiseId,
   resolveVatPurchaseVariant,
   VAT_OPTION_NAME,
@@ -109,5 +110,17 @@ describe('product-vat-variants', () => {
         false,
       ),
     ).toBe(blackStandard.id);
+  });
+
+  it('uses Standard (not VAT Relief) for product list / From prices', () => {
+    expect(
+      getProductListPrice({
+        priceRange: {
+          minVariantPrice: {amount: '3500.00', currencyCode: 'GBP'},
+          maxVariantPrice: {amount: '4200.00', currencyCode: 'GBP'},
+        },
+        variants: {nodes: variants},
+      }).amount,
+    ).toBe('4200.00');
   });
 });

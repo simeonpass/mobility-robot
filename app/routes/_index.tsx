@@ -146,6 +146,23 @@ const HOME_PRODUCT_FRAGMENT = `#graphql
         amount
         currencyCode
       }
+      maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    variants(first: 50) {
+      nodes {
+        id
+        price {
+          amount
+          currencyCode
+        }
+        selectedOptions {
+          name
+          value
+        }
+      }
     }
   }
 ` as const;

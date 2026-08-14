@@ -153,6 +153,23 @@ const ACCESSORIES_COLLECTION_QUERY = `#graphql
               amount
               currencyCode
             }
+            maxVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          variants(first: 50) {
+            nodes {
+              id
+              price {
+                amount
+                currencyCode
+              }
+              selectedOptions {
+                name
+                value
+              }
+            }
           }
         }
       }
@@ -179,6 +196,23 @@ const FORCED_ACCESSORIES_QUERY = `#graphql
         minVariantPrice {
           amount
           currencyCode
+        }
+        maxVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      variants(first: 50) {
+        nodes {
+          id
+          price {
+            amount
+            currencyCode
+          }
+          selectedOptions {
+            name
+            value
+          }
         }
       }
     }

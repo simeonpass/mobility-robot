@@ -166,3 +166,51 @@ export function resolveCartMerchandiseId(
 export function moneyAmount(price?: Pick<MoneyV2, 'amount'> | null): number {
   return Number(price?.amount ?? 0);
 }
+
+type ListPriceMoney = Pick<MoneyV2, 'amount' | 'currencyCode'>;
+
+/**
+ * Catalog “From” / card price: Standard (gross) when dual VAT variants exist.
+ * Shopify `priceRange.min` is the cheaper VAT Relief SKU after dual pricing —
+ * never use that alone for marketing list prices.
+ */
+export function getProductListPrice(product: {
+  priceRange: {
+    minVariantPrice: ListPriceMoney;
+    maxVariantPrice?: ListPriceMoney | null;
+  };
+  variants?: {nodes?: VatPricedVariant[] | null} | null;
+}): ListPriceMoney {
+  const nodes = product.variants?.nodes ?? [];
+  if (variantsHaveVatOption(nodes)) {
+    const standards = filterStandardVatVariants(nodes);
+    let cheapest: VatPricedVariant | null = null;
+    for (const variant of standards) {
+      if (!variant.price) continue;
+      if (
+        !cheapest ||
+        moneyAmount(variant.price) < moneyAmount(cheapest.price)
+      ) {
+        cheapest = variant;
+      }
+    }
+    if (cheapest?.price?.amount) {
+      return {
+        amount: cheapest.price.amount,
+        currencyCode:
+          cheapest.price.currencyCode ??
+          product.priceRange.minVariantPrice.currencyCode,
+      };
+    }
+  }
+
+  const min = product.priceRange.minVariantPrice;
+  const max = product.priceRange.maxVariantPrice;
+  if (max && moneyAmount(max) > moneyAmount(min)) {
+    // Dual prices without option metadata in the query — prefer the higher
+    // (Standard) amount for chairs/accessories that only differ by VAT.
+    return max;
+  }
+
+  return min;
+}
