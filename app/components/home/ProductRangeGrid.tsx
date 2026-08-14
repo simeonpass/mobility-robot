@@ -147,7 +147,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
 
         <p className="mt-10 text-center">
           <Link
-            className="text-sm font-semibold text-gold underline-offset-4 hover:underline"
+            className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
             prefetch="intent"
             to="/quote"
           >
