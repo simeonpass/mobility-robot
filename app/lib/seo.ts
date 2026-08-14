@@ -5,6 +5,7 @@ import {
   SITE_NAME,
   SITE_URL,
 } from '~/lib/const';
+import {SOCIAL_LINKS} from '~/lib/site-navigation';
 
 export {SITE_URL, SITE_NAME} from '~/lib/const';
 
@@ -187,6 +188,7 @@ export function organizationJsonLd() {
       areaServed: 'GB',
       availableLanguage: 'English',
     },
+    sameAs: SOCIAL_LINKS.map((link) => link.href),
   };
 }
 
