@@ -6,6 +6,8 @@ export type StoredVatReliefRegistration = {
   address: string;
   condition: string;
   registeredAt: string;
+  /** When false, declaration may still be remembered for the form but relief is off. */
+  enabled?: boolean;
 };
 
 export function saveVatReliefRegistration(data: StoredVatReliefRegistration) {
@@ -27,6 +29,19 @@ export function readVatReliefRegistration(): StoredVatReliefRegistration | null 
   } catch {
     return null;
   }
+}
+
+/** True only when a complete declaration is stored AND relief is still enabled. */
+export function readVatReliefEnabled(): boolean {
+  const stored = readVatReliefRegistration();
+  if (!stored) return false;
+  if (stored.enabled === false) return false;
+  return Boolean(
+    stored.email.trim() &&
+      stored.name.trim() &&
+      stored.address.trim() &&
+      stored.condition.trim(),
+  );
 }
 
 export function clearVatReliefRegistration() {
