@@ -70,7 +70,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
 
   return (
     <header className={headerClass} style={headerStyle}>
-      <div className="xsto-container flex h-16 items-center gap-1.5 sm:h-[4.5rem] sm:gap-3 lg:h-[5.25rem] lg:gap-4">
+      <div className="xsto-container flex h-[4.75rem] items-center gap-1.5 sm:h-[4.75rem] sm:gap-3 lg:h-[5.25rem] lg:gap-4">
         <NavLink
           aria-label="Mobility Robot home"
           className="site-header-logo min-w-0 shrink-0"
@@ -80,7 +80,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
         >
           <img
             alt={HEADER_LOGO.dark.alt}
-            className="h-12 w-auto max-w-[min(100%,12.5rem)] overflow-hidden rounded-none bg-transparent object-contain object-left sm:h-[3.25rem] sm:max-w-[13.5rem] lg:h-14 lg:max-w-[14rem] xl:h-16 xl:max-w-[16rem]"
+            className="h-16 w-auto max-w-[min(100%,15rem)] overflow-hidden rounded-none bg-transparent object-contain object-left sm:h-16 sm:max-w-[15rem] lg:h-14 lg:max-w-[14rem] xl:h-16 xl:max-w-[16rem]"
             decoding="async"
             fetchPriority="high"
             height={HEADER_LOGO_DISPLAY_HEIGHT}
