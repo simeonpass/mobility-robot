@@ -958,9 +958,9 @@
 
   /*
    * Mobile: hero media sits under the fixed announcement + header chrome.
-   * Phones render the lifestyle poster only (see HeroVideoBackground) — the
-   * autoplay YouTube crop was tighter and clipped the rider’s head. Zoom from
-   * the top of that still so sky leads and the head sits clear of the nav.
+   * Phones use the lifestyle poster (HeroVideoBackground skips YouTube below
+   * md). Zoom from the top of that still so sky leads and the head sits clear
+   * of the nav. CSS also hides any embed as a safety net.
    */
   @media (max-width: 767.98px) {
     .home-hero-media {
@@ -969,6 +969,14 @@
       ) !important;
       bottom: 0 !important;
       overflow: hidden;
+    }
+
+    .home-hero .hero-youtube-embed {
+      display: none !important;
+    }
+
+    .home-hero .hero-video-layer--playing .hero-video-poster {
+      opacity: 1 !important;
     }
 
     .home-hero-media > .hero-video-layer,

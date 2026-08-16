@@ -12,8 +12,13 @@ type HeroVideoBackgroundProps = {
 
 const DESKTOP_HERO_VIDEO_QUERY = '(min-width: 768px)';
 
+function readDesktopHeroVideoPreference() {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia(DESKTOP_HERO_VIDEO_QUERY).matches;
+}
+
 function usePrefersDesktopHeroVideo() {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(readDesktopHeroVideoPreference);
 
   useEffect(() => {
     const media = window.matchMedia(DESKTOP_HERO_VIDEO_QUERY);
