@@ -126,28 +126,28 @@ export function ProductAccessoryAddons({
       aria-labelledby={headingId}
       className="rounded-lg border border-border/80 bg-background"
     >
-      <header className="flex items-baseline justify-between gap-3 border-b border-border/70 px-3.5 py-3 sm:px-4">
+      <header className="flex items-baseline justify-between gap-3 border-b border-border/70 px-4 py-3.5">
         <div>
           <h2
-            className="text-sm font-semibold uppercase tracking-[0.12em] text-navy sm:text-[0.9375rem]"
+            className="text-base font-semibold uppercase tracking-[0.1em] text-navy"
             id={headingId}
           >
             Choose accessories
           </h2>
-          <p className="mt-1 text-[0.9375rem] leading-snug text-slate sm:text-base">
+          <p className="mt-1.5 text-base leading-snug text-slate">
             {chairLabel
               ? `Optional extras that fit ${chairLabel}. Tick any you want to add.`
               : 'Optional extras for this chair. Tick any you want to add.'}
           </p>
         </div>
         {selectedIds.size > 0 ? (
-          <span className="shrink-0 text-sm font-semibold tabular-nums text-primary">
+          <span className="shrink-0 text-base font-semibold tabular-nums text-primary">
             {selectedIds.size} selected
           </span>
         ) : null}
       </header>
 
-      <ul className="max-h-[min(32rem,60vh)] divide-y divide-border/60 overflow-y-auto overscroll-contain">
+      <ul className="max-h-[min(36rem,65vh)] divide-y divide-border/60 overflow-y-auto overscroll-contain">
         {available.map((product) => {
           const variants = availableVariants(product);
           const selectedVariantFromSet = variants.find((variant) =>
@@ -181,11 +181,11 @@ export function ProductAccessoryAddons({
             >
               <div
                 className={[
-                  'flex items-start gap-3 px-3.5 py-3.5 transition-colors sm:px-4',
+                  'flex items-start gap-3.5 px-4 py-4 transition-colors',
                   checked ? 'bg-navy/[0.03]' : 'hover:bg-secondary/40',
                 ].join(' ')}
               >
-                <label className="relative mt-0.5 flex size-7 shrink-0 cursor-pointer items-center justify-center">
+                <label className="relative mt-0.5 flex size-8 shrink-0 cursor-pointer items-center justify-center">
                   <input
                     checked={checked}
                     className="peer sr-only"
@@ -195,30 +195,30 @@ export function ProductAccessoryAddons({
                   <span
                     aria-hidden
                     className={[
-                      'flex size-7 items-center justify-center rounded border-2 transition-colors',
+                      'flex size-8 items-center justify-center rounded border-2 transition-colors',
                       checked
                         ? 'border-navy bg-navy text-white'
                         : 'border-border bg-white',
                     ].join(' ')}
                   >
                     {checked ? (
-                      <Check className="size-4" strokeWidth={3} />
+                      <Check className="size-5" strokeWidth={3} />
                     ) : null}
                   </span>
                 </label>
 
                 {image?.url ? (
-                  <span className="mt-0.5 flex size-14 shrink-0 items-center justify-center overflow-hidden rounded bg-white ring-1 ring-border/70 sm:size-12">
+                  <span className="mt-0.5 flex size-16 shrink-0 items-center justify-center overflow-hidden rounded bg-white ring-1 ring-border/70">
                     <Image
                       alt={image.altText || product.title}
                       className="max-h-full w-full object-contain p-0.5"
                       data={{
                         url: image.url,
                         altText: image.altText ?? product.title,
-                        width: 112,
-                        height: 112,
+                        width: 128,
+                        height: 128,
                       }}
-                      sizes="56px"
+                      sizes="64px"
                     />
                   </span>
                 ) : null}
@@ -226,20 +226,20 @@ export function ProductAccessoryAddons({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-base font-medium leading-snug text-navy">
+                      <p className="text-lg font-semibold leading-snug text-navy">
                         {product.title}
                       </p>
-                      <p className="mt-1 text-sm leading-snug text-slate">
+                      <p className="mt-1 text-base leading-snug text-slate">
                         {hasColours ? 'Choose a colour · ' : ''}
                         {formatCompatibilityLabel(slots)}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-base font-semibold tabular-nums text-navy">
+                      <p className="text-lg font-semibold tabular-nums text-navy">
                         {exVat}
                       </p>
                       <Link
-                        className="mt-1 block text-sm font-medium text-navy underline underline-offset-2 hover:text-primary"
+                        className="mt-1 block text-base font-semibold text-navy underline underline-offset-2 hover:text-primary"
                         prefetch="intent"
                         to={`/products/${product.handle}`}
                       >
@@ -249,10 +249,10 @@ export function ProductAccessoryAddons({
                   </div>
 
                   {hasColours ? (
-                    <label className="mt-2.5 block">
+                    <label className="mt-3 block">
                       <span className="sr-only">Colour for {product.title}</span>
                       <select
-                        className="min-h-11 w-full rounded-md border border-border bg-white px-3 py-2.5 text-base font-medium text-navy outline-none focus:border-navy"
+                        className="min-h-12 w-full rounded-md border border-border bg-white px-3 py-3 text-base font-medium text-navy outline-none focus:border-navy"
                         onChange={(event) => {
                           const nextId = event.target.value;
                           const previousId = selectedVariantFromSet?.id ?? null;
@@ -281,9 +281,9 @@ export function ProductAccessoryAddons({
         })}
       </ul>
 
-      <div className="border-t border-border/70 px-3.5 py-3 sm:px-4">
+      <div className="border-t border-border/70 px-4 py-3.5">
         <Link
-          className="text-sm font-semibold text-navy underline underline-offset-2 hover:text-primary"
+          className="text-base font-semibold text-navy underline underline-offset-2 hover:text-primary"
           prefetch="intent"
           to="/collections/accessories"
         >

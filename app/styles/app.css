@@ -479,6 +479,17 @@
     padding-top: calc(var(--announcement-bar-height, 2.5rem) + var(--header-height)) !important;
   }
 
+  /*
+   * Phones: do not pull the hero under the fixed header. Keep the film below
+   * the white nav so the rider’s head is never hidden behind chrome.
+   */
+  @media (max-width: 767.98px) {
+    .home-hero {
+      margin-top: 0 !important;
+      padding-top: var(--header-height) !important;
+    }
+  }
+
   /* Hero copy — vertical rhythm + type hierarchy over full-bleed media */
   .home-hero-copy {
     display: flex;
@@ -957,17 +968,13 @@
   }
 
   /*
-   * Mobile: hero media sits under the fixed announcement + header chrome.
-   * Phones use the lifestyle poster (HeroVideoBackground skips YouTube below
-   * md). Size the still taller than the media box and pin it to the top so the
-   * visible crop is the upper part of the 16:9 frame (sky + head), not a
-   * center cover that puts the hairline under the nav.
+   * Mobile: film lives fully below the white header (see .home-hero above).
+   * Phones use the lifestyle poster only; size it taller and pin to the top so
+   * the visible crop is sky + headroom, not a flush hairline.
    */
   @media (max-width: 767.98px) {
     .home-hero-media {
-      top: calc(
-        var(--announcement-bar-height, 2.5rem) + var(--header-height) + 0.75rem
-      ) !important;
+      top: var(--header-height) !important;
       bottom: 0 !important;
       overflow: hidden;
       background: hsl(var(--navy));
@@ -986,12 +993,12 @@
       inset: auto !important;
       top: 0 !important;
       left: 50% !important;
-      width: 170% !important;
-      height: 170% !important;
+      width: 180% !important;
+      height: 180% !important;
       max-width: none !important;
       transform: translateX(-50%);
       object-fit: cover;
-      object-position: 40% top;
+      object-position: 38% top;
     }
   }
 
