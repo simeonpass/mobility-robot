@@ -958,21 +958,19 @@
 
   /*
    * Mobile: hero media sits under the fixed announcement + header chrome.
-   * Pin the media box just under that chrome (instead of scale+translate,
-   * which fought each other from a center origin) so the rider’s head is
-   * not hidden behind the white nav on first paint.
+   * Nudge the media box down with !important so we win over Tailwind inset-0,
+   * keeping the rider’s head below the white nav on first paint.
    */
   @media (max-width: 767.98px) {
-    .home-hero > [aria-hidden]:first-child {
+    .home-hero-media {
       top: calc(
-        var(--announcement-bar-height, 2.5rem) + var(--header-height) - 0.25rem
-      );
-      /* Keep covering the lower hero after shifting the top edge down. */
-      bottom: -12%;
+        var(--announcement-bar-height, 2.5rem) + var(--header-height) - 0.5rem
+      ) !important;
+      bottom: -10% !important;
     }
 
     .hero-video-poster {
-      object-position: 48% 30%;
+      object-position: 42% 35%;
     }
   }
 

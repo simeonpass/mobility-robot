@@ -22,7 +22,7 @@ export function HeroSection() {
       aria-label="Hero"
       className="home-hero relative min-h-[min(92svh,34rem)] overflow-hidden bg-navy !p-0 md:min-h-[100svh]"
     >
-      <div aria-hidden className="absolute inset-0">
+      <div aria-hidden className="home-hero-media absolute inset-0">
         <HeroVideoBackground />
       </div>
 
