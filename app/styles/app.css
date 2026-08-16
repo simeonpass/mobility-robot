@@ -958,10 +958,10 @@
 
   /*
    * Mobile: hero media sits under the fixed announcement + header chrome.
-   * 1) Offset the media box below the nav (!important beats Tailwind inset-0).
-   * 2) Zoom from the top of the landscape film so sky fills the top of the
-   *    viewport and the rider’s head sits lower — object-position alone cannot
-   *    do this when a 16:9 still covers a portrait box (no vertical overflow).
+   * The autoplay YouTube frame is a tighter crop than the poster still, so on
+   * phones we keep the poster visible (hide the embed) and zoom from the top
+   * of that lifestyle frame — object-position alone cannot lower the rider in
+   * a portrait box covering a 16:9 still (no vertical overflow).
    */
   @media (max-width: 767.98px) {
     .home-hero-media {
@@ -972,15 +972,23 @@
       overflow: hidden;
     }
 
+    .home-hero .hero-youtube-embed {
+      display: none !important;
+    }
+
+    .home-hero .hero-video-layer--playing .hero-video-poster {
+      opacity: 1 !important;
+    }
+
     .home-hero-media > .hero-video-layer,
     .home-hero-media > .hero-video-poster {
-      transform: scale(1.42);
-      transform-origin: 44% top;
+      transform: scale(1.35);
+      transform-origin: 42% top;
     }
 
     .hero-video-poster {
       object-fit: cover;
-      object-position: 44% top;
+      object-position: 42% top;
     }
   }
 
