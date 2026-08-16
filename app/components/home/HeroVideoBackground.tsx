@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useReducedMotion} from 'framer-motion';
 import {
   HOMEPAGE_HERO_YOUTUBE_ID,
@@ -10,14 +10,37 @@ type HeroVideoBackgroundProps = {
   youtubeId?: string;
 };
 
+const DESKTOP_HERO_VIDEO_QUERY = '(min-width: 768px)';
+
+function readDesktopHeroVideoPreference() {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia(DESKTOP_HERO_VIDEO_QUERY).matches;
+}
+
+function usePrefersDesktopHeroVideo() {
+  const [enabled, setEnabled] = useState(readDesktopHeroVideoPreference);
+
+  useEffect(() => {
+    const media = window.matchMedia(DESKTOP_HERO_VIDEO_QUERY);
+    const sync = () => setEnabled(media.matches);
+    sync();
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
+  }, []);
+
+  return enabled;
+}
+
 export function HeroVideoBackground({
   youtubeId = HOMEPAGE_HERO_YOUTUBE_ID,
 }: HeroVideoBackgroundProps) {
   const reducedMotion = useReducedMotion();
+  const desktopVideo = usePrefersDesktopHeroVideo();
   const [ready, setReady] = useState(false);
   const posterUrl = heroYoutubePosterUrl(youtubeId);
+  const posterOnly = Boolean(reducedMotion) || !desktopVideo;
 
-  if (reducedMotion) {
+  if (posterOnly) {
     return (
       <img
         alt=""

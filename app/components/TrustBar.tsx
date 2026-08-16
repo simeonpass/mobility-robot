@@ -47,14 +47,14 @@ export function TrustBar() {
                 ) : null}
                 <Icon
                   aria-hidden
-                  className="size-4 shrink-0 text-navy/45"
+                  className="size-5 shrink-0 text-navy/55"
                   strokeWidth={1.5}
                 />
                 <div className="min-w-0">
-                  <p className="text-[0.8125rem] font-semibold leading-snug tracking-[-0.01em] text-navy sm:text-sm">
+                  <p className="text-base font-semibold leading-snug tracking-[-0.01em] text-navy sm:text-[0.9375rem]">
                     {label}
                   </p>
-                  <p className="mt-0.5 text-[0.6875rem] leading-snug text-navy/45 sm:text-xs">
+                  <p className="mt-0.5 text-sm leading-snug text-navy/70 sm:text-sm">
                     {sublabel}
                   </p>
                 </div>

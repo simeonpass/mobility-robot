@@ -597,7 +597,7 @@ export function ProductPurchasePanel({
               <p className="truncate font-display text-lg font-semibold tabular-nums leading-none tracking-[-0.03em] text-navy">
                 {stickyPrice}
               </p>
-              <p className="mt-0.5 truncate text-[0.65rem] text-slate">
+              <p className="mt-0.5 truncate text-sm text-slate">
                 {stickyPriceHint}
               </p>
             </div>

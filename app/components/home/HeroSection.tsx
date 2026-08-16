@@ -20,9 +20,9 @@ export function HeroSection() {
   return (
     <section
       aria-label="Hero"
-      className="home-hero relative min-h-[min(85svh,30rem)] overflow-hidden bg-navy !p-0 md:min-h-[100svh]"
+      className="home-hero relative min-h-[min(92svh,34rem)] overflow-hidden bg-navy !p-0 md:min-h-[100svh]"
     >
-      <div aria-hidden className="absolute inset-0">
+      <div aria-hidden className="home-hero-media absolute inset-0">
         <HeroVideoBackground />
       </div>
 
@@ -39,7 +39,7 @@ export function HeroSection() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[55%] bg-gradient-to-t from-black/80 via-black/40 to-transparent"
       />
 
-      <div className="relative z-10 mx-auto flex min-h-[min(85svh,30rem)] w-full max-w-[1400px] flex-col justify-end px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:min-h-[100svh] md:px-8 md:pb-20 md:pt-36 lg:pb-24">
+      <div className="relative z-10 mx-auto flex min-h-[min(92svh,34rem)] w-full max-w-[1400px] flex-col justify-end px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:min-h-[100svh] md:px-8 md:pb-20 md:pt-36 lg:pb-24">
         <div className="home-hero-copy w-full max-w-2xl text-left text-white">
           <motion.h1
             className="home-hero-title font-display text-white"
@@ -64,19 +64,19 @@ export function HeroSection() {
             {...fadeUp(0.3, reducedMotion)}
           >
             <Link
-              className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"
+              className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-base font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"
               to={x12Url}
             >
               Shop the X12
             </Link>
 
             <Link
-              className="btn-hero-secondary font-display inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/55 bg-black/20 px-4 text-center text-[0.8125rem] font-medium leading-snug tracking-wide text-white/90 no-underline backdrop-blur-sm transition-colors hover:border-white/80 hover:bg-black/35 hover:text-white hover:no-underline sm:px-6 md:h-14 md:text-sm"
+              className="btn-hero-secondary font-display inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/55 bg-black/20 px-4 text-center text-[0.9375rem] font-medium leading-snug tracking-wide text-white/90 no-underline backdrop-blur-sm transition-colors hover:border-white/80 hover:bg-black/35 hover:text-white hover:no-underline sm:px-6 md:h-14 md:text-sm"
               to="/vat-relief"
             >
               <BadgePercent
                 aria-hidden
-                className="size-3.5 shrink-0 text-white/85 md:size-4"
+                className="size-4 shrink-0 text-white/85 md:size-4"
                 strokeWidth={1.5}
               />
               <span className="sm:hidden">VAT relief — pay no VAT</span>

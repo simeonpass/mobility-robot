@@ -479,6 +479,17 @@
     padding-top: calc(var(--announcement-bar-height, 2.5rem) + var(--header-height)) !important;
   }
 
+  /*
+   * Phones: do not pull the hero under the fixed header. Keep the film below
+   * the white nav so the rider’s head is never hidden behind chrome.
+   */
+  @media (max-width: 767.98px) {
+    .home-hero {
+      margin-top: 0 !important;
+      padding-top: var(--header-height) !important;
+    }
+  }
+
   /* Hero copy — vertical rhythm + type hierarchy over full-bleed media */
   .home-hero-copy {
     display: flex;
@@ -488,7 +499,7 @@
 
   .home-hero-title {
     margin: 0;
-    font-size: clamp(1.5rem, 5.2vw, 1.75rem);
+    font-size: clamp(1.6875rem, 5.8vw, 1.875rem);
     font-weight: 600;
     line-height: 1.18;
     letter-spacing: 0.05em;
@@ -504,11 +515,11 @@
   .home-hero-support {
     margin: 0.75rem 0 0;
     max-width: 32rem;
-    font-size: 0.9375rem;
+    font-size: 1.0625rem;
     font-weight: 400;
     line-height: 1.5;
     letter-spacing: 0.01em;
-    color: rgb(255 255 255 / 0.78);
+    color: rgb(255 255 255 / 0.88);
     text-wrap: pretty;
   }
 
@@ -592,7 +603,7 @@
   }
 
   .site-announcement-text {
-    @apply font-sans text-[0.6875rem] font-medium leading-snug tracking-[0.04em] sm:text-[0.8125rem];
+    @apply font-sans text-[0.75rem] font-medium leading-snug tracking-[0.04em] sm:text-[0.8125rem];
     color: hsl(0 0% 100% / 0.92);
   }
 
@@ -954,6 +965,41 @@
     @apply absolute inset-0 z-[1] object-cover transition-opacity duration-1000;
     /* Keep the X12 + rider in frame on tall phones (landscape poster). */
     object-position: 42% 40%;
+  }
+
+  /*
+   * Mobile: film lives fully below the white header (see .home-hero above).
+   * Phones use the lifestyle poster only; size it taller and pin to the top so
+   * the visible crop is sky + headroom, not a flush hairline.
+   */
+  @media (max-width: 767.98px) {
+    .home-hero-media {
+      top: var(--header-height) !important;
+      bottom: 0 !important;
+      overflow: hidden;
+      background: hsl(var(--navy));
+    }
+
+    .home-hero .hero-youtube-embed {
+      display: none !important;
+    }
+
+    .home-hero .hero-video-layer--playing .hero-video-poster {
+      opacity: 1 !important;
+    }
+
+    .home-hero-media > .hero-video-poster {
+      position: absolute !important;
+      inset: auto !important;
+      top: 0 !important;
+      left: 50% !important;
+      width: 180% !important;
+      height: 180% !important;
+      max-width: none !important;
+      transform: translateX(-50%);
+      object-fit: cover;
+      object-position: 38% top;
+    }
   }
 
   @media (min-width: 768px) {
