@@ -64,19 +64,19 @@ export function HeroSection() {
             {...fadeUp(0.3, reducedMotion)}
           >
             <Link
-              className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"
+              className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-base font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"
               to={x12Url}
             >
               Shop the X12
             </Link>
 
             <Link
-              className="btn-hero-secondary font-display inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/55 bg-black/20 px-4 text-center text-[0.8125rem] font-medium leading-snug tracking-wide text-white/90 no-underline backdrop-blur-sm transition-colors hover:border-white/80 hover:bg-black/35 hover:text-white hover:no-underline sm:px-6 md:h-14 md:text-sm"
+              className="btn-hero-secondary font-display inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/55 bg-black/20 px-4 text-center text-[0.9375rem] font-medium leading-snug tracking-wide text-white/90 no-underline backdrop-blur-sm transition-colors hover:border-white/80 hover:bg-black/35 hover:text-white hover:no-underline sm:px-6 md:h-14 md:text-sm"
               to="/vat-relief"
             >
               <BadgePercent
                 aria-hidden
-                className="size-3.5 shrink-0 text-white/85 md:size-4"
+                className="size-4 shrink-0 text-white/85 md:size-4"
                 strokeWidth={1.5}
               />
               <span className="sm:hidden">VAT relief — pay no VAT</span>

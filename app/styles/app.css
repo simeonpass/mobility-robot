@@ -488,7 +488,7 @@
 
   .home-hero-title {
     margin: 0;
-    font-size: clamp(1.5rem, 5.2vw, 1.75rem);
+    font-size: clamp(1.6875rem, 5.8vw, 1.875rem);
     font-weight: 600;
     line-height: 1.18;
     letter-spacing: 0.05em;
@@ -504,11 +504,11 @@
   .home-hero-support {
     margin: 0.75rem 0 0;
     max-width: 32rem;
-    font-size: 0.9375rem;
+    font-size: 1.0625rem;
     font-weight: 400;
     line-height: 1.5;
     letter-spacing: 0.01em;
-    color: rgb(255 255 255 / 0.78);
+    color: rgb(255 255 255 / 0.88);
     text-wrap: pretty;
   }
 
@@ -592,7 +592,7 @@
   }
 
   .site-announcement-text {
-    @apply font-sans text-[0.6875rem] font-medium leading-snug tracking-[0.04em] sm:text-[0.8125rem];
+    @apply font-sans text-[0.75rem] font-medium leading-snug tracking-[0.04em] sm:text-[0.8125rem];
     color: hsl(0 0% 100% / 0.92);
   }
 
@@ -954,6 +954,30 @@
     @apply absolute inset-0 z-[1] object-cover transition-opacity duration-1000;
     /* Keep the X12 + rider in frame on tall phones (landscape poster). */
     object-position: 42% 40%;
+  }
+
+  /*
+   * Mobile: hero media sits under the fixed announcement + header chrome.
+   * Scale and nudge the film downward so the rider's head clears the nav
+   * instead of being cropped by it on first paint. Apply to the layer (and
+   * reduced-motion poster) only — not the iframe alone — so poster → video
+   * handoff does not jump.
+   */
+  @media (max-width: 767.98px) {
+    .home-hero .hero-video-layer {
+      transform: scale(1.22) translateY(9%);
+      transform-origin: center center;
+    }
+
+    /* Reduced-motion path renders the poster without the layer wrapper. */
+    .home-hero > [aria-hidden] > .hero-video-poster {
+      transform: scale(1.22) translateY(9%);
+      transform-origin: center center;
+    }
+
+    .hero-video-poster {
+      object-position: 46% 28%;
+    }
   }
 
   @media (min-width: 768px) {
