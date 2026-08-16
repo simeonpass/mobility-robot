@@ -958,19 +958,46 @@
 
   /*
    * Mobile: hero media sits under the fixed announcement + header chrome.
-   * Nudge the media box down with !important so we win over Tailwind inset-0,
-   * keeping the rider’s head below the white nav on first paint.
+   * 1) Offset the media box below the nav (!important beats Tailwind inset-0).
+   * 2) Oversample the film layer (or reduced-motion poster) and pin it to the
+   *    top of that box so the visible crop prefers sky + rider headroom,
+   *    cropping grass at the bottom instead of the hairline at the top.
    */
   @media (max-width: 767.98px) {
     .home-hero-media {
       top: calc(
         var(--announcement-bar-height, 2.5rem) + var(--header-height) - 0.5rem
       ) !important;
-      bottom: -10% !important;
+      bottom: 0 !important;
+      overflow: hidden;
+    }
+
+    .home-hero-media > .hero-video-layer,
+    .home-hero-media > .hero-video-poster {
+      inset: auto !important;
+      top: 0 !important;
+      left: 50% !important;
+      width: 145% !important;
+      height: 145% !important;
+      max-width: none;
+      transform: translateX(-50%);
     }
 
     .hero-video-poster {
-      object-position: 42% 35%;
+      object-fit: cover;
+      object-position: 42% 12%;
+    }
+
+    @supports (height: 100cqh) {
+      .home-hero .hero-youtube-iframe {
+        height: 100cqh;
+        min-height: 100cqh;
+        width: auto;
+        min-width: 100cqw;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
   }
 
