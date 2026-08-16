@@ -964,11 +964,13 @@
    */
   @media (max-width: 767.98px) {
     .home-hero-media {
+      /* Extra 12px below the chrome so the hairline isn’t flush with the nav. */
       top: calc(
-        var(--announcement-bar-height, 2.5rem) + var(--header-height)
+        var(--announcement-bar-height, 2.5rem) + var(--header-height) + 0.75rem
       ) !important;
       bottom: 0 !important;
       overflow: hidden;
+      background: hsl(var(--navy));
     }
 
     .home-hero .hero-youtube-embed {
@@ -981,13 +983,13 @@
 
     .home-hero-media > .hero-video-layer,
     .home-hero-media > .hero-video-poster {
-      transform: scale(1.35);
-      transform-origin: 42% top;
+      transform: scale(1.5);
+      transform-origin: 40% top;
     }
 
     .hero-video-poster {
       object-fit: cover;
-      object-position: 42% top;
+      object-position: 40% top;
     }
   }
 
