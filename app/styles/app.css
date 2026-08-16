@@ -959,12 +959,12 @@
   /*
    * Mobile: hero media sits under the fixed announcement + header chrome.
    * Phones use the lifestyle poster (HeroVideoBackground skips YouTube below
-   * md). Zoom from the top of that still so sky leads and the head sits clear
-   * of the nav. CSS also hides any embed as a safety net.
+   * md). Size the still taller than the media box and pin it to the top so the
+   * visible crop is the upper part of the 16:9 frame (sky + head), not a
+   * center cover that puts the hairline under the nav.
    */
   @media (max-width: 767.98px) {
     .home-hero-media {
-      /* Extra 12px below the chrome so the hairline isn’t flush with the nav. */
       top: calc(
         var(--announcement-bar-height, 2.5rem) + var(--header-height) + 0.75rem
       ) !important;
@@ -981,13 +981,15 @@
       opacity: 1 !important;
     }
 
-    .home-hero-media > .hero-video-layer,
     .home-hero-media > .hero-video-poster {
-      transform: scale(1.5);
-      transform-origin: 40% top;
-    }
-
-    .hero-video-poster {
+      position: absolute !important;
+      inset: auto !important;
+      top: 0 !important;
+      left: 50% !important;
+      width: 170% !important;
+      height: 170% !important;
+      max-width: none !important;
+      transform: translateX(-50%);
       object-fit: cover;
       object-position: 40% top;
     }
