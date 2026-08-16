@@ -958,25 +958,21 @@
 
   /*
    * Mobile: hero media sits under the fixed announcement + header chrome.
-   * Scale and nudge the film downward so the rider's head clears the nav
-   * instead of being cropped by it on first paint. Apply to the layer (and
-   * reduced-motion poster) only — not the iframe alone — so poster → video
-   * handoff does not jump.
+   * Pin the media box just under that chrome (instead of scale+translate,
+   * which fought each other from a center origin) so the rider’s head is
+   * not hidden behind the white nav on first paint.
    */
   @media (max-width: 767.98px) {
-    .home-hero .hero-video-layer {
-      transform: scale(1.32) translateY(16%);
-      transform-origin: center center;
-    }
-
-    /* Reduced-motion path renders the poster without the layer wrapper. */
-    .home-hero > [aria-hidden] > .hero-video-poster {
-      transform: scale(1.32) translateY(16%);
-      transform-origin: center center;
+    .home-hero > [aria-hidden]:first-child {
+      top: calc(
+        var(--announcement-bar-height, 2.5rem) + var(--header-height) - 0.25rem
+      );
+      /* Keep covering the lower hero after shifting the top edge down. */
+      bottom: -12%;
     }
 
     .hero-video-poster {
-      object-position: 48% 22%;
+      object-position: 48% 30%;
     }
   }
 

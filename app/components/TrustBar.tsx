@@ -54,7 +54,7 @@ export function TrustBar() {
                   <p className="text-sm font-semibold leading-snug tracking-[-0.01em] text-navy sm:text-[0.9375rem]">
                     {label}
                   </p>
-                  <p className="mt-0.5 text-[0.8125rem] leading-snug text-navy/60 sm:text-sm">
+                  <p className="mt-0.5 text-[0.875rem] leading-snug text-navy/70 sm:text-sm">
                     {sublabel}
                   </p>
                 </div>
