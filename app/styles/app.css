@@ -965,18 +965,18 @@
    */
   @media (max-width: 767.98px) {
     .home-hero .hero-video-layer {
-      transform: scale(1.22) translateY(9%);
+      transform: scale(1.32) translateY(16%);
       transform-origin: center center;
     }
 
     /* Reduced-motion path renders the poster without the layer wrapper. */
     .home-hero > [aria-hidden] > .hero-video-poster {
-      transform: scale(1.22) translateY(9%);
+      transform: scale(1.32) translateY(16%);
       transform-origin: center center;
     }
 
     .hero-video-poster {
-      object-position: 46% 28%;
+      object-position: 48% 22%;
     }
   }
 
