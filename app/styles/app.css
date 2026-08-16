@@ -959,14 +959,14 @@
   /*
    * Mobile: hero media sits under the fixed announcement + header chrome.
    * 1) Offset the media box below the nav (!important beats Tailwind inset-0).
-   * 2) Oversample the film layer (or reduced-motion poster) and pin it to the
-   *    top of that box so the visible crop prefers sky + rider headroom,
-   *    cropping grass at the bottom instead of the hairline at the top.
+   * 2) Zoom from the top of the landscape film so sky fills the top of the
+   *    viewport and the rider’s head sits lower — object-position alone cannot
+   *    do this when a 16:9 still covers a portrait box (no vertical overflow).
    */
   @media (max-width: 767.98px) {
     .home-hero-media {
       top: calc(
-        var(--announcement-bar-height, 2.5rem) + var(--header-height) - 0.5rem
+        var(--announcement-bar-height, 2.5rem) + var(--header-height)
       ) !important;
       bottom: 0 !important;
       overflow: hidden;
@@ -974,30 +974,13 @@
 
     .home-hero-media > .hero-video-layer,
     .home-hero-media > .hero-video-poster {
-      inset: auto !important;
-      top: 0 !important;
-      left: 50% !important;
-      width: 145% !important;
-      height: 145% !important;
-      max-width: none;
-      transform: translateX(-50%);
+      transform: scale(1.42);
+      transform-origin: 44% top;
     }
 
     .hero-video-poster {
       object-fit: cover;
-      object-position: 42% 12%;
-    }
-
-    @supports (height: 100cqh) {
-      .home-hero .hero-youtube-iframe {
-        height: 100cqh;
-        min-height: 100cqh;
-        width: auto;
-        min-width: 100cqw;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
+      object-position: 44% top;
     }
   }
 
