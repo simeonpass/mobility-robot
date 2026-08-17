@@ -46,7 +46,7 @@ describe('getDeliveryInfo', () => {
       handle: 'x12-all-terrain-mobility-robot',
     });
     expect(info.status).toBe('preorder');
-    expect(info.headline).toBe('Pre-order');
+    expect(info.headline).toBe('Pre-order available');
     expect(info.detail).toContain('8–10 weeks');
     expect(info.detail).toContain('10% deposit');
     expect(info.preorderWeeks).toBe(10);
@@ -121,7 +121,10 @@ describe('getDeliveryInfo', () => {
       tags: ['Pre-order'],
     });
     expect(info.status).toBe('preorder');
-    expect(info.headline).toBe('Pre-order');
+    expect(info.headline).toBe('Pre-order available');
+    expect(info.detail).toMatch(/still order today/i);
+    expect(info.instructions).toMatch(/as soon as it comes back into stock/i);
+    expect(info.preorderWeeks).toBeNull();
   });
 
   it('allows pre-order at qty 0 when the metafield is set', () => {

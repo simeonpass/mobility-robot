@@ -417,15 +417,20 @@ export function ProductPurchasePanel({
     productVatReliefEnabled,
   ]);
 
+  const isPreorder = delivery?.status === 'preorder';
   const priceForLabel =
     paymentChoice === 'deposit' ? dueTodayDisplay : activePriceDisplay;
   const baseLabel = priceForLabel
     ? paymentChoice === 'deposit'
       ? `Reserve with deposit — ${priceForLabel}`
-      : `Add to cart — ${priceForLabel}`
+      : isPreorder
+        ? `Pre-order now — ${priceForLabel}`
+        : `Add to cart — ${priceForLabel}`
     : paymentChoice === 'deposit'
       ? 'Reserve with deposit'
-      : 'Add to cart';
+      : isPreorder
+        ? 'Pre-order now'
+        : 'Add to cart';
   const addToCartLabel =
     addonCount > 0
       ? `${baseLabel} · ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'}`
@@ -470,13 +475,15 @@ export function ProductPurchasePanel({
       ? addonCount > 0
         ? 'Deposit + accessories due today'
         : '10% deposit due today'
-      : addonCount > 0
-        ? productVatReliefEnabled
-          ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · VAT relief`
-          : `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · inc. VAT`
-        : productVatReliefEnabled
-          ? 'VAT relief price'
-          : 'inc. VAT';
+      : isPreorder
+        ? 'Ships as soon as stock arrives'
+        : addonCount > 0
+          ? productVatReliefEnabled
+            ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · VAT relief`
+            : `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · inc. VAT`
+          : productVatReliefEnabled
+            ? 'VAT relief price'
+            : 'inc. VAT';
 
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
@@ -515,6 +522,13 @@ export function ProductPurchasePanel({
         {tagline ? (
           <p className="mt-1.5 text-sm leading-snug text-slate sm:mt-2">
             {tagline}
+          </p>
+        ) : null}
+        {isPreorder ? (
+          <p className="mt-2.5 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-amber-950">
+            {isForcedPreorder(productHandle)
+              ? 'Pre-order — estimated 8–10 weeks'
+              : 'Pre-order — ships when stock arrives'}
           </p>
         ) : null}
       </header>
@@ -635,11 +649,15 @@ export function ProductPurchasePanel({
           >
             {!canAddToCart
               ? soldOutLabel
-              : stickyPrice
-                ? paymentChoice === 'deposit'
-                  ? `Deposit — ${stickyPrice}`
-                  : `Add — ${stickyPrice}`
-                : 'Add to cart'}
+                : stickyPrice
+                  ? paymentChoice === 'deposit'
+                    ? `Deposit — ${stickyPrice}`
+                    : isPreorder
+                      ? `Pre-order — ${stickyPrice}`
+                      : `Add — ${stickyPrice}`
+                  : isPreorder
+                    ? 'Pre-order now'
+                    : 'Add to cart'}
           </AddToCartButton>
         </div>
       </div>

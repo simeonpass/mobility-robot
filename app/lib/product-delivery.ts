@@ -13,6 +13,8 @@ export type DeliveryInfo = {
   etaLabel: string;
   /** Estimated lead time in weeks when status is preorder; null otherwise. */
   preorderWeeks: number | null;
+  /** Extra customer-facing explanation shown on the product page. */
+  instructions?: string | null;
 };
 
 /** Default pre-order lead time when a product has no per-handle override. */
@@ -234,10 +236,12 @@ export function getDeliveryInfo({
     const weeksLabel = getPreorderWeeksLabel(handle);
     return {
       status: 'preorder',
-      headline: 'Pre-order',
+      headline: 'Pre-order available',
       detail: `Estimated delivery ${weeksLabel} · 10% deposit available`,
       etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
       preorderWeeks: weeks,
+      instructions:
+        'Order today to reserve yours. We will build, fulfil and dispatch as soon as your chair is ready — you do not need to wait until it is back in stock.',
     };
   }
 
@@ -274,18 +278,14 @@ export function getDeliveryInfo({
 
   // Qty 0: only sell as a pre-order when the merchant opted in.
   if (availableForSale && preorderAllowed) {
-    const weeks = getPreorderWeeks(handle);
-    const weeksLabel = getPreorderWeeksLabel(handle);
-    const depositHint = isForcedPreorder(handle)
-      ? ' · 10% deposit available'
-      : '';
-
     return {
       status: 'preorder',
-      headline: 'Pre-order',
-      detail: `Estimated delivery ${weeksLabel}${depositHint}`,
-      etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
-      preorderWeeks: weeks,
+      headline: 'Pre-order available',
+      detail: 'Currently out of stock — you can still order today',
+      etaLabel: 'Dispatched as soon as it arrives · Free UK mainland delivery',
+      preorderWeeks: null,
+      instructions:
+        'Place your order now to reserve this item. We will fulfil it and send it out as soon as it comes back into stock — no need to check back later.',
     };
   }
 

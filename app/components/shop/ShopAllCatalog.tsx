@@ -13,7 +13,7 @@ import {
   HOMEPAGE_PRODUCT_BADGES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
-import {isForcedLowStock, isForcedPreorder} from '~/lib/product-delivery';
+import {isForcedLowStock, isForcedPreorder, isPreorderAllowed} from '~/lib/product-delivery';
 import {getProductListPrice} from '~/lib/product-vat-variants';
 import {type ShopAllProduct} from '~/lib/shop-all';
 
@@ -123,7 +123,9 @@ function ChairCard({
     | HomepageFlagshipHandle
     | undefined;
   const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
-  const preorder = isForcedPreorder(product.handle);
+  const preorder =
+    isForcedPreorder(product.handle) ||
+    isPreorderAllowed({handle: product.handle, tags: product.tags});
   const lowStock = !preorder && isForcedLowStock(product.handle);
   const listPrice = getProductListPrice(product);
   const exVatPrice = formatHomepageFromPrice(
@@ -150,7 +152,9 @@ function ChairCard({
           ) : null}
           {preorder ? (
             <span className="rounded-full bg-navy px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white shadow-soft sm:px-3 sm:text-xs">
-              Pre-order · 10% deposit
+              {isForcedPreorder(product.handle)
+                ? 'Pre-order · 10% deposit'
+                : 'Pre-order · ships when in stock'}
             </span>
           ) : null}
           {lowStock ? (
