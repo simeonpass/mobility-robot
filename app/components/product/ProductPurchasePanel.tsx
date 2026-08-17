@@ -17,7 +17,7 @@ import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions'
 import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
-import {getDeliveryInfo, isForcedPreorder} from '~/lib/product-delivery';
+import {getDeliveryInfo, isForcedPreorder, isPurchasable} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
   formatProductPrice,
@@ -67,6 +67,8 @@ type ProductPurchasePanelProps = {
       : {nodes?: SellingPlanAllocationNode[]};
   }>;
   accessoryAddons?: AddonProduct[];
+  productTags?: string[];
+  allowPreorder?: boolean | string | null;
 };
 
 export function ProductPurchasePanel({
@@ -79,6 +81,8 @@ export function ProductPurchasePanel({
   productOptions,
   productVariants = [],
   accessoryAddons = [],
+  productTags = [],
+  allowPreorder = null,
 }: ProductPurchasePanelProps) {
   const {
     declaration,
@@ -131,6 +135,8 @@ export function ProductPurchasePanel({
         availableForSale: purchaseVariant.availableForSale,
         quantityAvailable: purchaseVariant.quantityAvailable,
         handle: productHandle,
+        tags: productTags,
+        allowPreorder: allowPreorder,
       })
     : null;
 
@@ -172,6 +178,7 @@ export function ProductPurchasePanel({
 
   const canAddToCart =
     Boolean(purchaseVariant?.availableForSale) &&
+    delivery?.status !== 'sold_out' &&
     (!productVatReliefEnabled || vatFormComplete);
 
   const cartAttributes = useMemo(
@@ -185,10 +192,25 @@ export function ProductPurchasePanel({
     for (const product of accessoryAddons) {
       const variants = product.variants?.nodes ?? [];
       const pickerVariants = filterStandardVatVariants(
-        variants.filter((variant) => variant.availableForSale),
+        variants.filter((variant) =>
+          isPurchasable({
+            availableForSale: variant.availableForSale,
+            quantityAvailable: variant.quantityAvailable,
+            handle: product.handle,
+            tags: product.tags,
+          }),
+        ),
       );
       const fallback =
-        product.selectedOrFirstAvailableVariant?.availableForSale
+        product.selectedOrFirstAvailableVariant &&
+        isPurchasable({
+          availableForSale:
+            product.selectedOrFirstAvailableVariant.availableForSale,
+          quantityAvailable:
+            product.selectedOrFirstAvailableVariant.quantityAvailable,
+          handle: product.handle,
+          tags: product.tags,
+        })
           ? [product.selectedOrFirstAvailableVariant]
           : [];
       const colourChoices = pickerVariants.length ? pickerVariants : fallback;
@@ -395,25 +417,33 @@ export function ProductPurchasePanel({
     productVatReliefEnabled,
   ]);
 
+  const isPreorder = delivery?.status === 'preorder';
   const priceForLabel =
     paymentChoice === 'deposit' ? dueTodayDisplay : activePriceDisplay;
   const baseLabel = priceForLabel
     ? paymentChoice === 'deposit'
       ? `Reserve with deposit — ${priceForLabel}`
-      : `Add to cart — ${priceForLabel}`
+      : isPreorder
+        ? `Pre-order now — ${priceForLabel}`
+        : `Add to cart — ${priceForLabel}`
     : paymentChoice === 'deposit'
       ? 'Reserve with deposit'
-      : 'Add to cart';
+      : isPreorder
+        ? 'Pre-order now'
+        : 'Add to cart';
   const addToCartLabel =
     addonCount > 0
       ? `${baseLabel} · ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'}`
       : baseLabel;
 
-  const soldOutLabel = purchaseVariant?.availableForSale
-    ? productVatReliefEnabled && !vatFormComplete
-      ? 'Complete VAT declaration'
-      : 'Sold out'
-    : 'Sold out';
+  const soldOutLabel =
+    delivery?.status === 'sold_out'
+      ? 'Sold out'
+      : purchaseVariant?.availableForSale
+        ? productVatReliefEnabled && !vatFormComplete
+          ? 'Complete VAT declaration'
+          : 'Sold out'
+        : 'Sold out';
 
   const cartLines: OptimisticCartLineInput[] = purchaseVariant
     ? [
@@ -445,13 +475,15 @@ export function ProductPurchasePanel({
       ? addonCount > 0
         ? 'Deposit + accessories due today'
         : '10% deposit due today'
-      : addonCount > 0
-        ? productVatReliefEnabled
-          ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · VAT relief`
-          : `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · inc. VAT`
-        : productVatReliefEnabled
-          ? 'VAT relief price'
-          : 'inc. VAT';
+      : isPreorder
+        ? 'Ships as soon as stock arrives'
+        : addonCount > 0
+          ? productVatReliefEnabled
+            ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · VAT relief`
+            : `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · inc. VAT`
+          : productVatReliefEnabled
+            ? 'VAT relief price'
+            : 'inc. VAT';
 
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
@@ -490,6 +522,13 @@ export function ProductPurchasePanel({
         {tagline ? (
           <p className="mt-1.5 text-sm leading-snug text-slate sm:mt-2">
             {tagline}
+          </p>
+        ) : null}
+        {isPreorder ? (
+          <p className="mt-2.5 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-amber-950">
+            {isForcedPreorder(productHandle)
+              ? 'Pre-order — estimated 8–10 weeks'
+              : 'Pre-order — ships when stock arrives'}
           </p>
         ) : null}
       </header>
@@ -608,15 +647,17 @@ export function ProductPurchasePanel({
             lines={cartLines}
             onClick={() => open('cart')}
           >
-            {!selectedVariant?.availableForSale
+            {!canAddToCart
               ? soldOutLabel
-              : !canAddToCart
-                ? soldOutLabel
                 : stickyPrice
                   ? paymentChoice === 'deposit'
                     ? `Deposit — ${stickyPrice}`
-                    : `Add — ${stickyPrice}`
-                  : 'Add to cart'}
+                    : isPreorder
+                      ? `Pre-order — ${stickyPrice}`
+                      : `Add — ${stickyPrice}`
+                  : isPreorder
+                    ? 'Pre-order now'
+                    : 'Add to cart'}
           </AddToCartButton>
         </div>
       </div>

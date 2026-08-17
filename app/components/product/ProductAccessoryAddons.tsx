@@ -8,11 +8,13 @@ import {
   resolveAccessoryCompatibility,
 } from '~/lib/accessories';
 import {formatExVatPrice} from '~/lib/homepage-data';
+import {isPurchasable} from '~/lib/product-delivery';
 
 export type AddonVariant = {
   id: string;
   title: string;
   availableForSale: boolean;
+  quantityAvailable?: number | null;
   price: {
     amount: string;
     currencyCode: string;
@@ -83,12 +85,25 @@ function colourLabel(variant: AddonVariant): string {
 }
 
 function availableVariants(product: AddonProduct): AddonVariant[] {
-  const nodes = product.variants?.nodes?.filter(
-    (variant) => variant.availableForSale,
+  const nodes = product.variants?.nodes?.filter((variant) =>
+    isPurchasable({
+      availableForSale: variant.availableForSale,
+      quantityAvailable: variant.quantityAvailable,
+      handle: product.handle,
+      tags: product.tags,
+    }),
   );
   const list = nodes?.length
     ? nodes
-    : product.selectedOrFirstAvailableVariant?.availableForSale
+    : product.selectedOrFirstAvailableVariant &&
+        isPurchasable({
+          availableForSale:
+            product.selectedOrFirstAvailableVariant.availableForSale,
+          quantityAvailable:
+            product.selectedOrFirstAvailableVariant.quantityAvailable,
+          handle: product.handle,
+          tags: product.tags,
+        })
       ? [product.selectedOrFirstAvailableVariant]
       : [];
 

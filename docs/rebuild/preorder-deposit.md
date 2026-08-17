@@ -1,26 +1,42 @@
-# Pre-order + 10% deposit (Shopify Admin checklist)
+# Pre-order + inventory (Shopify Admin checklist)
 
-Hydrogen already supports **pay in full** vs **pay 10% deposit** when variants expose `sellingPlanAllocations`, and shows per-product pre-order ETAs:
+The storefront now treats **inventory quantity as the source of truth**:
 
-| Product | Handle | ETA |
-|---------|--------|-----|
-| X12 | `x12-all-terrain-mobility-robot` | 8–10 weeks (forced pre-order) |
-| X12 Pro | `xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | 8–10 weeks (forced pre-order) |
+| Shopify inventory | Storefront |
+|-------------------|------------|
+| Quantity **1+** | **In stock** (shows remaining count) — customers can buy |
+| Quantity **0**, no pre-order opt-in | **Sold out** — add to cart disabled |
+| Quantity **0**, pre-order opted in | **Pre-order** — customers can still order |
+| X12 / X12 Pro | Always **Pre-order** (8–10 weeks, 10% deposit) when Shopify will still take the order |
 
-Without the Admin steps below, OOS chairs stay **Sold out**, and the deposit radio stays hidden. Storefront messaging still shows **Pre-order** for both models even if Shopify still has inventory.
+## Opt a product into pre-order when stock is 0
 
-## 1. Continue selling when out of stock (required for X12 / X12 Pro)
+Do **all** of these in Shopify Admin:
 
-For **X12** and **X12 Pro**:
+1. **Products** → open the product
+2. **Inventory** → set quantity to **0** (or leave it at 0)
+3. Enable **Continue selling when out of stock** (otherwise Shopify checkout rejects the order)
+4. Add the product tag **`preorder`** (or set metafield `custom.allow_preorder` = `true`)
+5. Save
+
+To stop pre-orders and show Sold out: remove the `preorder` tag **or** turn off Continue selling.
+
+## In-stock products
+
+Set the **inventory quantity** to the number of units you can ship. The product page shows that count (e.g. “3 available”).
+
+## X12 / X12 Pro (forced pre-order)
+
+These models always show **Pre-order · 8–10 weeks** when they are still sellable:
 
 1. Shopify Admin → **Products** → open the product
-2. **Inventory** → set quantity to **0** (so checkout cannot ship from phantom stock)
-3. Enable **Continue selling when out of stock** (per variant if multi-variant)
+2. **Inventory** → set quantity to **0**
+3. Enable **Continue selling when out of stock**
 4. Save
 
-Storefront rule: forced pre-order slots (X12 + X12 Pro) always show **Pre-order · 8–10 weeks**. `availableForSale && quantityAvailable === 0` also maps other products to pre-order. If continue-selling is off and qty is 0, ATC stays sold out.
+Without Continue selling, they stay **Sold out**. The 10% deposit radio still needs a selling plan (below).
 
-## 2. Create a 10% deposit selling plan group
+## Deposit selling plan group
 
 Native deposit / deferred checkout charges need a **Purchase options / selling plan** app with `write_purchase_options` (often Shopify Plus / deferred purchase options).
 

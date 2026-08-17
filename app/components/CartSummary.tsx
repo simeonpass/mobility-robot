@@ -213,7 +213,15 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
             Estimated UK delivery
           </p>
           <p className="text-sm font-medium text-foreground">{delivery.headline}</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">{delivery.etaLabel}</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{delivery.detail}</p>
+          {delivery.instructions ? (
+            <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
+              {delivery.instructions}
+            </p>
+          ) : null}
+          <p className="mt-1.5 text-sm font-medium text-foreground">
+            {delivery.etaLabel}
+          </p>
         </div>
 
         {totals?.hasVatRelief ? (

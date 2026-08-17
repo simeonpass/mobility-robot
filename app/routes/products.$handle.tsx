@@ -38,6 +38,7 @@ import {resolveProductSeo} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 import {getProductDisplayName} from '~/lib/product-content';
+import {getDeliveryInfo, isPurchasable} from '~/lib/product-delivery';
 import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -144,14 +145,22 @@ async function loadAccessoryAddons(
   );
 
   // All compatible accessories for this chair (no short “frequently bought” cap).
-  return nodes.filter(
-    (product: (typeof nodes)[number]) =>
-      product.selectedOrFirstAvailableVariant?.availableForSale ||
-      product.variants?.nodes?.some(
-        (variant: {availableForSale?: boolean | null}) =>
-          variant.availableForSale,
-      ),
-  );
+  return nodes.filter((product: (typeof nodes)[number]) => {
+    const variants = product.variants?.nodes ?? [];
+    const selected = product.selectedOrFirstAvailableVariant;
+    const candidates = variants.length ? variants : selected ? [selected] : [];
+    return candidates.some((variant: {
+      availableForSale?: boolean | null;
+      quantityAvailable?: number | null;
+    }) =>
+      isPurchasable({
+        availableForSale: variant.availableForSale,
+        quantityAvailable: variant.quantityAvailable,
+        handle: product.handle,
+        tags: product.tags,
+      }),
+    );
+  });
 }
 
 export default function Product() {
@@ -210,6 +219,19 @@ export default function Product() {
 
   const productReviews = getReviewsForProduct(product.handle);
   const reviewSummary = summarizeReviews(productReviews);
+  const allowPreorderValue = (
+    product as typeof product & {
+      allowPreorder?: {value?: string | null} | null;
+    }
+  ).allowPreorder?.value;
+
+  const delivery = getDeliveryInfo({
+    availableForSale: selectedVariant?.availableForSale ?? false,
+    quantityAvailable: selectedVariant?.quantityAvailable,
+    handle: product.handle,
+    tags: product.tags,
+    allowPreorder: allowPreorderValue,
+  });
 
   const productSchema = productJsonLd({
     name: displayName,
@@ -220,6 +242,7 @@ export default function Product() {
     price: selectedVariant?.price.amount ?? '0',
     currencyCode: selectedVariant?.price.currencyCode ?? 'GBP',
     availableForSale: selectedVariant?.availableForSale ?? false,
+    availability: delivery.status,
     ratingValue: reviewSummary.count > 0 ? reviewSummary.average : undefined,
     reviewCount: reviewSummary.count > 0 ? reviewSummary.count : undefined,
   });
@@ -245,10 +268,12 @@ export default function Product() {
           <div className="product-main min-w-0">
             <ProductPurchasePanel
               accessoryAddons={accessoryAddons}
+              allowPreorder={allowPreorderValue}
               displayName={displayName}
               productHandle={product.handle}
               productId={product.id}
               productOptions={productOptions}
+              productTags={product.tags}
               productVariants={
                 (
                   product as typeof product & {
@@ -444,6 +469,9 @@ const PRODUCT_FRAGMENT = `#graphql
     videoUrl: metafield(namespace: "custom", key: "video_url") {
       value
     }
+    allowPreorder: metafield(namespace: "custom", key: "allow_preorder") {
+      value
+    }
     options {
       name
       optionValues {
@@ -579,6 +607,7 @@ const ADDON_PRODUCT_FIELDS = `#graphql
         id
         title
         availableForSale
+        quantityAvailable
         price {
           amount
           currencyCode
@@ -601,6 +630,7 @@ const ADDON_PRODUCT_FIELDS = `#graphql
       id
       title
       availableForSale
+      quantityAvailable
       price {
         amount
         currencyCode
