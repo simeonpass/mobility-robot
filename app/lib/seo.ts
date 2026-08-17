@@ -35,6 +35,7 @@ type ProductJsonLdInput = {
   price: string;
   currencyCode: string;
   availableForSale: boolean;
+  availability?: 'in_stock' | 'low_stock' | 'preorder' | 'sold_out';
   ratingValue?: number;
   reviewCount?: number;
 };
@@ -245,9 +246,16 @@ export function productJsonLd({
   price,
   currencyCode,
   availableForSale,
+  availability,
   ratingValue,
   reviewCount,
 }: ProductJsonLdInput) {
+  const schemaAvailability =
+    availability === 'preorder'
+      ? 'https://schema.org/PreOrder'
+      : availability === 'sold_out' || !availableForSale
+        ? 'https://schema.org/OutOfStock'
+        : 'https://schema.org/InStock';
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -273,9 +281,7 @@ export function productJsonLd({
       priceCurrency: currencyCode || 'GBP',
       price,
       itemCondition: 'https://schema.org/NewCondition',
-      availability: availableForSale
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
+      availability: schemaAvailability,
       seller: {'@type': 'Organization', name: 'Bentech Medical Ltd'},
     },
   };

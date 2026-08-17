@@ -17,7 +17,7 @@ import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions'
 import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
-import {getDeliveryInfo, isForcedPreorder} from '~/lib/product-delivery';
+import {getDeliveryInfo, isForcedPreorder, isPurchasable} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
   formatProductPrice,
@@ -67,6 +67,8 @@ type ProductPurchasePanelProps = {
       : {nodes?: SellingPlanAllocationNode[]};
   }>;
   accessoryAddons?: AddonProduct[];
+  productTags?: string[];
+  allowPreorder?: boolean | string | null;
 };
 
 export function ProductPurchasePanel({
@@ -79,6 +81,8 @@ export function ProductPurchasePanel({
   productOptions,
   productVariants = [],
   accessoryAddons = [],
+  productTags = [],
+  allowPreorder = null,
 }: ProductPurchasePanelProps) {
   const {
     declaration,
@@ -131,6 +135,8 @@ export function ProductPurchasePanel({
         availableForSale: purchaseVariant.availableForSale,
         quantityAvailable: purchaseVariant.quantityAvailable,
         handle: productHandle,
+        tags: productTags,
+        allowPreorder: allowPreorder,
       })
     : null;
 
@@ -172,6 +178,7 @@ export function ProductPurchasePanel({
 
   const canAddToCart =
     Boolean(purchaseVariant?.availableForSale) &&
+    delivery?.status !== 'sold_out' &&
     (!productVatReliefEnabled || vatFormComplete);
 
   const cartAttributes = useMemo(
@@ -185,10 +192,25 @@ export function ProductPurchasePanel({
     for (const product of accessoryAddons) {
       const variants = product.variants?.nodes ?? [];
       const pickerVariants = filterStandardVatVariants(
-        variants.filter((variant) => variant.availableForSale),
+        variants.filter((variant) =>
+          isPurchasable({
+            availableForSale: variant.availableForSale,
+            quantityAvailable: variant.quantityAvailable,
+            handle: product.handle,
+            tags: product.tags,
+          }),
+        ),
       );
       const fallback =
-        product.selectedOrFirstAvailableVariant?.availableForSale
+        product.selectedOrFirstAvailableVariant &&
+        isPurchasable({
+          availableForSale:
+            product.selectedOrFirstAvailableVariant.availableForSale,
+          quantityAvailable:
+            product.selectedOrFirstAvailableVariant.quantityAvailable,
+          handle: product.handle,
+          tags: product.tags,
+        })
           ? [product.selectedOrFirstAvailableVariant]
           : [];
       const colourChoices = pickerVariants.length ? pickerVariants : fallback;
@@ -409,11 +431,14 @@ export function ProductPurchasePanel({
       ? `${baseLabel} · ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'}`
       : baseLabel;
 
-  const soldOutLabel = purchaseVariant?.availableForSale
-    ? productVatReliefEnabled && !vatFormComplete
-      ? 'Complete VAT declaration'
-      : 'Sold out'
-    : 'Sold out';
+  const soldOutLabel =
+    delivery?.status === 'sold_out'
+      ? 'Sold out'
+      : purchaseVariant?.availableForSale
+        ? productVatReliefEnabled && !vatFormComplete
+          ? 'Complete VAT declaration'
+          : 'Sold out'
+        : 'Sold out';
 
   const cartLines: OptimisticCartLineInput[] = purchaseVariant
     ? [
@@ -608,15 +633,13 @@ export function ProductPurchasePanel({
             lines={cartLines}
             onClick={() => open('cart')}
           >
-            {!selectedVariant?.availableForSale
+            {!canAddToCart
               ? soldOutLabel
-              : !canAddToCart
-                ? soldOutLabel
-                : stickyPrice
-                  ? paymentChoice === 'deposit'
-                    ? `Deposit — ${stickyPrice}`
-                    : `Add — ${stickyPrice}`
-                  : 'Add to cart'}
+              : stickyPrice
+                ? paymentChoice === 'deposit'
+                  ? `Deposit — ${stickyPrice}`
+                  : `Add — ${stickyPrice}`
+                : 'Add to cart'}
           </AddToCartButton>
         </div>
       </div>

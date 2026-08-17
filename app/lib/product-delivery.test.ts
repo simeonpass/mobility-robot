@@ -6,6 +6,8 @@ import {
   getPreorderWeeks,
   getPreorderWeeksLabel,
   isForcedPreorder,
+  isPreorderAllowed,
+  isPurchasable,
 } from './product-delivery';
 
 describe('getPreorderWeeks', () => {
@@ -80,6 +82,7 @@ describe('getDeliveryInfo', () => {
       handle: 'buy-robot-wheelchair',
     });
     expect(info.status).toBe('in_stock');
+    expect(info.detail).toBe('3 available · Free UK mainland delivery');
     expect(info.etaLabel).toBe('Delivers in 3–4 working days');
     expect(info.preorderWeeks).toBeNull();
   });
@@ -99,6 +102,36 @@ describe('getDeliveryInfo', () => {
       quantityAvailable: 0,
     });
     expect(info.status).toBe('sold_out');
+  });
+
+  it('treats qty 0 as sold out unless pre-order is opted in', () => {
+    const info = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 0,
+      handle: 'buy-robot-wheelchair',
+    });
+    expect(info.status).toBe('sold_out');
+  });
+
+  it('allows pre-order at qty 0 when the product is tagged', () => {
+    const info = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 0,
+      handle: 'buy-robot-wheelchair',
+      tags: ['Pre-order'],
+    });
+    expect(info.status).toBe('preorder');
+    expect(info.headline).toBe('Pre-order');
+  });
+
+  it('allows pre-order at qty 0 when the metafield is set', () => {
+    const info = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 0,
+      handle: 'some-accessory',
+      allowPreorder: 'true',
+    });
+    expect(info.status).toBe('preorder');
   });
 });
 
@@ -138,5 +171,29 @@ describe('getCartDeliveryInfo', () => {
       },
     ]);
     expect(info.status).toBe('in_stock');
+  });
+});
+
+describe('isPreorderAllowed / isPurchasable', () => {
+  it('does not sell untagged products at qty 0', () => {
+    expect(
+      isPurchasable({
+        availableForSale: true,
+        quantityAvailable: 0,
+        handle: 'buy-robot-wheelchair',
+      }),
+    ).toBe(false);
+  });
+
+  it('sells tagged products at qty 0 when Shopify still allows sale', () => {
+    expect(isPreorderAllowed({tags: ['preorder']})).toBe(true);
+    expect(
+      isPurchasable({
+        availableForSale: true,
+        quantityAvailable: 0,
+        handle: 'buy-robot-wheelchair',
+        tags: ['preorder'],
+      }),
+    ).toBe(true);
   });
 });

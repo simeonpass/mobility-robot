@@ -70,6 +70,65 @@ export function isForcedLowStock(handle?: string | null): boolean {
   return false;
 }
 
+const PREORDER_TAGS = new Set([
+  'preorder',
+  'pre-order',
+  'allow-preorder',
+  'allow_preorder',
+]);
+
+function metafieldAllowsPreorder(value?: string | null): boolean {
+  if (!value) return false;
+  const normalized = value.trim().toLowerCase();
+  return normalized === 'true' || normalized === '1' || normalized === 'yes';
+}
+
+/**
+ * Merchant opt-in for selling when inventory is 0.
+ * Shopify Admin: add product tag `preorder` (or metafield custom.allow_preorder)
+ * AND enable Continue selling when out of stock.
+ */
+export function isPreorderAllowed({
+  handle,
+  tags,
+  allowPreorder,
+}: {
+  handle?: string | null;
+  tags?: string[] | null;
+  allowPreorder?: boolean | string | null;
+} = {}): boolean {
+  if (isForcedPreorder(handle)) return true;
+  if (metafieldAllowsPreorder(String(allowPreorder ?? ''))) return true;
+  if (allowPreorder === true) return true;
+  return (tags ?? []).some((tag) =>
+    PREORDER_TAGS.has(tag.trim().toLowerCase()),
+  );
+}
+
+export function isPurchasable({
+  availableForSale,
+  quantityAvailable,
+  handle,
+  tags,
+  allowPreorder,
+}: {
+  availableForSale?: boolean | null;
+  quantityAvailable?: number | null;
+  handle?: string | null;
+  tags?: string[] | null;
+  allowPreorder?: boolean | string | null;
+}): boolean {
+  return (
+    getDeliveryInfo({
+      availableForSale: Boolean(availableForSale),
+      quantityAvailable,
+      handle,
+      tags,
+      allowPreorder,
+    }).status !== 'sold_out'
+  );
+}
+
 export function getPreorderWeeks(handle?: string | null): number {
   if (!handle) return DEFAULT_PREORDER_WEEKS;
 
@@ -144,27 +203,33 @@ export function formatPreorderWeeksLabel(weeks: number): string {
   return weeks === 1 ? '~1 week' : `~${weeks} weeks`;
 }
 
+function formatStockCount(quantityAvailable: number): string {
+  return quantityAvailable === 1
+    ? '1 available'
+    : `${quantityAvailable} available`;
+}
+
 export function getDeliveryInfo({
   availableForSale,
   quantityAvailable,
   handle,
+  tags,
+  allowPreorder,
 }: {
   availableForSale: boolean;
   quantityAvailable?: number | null;
   handle?: string | null;
+  tags?: string[] | null;
+  allowPreorder?: boolean | string | null;
 }): DeliveryInfo {
-  if (!availableForSale) {
-    return {
-      status: 'sold_out',
-      headline: 'Currently unavailable',
-      detail: 'This model is out of stock.',
-      etaLabel: 'Contact us for availability',
-      preorderWeeks: null,
-    };
-  }
+  const preorderAllowed = isPreorderAllowed({
+    handle,
+    tags,
+    allowPreorder,
+  });
 
-  // X12 / X12 Pro: always pre-order regardless of Shopify qty.
-  if (isForcedPreorder(handle)) {
+  // X12 / X12 Pro: always pre-order when Shopify will still take the order.
+  if (isForcedPreorder(handle) && availableForSale) {
     const weeks = getPreorderWeeks(handle);
     const weeksLabel = getPreorderWeeksLabel(handle);
     return {
@@ -180,11 +245,19 @@ export function getDeliveryInfo({
     availableForSale && (quantityAvailable == null || quantityAvailable > 0);
 
   if (inStock) {
+    const stockDetail =
+      quantityAvailable != null && quantityAvailable > 0
+        ? `${formatStockCount(quantityAvailable)} · Free UK mainland delivery`
+        : 'Free UK mainland delivery';
+
     if (isForcedLowStock(handle)) {
       return {
         status: 'low_stock',
         headline: 'Very low stock',
-        detail: 'Limited availability — order soon',
+        detail:
+          quantityAvailable != null && quantityAvailable > 0
+            ? `${formatStockCount(quantityAvailable)} — order soon`
+            : 'Limited availability — order soon',
         etaLabel: formatInStockEtaLabel(handle),
         preorderWeeks: null,
       };
@@ -193,21 +266,35 @@ export function getDeliveryInfo({
     return {
       status: 'in_stock',
       headline: 'In stock',
-      detail: 'Free UK mainland delivery',
+      detail: stockDetail,
       etaLabel: formatInStockEtaLabel(handle),
       preorderWeeks: null,
     };
   }
 
-  const weeks = getPreorderWeeks(handle);
-  const weeksLabel = getPreorderWeeksLabel(handle);
+  // Qty 0: only sell as a pre-order when the merchant opted in.
+  if (availableForSale && preorderAllowed) {
+    const weeks = getPreorderWeeks(handle);
+    const weeksLabel = getPreorderWeeksLabel(handle);
+    const depositHint = isForcedPreorder(handle)
+      ? ' · 10% deposit available'
+      : '';
+
+    return {
+      status: 'preorder',
+      headline: 'Pre-order',
+      detail: `Estimated delivery ${weeksLabel}${depositHint}`,
+      etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
+      preorderWeeks: weeks,
+    };
+  }
 
   return {
-    status: 'preorder',
-    headline: 'Pre-order',
-    detail: `Estimated delivery ${weeksLabel}`,
-    etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
-    preorderWeeks: weeks,
+    status: 'sold_out',
+    headline: 'Currently unavailable',
+    detail: 'This model is out of stock.',
+    etaLabel: 'Contact us for availability',
+    preorderWeeks: null,
   };
 }
 
@@ -220,7 +307,10 @@ export function getCartDeliveryInfo(
     merchandise?: {
       availableForSale?: boolean | null;
       quantityAvailable?: number | null;
-      product?: {handle?: string | null} | null;
+      product?: {
+        handle?: string | null;
+        tags?: string[] | null;
+      } | null;
     } | null;
   }>,
 ): DeliveryInfo {
@@ -238,6 +328,7 @@ export function getCartDeliveryInfo(
       availableForSale: merchandise.availableForSale ?? true,
       quantityAvailable: merchandise.quantityAvailable,
       handle: merchandise.product?.handle,
+      tags: merchandise.product?.tags,
     });
 
     if (info.status !== 'preorder') continue;
@@ -260,12 +351,22 @@ export function getDeliveryEstimate({
   availableForSale,
   quantityAvailable,
   handle,
+  tags,
+  allowPreorder,
 }: {
   availableForSale: boolean;
   quantityAvailable?: number | null;
   handle?: string | null;
+  tags?: string[] | null;
+  allowPreorder?: boolean | string | null;
 }): string {
-  const info = getDeliveryInfo({availableForSale, quantityAvailable, handle});
+  const info = getDeliveryInfo({
+    availableForSale,
+    quantityAvailable,
+    handle,
+    tags,
+    allowPreorder,
+  });
   if (info.status === 'sold_out') {
     return `${info.headline}. ${info.detail}`;
   }
