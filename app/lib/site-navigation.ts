@@ -67,6 +67,7 @@ export const PRODUCT_NAV_ITEMS: NavItem[] = PRODUCT_NAV_GROUPS.flatMap(
 /** Secondary links in the desktop header (kept lean). */
 export const HEADER_SECONDARY_NAV: NavItem[] = [
   {title: 'Accessories', url: '/collections/accessories'},
+  {title: 'Blog', url: '/blog'},
   {title: 'Stockists', url: '/stockists'},
   {title: 'FAQ', url: '/faq'},
 ];
@@ -100,6 +101,7 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'X12', url: productUrl('xsto-x12')},
   {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
   {title: 'Accessories', url: '/collections/accessories'},
+  {title: 'Blog', url: '/blog'},
   {title: 'Videos', url: '/videos'},
   {title: 'Find a Dealer', url: '/stockists'},
   {title: 'Book Demo', url: '/demo'},

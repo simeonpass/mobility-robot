@@ -1,7 +1,11 @@
 import type {Route} from './+types/sitemap.$type.$page[.xml]';
 import {getSitemap} from '@shopify/hydrogen';
-import {isUkUnavailableProductHandle} from '~/lib/homepage-data';
-import {SITE_URL, canonicalSitemapRequest} from '~/lib/seo';
+import {canonicalSitemapRequest} from '~/lib/seo';
+import {
+  buildSitemapResourceUrl,
+  filterSitemapXml,
+  shouldIncludeSitemapResource,
+} from '~/lib/sitemap-utils';
 
 export async function loader({
   request,
@@ -14,28 +18,21 @@ export async function loader({
     params,
     locales: [],
     getLink: ({type, handle, locale}) => {
-      if (!locale) return `${SITE_URL}/${type}/${handle}`;
-      return `${SITE_URL}/${locale}/${type}/${handle}`;
+      if (!handle || !shouldIncludeSitemapResource(type, handle)) {
+        // Hydrogen still emits a <url>; filterSitemapXml strips these.
+        return buildSitemapResourceUrl(type, `__excluded__${handle ?? ''}`, locale);
+      }
+      return buildSitemapResourceUrl(type, handle, locale);
     },
   });
 
-  response.headers.set('Cache-Control', `max-age=${60 * 60 * 24}`);
+  const xml = filterSitemapXml(await response.text());
 
-  if (params.type !== 'products') {
-    return response;
-  }
-
-  const xml = await response.text();
-  const filtered = xml.replace(/<url>[\s\S]*?<\/url>/g, (block) => {
-    const match = block.match(/\/products\/([^/<"\s]+)/);
-    if (match && isUkUnavailableProductHandle(match[1])) {
-      return '';
-    }
-    return block;
-  });
-
-  return new Response(filtered, {
+  return new Response(xml, {
     status: response.status,
-    headers: response.headers,
+    headers: {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': `max-age=${60 * 60 * 24}`,
+    },
   });
 }
