@@ -140,18 +140,17 @@ export function ProductPurchasePanel({
 
   const purchaseOptions = useMemo(
     () =>
-      buildPurchaseOptions({
-        allocations: purchaseVariant?.sellingPlanAllocations
-          ?.nodes as SellingPlanAllocationNode[] | undefined,
-        vatReliefEnabled: productVatReliefEnabled && !dualVatPricing,
-      }),
-    [dualVatPricing, productVatReliefEnabled, purchaseVariant],
+      isForcedInStock(productHandle)
+        ? [{kind: 'full' as const}]
+        : buildPurchaseOptions({
+            allocations: purchaseVariant?.sellingPlanAllocations
+              ?.nodes as SellingPlanAllocationNode[] | undefined,
+            vatReliefEnabled: productVatReliefEnabled && !dualVatPricing,
+          }),
+    [dualVatPricing, productHandle, productVatReliefEnabled, purchaseVariant],
   );
 
-  const depositOption =
-    isForcedInStock(productHandle)
-      ? null
-      : (purchaseOptions.find(isDepositPurchaseOption) ?? null);
+  const depositOption = purchaseOptions.find(isDepositPurchaseOption) ?? null;
   const hasDepositOption = Boolean(depositOption);
 
   useEffect(() => {
@@ -175,7 +174,9 @@ export function ProductPurchasePanel({
   };
 
   const selectedSellingPlanId =
-    paymentChoice === 'deposit' ? depositOption?.sellingPlanId : null;
+    isForcedInStock(productHandle) || paymentChoice !== 'deposit'
+      ? null
+      : depositOption?.sellingPlanId;
 
   const canAddToCart =
     Boolean(purchaseVariant?.availableForSale) &&
