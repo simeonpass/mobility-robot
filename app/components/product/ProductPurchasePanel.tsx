@@ -17,7 +17,11 @@ import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions'
 import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
-import {getDeliveryInfo, isForcedPreorder} from '~/lib/product-delivery';
+import {
+  getDeliveryInfo,
+  isForcedInStock,
+  isForcedPreorder,
+} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
   formatProductPrice,
@@ -144,7 +148,10 @@ export function ProductPurchasePanel({
     [dualVatPricing, productVatReliefEnabled, purchaseVariant],
   );
 
-  const depositOption = purchaseOptions.find(isDepositPurchaseOption) ?? null;
+  const depositOption =
+    isForcedInStock(productHandle)
+      ? null
+      : (purchaseOptions.find(isDepositPurchaseOption) ?? null);
   const hasDepositOption = Boolean(depositOption);
 
   useEffect(() => {
