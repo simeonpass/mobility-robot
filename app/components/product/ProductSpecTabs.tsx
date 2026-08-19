@@ -7,6 +7,7 @@ import {isXstoRangeProduct, type ProductContent} from '~/lib/product-specs';
 type ProductSpecTabsProps = {
   content: ProductContent;
   shopifyHandle: string;
+  className?: string;
 };
 
 const TAB_ORDER = [
@@ -21,7 +22,11 @@ const TAB_ORDER = [
 
 type TabId = (typeof TAB_ORDER)[number]['id'];
 
-export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) {
+export function ProductSpecTabs({
+  content,
+  shopifyHandle,
+  className,
+}: ProductSpecTabsProps) {
   const baseId = useId();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const showAllTabs = isXstoRangeProduct(shopifyHandle);
@@ -62,7 +67,10 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
     : visibleTabs[0].id;
 
   return (
-    <section aria-labelledby={`${baseId}-heading`} className="mt-10 md:mt-12">
+    <section
+      aria-labelledby={`${baseId}-heading`}
+      className={className ?? 'mt-10 md:mt-12'}
+    >
       <h2 className="sr-only" id={`${baseId}-heading`}>
         Product details
       </h2>

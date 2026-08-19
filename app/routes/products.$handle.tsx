@@ -237,12 +237,12 @@ export default function Product() {
       <div className="xsto-container py-3 md:py-6">
         <ProductBreadcrumbs title={displayName} />
 
-        <div className="product grid gap-5 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,400px)] lg:items-start lg:gap-10 xl:gap-12">
+        <div className="product grid gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)] lg:items-start lg:gap-8 xl:gap-10">
           <div className="min-w-0">
             <ProductGallery items={galleryItems} productTitle={displayName} />
           </div>
 
-          <div className="product-main min-w-0">
+          <div className="product-main min-w-0 lg:row-span-2">
             <ProductPurchasePanel
               accessoryAddons={accessoryAddons}
               displayName={displayName}
@@ -265,13 +265,23 @@ export default function Product() {
               title={displayName}
             />
           </div>
+
+          <div className="min-w-0">
+            {featuredVideo ? (
+              <ProductVideoHero
+                className="mt-6 md:mt-8"
+                productName={displayName}
+                video={featuredVideo}
+              />
+            ) : null}
+
+            <ProductSpecTabs
+              className="mt-8 md:mt-10"
+              content={tabContent}
+              shopifyHandle={product.handle}
+            />
+          </div>
         </div>
-
-        {featuredVideo ? (
-          <ProductVideoHero productName={displayName} video={featuredVideo} />
-        ) : null}
-
-        <ProductSpecTabs content={tabContent} shopifyHandle={product.handle} />
 
         <ProductReviews
           productHandle={product.handle}
