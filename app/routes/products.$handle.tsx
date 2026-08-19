@@ -237,12 +237,12 @@ export default function Product() {
       <div className="xsto-container py-3 md:py-6">
         <ProductBreadcrumbs title={displayName} />
 
-        <div className="product grid gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)] lg:items-start lg:gap-8 xl:gap-10">
+        <div className="product grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)] lg:items-start lg:gap-x-8 lg:gap-y-2">
           <div className="min-w-0">
             <ProductGallery items={galleryItems} productTitle={displayName} />
           </div>
 
-          <div className="product-main min-w-0 lg:row-span-2">
+          <div className="product-main min-w-0 lg:col-start-2 lg:row-span-2">
             <ProductPurchasePanel
               accessoryAddons={accessoryAddons}
               displayName={displayName}
@@ -266,10 +266,10 @@ export default function Product() {
             />
           </div>
 
-          <div className="min-w-0">
+          <div className="min-w-0 lg:col-start-1">
             {featuredVideo ? (
               <ProductVideoHero
-                className="mt-6 md:mt-8"
+                className="mt-2 md:mt-4"
                 productName={displayName}
                 video={featuredVideo}
               />

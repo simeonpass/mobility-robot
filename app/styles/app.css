@@ -1767,9 +1767,11 @@ button.reset:hover:not(:has(> *)) {
 
 @media (min-width: 64rem) {
   .product-main {
-    align-self: start;
-    position: sticky;
-    top: 6rem;
+    /* Do not let the tall buy box size the gallery row; the inner panel is sticky. */
+    align-self: stretch;
+    height: 0;
+    min-height: 100%;
+    overflow: visible;
   }
 }
 
