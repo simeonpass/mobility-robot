@@ -111,31 +111,31 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
         id={`${groupId}-main-media`}
         role="region"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border/60 bg-white">
+        <div className="relative overflow-hidden rounded-lg border border-border/60 bg-white">
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               animate={{opacity: 1}}
-              className="absolute inset-0"
+              className="flex w-full items-center justify-center p-2 sm:p-3"
               exit={{opacity: 0}}
               initial={reducedMotion ? false : {opacity: 0}}
               key={activeItem.id}
               transition={{duration: reducedMotion ? 0 : 0.2}}
             >
               {activeItem.type === 'image' ? (
-                <div className="flex size-full items-center justify-center p-2 sm:p-3">
-                  <Image
-                    alt={activeItem.altText || productTitle}
-                    className="max-h-full max-w-full object-contain"
-                    data={activeItem}
-                    sizes="(min-width: 1024px) 50vw, 100vw"
+                <Image
+                  alt={activeItem.altText || productTitle}
+                  className="h-auto max-h-[min(28rem,58vh)] w-auto max-w-full object-contain"
+                  data={activeItem}
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                />
+              ) : (
+                <div className="aspect-video w-full">
+                  <ProductVideoPlayer
+                    className="size-full border-0 object-contain"
+                    src={activeItem.embedUrl}
+                    title={activeItem.title}
                   />
                 </div>
-              ) : (
-                <ProductVideoPlayer
-                  className="size-full border-0 object-contain"
-                  src={activeItem.embedUrl}
-                  title={activeItem.title}
-                />
               )}
             </motion.div>
           </AnimatePresence>
