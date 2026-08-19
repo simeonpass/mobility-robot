@@ -99,7 +99,7 @@ export const x12FAQs: ProductFAQ[] = [
   },
   {
     question: "Is the X12 available to buy now?",
-    answer: "The X12 is available by pre-order only due to high demand. Place a 10% deposit to join the build queue, with an estimated delivery of approximately 12 weeks. You pay the remaining balance before dispatch.",
+    answer: "Yes. The X12 and X12 Pro are in stock now, with an estimated delivery of 10 days. Free UK mainland delivery is included.",
   },
   {
     question: "What's included in the box with the X12?",

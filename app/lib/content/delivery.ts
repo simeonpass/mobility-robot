@@ -95,7 +95,7 @@ export const deliverySections: ContentSection[] = [
     id: 'lead-times',
     title: 'Lead times',
     paragraphs: [
-      'In-stock M4, M4B and M4 Pro typically deliver within 3–4 working days to UK mainland addresses. Other in-stock models usually arrive within 5–7 working days. X12 and X12 Pro are pre-order only (about 8–10 weeks); pay in full or place a 10% deposit — balance due before dispatch.',
+      'In-stock M4, M4B and M4 Pro typically deliver within 3–4 working days to UK mainland addresses. X12 and X12 Pro typically arrive in 10 days. Other in-stock models usually arrive within 5–7 working days.',
       'Mixed orders follow the longest lead time. Accessories ordered with a chair usually ship with the chair unless we agree otherwise.',
     ],
   },

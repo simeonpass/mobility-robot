@@ -3,6 +3,9 @@
  * Set continue-selling + create/assign a 10% deposit PRE_ORDER selling plan
  * for X12 and X12 Pro.
  *
+ * X12 / X12 Pro are currently in stock with a 10-day lead time — do not run
+ * this script unless those models go back on pre-order.
+ *
  * Auth (first match wins):
  *   1. SHOPIFY_ADMIN_API_ACCESS_TOKEN starting with shpat_ (legacy custom app)
  *   2. SHOPIFY_DEPOSIT_CLIENT_ID + SHOPIFY_DEPOSIT_CLIENT_SECRET

@@ -83,11 +83,11 @@ const X12_SERIES_DOWNLOADS: ProductDownload[] = [
 /** Giant local demo MP4s kept out of public/ (see tmp/local-videos). */
 const X12_SERIES_VIDEOS: ProductVideo[] = [];
 
-const DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. In-stock models typically arrive within 5–7 working days.
+const M_SERIES_DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. Typically arrives within 3–4 working days.
 
 Warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts, and 1 year on the battery. Bentech Medical Ltd manages all UK warranty claims as the official distributor.`;
 
-const M_SERIES_DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. Typically arrives within 3–4 working days.
+const X12_SERIES_DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. The X12 and X12 Pro are in stock, with an estimated delivery of 10 days.
 
 Warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts, and 1 year on the battery. Bentech Medical Ltd manages all UK warranty claims as the official distributor.`;
 
@@ -328,7 +328,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nThe X12 is available by pre-order only (estimated 8–10 weeks). Pay in full or place a 10% deposit to join the build queue; balance due before dispatch.`,
+    deliveryWarranty: X12_SERIES_DELIVERY_WARRANTY,
     faqs: x12FAQs,
     videos: [
       {title: 'Watch the X12 in Action', embedUrl: YOUTUBE.x12},
@@ -373,7 +373,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       'User Manual',
       'Tool Kit',
     ],
-    deliveryWarranty: `${DELIVERY_WARRANTY}\n\nX12 Pro models are available by pre-order (estimated 8–10 weeks). Pay in full or place a 10% deposit to join the build queue; balance due before dispatch.`,
+    deliveryWarranty: X12_SERIES_DELIVERY_WARRANTY,
     faqs: x12FAQs,
     videos: [
       {title: 'Watch the X12 Pro in Action', embedUrl: YOUTUBE.x12Pro},
