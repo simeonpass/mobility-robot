@@ -103,7 +103,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
     ) : null;
 
   return (
-    <div className="flex min-w-0 flex-col gap-3">
+    <div className="flex min-w-0 flex-col gap-2">
       <div
         aria-label={`${productTitle} gallery`}
         aria-roledescription="carousel"
@@ -124,7 +124,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
               {activeItem.type === 'image' ? (
                 <Image
                   alt={activeItem.altText || productTitle}
-                  className="h-auto max-h-[min(28rem,58vh)] w-auto max-w-full object-contain"
+                  className="product-gallery-image"
                   data={activeItem}
                   sizes="(min-width: 1024px) 50vw, 100vw"
                 />

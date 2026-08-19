@@ -1765,6 +1765,17 @@ button.reset:hover:not(:has(> *)) {
   letter-spacing: -0.025em;
 }
 
+.product-gallery-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(24rem, 52vh);
+  margin-inline: auto;
+  object-fit: contain;
+  aspect-ratio: auto !important;
+}
+
 @media (min-width: 64rem) {
   .product-main {
     /* Do not let the tall buy box size the gallery row; the inner panel is sticky. */
