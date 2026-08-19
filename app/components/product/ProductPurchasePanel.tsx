@@ -17,7 +17,11 @@ import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions'
 import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
-import {getDeliveryInfo, isForcedPreorder} from '~/lib/product-delivery';
+import {
+  getDeliveryInfo,
+  isForcedInStock,
+  isForcedPreorder,
+} from '~/lib/product-delivery';
 import {
   buildVatCartAttributes,
   formatProductPrice,
@@ -136,12 +140,14 @@ export function ProductPurchasePanel({
 
   const purchaseOptions = useMemo(
     () =>
-      buildPurchaseOptions({
-        allocations: purchaseVariant?.sellingPlanAllocations
-          ?.nodes as SellingPlanAllocationNode[] | undefined,
-        vatReliefEnabled: productVatReliefEnabled && !dualVatPricing,
-      }),
-    [dualVatPricing, productVatReliefEnabled, purchaseVariant],
+      isForcedInStock(productHandle)
+        ? [{kind: 'full' as const}]
+        : buildPurchaseOptions({
+            allocations: purchaseVariant?.sellingPlanAllocations
+              ?.nodes as SellingPlanAllocationNode[] | undefined,
+            vatReliefEnabled: productVatReliefEnabled && !dualVatPricing,
+          }),
+    [dualVatPricing, productHandle, productVatReliefEnabled, purchaseVariant],
   );
 
   const depositOption = purchaseOptions.find(isDepositPurchaseOption) ?? null;
@@ -168,7 +174,9 @@ export function ProductPurchasePanel({
   };
 
   const selectedSellingPlanId =
-    paymentChoice === 'deposit' ? depositOption?.sellingPlanId : null;
+    isForcedInStock(productHandle) || paymentChoice !== 'deposit'
+      ? null
+      : depositOption?.sellingPlanId;
 
   const canAddToCart =
     Boolean(purchaseVariant?.availableForSale) &&

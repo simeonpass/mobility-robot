@@ -65,7 +65,7 @@ After create:
 
 1. Check each product: Standard = gross, VAT Relief = `gross ÷ 1.2`.
 2. Confirm inventory / “continue selling” on new variants.
-3. Re-attach **10% deposit** selling plans to new variants if X12 / X12 Pro.
+3. X12 / X12 Pro are in stock (10-day lead) — do **not** re-attach 10% deposit selling plans unless those models go back on pre-order.
 4. Publish variants to the Hydrogen / Online Store channel if needed.
 5. Optional: deactivate **VAT Relief (exact)** once every qualifying product has dual variants (legacy products still use the discount).
 

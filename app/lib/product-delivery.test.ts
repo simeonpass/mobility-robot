@@ -3,74 +3,58 @@ import {
   DEFAULT_PREORDER_WEEKS,
   getCartDeliveryInfo,
   getDeliveryInfo,
+  getInStockDeliveryDays,
   getPreorderWeeks,
-  getPreorderWeeksLabel,
+  isForcedInStock,
   isForcedPreorder,
 } from './product-delivery';
 
 describe('getPreorderWeeks', () => {
-  it('returns X12 and X12 Pro as 10 weeks (upper bound)', () => {
-    expect(getPreorderWeeks('x12-all-terrain-mobility-robot')).toBe(10);
-    expect(
-      getPreorderWeeks(
-        'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
-      ),
-    ).toBe(10);
-  });
-
-  it('returns 8–10 weeks labels for the X12 range', () => {
-    expect(getPreorderWeeksLabel('x12-all-terrain-mobility-robot')).toBe(
-      '8–10 weeks',
-    );
-    expect(
-      getPreorderWeeksLabel(
-        'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
-      ),
-    ).toBe('8–10 weeks');
-  });
-
-  it('falls back to default for other products', () => {
+  it('falls back to default for products without a preorder override', () => {
     expect(getPreorderWeeks('buy-robot-wheelchair')).toBe(
+      DEFAULT_PREORDER_WEEKS,
+    );
+    expect(getPreorderWeeks('x12-all-terrain-mobility-robot')).toBe(
       DEFAULT_PREORDER_WEEKS,
     );
   });
 });
 
 describe('getDeliveryInfo', () => {
-  it('forces X12 preorder even when Shopify reports stock', () => {
+  it('shows X12 as in stock with a 10-day lead time when Shopify reports stock', () => {
     const info = getDeliveryInfo({
       availableForSale: true,
       quantityAvailable: 3,
       handle: 'x12-all-terrain-mobility-robot',
     });
-    expect(info.status).toBe('preorder');
-    expect(info.headline).toBe('Pre-order');
-    expect(info.detail).toContain('8–10 weeks');
-    expect(info.detail).toContain('10% deposit');
-    expect(info.preorderWeeks).toBe(10);
-    expect(isForcedPreorder('x12-all-terrain-mobility-robot')).toBe(true);
+    expect(info.status).toBe('in_stock');
+    expect(info.headline).toBe('In stock');
+    expect(info.etaLabel).toBe('Delivers in 10 days');
+    expect(info.preorderWeeks).toBeNull();
+    expect(isForcedPreorder('x12-all-terrain-mobility-robot')).toBe(false);
+    expect(isForcedInStock('x12-all-terrain-mobility-robot')).toBe(true);
   });
 
-  it('forces X12 preorder when quantity is zero', () => {
+  it('keeps X12 in stock with a 10-day lead time when quantity is zero', () => {
     const info = getDeliveryInfo({
       availableForSale: true,
       quantityAvailable: 0,
       handle: 'x12-all-terrain-mobility-robot',
     });
-    expect(info.status).toBe('preorder');
-    expect(info.detail).toContain('8–10 weeks');
+    expect(info.status).toBe('in_stock');
+    expect(info.etaLabel).toBe('Delivers in 10 days');
   });
 
-  it('forces X12 Pro preorder even when Shopify reports stock', () => {
+  it('shows X12 Pro as in stock with a 10-day lead time', () => {
     const x12Pro = getDeliveryInfo({
       availableForSale: true,
       quantityAvailable: 5,
       handle:
         'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
     });
-    expect(x12Pro.status).toBe('preorder');
-    expect(x12Pro.detail).toContain('8–10 weeks');
-    expect(x12Pro.detail).toContain('10% deposit');
+    expect(x12Pro.status).toBe('in_stock');
+    expect(x12Pro.etaLabel).toBe('Delivers in 10 days');
+    expect(getInStockDeliveryDays('xsto-x12-pro')).toBe('10 days');
   });
 
   it('marks in-stock products as in_stock', () => {
@@ -100,31 +84,59 @@ describe('getDeliveryInfo', () => {
     });
     expect(info.status).toBe('sold_out');
   });
+
+  it('maps continue-selling zero-qty products to preorder', () => {
+    const info = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 0,
+      handle: 'some-other-product',
+    });
+    expect(info.status).toBe('preorder');
+    expect(info.preorderWeeks).toBe(DEFAULT_PREORDER_WEEKS);
+  });
 });
 
 describe('getCartDeliveryInfo', () => {
-  it('uses the longest pre-order lead time in the cart', () => {
+  it('uses the longest in-stock lead time in the cart', () => {
     const info = getCartDeliveryInfo([
       {
         merchandise: {
           availableForSale: true,
           quantityAvailable: 5,
-          product: {
-            handle:
-              'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
-          },
+          product: {handle: 'buy-robot-wheelchair'},
+        },
+      },
+      {
+        merchandise: {
+          availableForSale: true,
+          quantityAvailable: 2,
+          product: {handle: 'x12-all-terrain-mobility-robot'},
+        },
+      },
+    ]);
+    expect(info.status).toBe('in_stock');
+    expect(info.etaLabel).toBe('Delivers in 10 days');
+  });
+
+  it('uses the longest pre-order lead time when any line is preorder', () => {
+    const info = getCartDeliveryInfo([
+      {
+        merchandise: {
+          availableForSale: true,
+          quantityAvailable: 5,
+          product: {handle: 'buy-robot-wheelchair'},
         },
       },
       {
         merchandise: {
           availableForSale: true,
           quantityAvailable: 0,
-          product: {handle: 'x12-all-terrain-mobility-robot'},
+          product: {handle: 'some-preorder-product'},
         },
       },
     ]);
     expect(info.status).toBe('preorder');
-    expect(info.preorderWeeks).toBe(10);
+    expect(info.preorderWeeks).toBe(DEFAULT_PREORDER_WEEKS);
   });
 
   it('falls back to in-stock when no preorder lines', () => {
@@ -138,5 +150,6 @@ describe('getCartDeliveryInfo', () => {
       },
     ]);
     expect(info.status).toBe('in_stock');
+    expect(info.etaLabel).toBe('Delivers in 3–4 working days');
   });
 });

@@ -1,24 +1,26 @@
 # Pre-order + 10% deposit (Shopify Admin checklist)
 
-Hydrogen already supports **pay in full** vs **pay 10% deposit** when variants expose `sellingPlanAllocations`, and shows per-product pre-order ETAs:
+Hydrogen supports **pay in full** vs **pay 10% deposit** when variants expose `sellingPlanAllocations`, and shows per-product delivery ETAs.
+
+**X12 / X12 Pro (current):** both models are **in stock** with a **10-day** lead time. They are not forced pre-order. If a 10% deposit selling plan is still assigned in Shopify Admin, the PDP may still offer it — remove the purchase option from those products if deposits should no longer appear.
 
 | Product | Handle | ETA |
 |---------|--------|-----|
-| X12 | `x12-all-terrain-mobility-robot` | 8–10 weeks (forced pre-order) |
-| X12 Pro | `xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | 8–10 weeks (forced pre-order) |
+| X12 | `x12-all-terrain-mobility-robot` | In stock · 10 days |
+| X12 Pro | `xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | In stock · 10 days |
 
-Without the Admin steps below, OOS chairs stay **Sold out**, and the deposit radio stays hidden. Storefront messaging still shows **Pre-order** for both models even if Shopify still has inventory.
+The checklist below is for **future** pre-order products that need continue-selling + a deposit plan. Without those Admin steps, OOS chairs stay **Sold out**, and the deposit radio stays hidden.
 
-## 1. Continue selling when out of stock (required for X12 / X12 Pro)
+## 1. Continue selling when out of stock (required for pre-order)
 
-For **X12** and **X12 Pro**:
+For any product that should stay buyable at quantity 0:
 
 1. Shopify Admin → **Products** → open the product
 2. **Inventory** → set quantity to **0** (so checkout cannot ship from phantom stock)
 3. Enable **Continue selling when out of stock** (per variant if multi-variant)
 4. Save
 
-Storefront rule: forced pre-order slots (X12 + X12 Pro) always show **Pre-order · 8–10 weeks**. `availableForSale && quantityAvailable === 0` also maps other products to pre-order. If continue-selling is off and qty is 0, ATC stays sold out.
+Storefront rule: `availableForSale && quantityAvailable === 0` maps products to pre-order, except X12 / X12 Pro which stay **In stock · 10 days**. If continue-selling is off and qty is 0, ATC stays sold out.
 
 ## 2. Create a 10% deposit selling plan group
 
@@ -61,7 +63,7 @@ Auth order (first match wins):
 2. `SHOPIFY_DEPOSIT_CLIENT_ID` + `SHOPIFY_DEPOSIT_CLIENT_SECRET` (Dev Dashboard)
 3. VAT Relief client credentials (last resort — usually `write_discounts` only, will fail)
 
-The script:
+The script (legacy X12 setup — do not re-run unless those models go back on pre-order):
 
 1. Finds X12 and X12 Pro by handle
 2. Sets variant `inventoryPolicy: CONTINUE` where needed
@@ -138,8 +140,8 @@ npm run dev
 
 | URL | Expect |
 |-----|--------|
-| `/products/x12-all-terrain-mobility-robot` | Pre-order 8–10 weeks (forced); deposit option if plan assigned |
+| `/products/x12-all-terrain-mobility-robot` | In stock · Delivers in 10 days |
 | `/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition` | Same as X12 |
-| `/cart` | Pre-order ETA from longest lead-time line; deposit badge on deposit lines |
+| `/cart` | Slowest in-stock ETA (10 days if an X12 is in the cart); deposit badge only on deposit lines |
 
 Checkout still uses Shopify `checkoutUrl` (selling plans ride along).

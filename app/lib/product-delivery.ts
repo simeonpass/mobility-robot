@@ -24,50 +24,50 @@ export const DEFAULT_PREORDER_WEEKS = 12;
  * Used when a product is available for sale but qty is 0 (continue selling),
  * or when the handle is in FORCE_PREORDER_SLOTS.
  */
-export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {
-  'x12-all-terrain-mobility-robot': 10,
-  'xsto-x12': 10,
-  'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition': 10,
-  'xsto-x12-pro': 10,
-};
+export const PREORDER_WEEKS_BY_HANDLE: Record<string, number> = {};
 
 /** Customer-facing lead-time labels (prefer ranges over a single week count). */
-export const PREORDER_WEEKS_LABEL_BY_HANDLE: Record<string, string> = {
-  'x12-all-terrain-mobility-robot': '8–10 weeks',
-  'xsto-x12': '8–10 weeks',
-  'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition':
-    '8–10 weeks',
-  'xsto-x12-pro': '8–10 weeks',
-};
+export const PREORDER_WEEKS_LABEL_BY_HANDLE: Record<string, string> = {};
 
 /**
  * Slot handles that always show as pre-order, even with Shopify stock.
- * X12 and X12 Pro are both build-to-order (~8–10 weeks, 10% deposit).
+ * Currently none — X12 / X12 Pro ship in stock with a 10-day lead time.
  */
-const FORCE_PREORDER_SLOTS = new Set(['xsto-x12', 'xsto-x12-pro']);
+const FORCE_PREORDER_SLOTS = new Set<string>();
+
+/**
+ * Slot handles that always show as in stock when available for sale,
+ * even if Shopify quantity is 0 (continue selling).
+ */
+const FORCE_IN_STOCK_SLOTS = new Set(['xsto-x12', 'xsto-x12-pro']);
 
 /** Slot handles that show a "Very low stock" urgency alert when available. */
 const FORCE_LOW_STOCK_SLOTS = new Set<string>();
 
-export function isForcedPreorder(handle?: string | null): boolean {
+function matchesForcedSlots(
+  handle: string | null | undefined,
+  slots: Set<string>,
+  extraHandles: readonly string[] = [],
+): boolean {
   if (!handle) return false;
   const slot = getHomepageProductSlot(handle);
-  if (slot != null && FORCE_PREORDER_SLOTS.has(slot)) return true;
-  // Direct Shopify handles that map to forced slots but may not resolve via slot
-  if (
-    handle === 'x12-all-terrain-mobility-robot' ||
-    handle === 'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'
-  ) {
-    return true;
-  }
-  return false;
+  if (slot != null && slots.has(slot)) return true;
+  return extraHandles.includes(handle);
+}
+
+export function isForcedPreorder(handle?: string | null): boolean {
+  return matchesForcedSlots(handle, FORCE_PREORDER_SLOTS);
+}
+
+export function isForcedInStock(handle?: string | null): boolean {
+  return matchesForcedSlots(handle, FORCE_IN_STOCK_SLOTS, [
+    'x12-all-terrain-mobility-robot',
+    'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
+  ]);
 }
 
 export function isForcedLowStock(handle?: string | null): boolean {
-  if (!handle) return false;
-  const slot = getHomepageProductSlot(handle);
-  if (slot != null && FORCE_LOW_STOCK_SLOTS.has(slot)) return true;
-  return false;
+  return matchesForcedSlots(handle, FORCE_LOW_STOCK_SLOTS);
 }
 
 export function getPreorderWeeks(handle?: string | null): number {
@@ -116,14 +116,23 @@ export const DEFAULT_IN_STOCK_DELIVERY_DAYS = '5–7 working days';
 
 /**
  * In-stock delivery ETA for chairs that ship in 3–4 working days
- * (M-series only — X12 range is pre-order).
+ * (M-series).
  */
 export const FAST_IN_STOCK_DELIVERY_DAYS = '3–4 working days';
+
+/** X12 / X12 Pro in-stock lead time. */
+export const X12_IN_STOCK_DELIVERY_DAYS = '10 days';
+
+/** Upper-bound working/calendar days used to pick the slowest cart ETA. */
+const DEFAULT_IN_STOCK_LEAD_DAYS = 7;
+const FAST_IN_STOCK_LEAD_DAYS = 4;
+const X12_IN_STOCK_LEAD_DAYS = 10;
 
 /** @deprecated Use FAST_IN_STOCK_DELIVERY_DAYS */
 export const M_SERIES_IN_STOCK_DELIVERY_DAYS = FAST_IN_STOCK_DELIVERY_DAYS;
 
 const FAST_IN_STOCK_SLOTS = new Set(['xsto-m4', 'xsto-m4b', 'xsto-m4-pro']);
+const X12_IN_STOCK_SLOTS = new Set(['xsto-x12', 'xsto-x12-pro']);
 
 export function getInStockDeliveryDays(handle?: string | null): string {
   if (!handle) return DEFAULT_IN_STOCK_DELIVERY_DAYS;
@@ -132,8 +141,25 @@ export function getInStockDeliveryDays(handle?: string | null): string {
   if (slot && FAST_IN_STOCK_SLOTS.has(slot)) {
     return FAST_IN_STOCK_DELIVERY_DAYS;
   }
+  if (slot && X12_IN_STOCK_SLOTS.has(slot)) {
+    return X12_IN_STOCK_DELIVERY_DAYS;
+  }
 
   return DEFAULT_IN_STOCK_DELIVERY_DAYS;
+}
+
+export function getInStockLeadDays(handle?: string | null): number {
+  if (!handle) return DEFAULT_IN_STOCK_LEAD_DAYS;
+
+  const slot = getHomepageProductSlot(handle);
+  if (slot && FAST_IN_STOCK_SLOTS.has(slot)) {
+    return FAST_IN_STOCK_LEAD_DAYS;
+  }
+  if (slot && X12_IN_STOCK_SLOTS.has(slot)) {
+    return X12_IN_STOCK_LEAD_DAYS;
+  }
+
+  return DEFAULT_IN_STOCK_LEAD_DAYS;
 }
 
 export function formatInStockEtaLabel(handle?: string | null): string {
@@ -142,6 +168,26 @@ export function formatInStockEtaLabel(handle?: string | null): string {
 
 export function formatPreorderWeeksLabel(weeks: number): string {
   return weeks === 1 ? '~1 week' : `~${weeks} weeks`;
+}
+
+function inStockDelivery(handle?: string | null): DeliveryInfo {
+  if (isForcedLowStock(handle)) {
+    return {
+      status: 'low_stock',
+      headline: 'Very low stock',
+      detail: 'Limited availability — order soon',
+      etaLabel: formatInStockEtaLabel(handle),
+      preorderWeeks: null,
+    };
+  }
+
+  return {
+    status: 'in_stock',
+    headline: 'In stock',
+    detail: 'Free UK mainland delivery',
+    etaLabel: formatInStockEtaLabel(handle),
+    preorderWeeks: null,
+  };
 }
 
 export function getDeliveryInfo({
@@ -163,7 +209,6 @@ export function getDeliveryInfo({
     };
   }
 
-  // X12 / X12 Pro: always pre-order regardless of Shopify qty.
   if (isForcedPreorder(handle)) {
     const weeks = getPreorderWeeks(handle);
     const weeksLabel = getPreorderWeeksLabel(handle);
@@ -176,27 +221,16 @@ export function getDeliveryInfo({
     };
   }
 
+  // X12 / X12 Pro: in stock with a 10-day lead time, even if Shopify qty is 0.
+  if (isForcedInStock(handle)) {
+    return inStockDelivery(handle);
+  }
+
   const inStock =
     availableForSale && (quantityAvailable == null || quantityAvailable > 0);
 
   if (inStock) {
-    if (isForcedLowStock(handle)) {
-      return {
-        status: 'low_stock',
-        headline: 'Very low stock',
-        detail: 'Limited availability — order soon',
-        etaLabel: formatInStockEtaLabel(handle),
-        preorderWeeks: null,
-      };
-    }
-
-    return {
-      status: 'in_stock',
-      headline: 'In stock',
-      detail: 'Free UK mainland delivery',
-      etaLabel: formatInStockEtaLabel(handle),
-      preorderWeeks: null,
-    };
+    return inStockDelivery(handle);
   }
 
   const weeks = getPreorderWeeks(handle);
@@ -213,7 +247,8 @@ export function getDeliveryInfo({
 
 /**
  * Cart / order-summary delivery copy from line merchandise.
- * Prefers the longest pre-order lead time when mixed; falls back to in-stock.
+ * Prefers the longest pre-order lead time when mixed; otherwise the
+ * slowest in-stock ETA (so an X12 10-day line is not hidden by M-series).
  */
 export function getCartDeliveryInfo(
   lines: Array<{
@@ -229,28 +264,41 @@ export function getCartDeliveryInfo(
   }
 
   let worstPreorder: DeliveryInfo | null = null;
+  let slowestInStock: DeliveryInfo | null = null;
+  let slowestInStockDays = 0;
 
   for (const line of lines) {
     const merchandise = line.merchandise;
     if (!merchandise) continue;
 
+    const handle = merchandise.product?.handle;
     const info = getDeliveryInfo({
       availableForSale: merchandise.availableForSale ?? true,
       quantityAvailable: merchandise.quantityAvailable,
-      handle: merchandise.product?.handle,
+      handle,
     });
 
-    if (info.status !== 'preorder') continue;
+    if (info.status === 'preorder') {
+      if (
+        !worstPreorder ||
+        (info.preorderWeeks ?? 0) > (worstPreorder.preorderWeeks ?? 0)
+      ) {
+        worstPreorder = info;
+      }
+      continue;
+    }
 
-    if (
-      !worstPreorder ||
-      (info.preorderWeeks ?? 0) > (worstPreorder.preorderWeeks ?? 0)
-    ) {
-      worstPreorder = info;
+    if (info.status === 'in_stock' || info.status === 'low_stock') {
+      const days = getInStockLeadDays(handle);
+      if (!slowestInStock || days > slowestInStockDays) {
+        slowestInStock = info;
+        slowestInStockDays = days;
+      }
     }
   }
 
   if (worstPreorder) return worstPreorder;
+  if (slowestInStock) return slowestInStock;
 
   return getDeliveryInfo({availableForSale: true, quantityAvailable: 1});
 }
