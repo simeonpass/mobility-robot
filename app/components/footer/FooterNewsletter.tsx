@@ -41,6 +41,19 @@ export function FooterNewsletter() {
             className="flex flex-col gap-3 sm:flex-row sm:items-stretch"
             method="post"
           >
+            <div
+              aria-hidden="true"
+              className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+            >
+              <label htmlFor="footer-newsletter-website">Website</label>
+              <input
+                autoComplete="off"
+                id="footer-newsletter-website"
+                name="website"
+                tabIndex={-1}
+                type="text"
+              />
+            </div>
             <label className="sr-only" htmlFor="footer-newsletter-email">
               Email address
             </label>
