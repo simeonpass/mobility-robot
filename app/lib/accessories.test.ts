@@ -44,6 +44,24 @@ describe('resolveAccessoryCompatibility', () => {
     ).toEqual(['xsto-m4', 'xsto-m4b']);
   });
 
+  it('keeps CT420 joystick off chair sections', () => {
+    expect(
+      resolveAccessoryCompatibility({
+        handle: 'ct420-handle-joystick-knob',
+        title: 'CT420 Handle Joystick Knob',
+      }),
+    ).toEqual([]);
+  });
+
+  it('maps new Pro/X12 phone holder', () => {
+    expect(
+      resolveAccessoryCompatibility({
+        handle: 'phone-holder-m4-pro-x12',
+        title: 'Mobile Phone Holder — M4 Pro & X12',
+      }),
+    ).toEqual(['xsto-m4-pro', 'xsto-x12', 'xsto-x12-pro']);
+  });
+
   it('detects M4 Pro from title', () => {
     expect(
       resolveAccessoryCompatibility({
@@ -57,6 +75,10 @@ describe('resolveAccessoryCompatibility', () => {
     expect(
       formatCompatibilityLabel(['xsto-m4', 'xsto-m4b', 'xsto-m4-pro']),
     ).toBe('Fits M4, M4B & M4 Pro');
+  });
+
+  it('labels empty compatibility as spare / other', () => {
+    expect(formatCompatibilityLabel([])).toBe('Spare / other');
   });
 });
 

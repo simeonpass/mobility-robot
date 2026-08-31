@@ -84,6 +84,50 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
   'adjustable-headrest-m4-pro': ['xsto-m4-pro'],
   'adjustable-headrest-for-x12-x12-pro': ['xsto-x12', 'xsto-x12-pro'],
   'armrest-bag': M4_AND_M4B,
+  'cane-holder-m4': M4_AND_M4B,
+  'cooling-seat-cushion-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12', 'xsto-x12-pro'],
+  'ct420-handle-joystick-knob': [],
+  'm4-m4-pro-battery-25-2v-23-8ah': ALL_M4_FAMILY,
+  'm4-pro-handle-fixing-plate': ['xsto-m4-pro'],
+  'm4-spare-left-front-mud-cover': M4_AND_M4B,
+  'm4-spare-right-front-mud-cover': M4_AND_M4B,
+  'm4-spare-seat-connector-female-socket': M4_AND_M4B,
+  'phone-holder-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12', 'xsto-x12-pro'],
+  'rear-push-handles-m4': M4_AND_M4B,
+  'rear-view-mirror-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12', 'xsto-x12-pro'],
+  'straight-backrest-cushion-l-m4-pro-x12': [
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
+  'straight-backrest-cushion-m-m4-pro-x12': [
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
+  'straight-backrest-cushion-s-m4-pro-x12': [
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
+  'straight-quick-release-backboard-m4-pro': ['xsto-m4-pro'],
+  'straight-seat-cushion-l-m4-pro-x12': [
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
+  'straight-seat-cushion-m-m4-pro-x12': [
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
+  'straight-seat-cushion-s-m4-pro-x12': [
+    'xsto-m4-pro',
+    'xsto-x12',
+    'xsto-x12-pro',
+  ],
+  'umbrella-holder-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12', 'xsto-x12-pro'],
+  'x12-x12-pro-battery-25-2v-25-6ah': ['xsto-x12', 'xsto-x12-pro'],
   'auxiliary-joystick-m4-pro': ['xsto-m4-pro', 'xsto-m4', 'xsto-m4b'],
   'backrest-cushion-large-m4-pro': ['xsto-m4-pro'],
   'backrest-cushion-small-m4-pro': ['xsto-m4-pro'],
@@ -202,8 +246,9 @@ export function resolveAccessoryCompatibility(
   product: CompatibilityInput,
 ): AccessoryChairSlot[] {
   // Curated handles win over incomplete Shopify tags (e.g. tag "m4" alone).
+  // An explicit empty array means "not chair-specific" (spares / other kit).
   const fromHandle = ACCESSORY_COMPAT_BY_HANDLE[product.handle];
-  if (fromHandle?.length) return uniqueSlots(fromHandle);
+  if (fromHandle !== undefined) return uniqueSlots(fromHandle);
 
   const fromTags = product.tags?.length ? slotsFromTags(product.tags) : [];
   if (fromTags.length) return fromTags;
@@ -236,7 +281,7 @@ export function mergeAccessoryProducts<T extends {handle: string}>(
 }
 
 export function formatCompatibilityLabel(slots: AccessoryChairSlot[]): string {
-  if (!slots.length) return 'Compatibility TBC';
+  if (!slots.length) return 'Spare / other';
   if (slots.length === ACCESSORY_CHAIR_SECTIONS.length) return 'All models';
 
   const labels = ACCESSORY_CHAIR_SECTIONS.filter((section) =>
@@ -276,6 +321,15 @@ export function groupAccessoriesByChair<T extends CompatibilityInput>(
   }
 
   return groups;
+}
+
+/** Accessories with no chair mapping (spares, CT420, etc.). */
+export function ungroupedAccessories<T extends CompatibilityInput>(
+  products: T[],
+): T[] {
+  return products.filter(
+    (product) => resolveAccessoryCompatibility(product).length === 0,
+  );
 }
 
 export const ACCESSORIES_COLLECTION_HANDLE = 'accessories';
