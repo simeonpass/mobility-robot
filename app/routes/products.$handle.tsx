@@ -1,4 +1,4 @@
-import {useLoaderData} from 'react-router';
+import {redirect, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -39,6 +39,15 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 import {getProductDisplayName} from '~/lib/product-content';
 import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
+import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
+import {
+  isX12CanonicalHandle,
+  isX12ProShopifyHandle,
+  parseX12LegRest,
+  X12_LEG_REST_PARAM,
+  X12_PRO_SHOPIFY_HANDLE,
+  x12MergedPath,
+} from '~/lib/x12-lineup';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -82,10 +91,24 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     throw new Error('Expected product handle to be defined');
   }
 
-  const [{product}] = await Promise.all([
+  if (isX12ProShopifyHandle(handle)) {
+    throw redirect(x12MergedPath('electric'), 301);
+  }
+
+  const selectedOptions = getSelectedProductOptions(request);
+
+  const [{product}, siblingData] = await Promise.all([
     storefront.query(PRODUCT_QUERY, {
-      variables: {handle, selectedOptions: getSelectedProductOptions(request)},
+      variables: {handle, selectedOptions},
     }),
+    isX12CanonicalHandle(handle)
+      ? storefront.query(PRODUCT_QUERY, {
+          variables: {
+            handle: X12_PRO_SHOPIFY_HANDLE,
+            selectedOptions,
+          },
+        })
+      : Promise.resolve({product: null}),
   ]);
 
   if (!product?.id) {
@@ -94,20 +117,20 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   redirectIfHandleIsLocalized(request, {handle, data: product});
 
-  return {product};
+  return {
+    product,
+    x12ProProduct: siblingData?.product ?? null,
+  };
 }
 
 async function loadRelatedProducts({context}: Route.LoaderArgs) {
   const {storefront} = context;
 
   const data = await storefront.query(RELATED_PRODUCTS_QUERY);
-  const nodes = [
-    data?.m4,
-    data?.m4Pro,
-    data?.m4b,
-    data?.x12,
-    data?.x12Pro,
-  ].filter(Boolean);
+  const nodes = [data?.m4, data?.m4Pro, data?.m4b, data?.x12].filter(
+    (product): product is NonNullable<typeof product> =>
+      Boolean(product) && !isHiddenStorefrontProductHandle(product.handle),
+  );
 
   return nodes;
 }
@@ -155,12 +178,19 @@ async function loadAccessoryAddons(
 }
 
 export default function Product() {
-  const {product, relatedProducts, accessoryAddons} =
+  const {product, relatedProducts, accessoryAddons, x12ProProduct} =
     useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
+  );
+
+  const proSelectedVariant = useOptimisticVariant(
+    x12ProProduct?.selectedOrFirstAvailableVariant ??
+      product.selectedOrFirstAvailableVariant,
+    getAdjacentAndFirstAvailableVariants(x12ProProduct ?? product),
   );
 
   useSelectedOptionInUrlParam(
@@ -171,6 +201,15 @@ export default function Product() {
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
   });
+
+  const proProductOptions = x12ProProduct
+    ? getProductOptions({
+        ...x12ProProduct,
+        selectedOrFirstAvailableVariant: proSelectedVariant,
+      })
+    : [];
+
+  const x12Choice = parseX12LegRest(searchParams.get(X12_LEG_REST_PARAM));
 
   const metafieldEmbedUrl = normalizeYoutubeEmbed(
     product.youtubeEmbed?.value ?? product.videoUrl?.value,
@@ -263,6 +302,45 @@ export default function Product() {
               selectedVariant={selectedVariant}
               tagline={staticContent?.tagline ?? tabContent.tagline}
               title={displayName}
+              x12Edition={
+                isX12CanonicalHandle(product.handle)
+                  ? {
+                      initialChoice: x12Choice,
+                      standard: {
+                        handle: product.handle,
+                        selectedVariant,
+                        productOptions,
+                        productVariants:
+                          (
+                            product as typeof product & {
+                              variants?: {
+                                nodes?: Array<
+                                  NonNullable<typeof selectedVariant>
+                                >;
+                              };
+                            }
+                          ).variants?.nodes ?? [],
+                      },
+                      pro: x12ProProduct
+                        ? {
+                            handle: x12ProProduct.handle,
+                            selectedVariant: proSelectedVariant,
+                            productOptions: proProductOptions,
+                            productVariants:
+                              (
+                                x12ProProduct as typeof x12ProProduct & {
+                                  variants?: {
+                                    nodes?: Array<
+                                      NonNullable<typeof proSelectedVariant>
+                                    >;
+                                  };
+                                }
+                              ).variants?.nodes ?? [],
+                          }
+                        : null,
+                    }
+                  : undefined
+              }
             />
           </div>
         </div>
@@ -281,7 +359,9 @@ export default function Product() {
 
         <RelatedProducts
           currentHandle={product.handle}
-          products={relatedProducts}
+          products={relatedProducts.filter(
+            (item) => !isHiddenStorefrontProductHandle(item.handle),
+          )}
         />
       </div>
 
@@ -547,9 +627,6 @@ const RELATED_PRODUCTS_QUERY = `#graphql
       ...HomeProduct
     }
     x12: product(handle: "x12-all-terrain-mobility-robot") {
-      ...HomeProduct
-    }
-    x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") {
       ...HomeProduct
     }
   }

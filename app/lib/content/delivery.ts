@@ -7,7 +7,7 @@ export const DELIVERY_METHODS = [
     summary:
       'Full-size powered wheelchairs are delivered on a pallet by a specialist freight carrier.',
     details: [
-      'Typical for M4, M4 Pro, M4B, X12 and X12 Pro orders.',
+      'Typical for M4, M4 Pro, M4B and X12 orders.',
       'Kerbside or nearest safe point delivery — the driver will not carry the chair upstairs.',
       'You will need clear access (path, doorway width) and someone available to accept delivery.',
       'The chair remains secured on the pallet until you are ready to unpack and inspect it.',
@@ -95,7 +95,7 @@ export const deliverySections: ContentSection[] = [
     id: 'lead-times',
     title: 'Lead times',
     paragraphs: [
-      'In-stock M4, M4B and M4 Pro typically deliver within 3–4 working days to UK mainland addresses. X12 and X12 Pro typically arrive in 10 days. Other in-stock models usually arrive within 5–7 working days.',
+      'In-stock M4, M4B and M4 Pro typically deliver within 3–4 working days to UK mainland addresses. X12 typically arrives in 10 days. Other in-stock models usually arrive within 5–7 working days.',
       'Mixed orders follow the longest lead time. Accessories ordered with a chair usually ship with the chair unless we agree otherwise.',
     ],
   },

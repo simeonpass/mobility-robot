@@ -1,6 +1,6 @@
 import type {Route} from './+types/sitemap.$type.$page[.xml]';
 import {getSitemap} from '@shopify/hydrogen';
-import {isUkUnavailableProductHandle} from '~/lib/homepage-data';
+import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
 import {SITE_URL, canonicalSitemapRequest} from '~/lib/seo';
 
 export async function loader({
@@ -28,7 +28,7 @@ export async function loader({
   const xml = await response.text();
   const filtered = xml.replace(/<url>[\s\S]*?<\/url>/g, (block) => {
     const match = block.match(/\/products\/([^/<"\s]+)/);
-    if (match && isUkUnavailableProductHandle(match[1])) {
+    if (match && isHiddenStorefrontProductHandle(match[1])) {
       return '';
     }
     return block;

@@ -59,7 +59,6 @@ const CHAIR_DISPLAY_NAMES = [
   'XSTO M4 Pro',
   'XSTO M4B',
   'XSTO X12',
-  'XSTO X12 Pro',
 ] as const;
 
 /** Handles that the old substring slot matcher wrongly treated as chairs. */
@@ -141,7 +140,6 @@ describe('accessory catalogue integrity', () => {
       'xsto-m4b',
       'xsto-m4-pro',
       'xsto-x12',
-      'xsto-x12-pro',
     ]);
 
     expect(
@@ -156,13 +154,13 @@ describe('accessory catalogue integrity', () => {
         handle: 'adjustable-headrest-for-x12-x12-pro',
         title: 'Adjustable Headrest for X12/X12 Pro',
       }),
-    ).toEqual(['xsto-x12', 'xsto-x12-pro']);
+    ).toEqual(['xsto-x12']);
 
     expect(
       resolveAccessoryCompatibility({
         handle: 'calf-support-set-for-x12-x12pro',
         title: 'Calf Support Set for X12/X12Pro',
       }),
-    ).toEqual(['xsto-x12', 'xsto-x12-pro']);
+    ).toEqual(['xsto-x12']);
   });
 });

@@ -42,7 +42,7 @@ export const DISTRIBUTOR_DISCLAIMER =
 
 export const ABOUT_INTRO = [
   `${COMPANY.name} runs Mobility Robot — the official UK and Ireland storefront for XSTO powered wheelchairs. Foldable, portable mobility robots designed for modern independent living.`,
-  'From our base in Wimborne, Dorset, we supply the full XSTO range — M4, M4B, M4 Pro, X12 and X12 Pro — with free UK delivery, VAT relief for eligible customers, and manufacturer warranty managed locally.',
+  'From our base in Wimborne, Dorset, we supply the full XSTO range — M4, M4B, M4 Pro and X12 — with free UK delivery, VAT relief for eligible customers, and manufacturer warranty managed locally.',
   'Alongside online ordering we work with authorised stockists across the UK and Ireland, so you can see a chair in person, arrange a demonstration, and get expert advice close to home.',
 ] as const;
 

@@ -18,7 +18,7 @@ export const meta: Route.MetaFunction = ({data}) => {
     title,
     description:
       data?.collection?.description ||
-      'Shop XSTO wheelchair accessories by chair compatibility — M4, M4B, M4 Pro, X12 and X12 Pro. Free UK delivery from the official UK distributor.',
+      'Shop XSTO wheelchair accessories by chair compatibility — M4, M4B, M4 Pro and X12. Free UK delivery from the official UK distributor.',
     path: '/collections/accessories',
   });
 };
@@ -59,6 +59,9 @@ function resolveChairFilter(
   chairParam: string | null,
 ): AccessoryChairSlot | 'all' {
   if (!chairParam) return 'all';
+  if (chairParam === 'x12-pro' || chairParam === 'xsto-x12-pro') {
+    return 'xsto-x12';
+  }
   const match = ACCESSORY_CHAIR_SECTIONS.find(
     (section) => section.id === chairParam || section.slot === chairParam,
   );

@@ -38,9 +38,9 @@ export const ACCESSORY_DESCRIPTION_FALLBACKS: Record<
   },
   'adjustable-headrest-for-x12-x12-pro': {
     overview:
-      'Add comfortable head and neck support to the XSTO X12 or X12 Pro. The adjustable headrest helps with longer outdoor sessions, stair-climbing practice and all-day posture.',
+      'Add comfortable head and neck support to the XSTO X12. The adjustable headrest helps with longer outdoor sessions, stair-climbing practice and all-day posture.',
     highlights: [
-      'Designed for X12 and X12 Pro seating',
+      'Designed for X12 seating, including X12 Pro',
       'Adjustable height and angle for personal fit',
       'Supports neck comfort on longer journeys',
       'Pairs with the stair-climbing outdoor platform',
@@ -68,7 +68,7 @@ export const ACCESSORY_DESCRIPTION_FALLBACKS: Record<
   },
   'calf-support-set-for-x12-x12pro': {
     overview:
-      'Calf supports for the XSTO X12 and X12 Pro help stabilise the lower legs during outdoor travel and stair-climbing modes. A useful comfort upgrade for users who need extra lower-leg guidance.',
+      'Calf supports for the XSTO X12 help stabilise the lower legs during outdoor travel and stair-climbing modes. A useful comfort upgrade for users who need extra lower-leg guidance.',
     highlights: [
       'Fits X12 and X12 Pro',
       'Improves lower-leg stability underway',

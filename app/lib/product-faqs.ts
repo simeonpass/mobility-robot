@@ -156,12 +156,12 @@ export const x12FAQs: ProductFAQ[] = [
   {
     question: 'How much does the X12 weigh?',
     answer:
-      'The X12 weighs 112.8 kg without battery (X12 Pro: 115.8 kg). It is not designed to be lifted like the M4 series — it is built for all-terrain performance and stair-climbing capability. It can be transported in a suitable vehicle with a ramp or hoist.',
+      'The X12 weighs 112.8 kg without battery (about 115.8 kg as X12 Pro with the electric elevating leg rest). It is not designed to be lifted like the M4 series — it is built for all-terrain performance and stair-climbing capability. It can be transported in a suitable vehicle with a ramp or hoist.',
   },
   {
     question: 'Is the X12 available to buy now?',
     answer:
-      'Yes. The X12 and X12 Pro are in stock now, with an estimated delivery of 10 days. Free UK mainland delivery is included.',
+      'Yes. The X12 is in stock now, with an estimated delivery of 10 days. Free UK mainland delivery is included.',
   },
   {
     question: "What's included in the box with the X12?",
@@ -169,9 +169,9 @@ export const x12FAQs: ProductFAQ[] = [
       'The X12 comes with the robot, 2× batteries, charger, joystick controller, wireless key, user manual, and tool kit. The X12 is app-controlled, so no physical remote control is included.',
   },
   {
-    question: 'What is the difference between the X12 and X12 Pro?',
+    question: 'What is the difference between X12 and X12 Pro?',
     answer:
-      'The X12 Pro adds an electric legrest and electric seat adjustment over the standard X12. Both models share the same 136 kg capacity, 40° stair capability, dual batteries, and 35 km range.',
+      'They are the same X12 chair. X12 Pro adds an electric elevating leg rest; the standard X12 does not. Both share the same 136 kg capacity, 40° stair capability, dual batteries, and 35 km range. Choose X12 or X12 Pro when you add the chair to your cart, then add any accessories.',
   },
 ];
 
@@ -230,7 +230,7 @@ export const generalFAQs: ProductFAQ[] = [
   {
     question: 'How soon will my order arrive?',
     answer:
-      'In-stock M4, M4B and M4 Pro: free UK mainland delivery in 3–4 working days. X12 and X12 Pro typically arrive in 10 days. Other in-stock models typically arrive in 5–7 working days.',
+      'In-stock M4, M4B and M4 Pro: free UK mainland delivery in 3–4 working days. X12 typically arrives in 10 days. Other in-stock models typically arrive in 5–7 working days.',
   },
   {
     question: 'Who provides UK customer support?',

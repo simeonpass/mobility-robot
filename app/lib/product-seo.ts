@@ -30,12 +30,12 @@ const PRODUCT_SEO: Record<
   'xsto-x12': {
     title: 'XSTO X12 Stair Climber',
     description:
-      'Buy the XSTO X12 all-terrain stair-climbing mobility robot. Climbs steps up to 40°, AI mode switching, free UK delivery.',
+      'Buy the XSTO X12 all-terrain stair-climbing mobility robot. Choose X12 or X12 Pro with an electric elevating leg rest. Climbs steps up to 40°, free UK delivery.',
   },
   'xsto-x12-pro': {
-    title: 'XSTO X12 Pro Stair Climber',
+    title: 'XSTO X12 Stair Climber',
     description:
-      'Buy the XSTO X12 Pro AI stair-climbing wheelchair. Fully configurable comfort, all-terrain capability, free UK delivery.',
+      'Buy the XSTO X12 all-terrain stair-climbing mobility robot. Choose X12 or X12 Pro with an electric elevating leg rest, free UK delivery.',
   },
 };
 
