@@ -7,6 +7,8 @@ import {
   getPreorderWeeks,
   isForcedInStock,
   isForcedPreorder,
+  isX12AccessoryBackorder,
+  X12_ACCESSORY_PREORDER_WEEKS,
 } from './product-delivery';
 
 describe('getPreorderWeeks', () => {
@@ -94,6 +96,34 @@ describe('getDeliveryInfo', () => {
     expect(info.status).toBe('preorder');
     expect(info.preorderWeeks).toBe(DEFAULT_PREORDER_WEEKS);
   });
+
+  it('puts X12 accessories on a 4-week backorder even when Shopify reports stock', () => {
+    expect(isX12AccessoryBackorder('cooling-seat-cushion-m4-pro-x12')).toBe(
+      true,
+    );
+    expect(isX12AccessoryBackorder('x12-x12-pro-battery-25-2v-25-6ah')).toBe(
+      true,
+    );
+    expect(isX12AccessoryBackorder('adjustable-headrest-m4-pro')).toBe(true);
+    expect(isX12AccessoryBackorder('x12-all-terrain-mobility-robot')).toBe(
+      false,
+    );
+    expect(isX12AccessoryBackorder('rear-cover-m4')).toBe(false);
+
+    const info = getDeliveryInfo({
+      availableForSale: true,
+      quantityAvailable: 8,
+      handle: 'cooling-seat-cushion-m4-pro-x12',
+    });
+    expect(info.status).toBe('preorder');
+    expect(info.headline).toBe('Pre-order');
+    expect(info.preorderWeeks).toBe(X12_ACCESSORY_PREORDER_WEEKS);
+    expect(info.detail).toContain('~4 weeks');
+    expect(info.detail).not.toMatch(/deposit/i);
+    expect(getPreorderWeeks('cooling-seat-cushion-m4-pro-x12')).toBe(
+      X12_ACCESSORY_PREORDER_WEEKS,
+    );
+  });
 });
 
 describe('getCartDeliveryInfo', () => {
@@ -137,6 +167,30 @@ describe('getCartDeliveryInfo', () => {
     ]);
     expect(info.status).toBe('preorder');
     expect(info.preorderWeeks).toBe(DEFAULT_PREORDER_WEEKS);
+  });
+
+  it('keeps the X12 chair lead time visible when a 4-week accessory is added', () => {
+    const info = getCartDeliveryInfo([
+      {
+        merchandise: {
+          availableForSale: true,
+          quantityAvailable: 2,
+          product: {handle: 'x12-all-terrain-mobility-robot'},
+        },
+      },
+      {
+        merchandise: {
+          availableForSale: true,
+          quantityAvailable: 1,
+          product: {handle: 'cooling-seat-cushion-m4-pro-x12'},
+        },
+      },
+    ]);
+    expect(info.status).toBe('preorder');
+    expect(info.headline).toBe('Split delivery');
+    expect(info.preorderWeeks).toBe(X12_ACCESSORY_PREORDER_WEEKS);
+    expect(info.detail).toContain('Delivers in 10 days');
+    expect(info.etaLabel).toMatch(/Pre-order accessories arrive around /);
   });
 
   it('falls back to in-stock when no preorder lines', () => {

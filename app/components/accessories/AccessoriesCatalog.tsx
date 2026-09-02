@@ -3,6 +3,7 @@ import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight} from 'lucide-react';
 import {
   ACCESSORY_CHAIR_SECTIONS,
+  accessoryFitsX12,
   formatCompatibilityLabel,
   groupAccessoriesByChair,
   resolveAccessoryCompatibility,
@@ -10,6 +11,7 @@ import {
 } from '~/lib/accessories';
 import {formatExVatPrice} from '~/lib/homepage-data';
 import {getProductListPrice} from '~/lib/product-vat-variants';
+import {X12_ACCESSORY_PREORDER_LABEL} from '~/lib/product-delivery';
 
 export type AccessoryListProduct = {
   id: string;
@@ -201,6 +203,9 @@ function AccessoryCard({product}: {product: AccessoryListProduct}) {
         <div className="flex flex-1 flex-col p-4">
           <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             {formatCompatibilityLabel(slots)}
+            {accessoryFitsX12(product.handle, product.title, product.tags)
+              ? ` · Pre-order ${X12_ACCESSORY_PREORDER_LABEL}`
+              : ''}
           </p>
           <h3 className="mt-1.5 text-base font-semibold leading-snug text-foreground">
             {product.title}

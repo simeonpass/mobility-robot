@@ -230,7 +230,7 @@ export const generalFAQs: ProductFAQ[] = [
   {
     question: 'How soon will my order arrive?',
     answer:
-      'In-stock M4, M4B and M4 Pro: free UK mainland delivery in 3–4 working days. X12 typically arrives in 10 days. Other in-stock models typically arrive in 5–7 working days.',
+      'In-stock M4, M4B and M4 Pro: free UK mainland delivery in 3–4 working days. X12 typically arrives in 10 days. X12 accessories are on a ~4 week pre-order — you can still buy them today. Other in-stock models typically arrive in 5–7 working days.',
   },
   {
     question: 'Who provides UK customer support?',

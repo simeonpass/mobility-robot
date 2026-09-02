@@ -1,3 +1,4 @@
+import {accessoryFitsX12} from '~/lib/accessories';
 import {getHomepageProductSlot} from '~/lib/homepage-data';
 
 export type DeliveryStatus =
@@ -17,6 +18,10 @@ export type DeliveryInfo = {
 
 /** Default pre-order lead time when a product has no per-handle override. */
 export const DEFAULT_PREORDER_WEEKS = 12;
+
+/** X12 accessories ship as a backorder — still buyable, ~4 week lead time. */
+export const X12_ACCESSORY_PREORDER_WEEKS = 4;
+export const X12_ACCESSORY_PREORDER_LABEL = '~4 weeks';
 
 /**
  * Per-product pre-order ETA (upper-bound weeks for date estimates / cart sorting).
@@ -59,6 +64,11 @@ export function isForcedPreorder(handle?: string | null): boolean {
   return matchesForcedSlots(handle, FORCE_PREORDER_SLOTS);
 }
 
+/** Accessories for the X12 are sold on a 4-week pre-order / backorder. */
+export function isX12AccessoryBackorder(handle?: string | null): boolean {
+  return accessoryFitsX12(handle);
+}
+
 export function isForcedInStock(handle?: string | null): boolean {
   return matchesForcedSlots(handle, FORCE_IN_STOCK_SLOTS, [
     'x12-all-terrain-mobility-robot',
@@ -73,6 +83,8 @@ export function isForcedLowStock(handle?: string | null): boolean {
 export function getPreorderWeeks(handle?: string | null): number {
   if (!handle) return DEFAULT_PREORDER_WEEKS;
 
+  if (isX12AccessoryBackorder(handle)) return X12_ACCESSORY_PREORDER_WEEKS;
+
   const direct = PREORDER_WEEKS_BY_HANDLE[handle];
   if (direct != null) return direct;
 
@@ -86,6 +98,8 @@ export function getPreorderWeeks(handle?: string | null): number {
 
 export function getPreorderWeeksLabel(handle?: string | null): string {
   if (handle) {
+    if (isX12AccessoryBackorder(handle)) return X12_ACCESSORY_PREORDER_LABEL;
+
     const direct = PREORDER_WEEKS_LABEL_BY_HANDLE[handle];
     if (direct) return direct;
 
@@ -190,6 +204,18 @@ function inStockDelivery(handle?: string | null): DeliveryInfo {
   };
 }
 
+function x12AccessoryBackorderDelivery(handle?: string | null): DeliveryInfo {
+  const weeks = getPreorderWeeks(handle);
+  const weeksLabel = getPreorderWeeksLabel(handle);
+  return {
+    status: 'preorder',
+    headline: 'Pre-order',
+    detail: `Available to order now · estimated delivery ${weeksLabel}`,
+    etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
+    preorderWeeks: weeks,
+  };
+}
+
 export function getDeliveryInfo({
   availableForSale,
   quantityAvailable,
@@ -219,6 +245,10 @@ export function getDeliveryInfo({
       etaLabel: `Est. arrival around ${getPreorderDeliveryDate(weeks)}`,
       preorderWeeks: weeks,
     };
+  }
+
+  if (isX12AccessoryBackorder(handle)) {
+    return x12AccessoryBackorderDelivery(handle);
   }
 
   // X12 / X12 Pro: in stock with a 10-day lead time, even if Shopify qty is 0.
@@ -295,6 +325,17 @@ export function getCartDeliveryInfo(
         slowestInStockDays = days;
       }
     }
+  }
+
+  if (worstPreorder && slowestInStock) {
+    const weeks = worstPreorder.preorderWeeks ?? DEFAULT_PREORDER_WEEKS;
+    return {
+      status: 'preorder',
+      headline: 'Split delivery',
+      detail: `${slowestInStock.etaLabel} for in-stock items`,
+      etaLabel: `Pre-order accessories arrive around ${getPreorderDeliveryDate(weeks)}`,
+      preorderWeeks: weeks,
+    };
   }
 
   if (worstPreorder) return worstPreorder;
