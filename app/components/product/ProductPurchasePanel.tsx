@@ -309,18 +309,30 @@ export function ProductPurchasePanel({
             product: {handle: productHandle},
           },
         },
-        ...accessoryAddons
-          .filter((product) =>
-            (product.variants?.nodes ?? []).some((variant) =>
-              selectedAddonIds.has(variant.id),
-            ),
-          )
-          .map((product) => ({
-            merchandise: {
-              availableForSale: true,
-              product: {handle: product.handle},
+        ...addonLines.flatMap((line) => {
+          const variant = line.selectedVariant as
+            | {product?: {handle?: string | null} | null}
+            | undefined;
+          const handle =
+            variant?.product?.handle ??
+            accessoryAddons.find(
+              (product) =>
+                product.selectedOrFirstAvailableVariant?.id ===
+                  line.merchandiseId ||
+                (product.variants?.nodes ?? []).some(
+                  (node) => node.id === line.merchandiseId,
+                ),
+            )?.handle;
+          if (!handle) return [];
+          return [
+            {
+              merchandise: {
+                availableForSale: true,
+                product: {handle},
+              },
             },
-          })),
+          ];
+        }),
       ])
     : null;
 
