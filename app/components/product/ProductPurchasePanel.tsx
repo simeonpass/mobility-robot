@@ -50,10 +50,10 @@ import {
   variantsHaveVatOption,
 } from '~/lib/product-vat-variants';
 import {
-  parseX12LegRest,
+  parseX12ChoiceFromSearch,
+  x12ChoiceSearchParams,
   x12LegRestCartAttribute,
   X12_LEG_REST_OPTIONS,
-  X12_LEG_REST_PARAM,
   type X12LegRestChoice,
 } from '~/lib/x12-lineup';
 
@@ -109,7 +109,7 @@ export function ProductPurchasePanel({
 
   const [x12Choice, setX12Choice] = useState<X12LegRestChoice>(() => {
     if (x12Edition?.initialChoice) return x12Edition.initialChoice;
-    return parseX12LegRest(searchParams.get(X12_LEG_REST_PARAM));
+    return parseX12ChoiceFromSearch(searchParams);
   });
 
   const activeEdition: ChairPurchaseSource = useMemo(() => {
@@ -269,10 +269,10 @@ export function ProductPurchasePanel({
   const handleX12ChoiceChange = (next: X12LegRestChoice) => {
     if (next === 'electric' && !x12Edition?.pro) return;
     setX12Choice(next);
-    const params = new URLSearchParams(searchParams);
-    if (next === 'electric') params.set(X12_LEG_REST_PARAM, 'electric');
-    else params.delete(X12_LEG_REST_PARAM);
-    setSearchParams(params, {replace: true, preventScrollReset: true});
+    setSearchParams(x12ChoiceSearchParams(searchParams, next), {
+      replace: true,
+      preventScrollReset: true,
+    });
   };
 
   const addonLines = useMemo(() => {
