@@ -13,6 +13,10 @@ import {x12MergedPath} from '~/lib/x12-lineup';
  * Preferred: Shopify Admin custom domains + DNS so xsto.co.uk 301s to
  * mobilityrobot.co.uk before traffic hits Oxygen.
  *
+ * Google & YouTube still emit Online Store URLs on checkout.mobilityrobot.co.uk.
+ * Keep Hydrogen `?variant=` PDPs as 200s so Merchant Center can rewrite those
+ * links onto this origin (see /feeds/google-products.txt).
+ *
  * Fallback: if this Hydrogen app still receives a legacy host below,
  * `resolveHostRedirect` / `legacyRedirect` issue a 301 to SITE_URL.
  *
@@ -152,12 +156,6 @@ export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | 
   const url = new URL(request.url);
   const pathname = url.pathname.replace(/\/+$/, '') || '/';
 
-  if (pathname.startsWith('/products/') && url.searchParams.has('variant')) {
-    url.searchParams.delete('variant');
-    const destination = `${pathname}${url.search}`;
-    return {destination, cacheControl: LEGACY_REDIRECT_CACHE_CONTROL};
-  }
-
   const blogMatch = pathname.match(/^\/blogs\/news\/([^/]+)$/);
   if (blogMatch) {
     return {
@@ -233,6 +231,16 @@ export function legacyRedirect(request: Request): Response | null {
   }
 
   const destination = new URL(destPath, SITE_URL).toString();
+  const currentOnCanonical = new URL(
+    `${url.pathname}${url.search}`,
+    SITE_URL,
+  ).toString();
+
+  // Never 301 a URL to itself. Stripping then re-appending `?variant=` used
+  // to loop and made Google Shopping treat every PDP as a missing page.
+  if (destination === currentOnCanonical && !hostResolved) {
+    return null;
+  }
 
   throw redirect(destination, {
     status: 301,

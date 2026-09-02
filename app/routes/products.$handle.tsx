@@ -39,6 +39,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 import {getProductDisplayName} from '~/lib/product-content';
 import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
+import {withRequestedShopifyVariant} from '~/lib/product-variant-url';
 import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
 import {
   isX12CanonicalHandle,
@@ -99,7 +100,9 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   const selectedOptions = withX12EditionSelectedOptions(
     handle,
-    getSelectedProductOptions(request),
+    getSelectedProductOptions(request).filter(
+      (option) => option.name.toLowerCase() !== 'variant',
+    ),
     request.url,
   );
 
@@ -126,8 +129,10 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   redirectIfHandleIsLocalized(request, {handle, data: product});
 
   return {
-    product,
-    x12ProProduct: siblingData?.product ?? null,
+    product: withRequestedShopifyVariant(product, request.url),
+    x12ProProduct: siblingData?.product
+      ? withRequestedShopifyVariant(siblingData.product, request.url)
+      : null,
   };
 }
 

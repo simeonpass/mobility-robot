@@ -2,6 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {SITE_URL} from './const';
 import {
   LEGACY_REDIRECTS,
+  legacyRedirect,
   resolveHostRedirect,
   resolveLegacyRedirect,
 } from './redirects';
@@ -31,11 +32,25 @@ describe('resolveLegacyRedirect', () => {
     expect(result?.destination).toBe('/blog/welcome-to-xsto');
   });
 
-  it('strips variant query params on legacy product URLs', () => {
-    const result = resolveLegacyRedirect(
-      requestFor('/products/buy-robot-wheelchair?variant=123&color=red'),
-    );
-    expect(result?.destination).toBe('/products/buy-robot-wheelchair?color=red');
+  it('keeps Shopify variant ids on live product URLs', () => {
+    expect(
+      resolveLegacyRedirect(
+        requestFor('/products/buy-robot-wheelchair?variant=55573906260346'),
+      ),
+    ).toBeNull();
+    expect(
+      resolveLegacyRedirect(
+        requestFor('/products/xsto-m4-pro?variant=56507462189434'),
+      ),
+    ).toBeNull();
+  });
+
+  it('does not 301 a live variant URL to itself', () => {
+    expect(
+      legacyRedirect(
+        requestFor('/products/xsto-m4-pro?variant=56507462189434'),
+      ),
+    ).toBeNull();
   });
 
   it('redirects prefixed legacy product handles', () => {
