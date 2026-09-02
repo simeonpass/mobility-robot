@@ -309,17 +309,18 @@ export function ProductPurchasePanel({
             product: {handle: productHandle},
           },
         },
-        ...addonLines.map((line) => {
-          const variant = line.selectedVariant as
-            | {product?: {handle?: string | null} | null}
-            | undefined;
-          return {
+        ...accessoryAddons
+          .filter((product) =>
+            (product.variants?.nodes ?? []).some((variant) =>
+              selectedAddonIds.has(variant.id),
+            ),
+          )
+          .map((product) => ({
             merchandise: {
               availableForSale: true,
-              product: {handle: variant?.product?.handle ?? null},
+              product: {handle: product.handle},
             },
-          };
-        }),
+          })),
       ])
     : null;
 
