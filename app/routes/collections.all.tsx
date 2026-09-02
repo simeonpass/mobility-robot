@@ -32,7 +32,6 @@ export async function loader({context}: Route.LoaderArgs) {
   );
 
   return {
-    products: products.nodes,
     chairs,
     accessories,
   };
