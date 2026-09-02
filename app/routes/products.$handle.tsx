@@ -43,8 +43,10 @@ import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
 import {
   isX12CanonicalHandle,
   isX12ProShopifyHandle,
-  parseX12LegRest,
-  X12_LEG_REST_PARAM,
+  parseX12ChoiceFromSearch,
+  productHasX12EditionOption,
+  variantsForX12Edition,
+  withX12EditionSelectedOptions,
   X12_PRO_SHOPIFY_HANDLE,
   x12MergedPath,
 } from '~/lib/x12-lineup';
@@ -95,13 +97,19 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     throw redirect(x12MergedPath('electric'), 301);
   }
 
-  const selectedOptions = getSelectedProductOptions(request);
+  const selectedOptions = withX12EditionSelectedOptions(
+    handle,
+    getSelectedProductOptions(request),
+    request.url,
+  );
+
+  const needsSiblingFallback = isX12CanonicalHandle(handle);
 
   const [{product}, siblingData] = await Promise.all([
     storefront.query(PRODUCT_QUERY, {
       variables: {handle, selectedOptions},
     }),
-    isX12CanonicalHandle(handle)
+    needsSiblingFallback
       ? storefront.query(PRODUCT_QUERY, {
           variables: {
             handle: X12_PRO_SHOPIFY_HANDLE,
@@ -209,7 +217,7 @@ export default function Product() {
       })
     : [];
 
-  const x12Choice = parseX12LegRest(searchParams.get(X12_LEG_REST_PARAM));
+  const x12Choice = parseX12ChoiceFromSearch(searchParams);
 
   const metafieldEmbedUrl = normalizeYoutubeEmbed(
     product.youtubeEmbed?.value ?? product.videoUrl?.value,
@@ -249,6 +257,39 @@ export default function Product() {
 
   const productReviews = getReviewsForProduct(product.handle);
   const reviewSummary = summarizeReviews(productReviews);
+
+  const pageVariants =
+    (
+      product as typeof product & {
+        variants?: {
+          nodes?: Array<NonNullable<typeof selectedVariant>>;
+        };
+      }
+    ).variants?.nodes ?? [];
+  const siblingVariants =
+    (
+      x12ProProduct as typeof x12ProProduct & {
+        variants?: {
+          nodes?: Array<NonNullable<typeof proSelectedVariant>>;
+        };
+      }
+    )?.variants?.nodes ?? [];
+  const editionOnProduct = productHasX12EditionOption(pageVariants);
+  const standardEditionVariants = editionOnProduct
+    ? variantsForX12Edition(pageVariants, 'standard')
+    : pageVariants;
+  const proEditionVariants = editionOnProduct
+    ? variantsForX12Edition(pageVariants, 'electric')
+    : siblingVariants;
+  const standardEditionVariant =
+    standardEditionVariants.find((variant) => variant?.id === selectedVariant?.id) ??
+    standardEditionVariants[0] ??
+    selectedVariant;
+  const proEditionVariant =
+    proEditionVariants.find((variant) => variant?.id === selectedVariant?.id) ??
+    proEditionVariants.find((variant) => variant?.id === proSelectedVariant?.id) ??
+    proEditionVariants[0] ??
+    null;
 
   const productSchema = productJsonLd({
     name: displayName,
@@ -308,36 +349,23 @@ export default function Product() {
                       initialChoice: x12Choice,
                       standard: {
                         handle: product.handle,
-                        selectedVariant,
+                        selectedVariant: standardEditionVariant,
                         productOptions,
-                        productVariants:
-                          (
-                            product as typeof product & {
-                              variants?: {
-                                nodes?: Array<
-                                  NonNullable<typeof selectedVariant>
-                                >;
-                              };
-                            }
-                          ).variants?.nodes ?? [],
+                        productVariants: standardEditionVariants,
                       },
-                      pro: x12ProProduct
-                        ? {
-                            handle: x12ProProduct.handle,
-                            selectedVariant: proSelectedVariant,
-                            productOptions: proProductOptions,
-                            productVariants:
-                              (
-                                x12ProProduct as typeof x12ProProduct & {
-                                  variants?: {
-                                    nodes?: Array<
-                                      NonNullable<typeof proSelectedVariant>
-                                    >;
-                                  };
-                                }
-                              ).variants?.nodes ?? [],
-                          }
-                        : null,
+                      pro:
+                        proEditionVariant && proEditionVariants.length
+                          ? {
+                              handle: editionOnProduct
+                                ? product.handle
+                                : (x12ProProduct?.handle ?? product.handle),
+                              selectedVariant: proEditionVariant,
+                              productOptions: editionOnProduct
+                                ? productOptions
+                                : proProductOptions,
+                              productVariants: proEditionVariants,
+                            }
+                          : null,
                     }
                   : undefined
               }

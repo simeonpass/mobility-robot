@@ -73,6 +73,7 @@ describe('product-vat-variants', () => {
       filterVisibleProductOptions([
         {name: 'Colour', optionValues: [{}, {}]},
         {name: VAT_OPTION_NAME, optionValues: [{}, {}]},
+        {name: 'Edition', optionValues: [{}, {}]},
       ]),
     ).toEqual([{name: 'Colour', optionValues: [{}, {}]}]);
 

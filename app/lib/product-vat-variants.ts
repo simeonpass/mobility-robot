@@ -1,4 +1,5 @@
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
+import {isX12EditionOptionName} from '~/lib/x12-lineup';
 
 /** Shopify product option that holds Standard vs VAT Relief prices. */
 export const VAT_OPTION_NAME = 'VAT';
@@ -57,11 +58,14 @@ export function variantsHaveVatOption(
   );
 }
 
-/** Colour / size options only — never expose VAT as a customer picker. */
+/** Colour / size only — hide VAT (relief SKU) and Edition (custom X12 cards). */
 export function filterVisibleProductOptions<
   T extends {name: string; optionValues: unknown[]},
 >(productOptions: T[]): T[] {
-  return productOptions.filter((option) => !isVatOptionName(option.name));
+  return productOptions.filter(
+    (option) =>
+      !isVatOptionName(option.name) && !isX12EditionOptionName(option.name),
+  );
 }
 
 /** Options shown on cart line chips. */
