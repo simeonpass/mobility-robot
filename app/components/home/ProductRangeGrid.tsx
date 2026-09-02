@@ -73,7 +73,7 @@ export function ProductRangeGrid({products}: ProductRangeGridProps) {
           title="Find the"
         />
 
-        <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
           {flagshipProducts.map((product, index) => {
             const slot = getHomepageProductSlot(product.handle) as
               | HomepageFlagshipHandle

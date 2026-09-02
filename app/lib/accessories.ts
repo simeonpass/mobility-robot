@@ -40,14 +40,8 @@ export const ACCESSORY_CHAIR_SECTIONS: ReadonlyArray<{
     slot: 'xsto-x12',
     label: 'XSTO X12',
     shortLabel: 'X12',
-    description: 'Accessories for the all-terrain stair-climbing X12.',
-  },
-  {
-    id: 'x12-pro',
-    slot: 'xsto-x12-pro',
-    label: 'XSTO X12 Pro',
-    shortLabel: 'X12 Pro',
-    description: 'Accessories for the X12 Pro configuration.',
+    description:
+      'Accessories for the all-terrain stair-climbing X12, including X12 Pro.',
   },
 ];
 
@@ -65,15 +59,15 @@ const TAG_TO_SLOT: Record<string, AccessoryChairSlot> = {
   'compatible-m4-pro': 'xsto-m4-pro',
   'compatible-m4pro': 'xsto-m4-pro',
   'compatible-x12': 'xsto-x12',
-  'compatible-x12-pro': 'xsto-x12-pro',
-  'compatible-x12pro': 'xsto-x12-pro',
+  'compatible-x12-pro': 'xsto-x12',
+  'compatible-x12pro': 'xsto-x12',
   m4: 'xsto-m4',
   m4b: 'xsto-m4b',
   'm4-pro': 'xsto-m4-pro',
   m4pro: 'xsto-m4-pro',
   x12: 'xsto-x12',
-  'x12-pro': 'xsto-x12-pro',
-  x12pro: 'xsto-x12-pro',
+  'x12-pro': 'xsto-x12',
+  x12pro: 'xsto-x12',
 };
 
 /**
@@ -82,7 +76,7 @@ const TAG_TO_SLOT: Record<string, AccessoryChairSlot> = {
  */
 export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = {
   'adjustable-headrest-m4-pro': ['xsto-m4-pro'],
-  'adjustable-headrest-for-x12-x12-pro': ['xsto-x12', 'xsto-x12-pro'],
+  'adjustable-headrest-for-x12-x12-pro': ['xsto-x12'],
   'armrest-bag': M4_AND_M4B,
   'auxiliary-joystick-m4-pro': ['xsto-m4-pro', 'xsto-m4', 'xsto-m4b'],
   'backrest-cushion-large-m4-pro': ['xsto-m4-pro'],
@@ -94,16 +88,14 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
     'xsto-m4b',
     'xsto-m4-pro',
     'xsto-x12',
-    'xsto-x12-pro',
   ],
   'buy-universal-phone-holder': M4_AND_M4B,
-  'calf-support-set-for-x12-x12pro': ['xsto-x12', 'xsto-x12-pro'],
+  'calf-support-set-for-x12-x12pro': ['xsto-x12'],
   'cup-holder-for-all-models': [
     'xsto-m4',
     'xsto-m4b',
     'xsto-m4-pro',
     'xsto-x12',
-    'xsto-x12-pro',
   ],
   // Live Shopify handle (title: High Back Rest & Neck Support Cushion)
   'ergonomic-chairs-for-back-support': M4_AND_M4B,
@@ -142,9 +134,22 @@ type CompatibilityInput = {
   tags?: readonly string[] | null;
 };
 
-function uniqueSlots(slots: AccessoryChairSlot[]): AccessoryChairSlot[] {
+function canonicalAccessorySlot(
+  slot: string,
+): AccessoryChairSlot | undefined {
+  if (slot === 'xsto-x12-pro') return 'xsto-x12';
+  return ACCESSORY_CHAIR_SECTIONS.some((section) => section.slot === slot)
+    ? (slot as AccessoryChairSlot)
+    : undefined;
+}
+
+function uniqueSlots(slots: readonly string[]): AccessoryChairSlot[] {
+  const canonical = slots
+    .map((slot) => canonicalAccessorySlot(slot))
+    .filter((slot): slot is AccessoryChairSlot => Boolean(slot));
+
   return ACCESSORY_CHAIR_SECTIONS.map((section) => section.slot).filter((slot) =>
-    slots.includes(slot),
+    canonical.includes(slot),
   );
 }
 
@@ -174,8 +179,7 @@ function slotsFromTitle(title: string): AccessoryChairSlot[] | null {
 
   if (/m4\s*pro/.test(t)) return ['xsto-m4-pro'];
   if (/m4b/.test(t)) return ['xsto-m4b'];
-  if (/x12\s*pro/.test(t)) return ['xsto-x12-pro'];
-  if (/x12/.test(t)) return ['xsto-x12', 'xsto-x12-pro'];
+  if (/x12/.test(t)) return ['xsto-x12'];
 
   if (
     /rear cover|phone holder|armrest bag|flashlight|universal wheels|raised backrest|high back|neck support/.test(
@@ -252,12 +256,13 @@ export function isAccessoryCompatibleWithChair(
   product: CompatibilityInput,
   chairHandleOrSlot: string,
 ): boolean {
-  const slot =
+  const rawSlot =
     getHomepageProductSlot(chairHandleOrSlot) ??
     (chairHandleOrSlot in SHOPIFY_HOME_PRODUCT_HANDLES
       ? (chairHandleOrSlot as AccessoryChairSlot)
       : undefined);
 
+  const slot = rawSlot ? canonicalAccessorySlot(rawSlot) : undefined;
   if (!slot) return false;
   return resolveAccessoryCompatibility(product).includes(slot);
 }

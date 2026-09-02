@@ -5,7 +5,7 @@ import {
 import {
   getHomepageProductSlot,
   HOMEPAGE_FLAGSHIP_HANDLES,
-  isUkUnavailableProductHandle,
+  isHiddenStorefrontProductHandle,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 
@@ -82,7 +82,7 @@ export function partitionShopAllProducts<T extends ShopAllProduct>(
   accessoriesFromCollection?: T[] | null,
 ): {chairs: T[]; accessories: T[]} {
   const retailProducts = products.filter(
-    (product) => !isUkUnavailableProductHandle(product.handle),
+    (product) => !isHiddenStorefrontProductHandle(product.handle),
   );
 
   const chairs = HOMEPAGE_FLAGSHIP_HANDLES.map((slot) =>
@@ -98,7 +98,7 @@ export function partitionShopAllProducts<T extends ShopAllProduct>(
       (product) =>
         !chairHandles.has(product.handle) &&
         !getHomepageProductSlot(product.handle) &&
-        !isUkUnavailableProductHandle(product.handle) &&
+        !isHiddenStorefrontProductHandle(product.handle) &&
         !isDepositOrNonRetailSku(product.handle),
     );
     return {chairs, accessories};

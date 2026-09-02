@@ -1,9 +1,11 @@
 import {redirect} from 'react-router';
 import {LEGACY_PUBLIC_HOSTS, SITE_URL} from '~/lib/const';
 import {
+  HOMEPAGE_FLAGSHIP_HANDLES,
   isUkUnavailableProductHandle,
   SHOPIFY_HOME_PRODUCT_HANDLES,
 } from '~/lib/homepage-data';
+import {x12MergedPath} from '~/lib/x12-lineup';
 
 /**
  * Host / domain cutover notes (merchant checklist in docs/rebuild/phase-8-deploy.md):
@@ -76,7 +78,9 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/products/xsto-ezgo2-carbon-fiber-power-wheelchair': '/collections/all',
   '/products/ezgo2-mobility-robot': '/collections/all',
   '/products/xsto-x12': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`,
-  '/products/xsto-x12-pro': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
+  '/products/xsto-x12-pro': x12MergedPath('electric'),
+  [`/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`]:
+    x12MergedPath('electric'),
 
   // Lovable accessory handles → current Shopify accessory handles / catalogue
   '/products/phone-holder': '/products/phone-holder-for-m4',
@@ -116,7 +120,7 @@ const PRODUCT_PREFIX_REDIRECTS: Array<{prefix: string; target: string}> = [
   },
   {
     prefix: '/products/xsto-x12-pro',
-    target: `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`,
+    target: x12MergedPath('electric'),
   },
   {
     prefix: '/products/xsto-x12',
@@ -139,7 +143,9 @@ export type LegacyRedirectResult = {
  * Resolve a legacy URL to its new path, or null if no redirect applies.
  */
 const CANONICAL_PRODUCT_PATHS = new Set(
-  Object.values(SHOPIFY_HOME_PRODUCT_HANDLES).map((handle) => `/products/${handle}`),
+  HOMEPAGE_FLAGSHIP_HANDLES.map(
+    (slot) => `/products/${SHOPIFY_HOME_PRODUCT_HANDLES[slot]}`,
+  ),
 );
 
 export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | null {

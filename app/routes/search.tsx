@@ -14,6 +14,7 @@ import type {
 } from 'storefrontapi.generated';
 
 import {buildMeta} from '~/lib/seo';
+import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
@@ -244,7 +245,19 @@ async function regularSearch({
     throw new Error('No search data returned from Shopify API');
   }
 
-  const total = Object.values(items).reduce(
+  const visibleProducts = (items.products?.nodes ?? []).filter(
+    (product) =>
+      !product?.handle || !isHiddenStorefrontProductHandle(product.handle),
+  );
+
+  const nextItems = {
+    ...items,
+    products: items.products
+      ? {...items.products, nodes: visibleProducts}
+      : items.products,
+  };
+
+  const total = Object.values(nextItems).reduce(
     (acc: number, {nodes}: {nodes: Array<unknown>}) => acc + nodes.length,
     0,
   );
@@ -253,7 +266,7 @@ async function regularSearch({
     ? errors.map(({message}: {message: string}) => message).join(', ')
     : undefined;
 
-  return {type: 'regular', term, error, result: {total, items}};
+  return {type: 'regular', term, error, result: {total, items: nextItems}};
 }
 
 /**
@@ -423,10 +436,18 @@ async function predictiveSearch({
     throw new Error('No predictive search data returned from Shopify API');
   }
 
-  const total = Object.values(items).reduce(
+  const visibleItems = {
+    ...items,
+    products: items.products.filter(
+      (product) =>
+        !product?.handle || !isHiddenStorefrontProductHandle(product.handle),
+    ),
+  };
+
+  const total = Object.values(visibleItems).reduce(
     (acc: number, item: Array<unknown>) => acc + item.length,
     0,
   );
 
-  return {type, term, result: {items, total}};
+  return {type, term, result: {items: visibleItems, total}};
 }

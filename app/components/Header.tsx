@@ -167,7 +167,6 @@ function getProductNavMeta(url: string) {
 
 function modelIconLabel(title: string) {
   if (title === 'M4 Pro') return 'M4P';
-  if (title === 'X12 Pro') return 'X12P';
   return title.replace(/\s+/g, '').slice(0, 4);
 }
 

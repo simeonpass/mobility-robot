@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {Link} from 'react-router';
+import {Link, useSearchParams} from 'react-router';
 import {BadgePercent, Check, Pencil} from 'lucide-react';
 import type {MappedProductOptions, OptimisticCartLineInput} from '@shopify/hydrogen';
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
@@ -16,6 +16,7 @@ import {ProductDeliveryEta} from '~/components/product/ProductDeliveryEta';
 import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions';
 import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
+import {ProductX12EditionOptions} from '~/components/product/ProductX12EditionOptions';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import {
   getDeliveryInfo,
@@ -48,6 +49,24 @@ import {
   resolveVatPurchaseVariant,
   variantsHaveVatOption,
 } from '~/lib/product-vat-variants';
+import {
+  parseX12LegRest,
+  x12LegRestCartAttribute,
+  X12_LEG_REST_OPTIONS,
+  X12_LEG_REST_PARAM,
+  type X12LegRestChoice,
+} from '~/lib/x12-lineup';
+
+type ChairVariant = NonNullable<
+  ProductFragment['selectedOrFirstAvailableVariant']
+>;
+
+export type ChairPurchaseSource = {
+  handle: string;
+  selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
+  productOptions: MappedProductOptions[];
+  productVariants?: ChairVariant[];
+};
 
 type ProductPurchasePanelProps = {
   productHandle: string;
@@ -57,32 +76,27 @@ type ProductPurchasePanelProps = {
   tagline?: string;
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
   productOptions: MappedProductOptions[];
-  productVariants?: Array<{
-    id: string;
-    availableForSale?: boolean | null;
-    quantityAvailable?: number | null;
-    price?: MoneyV2 | null;
-    compareAtPrice?: MoneyV2 | null;
-    selectedOptions?: Array<{name: string; value: string}> | null;
-    sellingPlanAllocations?: ProductFragment['selectedOrFirstAvailableVariant'] extends {
-      sellingPlanAllocations?: infer A;
-    }
-      ? {nodes?: SellingPlanAllocationNode[]} | A
-      : {nodes?: SellingPlanAllocationNode[]};
-  }>;
+  productVariants?: ChairVariant[];
   accessoryAddons?: AddonProduct[];
+  /** Merged X12 page: pick Standard X12 or X12 Pro without leaving this gallery. */
+  x12Edition?: {
+    standard: ChairPurchaseSource;
+    pro: ChairPurchaseSource | null;
+    initialChoice?: X12LegRestChoice;
+  };
 };
 
 export function ProductPurchasePanel({
-  productHandle,
+  productHandle: pageHandle,
   productId,
   title,
   displayName,
   tagline,
-  selectedVariant,
-  productOptions,
-  productVariants = [],
+  selectedVariant: pageSelectedVariant,
+  productOptions: pageProductOptions,
+  productVariants: pageProductVariants = [],
   accessoryAddons = [],
+  x12Edition,
 }: ProductPurchasePanelProps) {
   const {
     declaration,
@@ -91,6 +105,43 @@ export function ProductPurchasePanel({
     openProductModal,
   } = useVatRelief();
   const {open} = useAside();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [x12Choice, setX12Choice] = useState<X12LegRestChoice>(() => {
+    if (x12Edition?.initialChoice) return x12Edition.initialChoice;
+    return parseX12LegRest(searchParams.get(X12_LEG_REST_PARAM));
+  });
+
+  const activeEdition: ChairPurchaseSource = useMemo(() => {
+    if (!x12Edition) {
+      return {
+        handle: pageHandle,
+        selectedVariant: pageSelectedVariant,
+        productOptions: pageProductOptions,
+        productVariants: pageProductVariants,
+      };
+    }
+    if (x12Choice === 'electric' && x12Edition.pro) {
+      return x12Edition.pro;
+    }
+    return x12Edition.standard;
+  }, [
+    pageHandle,
+    pageProductOptions,
+    pageProductVariants,
+    pageSelectedVariant,
+    x12Choice,
+    x12Edition,
+  ]);
+
+  const productHandle = activeEdition.handle;
+  const selectedVariant = activeEdition.selectedVariant;
+  const productOptions = activeEdition.productOptions;
+  const productVariants = activeEdition.productVariants ?? [];
+  const editionLabel =
+    x12Edition && x12Choice === 'electric'
+      ? X12_LEG_REST_OPTIONS[1].label
+      : displayName ?? title;
 
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(
     () => new Set(),
@@ -182,11 +233,47 @@ export function ProductPurchasePanel({
     Boolean(purchaseVariant?.availableForSale) &&
     (!productVatReliefEnabled || vatFormComplete);
 
-  const cartAttributes = useMemo(
-    () =>
-      productVatReliefEnabled ? buildVatCartAttributes(declaration) : [],
-    [declaration, productVatReliefEnabled],
-  );
+  const cartAttributes = useMemo(() => {
+    const vat = productVatReliefEnabled
+      ? buildVatCartAttributes(declaration)
+      : [];
+    if (!x12Edition) return vat;
+    return [...vat, x12LegRestCartAttribute(x12Choice)];
+  }, [declaration, productVatReliefEnabled, x12Choice, x12Edition]);
+
+  const standardEditionPriceLabel = x12Edition
+    ? getExVatDisplay(
+        (resolveVatPurchaseVariant(
+          x12Edition.standard.selectedVariant,
+          x12Edition.standard.productVariants ??
+            (x12Edition.standard.selectedVariant
+              ? [x12Edition.standard.selectedVariant]
+              : []),
+          false,
+        ) ?? x12Edition.standard.selectedVariant)?.price,
+      )
+    : null;
+  const proEditionPriceLabel = x12Edition?.pro
+    ? getExVatDisplay(
+        (resolveVatPurchaseVariant(
+          x12Edition.pro.selectedVariant,
+          x12Edition.pro.productVariants ??
+            (x12Edition.pro.selectedVariant
+              ? [x12Edition.pro.selectedVariant]
+              : []),
+          false,
+        ) ?? x12Edition.pro.selectedVariant)?.price,
+      )
+    : null;
+
+  const handleX12ChoiceChange = (next: X12LegRestChoice) => {
+    if (next === 'electric' && !x12Edition?.pro) return;
+    setX12Choice(next);
+    const params = new URLSearchParams(searchParams);
+    if (next === 'electric') params.set(X12_LEG_REST_PARAM, 'electric');
+    else params.delete(X12_LEG_REST_PARAM);
+    setSearchParams(params, {replace: true, preventScrollReset: true});
+  };
 
   const addonLines = useMemo(() => {
     const lines: OptimisticCartLineInput[] = [];
@@ -492,7 +579,7 @@ export function ProductPurchasePanel({
           {displayName ?? title}
         </h1>
         <ProductReviewSummary
-          productHandle={productHandle}
+          productHandle={pageHandle}
           productId={productId}
         />
         {tagline ? (
@@ -532,6 +619,16 @@ export function ProductPurchasePanel({
       />
 
       <div className="mt-3 space-y-3 sm:mt-4">
+        {x12Edition ? (
+          <ProductX12EditionOptions
+            onChange={handleX12ChoiceChange}
+            proAvailable={Boolean(x12Edition.pro)}
+            proPriceLabel={proEditionPriceLabel}
+            standardPriceLabel={standardEditionPriceLabel}
+            value={x12Choice}
+          />
+        ) : null}
+
         {depositOption ? (
           <ProductPaymentOptions
             depositAmountLabel={depositOption.depositDisplay}
@@ -548,7 +645,7 @@ export function ProductPurchasePanel({
 
         {accessoryAddons.length ? (
           <ProductAccessoryAddons
-            chairLabel={displayName ?? title}
+            chairLabel={editionLabel}
             onSelectVariant={selectAddonVariant}
             onToggle={toggleAddon}
             products={accessoryAddons}

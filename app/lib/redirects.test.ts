@@ -45,14 +45,14 @@ describe('resolveLegacyRedirect', () => {
     expect(result?.destination).toBe('/products/xsto-m4-pro');
   });
 
-  it('does not redirect canonical X12 Pro Shopify handle', () => {
+  it('redirects the X12 Pro Shopify handle to the merged X12 page', () => {
     expect(
       resolveLegacyRedirect(
         requestFor(
           '/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
         ),
-      ),
-    ).toBeNull();
+      )?.destination,
+    ).toBe('/products/x12-all-terrain-mobility-robot?legrest=electric');
   });
 
   it('returns null for unknown paths', () => {

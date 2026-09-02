@@ -12,10 +12,10 @@ import {
 import {ReviewsSection} from '~/components/home/ReviewsSection';
 import {TrustBar} from '~/components/TrustBar';
 import {
-  HOMEPAGE_PRODUCT_HANDLES,
+  HOMEPAGE_FLAGSHIP_HANDLES,
   SHOPIFY_HOME_PRODUCT_HANDLES,
   heroYoutubePosterUrl,
-  type HomepageProductHandle,
+  type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 import {buildMeta} from '~/lib/seo';
 
@@ -23,7 +23,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'XSTO Powered Wheelchairs UK',
     description:
-      'Official UK store for XSTO foldable powered wheelchairs. M4, M4 Pro, M4B, X12 and X12 Pro — free UK delivery, VAT relief eligible.',
+      'Official UK store for XSTO foldable powered wheelchairs. M4, M4B, M4 Pro and X12 — free UK delivery, VAT relief eligible.',
     path: '/',
     image: undefined,
   });
@@ -75,12 +75,11 @@ export default function Homepage() {
   );
 }
 
-const HANDLE_QUERY_KEYS: Record<HomepageProductHandle, string> = {
+const HANDLE_QUERY_KEYS: Record<HomepageFlagshipHandle, string> = {
   'xsto-m4': 'm4',
   'xsto-m4-pro': 'm4Pro',
   'xsto-m4b': 'm4b',
   'xsto-x12': 'x12',
-  'xsto-x12-pro': 'x12Pro',
 };
 
 function dedupeProducts(products: HomeProduct[]): HomeProduct[] {
@@ -93,7 +92,7 @@ function dedupeProducts(products: HomeProduct[]): HomeProduct[] {
 }
 
 type AliasProductData = Partial<
-  Record<'m4' | 'm4Pro' | 'm4b' | 'x12' | 'x12Pro', HomeProduct | null>
+  Record<'m4' | 'm4Pro' | 'm4b' | 'x12', HomeProduct | null>
 >;
 
 function resolveHomeProducts(
@@ -107,7 +106,7 @@ function resolveHomeProducts(
   const resolved: HomeProduct[] = [];
   const usedHandles = new Set<string>();
 
-  for (const slot of HOMEPAGE_PRODUCT_HANDLES) {
+  for (const slot of HOMEPAGE_FLAGSHIP_HANDLES) {
     const aliasKey = HANDLE_QUERY_KEYS[slot];
     const aliasProduct = aliasData?.[aliasKey as keyof AliasProductData] ?? null;
 
@@ -181,9 +180,6 @@ const HOME_PRODUCTS_ALIAS_QUERY = `#graphql
       ...HomeProduct
     }
     x12: product(handle: "x12-all-terrain-mobility-robot") {
-      ...HomeProduct
-    }
-    x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") {
       ...HomeProduct
     }
   }

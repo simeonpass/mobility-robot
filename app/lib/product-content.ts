@@ -87,7 +87,7 @@ const M_SERIES_DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelc
 
 Warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts, and 1 year on the battery. Bentech Medical Ltd manages all UK warranty claims as the official distributor.`;
 
-const X12_SERIES_DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. The X12 and X12 Pro are in stock, with an estimated delivery of 10 days.
+const X12_SERIES_DELIVERY_WARRANTY = `Free UK mainland delivery on all XSTO wheelchairs. The X12 is in stock, with an estimated delivery of 10 days.
 
 Warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts, and 1 year on the battery. Bentech Medical Ltd manages all UK warranty claims as the official distributor.`;
 
@@ -293,14 +293,14 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
   },
   'xsto-x12': {
     displayName: 'XSTO X12',
-    tagline: 'AI-Powered All-Terrain Mobility Robot',
+    tagline: 'AI-Powered All-Terrain Mobility Robot — choose X12 or X12 Pro',
     overview:
-      'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries with gyroscopic self-balancing.',
+      'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries with gyroscopic self-balancing. Choose X12 with a standard leg rest, or X12 Pro with an electric elevating leg rest — the chairs look the same; that is the only hardware difference.',
     highlights: [
       'Climbs stairs up to 40° incline',
       '35 km range on dual batteries',
       'Three terrain modes for any surface',
-      'LiDAR obstacle detection',
+      'Optional electric elevating leg rest',
     ],
     specs: [
       {label: 'Max Load Capacity', value: '136 kg', unit: '(300 lbs)'},
@@ -311,6 +311,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Battery', value: '25.2V', unit: '25.6Ah × 2'},
       {label: 'Charge Time', value: '6.5 hours × 2'},
       {label: 'Max Pit Width', value: '300 mm', unit: '(tracked)'},
+      {label: 'Leg rest', value: 'Standard or X12 Pro electric'},
       {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
     ],
     dimensions: [
@@ -337,12 +338,12 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     downloads: X12_SERIES_DOWNLOADS,
   },
   'xsto-x12-pro': {
-    displayName: 'XSTO X12 Pro',
-    tagline: 'AI Stair Climbing Mobility Wheelchair — Pro Edition',
+    displayName: 'XSTO X12',
+    tagline: 'AI-Powered All-Terrain Mobility Robot — X12 Pro with electric elevating leg rest',
     overview:
-      'The X12 Pro adds an electric legrest and electric seat adjustment over the standard X12. Same 136 kg capacity, 40° stair capability, dual batteries, and 35 km range — with enhanced comfort and Pro-exclusive adjustments.',
+      'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries. X12 Pro adds an electric elevating leg rest — the chairs look the same as the standard X12.',
     highlights: [
-      'Electric legrest (Pro exclusive)',
+      'Electric elevating leg rest',
       'Climbs stairs up to 40° incline',
       'Dual battery system — 35 km range',
       'LiDAR obstacle detection',
@@ -365,7 +366,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Recline Angle', value: '90°–121°'},
     ],
     inBox: [
-      'XSTO X12 Pro All-Terrain Mobility Robot',
+      'XSTO X12 All-Terrain Mobility Robot',
       '2× 25.2V 25.6Ah Lithium Battery Packs',
       'Battery Charger',
       'Joystick Controller',
@@ -376,7 +377,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     deliveryWarranty: X12_SERIES_DELIVERY_WARRANTY,
     faqs: x12FAQs,
     videos: [
-      {title: 'Watch the X12 Pro in Action', embedUrl: YOUTUBE.x12Pro},
+      {title: 'Watch the X12 in Action', embedUrl: YOUTUBE.x12Pro},
       ...X12_SERIES_VIDEOS,
     ],
     downloads: X12_SERIES_DOWNLOADS,
@@ -405,7 +406,7 @@ export function getProductDisplayName(
       'xsto-m4-pro': 'XSTO M4 Pro',
       'xsto-m4b': 'XSTO M4B',
         'xsto-x12': 'XSTO X12',
-      'xsto-x12-pro': 'XSTO X12 Pro',
+      'xsto-x12-pro': 'XSTO X12',
     } as const;
     return fromBadges[slot];
   }

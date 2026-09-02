@@ -9,7 +9,6 @@ export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-m4b',
   'xsto-m4-pro',
   'xsto-x12',
-  'xsto-x12-pro',
 ] as const satisfies readonly HomepageProductHandle[];
 
 export type HomepageFlagshipHandle =
@@ -38,11 +37,6 @@ export const HOMEPAGE_PRODUCT_BADGES: Record<
     badge: 'Stair Climber',
     shortName: 'XSTO X12',
     exploreLabel: 'Explore XSTO X12',
-  },
-  'xsto-x12-pro': {
-    badge: 'Fully Configurable',
-    shortName: 'XSTO X12 Pro',
-    exploreLabel: 'Explore XSTO X12 Pro',
   },
 };
 
@@ -84,11 +78,11 @@ export const HOMEPAGE_VIDEO_ITEMS: readonly HomepageVideoItem[] = [
       'See the M4B platform with redesigned front wheels, folding footrest, and self-balancing control',
   },
   {
-    id: 'x12-pro',
-    youtubeId: '4KFMBL5jX20',
-    title: 'XSTO X12 Pro — Stair Climber',
+    id: 'x12',
+    youtubeId: 'ihXdzLuNz2s',
+    title: 'XSTO X12 — Stair Climber',
     description:
-      "See the X12 Pro climb stairs, tackle rough terrain, and deliver Pro-exclusive comfort features",
+      'See the X12 climb stairs and tackle rough terrain. Choose X12 or X12 Pro (electric elevating leg rest) at checkout',
   },
 ];
 
@@ -106,7 +100,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': true,
       'xsto-m4b': true,
       'xsto-x12': true,
-      'xsto-x12-pro': true,
     },
   },
   {
@@ -116,7 +109,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': true,
       'xsto-m4b': true,
       'xsto-x12': true,
-      'xsto-x12-pro': true,
     },
   },
   {
@@ -126,7 +118,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': false,
       'xsto-m4b': false,
       'xsto-x12': true,
-      'xsto-x12-pro': true,
     },
   },
   {
@@ -136,7 +127,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': true,
       'xsto-m4b': false,
       'xsto-x12': false,
-      'xsto-x12-pro': true,
     },
   },
   {
@@ -145,8 +135,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': false,
       'xsto-m4-pro': false,
       'xsto-m4b': false,
-      'xsto-x12': false,
-      'xsto-x12-pro': true,
+      'xsto-x12': 'Optional',
     },
   },
   {
@@ -156,7 +145,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': false,
       'xsto-m4b': true,
       'xsto-x12': false,
-      'xsto-x12-pro': false,
     },
   },
   {
@@ -166,7 +154,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '15°',
       'xsto-m4b': '10°',
       'xsto-x12': '40°',
-      'xsto-x12-pro': '40°',
     },
   },
   {
@@ -176,7 +163,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '26 km',
       'xsto-m4b': '15 km',
       'xsto-x12': '35 km',
-      'xsto-x12-pro': '35 km',
     },
   },
   {
@@ -186,7 +172,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '6 km/h',
       'xsto-m4b': '6 km/h',
       'xsto-x12': '12 km/h',
-      'xsto-x12-pro': '12 km/h',
     },
   },
   {
@@ -196,7 +181,6 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '60.1 kg',
       'xsto-m4b': '55.5 kg',
       'xsto-x12': '112.8 kg',
-      'xsto-x12-pro': '115.8 kg',
     },
   },
 ];
@@ -206,7 +190,6 @@ export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = 
   'xsto-m4-pro': 'M4 Pro',
   'xsto-m4b': 'M4B',
   'xsto-x12': 'X12',
-  'xsto-x12-pro': 'X12 Pro',
 };
 
 /**
@@ -222,8 +205,6 @@ export const HOMEPAGE_PRODUCT_THUMBS: Record<HomepageFlagshipHandle, string> = {
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/xsto-m4-pro-mobility-wheelchair-adjustable-seat-backrest-9425362.jpg',
   'xsto-x12':
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-all-terrain-mobility-robot-8874875.jpg',
-  'xsto-x12-pro':
-    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-pro-hero.webp',
 };
 
 /** Canonical product slots used for specs, comparison data, and bullets. */
@@ -270,6 +251,27 @@ export function isUkUnavailableProductHandle(handle: string): boolean {
     return true;
   }
   return h.startsWith('xsto-ezgo2') || h.startsWith('ezgo2-');
+}
+
+/**
+ * Shopify products that remain as cart SKUs but must not appear as their
+ * own storefront listing. X12 Pro is an edition on the X12 product page.
+ */
+export const MERGED_AWAY_PRODUCT_HANDLES = [
+  'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
+] as const;
+
+export function isMergedAwayProductHandle(handle: string): boolean {
+  const h = handle.trim().toLowerCase();
+  if (!h) return false;
+  return (MERGED_AWAY_PRODUCT_HANDLES as readonly string[]).includes(h);
+}
+
+/** Hidden from grids, search, sitemaps, and shop-all. */
+export function isHiddenStorefrontProductHandle(handle: string): boolean {
+  return (
+    isUkUnavailableProductHandle(handle) || isMergedAwayProductHandle(handle)
+  );
 }
 
 /** Reverse lookup: Shopify handle → canonical slot (for bullets/specs). */
@@ -372,12 +374,12 @@ export const HOMEPAGE_PRODUCT_BULLETS: Record<
   'xsto-x12': [
     'Climbs stairs up to 40° incline',
     '35 km range on dual batteries',
-    'AI-powered automatic mode switching',
+    'Optional electric elevating leg rest',
   ],
   'xsto-x12-pro': [
     'Climbs stairs up to 40° incline',
-    'Electric legrest · 35 km dual-battery range',
-    'LiDAR obstacle detection',
+    'Electric elevating leg rest',
+    '35 km dual-battery range',
   ],
 };
 
@@ -425,15 +427,6 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
     handle: 'xsto-x12',
     shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12'],
     weight: '112.8 kg',
-    capacity: '136 kg',
-    range: '35 km',
-    foldedSize: '1185 × 685 × 617 mm',
-  },
-  {
-    model: 'X12 Pro',
-    handle: 'xsto-x12-pro',
-    shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro'],
-    weight: '115.8 kg',
     capacity: '136 kg',
     range: '35 km',
     foldedSize: '1185 × 685 × 617 mm',

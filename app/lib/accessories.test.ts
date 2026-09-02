@@ -23,7 +23,7 @@ describe('resolveAccessoryCompatibility', () => {
         title: 'Mystery Part',
         tags: ['compatible-x12', 'compatible-x12-pro'],
       }),
-    ).toEqual(['xsto-x12', 'xsto-x12-pro']);
+    ).toEqual(['xsto-x12']);
   });
 
   it('uses curated handle map', () => {

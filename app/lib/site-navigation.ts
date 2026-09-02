@@ -54,7 +54,6 @@ export const PRODUCT_NAV_GROUPS: NavGroup[] = [
     title: 'X Series',
     items: [
       chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
-      chairItem('xsto-x12-pro', 'X12 Pro', 'Fully configurable X12'),
     ],
   },
 ];
@@ -98,7 +97,6 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'M4B', url: productUrl('xsto-m4b')},
   {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
   {title: 'X12', url: productUrl('xsto-x12')},
-  {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Videos', url: '/videos'},
   {title: 'Find a Dealer', url: '/stockists'},
