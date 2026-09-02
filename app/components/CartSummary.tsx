@@ -173,6 +173,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
         {totalsSection}
 
+        {delivery.status === 'preorder' ? (
+          <p className="mt-2 text-xs leading-snug text-muted-foreground">
+            <span className="font-medium text-foreground">{delivery.headline}.</span>{' '}
+            {delivery.etaLabel}
+          </p>
+        ) : null}
+
         <div className="mt-3 flex justify-between border-t border-border pt-3">
           <span className="text-base font-semibold text-foreground">
             {totals?.hasDeposit

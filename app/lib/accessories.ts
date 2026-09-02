@@ -41,7 +41,7 @@ export const ACCESSORY_CHAIR_SECTIONS: ReadonlyArray<{
     label: 'XSTO X12',
     shortLabel: 'X12',
     description:
-      'Accessories for the all-terrain stair-climbing X12, including X12 Pro.',
+      'Accessories for the all-terrain stair-climbing X12, including X12 Pro. Available to order now — estimated delivery around 4 weeks.',
   },
 ];
 
@@ -75,7 +75,7 @@ const TAG_TO_SLOT: Record<string, AccessoryChairSlot> = {
  * this catches known catalogue items if tags are missing.
  */
 export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = {
-  'adjustable-headrest-m4-pro': ['xsto-m4-pro'],
+  'adjustable-headrest-m4-pro': ['xsto-m4-pro', 'xsto-x12'],
   'adjustable-headrest-for-x12-x12-pro': ['xsto-x12'],
   'armrest-bag': M4_AND_M4B,
   'auxiliary-joystick-m4-pro': ['xsto-m4-pro', 'xsto-m4', 'xsto-m4b'],
@@ -91,6 +91,7 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
   ],
   'buy-universal-phone-holder': M4_AND_M4B,
   'calf-support-set-for-x12-x12pro': ['xsto-x12'],
+  'cooling-seat-cushion-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
   'cup-holder-for-all-models': [
     'xsto-m4',
     'xsto-m4b',
@@ -106,6 +107,7 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
   'lithium-10-4ah-battery-batteries-lithium-battery': ALL_M4_FAMILY,
   'lithium-15-6-ah-battery': ALL_M4_FAMILY,
   'phone-holder-for-m4': M4_AND_M4B,
+  'phone-holder-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
   'power-chair-battery-charger': ALL_M4_FAMILY,
   /** Live Shopify product: one listing with 7 colour variants. */
   'rear-cover-m4': M4_AND_M4B,
@@ -117,15 +119,25 @@ export const ACCESSORY_COMPAT_BY_HANDLE: Record<string, AccessoryChairSlot[]> = 
   'rear-cover-superior-purple': M4_AND_M4B,
   'rear-cover-tiffany-blue': M4_AND_M4B,
   'rear-view-mirror-m4-pro': ['xsto-m4-pro'],
+  'rear-view-mirror-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
   'right-lateral-support-m4-pro': ['xsto-m4-pro'],
   'seat-cushion-large-m4-pro': ['xsto-m4-pro'],
   'seat-cushion-small-m4-pro': ['xsto-m4-pro'],
+  'straight-backrest-cushion-s-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
+  'straight-backrest-cushion-m-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
+  'straight-backrest-cushion-l-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
+  'straight-seat-cushion-s-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
+  'straight-seat-cushion-m-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
+  'straight-seat-cushion-l-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
   'travel-cushion-seat-with-pump': ALL_M4_FAMILY,
   'travel-cushion-with-pump': ALL_M4_FAMILY,
-  'trunk-support': ['xsto-m4-pro'],
+  'trunk-support': ['xsto-m4-pro', 'xsto-x12'],
+  'trunk-support-m4-pro': ['xsto-m4-pro', 'xsto-x12'],
   'umbrella-attachment': ALL_M4_FAMILY,
+  'umbrella-holder-m4-pro-x12': ['xsto-m4-pro', 'xsto-x12'],
   'universal-wheels-for-xsto-m4': M4_AND_M4B,
   'wheelchair-battery-charger': ALL_M4_FAMILY,
+  'x12-x12-pro-battery-25-2v-25-6ah': ['xsto-x12'],
 };
 
 type CompatibilityInput = {
@@ -200,6 +212,40 @@ function slotsFromTitle(title: string): AccessoryChairSlot[] | null {
 
 /** Handles that must appear in accessories UI even if missing from the collection. */
 export const FORCED_ACCESSORY_HANDLES = ['rear-cover-m4'] as const;
+
+/**
+ * Handles whose Shopify title/tags include X12 but the handle does not.
+ * Chairs are excluded by getHomepageProductSlot in accessoryFitsX12.
+ */
+const X12_ACCESSORY_HANDLE_EXTRAS = new Set([
+  'adjustable-headrest-m4-pro',
+  'trunk-support',
+  'trunk-support-m4-pro',
+]);
+
+/**
+ * True for accessories sold for the X12 (including shared M4 Pro & X12 parts).
+ * Used to show a ~4 week pre-order / backorder lead time.
+ */
+export function accessoryFitsX12(
+  handle?: string | null,
+  title = '',
+  tags?: readonly string[] | null,
+): boolean {
+  if (!handle) return false;
+  const h = handle.trim().toLowerCase();
+  if (!h) return false;
+  if (getHomepageProductSlot(h)) return false;
+
+  if (h.includes('x12')) return true;
+  if (X12_ACCESSORY_HANDLE_EXTRAS.has(h)) return true;
+
+  return resolveAccessoryCompatibility({
+    handle: h,
+    title: title || h,
+    tags,
+  }).includes('xsto-x12');
+}
 
 /** Resolve which chairs an accessory fits. */
 export function resolveAccessoryCompatibility(

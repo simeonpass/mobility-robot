@@ -19,7 +19,7 @@ import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {ProductX12EditionOptions} from '~/components/product/ProductX12EditionOptions';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
 import {
-  getDeliveryInfo,
+  getCartDeliveryInfo,
   isForcedInStock,
   isForcedPreorder,
 } from '~/lib/product-delivery';
@@ -181,14 +181,6 @@ export function ProductPurchasePanel({
     : colourBaseVariant?.price;
   const compareAtPrice = colourBaseVariant?.compareAtPrice;
 
-  const delivery = purchaseVariant
-    ? getDeliveryInfo({
-        availableForSale: purchaseVariant.availableForSale,
-        quantityAvailable: purchaseVariant.quantityAvailable,
-        handle: productHandle,
-      })
-    : null;
-
   const purchaseOptions = useMemo(
     () =>
       isForcedInStock(productHandle)
@@ -307,6 +299,42 @@ export function ProductPurchasePanel({
   }, [accessoryAddons, cartAttributes, selectedAddonIds, vatReliefActive]);
 
   const addonCount = addonLines.length;
+
+  const delivery = purchaseVariant
+    ? getCartDeliveryInfo([
+        {
+          merchandise: {
+            availableForSale: purchaseVariant.availableForSale,
+            quantityAvailable: purchaseVariant.quantityAvailable,
+            product: {handle: productHandle},
+          },
+        },
+        ...addonLines.flatMap((line) => {
+          const variant = line.selectedVariant as
+            | {product?: {handle?: string | null} | null}
+            | undefined;
+          const handle =
+            variant?.product?.handle ??
+            accessoryAddons.find(
+              (product) =>
+                product.selectedOrFirstAvailableVariant?.id ===
+                  line.merchandiseId ||
+                (product.variants?.nodes ?? []).some(
+                  (node) => node.id === line.merchandiseId,
+                ),
+            )?.handle;
+          if (!handle) return [];
+          return [
+            {
+              merchandise: {
+                availableForSale: true,
+                product: {handle},
+              },
+            },
+          ];
+        }),
+      ])
+    : null;
 
   const standardPackagePrice = useMemo(() => {
     if (!dualVatPricing) return null;

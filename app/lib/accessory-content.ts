@@ -1,5 +1,6 @@
 import {
   ACCESSORY_CHAIR_SECTIONS,
+  accessoryFitsX12,
   formatCompatibilityLabel,
   resolveAccessoryCompatibility,
   type AccessoryChairSlot,
@@ -92,6 +93,10 @@ const ACCESSORY_DELIVERY = `Accessories typically ship with free UK mainland del
 
 In-stock accessories usually dispatch within a few working days. Warranty cover follows the accessory type — contact us if you need help confirming fitment or spare-part eligibility.`;
 
+const X12_ACCESSORY_DELIVERY = `X12 accessories are available to order now on a ~4 week pre-order / backorder. You can still add them to your basket today.
+
+They usually ship by parcel courier as a spare, or alongside an X12 when the dates line up. Warranty cover follows the accessory type — contact us if you need help confirming fitment.`;
+
 export function buildAccessoryOverviewHtml({
   handle,
   title,
@@ -174,7 +179,9 @@ export function buildAccessoryTabExtras(product: {
 
   return {
     ...overview,
-    deliveryWarranty: ACCESSORY_DELIVERY,
+    deliveryWarranty: accessoryFitsX12(product.handle, product.title, product.tags)
+      ? X12_ACCESSORY_DELIVERY
+      : ACCESSORY_DELIVERY,
     compatibilityLabel: formatCompatibilityLabel(slots),
     compatibilityChairs: accessoryCompatibilityLinks(slots),
   };

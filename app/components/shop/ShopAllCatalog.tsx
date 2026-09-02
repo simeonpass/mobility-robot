@@ -3,6 +3,7 @@ import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight} from 'lucide-react';
 import {SectionIntro} from '~/components/home/SectionIntro';
 import {
+  accessoryFitsX12,
   formatCompatibilityLabel,
   resolveAccessoryCompatibility,
 } from '~/lib/accessories';
@@ -13,7 +14,11 @@ import {
   HOMEPAGE_PRODUCT_BADGES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
-import {isForcedLowStock, isForcedPreorder} from '~/lib/product-delivery';
+import {
+  isForcedLowStock,
+  isForcedPreorder,
+  X12_ACCESSORY_PREORDER_LABEL,
+} from '~/lib/product-delivery';
 import {getProductListPrice} from '~/lib/product-vat-variants';
 import {type ShopAllProduct} from '~/lib/shop-all';
 
@@ -222,6 +227,9 @@ function AccessoryCard({product}: {product: ShopAllProduct}) {
         <div className="flex flex-1 flex-col p-4">
           <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             {formatCompatibilityLabel(slots)}
+            {accessoryFitsX12(product.handle, product.title, product.tags)
+              ? ` · Pre-order ${X12_ACCESSORY_PREORDER_LABEL}`
+              : ''}
           </p>
           <h3 className="mt-1.5 text-base font-semibold leading-snug text-foreground">
             {product.title}

@@ -4,9 +4,11 @@ import {Link} from 'react-router';
 import {Check} from 'lucide-react';
 import {
   FEATURED_ADDON_HANDLES,
+  accessoryFitsX12,
   formatCompatibilityLabel,
   resolveAccessoryCompatibility,
 } from '~/lib/accessories';
+import {X12_ACCESSORY_PREORDER_LABEL} from '~/lib/product-delivery';
 import {formatExVatPrice} from '~/lib/homepage-data';
 
 export type AddonVariant = {
@@ -232,6 +234,9 @@ export function ProductAccessoryAddons({
                       <p className="mt-1 text-base leading-snug text-slate">
                         {hasColours ? 'Choose a colour · ' : ''}
                         {formatCompatibilityLabel(slots)}
+                        {accessoryFitsX12(product.handle, product.title, product.tags)
+                          ? ` · Pre-order ${X12_ACCESSORY_PREORDER_LABEL}`
+                          : ''}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
