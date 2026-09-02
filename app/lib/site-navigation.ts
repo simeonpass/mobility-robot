@@ -38,21 +38,16 @@ function chairItem(
 }
 
 /**
- * Product series shown in the Models dropdown / mobile menu.
- * Ordered M series → X series.
+ * Flagship chairs in the Models menu.
+ * One flat range — M4, M4B, M4 Pro and X12 — not series columns.
  */
 export const PRODUCT_NAV_GROUPS: NavGroup[] = [
   {
-    title: 'M Series',
+    title: 'The range',
     items: [
       chairItem('xsto-m4', 'M4', 'Self-levelling everyday chair'),
       chairItem('xsto-m4b', 'M4B', 'Updated wheels & footrest'),
       chairItem('xsto-m4-pro', 'M4 Pro', 'Premium comfort & capacity'),
-    ],
-  },
-  {
-    title: 'X Series',
-    items: [
       chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
     ],
   },

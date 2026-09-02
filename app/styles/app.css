@@ -731,36 +731,16 @@
   }
 
   .site-header-dropdown-grid {
-    @apply grid gap-0 sm:grid-cols-2;
-  }
-
-  .site-header-dropdown-group {
-    @apply border-b p-4 sm:border-b-0 sm:border-r sm:p-5 sm:last:border-r-0;
-    border-color: hsl(var(--navy) / 0.08);
-  }
-
-  .site-header-dropdown-group[data-series='M Series'] .site-header-dropdown-label {
-    color: hsl(var(--navy));
-  }
-
-  .site-header-dropdown-group[data-series='X Series'] .site-header-dropdown-label {
-    color: hsl(var(--navy-light));
-  }
-
-  .site-header-dropdown-label {
-    @apply mb-3 px-1 font-display text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-navy/45;
-  }
-
-  .site-header-dropdown-list {
-    @apply m-0 flex list-none flex-col gap-1.5 p-0;
+    @apply m-0 grid list-none grid-cols-1 gap-2 p-4 sm:grid-cols-2 sm:p-5;
   }
 
   .site-header-dropdown-item {
-    @apply flex items-center gap-3 rounded-xl border border-transparent px-2 py-2 no-underline transition-all duration-200 hover:no-underline;
+    @apply flex h-full items-center gap-3 rounded-xl border px-3 py-2.5 no-underline transition-all duration-200 hover:no-underline;
+    border-color: hsl(var(--navy) / 0.08);
   }
 
   .site-header-dropdown-item:hover {
-    border-color: hsl(var(--navy) / 0.08);
+    border-color: hsl(var(--navy) / 0.16);
     background: hsl(var(--navy) / 0.035);
     box-shadow: 0 2px 8px hsl(var(--navy) / 0.04);
   }
@@ -783,12 +763,6 @@
     @apply flex size-10 shrink-0 items-center justify-center rounded-lg font-display text-[0.6875rem] font-bold uppercase tracking-tight;
     background: hsl(var(--navy) / 0.06);
     color: hsl(var(--navy));
-  }
-
-  .site-header-dropdown-group[data-series='X Series']
-    .site-header-dropdown-item-icon {
-    background: hsl(var(--navy) / 0.1);
-    color: hsl(var(--navy-light));
   }
 
   .site-header-dropdown-item-body {

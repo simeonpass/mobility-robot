@@ -24,7 +24,6 @@ import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
   HEADER_SECONDARY_NAV,
-  PRODUCT_NAV_GROUPS,
   PRODUCT_NAV_ITEMS,
   type NavItem,
 } from '~/lib/site-navigation';
@@ -230,93 +229,80 @@ function ModelsDropdown() {
           <div className="site-header-dropdown-intro">
             <p className="site-header-dropdown-eyebrow">Shop XSTO</p>
             <p className="site-header-dropdown-tagline">
-              Foldable powered wheelchairs — from everyday self-levelling to
-              all-terrain stair climbers.
+              Four models — everyday self-levelling chairs and the all-terrain
+              X12 stair climber.
             </p>
           </div>
 
-          <div className="site-header-dropdown-grid">
-            {PRODUCT_NAV_GROUPS.map((group) => (
-              <div
-                className="site-header-dropdown-group"
-                data-series={group.title}
-                key={group.title}
-              >
-                <p className="site-header-dropdown-label">{group.title}</p>
-                <ul className="site-header-dropdown-list">
-                  {group.items.map((item) => {
-                    const meta = getProductNavMeta(item.url);
-                    return (
-                      <li key={item.url}>
-                        <NavLink
-                          className={({isActive}) =>
-                            [
-                              'site-header-dropdown-item',
-                              isActive
-                                ? 'site-header-dropdown-item--active'
-                                : '',
-                            ]
-                              .filter(Boolean)
-                              .join(' ')
-                          }
-                          onClick={() => setOpen(false)}
-                          prefetch="intent"
-                          role="menuitem"
-                          to={item.url}
-                        >
-                          {item.imageUrl ? (
-                            <span
-                              aria-hidden
-                              className="site-header-dropdown-item-thumb"
-                            >
-                              <img
-                                alt=""
-                                className="site-header-dropdown-item-thumb-img"
-                                decoding="async"
-                                height={56}
-                                loading="lazy"
-                                src={`${item.imageUrl}?width=112&height=112`}
-                                width={56}
-                              />
-                            </span>
-                          ) : (
-                            <span
-                              aria-hidden
-                              className="site-header-dropdown-item-icon"
-                            >
-                              {modelIconLabel(item.title)}
-                            </span>
-                          )}
-                          <span className="site-header-dropdown-item-body">
-                            <span className="site-header-dropdown-item-row">
-                              <span className="site-header-dropdown-item-title">
-                                {meta?.shortName ?? item.title}
-                              </span>
-                              {meta?.badge ? (
-                                <span className="site-header-dropdown-item-badge">
-                                  {meta.badge}
-                                </span>
-                              ) : null}
-                            </span>
-                            {item.description ? (
-                              <span className="site-header-dropdown-item-desc">
-                                {item.description}
-                              </span>
-                            ) : null}
+          <ul className="site-header-dropdown-grid">
+            {PRODUCT_NAV_ITEMS.map((item) => {
+              const meta = getProductNavMeta(item.url);
+              return (
+                <li key={item.url}>
+                  <NavLink
+                    className={({isActive}) =>
+                      [
+                        'site-header-dropdown-item',
+                        isActive ? 'site-header-dropdown-item--active' : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')
+                    }
+                    onClick={() => setOpen(false)}
+                    prefetch="intent"
+                    role="menuitem"
+                    to={item.url}
+                  >
+                    {item.imageUrl ? (
+                      <span
+                        aria-hidden
+                        className="site-header-dropdown-item-thumb"
+                      >
+                        <img
+                          alt=""
+                          className="site-header-dropdown-item-thumb-img"
+                          decoding="async"
+                          height={56}
+                          loading="lazy"
+                          src={`${item.imageUrl}?width=112&height=112`}
+                          width={56}
+                        />
+                      </span>
+                    ) : (
+                      <span
+                        aria-hidden
+                        className="site-header-dropdown-item-icon"
+                      >
+                        {modelIconLabel(item.title)}
+                      </span>
+                    )}
+                    <span className="site-header-dropdown-item-body">
+                      <span className="site-header-dropdown-item-row">
+                        <span className="site-header-dropdown-item-title">
+                          {meta?.shortName ?? item.title}
+                        </span>
+                        {meta?.badge ? (
+                          <span className="site-header-dropdown-item-badge">
+                            {meta.badge}
                           </span>
-                          <ArrowRight
-                            aria-hidden
-                            className="site-header-dropdown-item-arrow"
-                            strokeWidth={2}
-                          />
-                        </NavLink>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
-          </div>
+                        ) : null}
+                      </span>
+                      {item.description ? (
+                        <span className="site-header-dropdown-item-desc">
+                          {item.description}
+                        </span>
+                      ) : null}
+                    </span>
+                    <ArrowRight
+                      aria-hidden
+                      className="site-header-dropdown-item-arrow"
+                      strokeWidth={2}
+                    />
+                  </NavLink>
+                </li>
+              );
+            })}
+          </ul>
 
           <div className="site-header-dropdown-footer">
             <div className="site-header-dropdown-footer-links">
@@ -382,13 +368,8 @@ function MobileNav({
 
       <div className="site-header-mobile-section">
         <p className="site-header-mobile-label">Models</p>
-        {PRODUCT_NAV_GROUPS.map((group) => (
-          <div className="site-header-mobile-group" key={group.title}>
-            <p className="site-header-mobile-group-title">{group.title}</p>
-            {group.items.map((item) => (
-              <MobileNavLink close={close} item={item} key={item.url} />
-            ))}
-          </div>
+        {PRODUCT_NAV_ITEMS.map((item) => (
+          <MobileNavLink close={close} item={item} key={item.url} />
         ))}
       </div>
 
