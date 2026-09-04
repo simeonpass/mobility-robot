@@ -18,6 +18,10 @@ const PRODUCTS_QUERY = `#graphql
         variants(first: 100) {
           nodes {
             id
+            selectedOptions {
+              name
+              value
+            }
           }
         }
       }
@@ -28,7 +32,12 @@ const PRODUCTS_QUERY = `#graphql
 type FeedProduct = {
   id: string;
   handle: string;
-  variants?: {nodes?: Array<{id: string} | null> | null};
+  variants?: {
+    nodes?: Array<{
+      id: string;
+      selectedOptions?: Array<{name: string; value: string}> | null;
+    } | null> | null;
+  };
 };
 
 export async function loader({context: {storefront}}: LoaderFunctionArgs) {
