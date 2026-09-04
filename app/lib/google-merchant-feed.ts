@@ -1,24 +1,73 @@
-import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
+import {
+  isMergedAwayProductHandle,
+  isUkUnavailableProductHandle,
+} from '~/lib/homepage-data';
 import {
   googleShoppingOfferId,
+  numericShopifyId,
   storefrontProductUrl,
 } from '~/lib/product-variant-url';
+import {isVatReliefVariant} from '~/lib/product-vat-variants';
+import {
+  getX12EditionValue,
+  isX12CanonicalHandle,
+  X12_EDITION_PRO_VALUE,
+  x12MergedPath,
+} from '~/lib/x12-lineup';
 import {SITE_URL} from '~/lib/const';
 
 export const GOOGLE_SHOPPING_FEED_COUNTRIES = ['ZZ', 'GB'] as const;
+
+/**
+ * VAT Relief variants are checkout-only price SKUs. They must never be
+ * advertised as standalone Google offers because the public landing page
+ * defaults back to the VAT-inclusive Standard variant until the customer
+ * completes the VAT declaration.
+ */
+export const VAT_RELIEF_EXCLUDED_DESTINATIONS =
+  'Shopping_ads,Display_ads,Free_listings,Youtube_affiliate,Youtube_merchandise';
+
+type GoogleMerchantSelectedOption = {
+  name: string;
+  value: string;
+};
+
+export type GoogleMerchantFeedVariant = {
+  id: string;
+  selectedOptions?: GoogleMerchantSelectedOption[] | null;
+};
 
 export type GoogleMerchantFeedProduct = {
   id: string;
   handle: string;
   variants?: {
-    nodes?: Array<{id: string} | null> | null;
+    nodes?: Array<GoogleMerchantFeedVariant | null> | null;
   } | null;
 };
 
 export type GoogleMerchantFeedRow = {
   id: string;
   link: string;
+  excludedDestination?: string;
 };
+
+function googleMerchantLandingPath(
+  productHandle: string,
+  variant: GoogleMerchantFeedVariant,
+): string {
+  const mergedX12Pro = isMergedAwayProductHandle(productHandle);
+  const x12ProEdition =
+    isX12CanonicalHandle(productHandle) &&
+    getX12EditionValue(variant.selectedOptions) === X12_EDITION_PRO_VALUE;
+
+  if (mergedX12Pro || x12ProEdition) {
+    const variantId = numericShopifyId(variant.id);
+    const path = x12MergedPath('electric');
+    return variantId ? `${path}&variant=${variantId}` : path;
+  }
+
+  return storefrontProductUrl(productHandle, variant.id);
+}
 
 export function googleMerchantFeedRows(
   products: GoogleMerchantFeedProduct[],
@@ -27,16 +76,21 @@ export function googleMerchantFeedRows(
   const rows: GoogleMerchantFeedRow[] = [];
 
   for (const product of products) {
-    if (!product.handle || isHiddenStorefrontProductHandle(product.handle)) {
+    if (!product.handle || isUkUnavailableProductHandle(product.handle)) {
       continue;
     }
+
     for (const variant of product.variants?.nodes ?? []) {
       if (!variant?.id) continue;
-      const path = storefrontProductUrl(product.handle, variant.id);
-      const link = `${origin}${path}`;
+
+      const link = `${origin}${googleMerchantLandingPath(product.handle, variant)}`;
+      const excludedDestination = isVatReliefVariant(variant.selectedOptions)
+        ? VAT_RELIEF_EXCLUDED_DESTINATIONS
+        : undefined;
+
       for (const country of GOOGLE_SHOPPING_FEED_COUNTRIES) {
         const id = googleShoppingOfferId(product.id, variant.id, country);
-        if (id) rows.push({id, link});
+        if (id) rows.push({id, link, excludedDestination});
       }
     }
   }
@@ -45,9 +99,11 @@ export function googleMerchantFeedRows(
 }
 
 export function googleMerchantTsv(rows: GoogleMerchantFeedRow[]): string {
-  const lines = ['id\tlink'];
+  const lines = ['id\tlink\texcluded_destination'];
   for (const row of rows) {
-    lines.push(`${row.id}\t${row.link}`);
+    lines.push(
+      `${row.id}\t${row.link}\t${row.excludedDestination ?? ''}`,
+    );
   }
   return `${lines.join('\n')}\n`;
 }
