@@ -7,14 +7,19 @@ import {ProductVideoPlayer} from '~/components/product/ProductVideoPlayer';
 type ProductVideoHeroProps = {
   video: ProductVideo;
   productName: string;
+  className?: string;
 };
 
-export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
+export function ProductVideoHero({
+  video,
+  productName,
+  className,
+}: ProductVideoHeroProps) {
   const [playing, setPlaying] = useState(false);
   const youtubeId = extractYoutubeVideoId(video.embedUrl);
 
   return (
-    <section className="mt-10 md:mt-12">
+    <section className={className ?? 'mt-10 md:mt-12'}>
       <h2 className="mb-4 text-center font-display text-xl font-semibold tracking-[-0.02em] text-navy md:text-2xl">
         {video.title}
       </h2>
