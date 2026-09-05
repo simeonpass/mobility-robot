@@ -7,6 +7,7 @@ import {
   numericShopifyId,
   storefrontProductUrl,
 } from '~/lib/product-variant-url';
+import {catalogToExVatAmount} from '~/lib/pricing-mode';
 import {isVatReliefVariant} from '~/lib/product-vat-variants';
 import {
   getX12EditionValue,
@@ -32,8 +33,14 @@ type GoogleMerchantSelectedOption = {
   value: string;
 };
 
+type GoogleMerchantMoney = {
+  amount: string;
+  currencyCode: string;
+};
+
 export type GoogleMerchantFeedVariant = {
   id: string;
+  price?: GoogleMerchantMoney | null;
   selectedOptions?: GoogleMerchantSelectedOption[] | null;
 };
 
@@ -48,6 +55,7 @@ export type GoogleMerchantFeedProduct = {
 export type GoogleMerchantFeedRow = {
   id: string;
   link: string;
+  price?: string;
   excludedDestination?: string;
 };
 
@@ -69,9 +77,28 @@ function googleMerchantLandingPath(
   return storefrontProductUrl(productHandle, variant.id);
 }
 
+function googleMerchantExVatPrice(
+  variant: GoogleMerchantFeedVariant,
+  shopifyPricesExVat: boolean,
+): string | undefined {
+  const amount = variant.price?.amount;
+  const currencyCode = variant.price?.currencyCode;
+  if (!amount || !currencyCode) return undefined;
+
+  // VAT Relief variants are already net-price SKUs. Standard variants use the
+  // catalog price converted to the customer's VAT-exempt / ex-VAT amount.
+  const exVat = isVatReliefVariant(variant.selectedOptions)
+    ? Number(amount)
+    : catalogToExVatAmount(amount, shopifyPricesExVat);
+
+  if (!Number.isFinite(exVat) || exVat <= 0) return undefined;
+  return `${exVat.toFixed(2)} ${currencyCode}`;
+}
+
 export function googleMerchantFeedRows(
   products: GoogleMerchantFeedProduct[],
   origin = SITE_URL,
+  shopifyPricesExVat = false,
 ): GoogleMerchantFeedRow[] {
   const rows: GoogleMerchantFeedRow[] = [];
 
@@ -84,13 +111,14 @@ export function googleMerchantFeedRows(
       if (!variant?.id) continue;
 
       const link = `${origin}${googleMerchantLandingPath(product.handle, variant)}`;
+      const price = googleMerchantExVatPrice(variant, shopifyPricesExVat);
       const excludedDestination = isVatReliefVariant(variant.selectedOptions)
         ? VAT_RELIEF_EXCLUDED_DESTINATIONS
         : undefined;
 
       for (const country of GOOGLE_SHOPPING_FEED_COUNTRIES) {
         const id = googleShoppingOfferId(product.id, variant.id, country);
-        if (id) rows.push({id, link, excludedDestination});
+        if (id) rows.push({id, link, price, excludedDestination});
       }
     }
   }
@@ -99,10 +127,10 @@ export function googleMerchantFeedRows(
 }
 
 export function googleMerchantTsv(rows: GoogleMerchantFeedRow[]): string {
-  const lines = ['id\tlink\texcluded_destination'];
+  const lines = ['id\tlink\tprice\texcluded_destination'];
   for (const row of rows) {
     lines.push(
-      `${row.id}\t${row.link}\t${row.excludedDestination ?? ''}`,
+      `${row.id}\t${row.link}\t${row.price ?? ''}\t${row.excludedDestination ?? ''}`,
     );
   }
   return `${lines.join('\n')}\n`;
