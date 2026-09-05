@@ -7,7 +7,7 @@ import {
 } from './google-merchant-feed';
 
 describe('google merchant supplemental feed', () => {
-  it('uses Hydrogen links, excludes checkout-only VAT variants, and maps X12 Pro', () => {
+  it('uses VAT-exclusive prices, Hydrogen links, excludes checkout-only VAT variants, and maps X12 Pro', () => {
     const rows = googleMerchantFeedRows([
       {
         id: 'gid://shopify/Product/15648931250554',
@@ -16,10 +16,12 @@ describe('google merchant supplemental feed', () => {
           nodes: [
             {
               id: 'gid://shopify/ProductVariant/56507462189434',
+              price: {amount: '4200.00', currencyCode: 'GBP'},
               selectedOptions: [{name: 'VAT', value: 'Standard'}],
             },
             {
               id: 'gid://shopify/ProductVariant/57163988533626',
+              price: {amount: '3500.00', currencyCode: 'GBP'},
               selectedOptions: [{name: 'VAT', value: 'VAT Relief'}],
             },
           ],
@@ -32,6 +34,7 @@ describe('google merchant supplemental feed', () => {
           nodes: [
             {
               id: 'gid://shopify/ProductVariant/2',
+              price: {amount: '5994.00', currencyCode: 'GBP'},
               selectedOptions: [{name: 'VAT', value: 'Standard'}],
             },
           ],
@@ -40,7 +43,14 @@ describe('google merchant supplemental feed', () => {
       {
         id: 'gid://shopify/Product/3',
         handle: 'xsto-ezgo2-carbon-fiber-power-wheelchair',
-        variants: {nodes: [{id: 'gid://shopify/ProductVariant/4'}]},
+        variants: {
+          nodes: [
+            {
+              id: 'gid://shopify/ProductVariant/4',
+              price: {amount: '1200.00', currencyCode: 'GBP'},
+            },
+          ],
+        },
       },
     ]);
 
@@ -48,42 +58,51 @@ describe('google merchant supplemental feed', () => {
       {
         id: 'shopify_ZZ_15648931250554_56507462189434',
         link: `${SITE_URL}/products/xsto-m4-pro?variant=56507462189434`,
+        price: '3500.00 GBP',
         excludedDestination: undefined,
       },
       {
         id: 'shopify_GB_15648931250554_56507462189434',
         link: `${SITE_URL}/products/xsto-m4-pro?variant=56507462189434`,
+        price: '3500.00 GBP',
         excludedDestination: undefined,
       },
       {
         id: 'shopify_ZZ_15648931250554_57163988533626',
         link: `${SITE_URL}/products/xsto-m4-pro?variant=57163988533626`,
+        price: '3500.00 GBP',
         excludedDestination: VAT_RELIEF_EXCLUDED_DESTINATIONS,
       },
       {
         id: 'shopify_GB_15648931250554_57163988533626',
         link: `${SITE_URL}/products/xsto-m4-pro?variant=57163988533626`,
+        price: '3500.00 GBP',
         excludedDestination: VAT_RELIEF_EXCLUDED_DESTINATIONS,
       },
       {
         id: 'shopify_ZZ_1_2',
         link: `${SITE_URL}/products/x12-all-terrain-mobility-robot?legrest=electric&variant=2`,
+        price: '4995.00 GBP',
         excludedDestination: undefined,
       },
       {
         id: 'shopify_GB_1_2',
         link: `${SITE_URL}/products/x12-all-terrain-mobility-robot?legrest=electric&variant=2`,
+        price: '4995.00 GBP',
         excludedDestination: undefined,
       },
     ]);
 
     const tsv = googleMerchantTsv(rows);
-    expect(tsv).toContain('id\tlink\texcluded_destination');
+    expect(tsv).toContain('id\tlink\tprice\texcluded_destination');
     expect(tsv).toContain(
-      `shopify_GB_15648931250554_57163988533626\t${SITE_URL}/products/xsto-m4-pro?variant=57163988533626\t${VAT_RELIEF_EXCLUDED_DESTINATIONS}`,
+      `shopify_GB_15648931250554_56507462189434\t${SITE_URL}/products/xsto-m4-pro?variant=56507462189434\t3500.00 GBP\t`,
     );
     expect(tsv).toContain(
-      `shopify_GB_1_2\t${SITE_URL}/products/x12-all-terrain-mobility-robot?legrest=electric&variant=2\t`,
+      `shopify_GB_15648931250554_57163988533626\t${SITE_URL}/products/xsto-m4-pro?variant=57163988533626\t3500.00 GBP\t${VAT_RELIEF_EXCLUDED_DESTINATIONS}`,
+    );
+    expect(tsv).toContain(
+      `shopify_GB_1_2\t${SITE_URL}/products/x12-all-terrain-mobility-robot?legrest=electric&variant=2\t4995.00 GBP\t`,
     );
     expect(tsv).not.toContain('xsto-ezgo2');
   });
