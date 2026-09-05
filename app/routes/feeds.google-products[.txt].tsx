@@ -18,6 +18,10 @@ const PRODUCTS_QUERY = `#graphql
         variants(first: 100) {
           nodes {
             id
+            price {
+              amount
+              currencyCode
+            }
             selectedOptions {
               name
               value
@@ -35,6 +39,7 @@ type FeedProduct = {
   variants?: {
     nodes?: Array<{
       id: string;
+      price?: {amount: string; currencyCode: string} | null;
       selectedOptions?: Array<{name: string; value: string}> | null;
     } | null> | null;
   };
@@ -55,7 +60,11 @@ export async function loader({context: {storefront}}: LoaderFunctionArgs) {
     cursor = connection?.pageInfo?.endCursor ?? null;
   }
 
-  const body = googleMerchantTsv(googleMerchantFeedRows(products, SITE_URL));
+  // Shopify catalog prices are currently VAT-inclusive. The Merchant feed
+  // deliberately publishes the VAT-exempt / ex-VAT customer price instead.
+  const body = googleMerchantTsv(
+    googleMerchantFeedRows(products, SITE_URL, false),
+  );
 
   return new Response(body, {
     status: 200,
