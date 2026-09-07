@@ -1,5 +1,6 @@
 import type {LoaderFunctionArgs} from 'react-router';
 import {loader as productFeedLoader} from './feeds.google-products[.txt]';
+import {marketProductUrl, requestCountry} from '~/lib/market';
 
 /**
  * Scheduled Merchant Center supplement for headless landing-page links.
@@ -8,6 +9,7 @@ import {loader as productFeedLoader} from './feeds.google-products[.txt]';
  * which must not overwrite the standard prices in the primary feed.
  */
 export async function loader(args: LoaderFunctionArgs) {
+  const country = requestCountry(new URL(args.request.url));
   const response = await productFeedLoader(args);
   if (!response.ok) return response;
 
@@ -25,7 +27,10 @@ export async function loader(args: LoaderFunctionArgs) {
     // Shopify's current market feeds use ZZ IDs. Legacy GB IDs have no
     // matching primary offers and produce supplemental-feed errors.
     .filter((values) => values[idIndex]?.startsWith('shopify_ZZ_'))
-    .map((values) => `${values[idIndex]}\t${values[linkIndex]}`);
+    .map(
+      (values) =>
+        `${values[idIndex]}\t${marketProductUrl(values[linkIndex], country)}`,
+    );
   const headers = new Headers(response.headers);
   headers.delete('Content-Length');
   return new Response(`id\tlink\n${rows.join('\n')}\n`, {headers});

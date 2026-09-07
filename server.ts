@@ -31,10 +31,18 @@ export default {
       const response = await handleRequest(request);
 
       if (hydrogenContext.session.isPending) {
-        response.headers.set(
+        response.headers.append(
           'Set-Cookie',
           await hydrogenContext.session.commit(),
         );
+      }
+
+      // Session-selected market prices must not be shared across visitors.
+      if (
+        !new URL(request.url).pathname.startsWith('/feeds/') &&
+        hydrogenContext.session.get('marketCountry')
+      ) {
+        response.headers.set('Cache-Control', 'private, no-store');
       }
 
       if (response.status === 404) {

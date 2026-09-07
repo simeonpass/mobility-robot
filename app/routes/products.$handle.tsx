@@ -101,7 +101,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const selectedOptions = withX12EditionSelectedOptions(
     handle,
     getSelectedProductOptions(request).filter(
-      (option) => option.name.toLowerCase() !== 'variant',
+      (option) => !['variant', 'country', 'currency'].includes(option.name.toLowerCase()),
     ),
     request.url,
   );

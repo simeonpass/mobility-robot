@@ -2,6 +2,7 @@ import {createHydrogenContext} from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
+import {requestCountry, storeCountry} from '~/lib/market';
 
 // Define the additional context object
 const additionalContext = {
@@ -45,6 +46,14 @@ export async function createHydrogenRouterContext(
     AppSession.init(request, [env.SESSION_SECRET]),
   ]);
 
+  const url = new URL(request.url);
+  const country = requestCountry(url, session.get('marketCountry'));
+  const requestedCountry = storeCountry(url.searchParams.get('country'));
+  const isFeed = url.pathname.startsWith('/feeds/');
+  if (!isFeed && requestedCountry && session.get('marketCountry') !== country) {
+    session.set('marketCountry', country);
+  }
+
   const hydrogenContext = createHydrogenContext(
     {
       env,
@@ -52,14 +61,28 @@ export async function createHydrogenRouterContext(
       cache,
       waitUntil,
       session,
-      // Or detect from URL path based on locale subpath, cookies, or any other strategy
-      i18n: {language: 'EN', country: 'US'},
+      i18n: {language: 'EN', country},
+      buyerIdentity: {countryCode: country},
       cart: {
         queryFragment: CART_QUERY_FRAGMENT,
       },
     },
     additionalContext,
   );
+
+  // A Google market link can also be opened by someone with an existing cart.
+  // Update it before loaders read totals; new carts use buyerIdentity above.
+  if (!isFeed && requestedCountry && hydrogenContext.cart.getCartId()) {
+    const cart = await hydrogenContext.cart.get();
+    if (cart && cart.buyerIdentity.countryCode !== country) {
+      const result = await hydrogenContext.cart.updateBuyerIdentity({
+        countryCode: country,
+      });
+      if (result.errors?.length || result.userErrors?.length) {
+        throw new Error('Unable to update cart market');
+      }
+    }
+  }
 
   return hydrogenContext;
 }
