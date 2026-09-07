@@ -1,109 +1,155 @@
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/blog._index';
-import {Image, getPaginationVariables} from '@shopify/hydrogen';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {PageHeader, PageShell} from '~/components/content/PageShell';
-import {BLOG_ARTICLES_QUERY, BLOG_HANDLE} from '~/lib/blog-queries';
+import {
+  filterLocalBlogPosts,
+  getLocalBlogCategories,
+  type LocalBlogPost,
+} from '~/lib/local-blog';
 import {pageMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) =>
+export const meta: Route.MetaFunction = () =>
   pageMeta({
-    title: data?.blog?.seo?.title || 'News & Updates',
+    title: 'Mobility Blog & Power Wheelchair Guides',
     description:
-      data?.blog?.seo?.description ||
-      'Latest news, guides and updates from Mobility Robot and Bentech Medical Ltd.',
+      'UK guides to foldable power wheelchairs, stair climbing chairs, VAT relief, maintenance and accessible travel from Mobility Robot — official XSTO distributor.',
     path: '/blog',
   });
 
-export async function loader({context, request}: Route.LoaderArgs) {
-  const paginationVariables = getPaginationVariables(request, {pageBy: 9});
-  const {blog} = await context.storefront.query(BLOG_ARTICLES_QUERY, {
-    variables: {blogHandle: BLOG_HANDLE, ...paginationVariables},
-  });
+export async function loader({request}: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const category = url.searchParams.get('category');
+  const allPosts = filterLocalBlogPosts('all');
+  const posts = filterLocalBlogPosts(category);
+  const categories = getLocalBlogCategories();
 
-  if (!blog) {
-    throw new Response('Blog not found', {status: 404});
-  }
-
-  return {blog};
+  return {
+    posts,
+    totalCount: allPosts.length,
+    categories,
+    activeCategory: category && category !== 'all' ? category : 'all',
+  };
 }
 
-type BlogArticleCard = {
-  id: string;
-  handle: string;
-  title: string;
-  excerpt?: string | null;
-  publishedAt?: string | null;
-  image?: {
-    altText?: string | null;
-    url: string;
-    width?: number | null;
-    height?: number | null;
-  } | null;
-};
-
 export default function BlogIndexPage() {
-  const {blog} = useLoaderData<typeof loader>();
+  const {posts, totalCount, categories, activeCategory} =
+    useLoaderData<typeof loader>();
 
   return (
     <PageShell>
       <PageHeader
-        description="News, product updates and mobility guides from the official UK XSTO distributor."
-        title={blog.title || 'News & Updates'}
+        description="Practical UK guides on power wheelchairs, stair climbing, VAT relief, maintenance and accessible living — written for Mobility Robot customers."
+        title="Mobility Blog"
       />
 
-      <PaginatedResourceSection<BlogArticleCard>
-        connection={blog.articles}
-        resourcesClassName="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-      >
-        {({node: article}) => (
-          <BlogCard article={article} key={article.id} />
-        )}
-      </PaginatedResourceSection>
+      <div className="mt-8 flex flex-wrap gap-2">
+        <CategoryChip
+          active={activeCategory === 'all'}
+          href="/blog"
+          label={`All (${totalCount})`}
+        />
+        {categories.map((category) => (
+          <CategoryChip
+            active={activeCategory === category.id}
+            href={`/blog?category=${category.id}`}
+            key={category.id}
+            label={`${category.label} (${category.count})`}
+          />
+        ))}
+      </div>
+
+      {posts.length === 0 ? (
+        <p className="mt-10 text-muted-foreground">
+          No articles in this category yet.
+        </p>
+      ) : (
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <BlogCard key={post.slug} post={post} />
+          ))}
+        </div>
+      )}
     </PageShell>
   );
 }
 
-function BlogCard({article}: {article: BlogArticleCard}) {
-  const publishedAt = article.publishedAt
-    ? new Intl.DateTimeFormat('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }).format(new Date(article.publishedAt))
-    : null;
+function CategoryChip({
+  href,
+  label,
+  active,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      className={[
+        'inline-flex rounded-full border px-3.5 py-1.5 text-sm no-underline transition-colors',
+        active
+          ? 'border-navy bg-navy text-white'
+          : 'border-border bg-card text-foreground hover:border-navy/40',
+      ].join(' ')}
+      prefetch="intent"
+      to={href}
+    >
+      {label}
+    </Link>
+  );
+}
+
+function BlogCard({post}: {post: LocalBlogPost}) {
+  const publishedAt = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(post.publishedAt));
 
   return (
-    <article className="overflow-hidden rounded-xl border border-border bg-card">
-      <Link className="block no-underline" prefetch="intent" to={`/blog/${article.handle}`}>
-        {article.image ? (
-          <Image
-            alt={article.image.altText || article.title}
-            aspectRatio="16/9"
-            className="w-full object-cover"
-            data={article.image}
-            loading="lazy"
-            sizes="(min-width: 768px) 33vw, 100vw"
-          />
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft transition-shadow hover:shadow-medium">
+      <Link
+        className="flex flex-1 flex-col no-underline"
+        prefetch="intent"
+        to={`/blog/${post.slug}`}
+      >
+        {post.featuredImage ? (
+          <div className="aspect-[16/9] overflow-hidden bg-secondary">
+            <img
+              alt=""
+              className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              decoding="async"
+              height={630}
+              loading="lazy"
+              src={post.featuredImage}
+              width={1200}
+            />
+          </div>
         ) : null}
-        <div className="p-5">
-          {publishedAt ? (
-            <time className="text-xs text-muted-foreground" dateTime={article.publishedAt!}>
-              {publishedAt}
-            </time>
-          ) : null}
-          <h2 className="mt-1 text-lg font-semibold text-foreground">{article.title}</h2>
-          {article.excerpt ? (
-            <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
-              {article.excerpt}
+        <div className="flex flex-1 flex-col p-5">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="rounded-full bg-secondary px-2.5 py-0.5 font-medium text-foreground">
+              {post.categoryLabel}
+            </span>
+            <time dateTime={post.publishedAt}>{publishedAt}</time>
+            <span aria-hidden>·</span>
+            <span>{post.readTime} min read</span>
+          </div>
+          <h2 className="mt-3 text-lg font-semibold leading-snug text-foreground group-hover:text-gold">
+            {post.title}
+          </h2>
+          {post.excerpt ? (
+            <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+              {post.excerpt}
             </p>
           ) : null}
-          <span className="mt-3 inline-block text-sm font-semibold text-gold">
-            Read article →
+          <span className="mt-4 inline-flex items-center text-sm font-semibold text-gold">
+            Read article
+            <span aria-hidden className="ml-1 transition-transform group-hover:translate-x-0.5">
+              →
+            </span>
           </span>
         </div>
       </Link>
     </article>
   );
 }
-

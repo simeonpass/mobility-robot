@@ -6,7 +6,7 @@
  * Output: public/sitemap-content.xml (for reference / CI validation)
  */
 
-import {writeFileSync} from 'node:fs';
+import {readdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 
 const SITE_URL = 'https://mobilityrobot.co.uk';
@@ -40,52 +40,25 @@ function escapeXml(value: string) {
     .replaceAll("'", '&apos;');
 }
 
-async function fetchBlogArticlePaths(): Promise<string[]> {
-  const token = process.env.PUBLIC_STOREFRONT_API_TOKEN;
-  const storeDomain =
-    process.env.PUBLIC_STORE_DOMAIN || 'f7vjea-hq.myshopify.com';
-
-  if (!token) {
-    console.warn('PUBLIC_STOREFRONT_API_TOKEN not set — skipping blog URLs');
-    return [];
-  }
-
-  const response = await fetch(
-    `https://${storeDomain}/api/2025-01/graphql.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': token,
-      },
-      body: JSON.stringify({
-        query: `query BlogArticles($blogHandle: String!) {
-          blog(handle: $blogHandle) {
-            articles(first: 250) {
-              nodes { handle }
-            }
-          }
-        }`,
-        variables: {blogHandle: 'news'},
-      }),
-    },
-  );
-
-  if (!response.ok) return [];
-
-  const json = (await response.json()) as {
-    data?: {blog?: {articles?: {nodes?: Array<{handle: string}>}}};
-  };
-
-  return (
-    json.data?.blog?.articles?.nodes?.map((node) => `/blog/${node.handle}`) ?? []
-  );
+function localBlogPaths() {
+  const dir = resolve(process.cwd(), 'app/content/blog');
+  return readdirSync(dir)
+    .filter((name) => name.endsWith('.md'))
+    .map((name) => {
+      const raw = readFileSync(resolve(dir, name), 'utf8');
+      const slugMatch = raw.match(/^slug:\s*["']?([^"'\n]+)["']?/m);
+      const slug = slugMatch?.[1]?.trim() || name.replace(/\.md$/, '');
+      return `/blog/${slug}`;
+    });
 }
 
 async function main() {
-  const blogPaths = await fetchBlogArticlePaths();
+  const blogPaths = localBlogPaths();
   const urls = [
-    ...STATIC_ROUTES.map((route) => ({...route, loc: `${SITE_URL}${route.path}`})),
+    ...STATIC_ROUTES.map((route) => ({
+      ...route,
+      loc: `${SITE_URL}${route.path}`,
+    })),
     ...blogPaths.map((path) => ({
       path,
       loc: `${SITE_URL}${path}`,
