@@ -19,10 +19,13 @@ export async function loader(args: LoaderFunctionArgs) {
     throw new Response('Product link feed schema unavailable', {status: 503});
   }
 
-  const rows = lines.filter(Boolean).map((line) => {
-    const values = line.split('\t');
-    return `${values[idIndex]}\t${values[linkIndex]}`;
-  });
+  const rows = lines
+    .filter(Boolean)
+    .map((line) => line.split('\t'))
+    // Shopify's current market feeds use ZZ IDs. Legacy GB IDs have no
+    // matching primary offers and produce supplemental-feed errors.
+    .filter((values) => values[idIndex]?.startsWith('shopify_ZZ_'))
+    .map((values) => `${values[idIndex]}\t${values[linkIndex]}`);
   const headers = new Headers(response.headers);
   headers.delete('Content-Length');
   return new Response(`id\tlink\n${rows.join('\n')}\n`, {headers});
