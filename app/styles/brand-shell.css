@@ -39,7 +39,13 @@
 .mr-brand { display: inline-flex; flex-shrink: 0; align-items: center; gap: 12px; color: #101b35; }
 .mr-brand-type { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
 .mr-brand-name { font-family: var(--font-display); font-size: 27px; line-height: 1.02; font-weight: 800; letter-spacing: -1.2px; white-space: nowrap; }
-.mr-brand-robot { color: #2155ed; }
+.mr-brand-robot {
+  display: inline-block;
+  color: #2155ed;
+  transform: skewX(-7deg);
+  transform-origin: left bottom;
+  margin-right: .08em;
+}
 .mr-brand-dot { color: #f2a23a; }
 .mr-brand-byline { color: #536177; font-size: 13px; font-weight: 500; line-height: 1.2; letter-spacing: 0; white-space: nowrap; }
 .mr-brand--light { color: #fff; }
