@@ -139,9 +139,10 @@ export function ProductAccessoryAddons({
                 <label className="mr-addon-select">
                   {image ? (
                     <Image
-                      data={{...image, width: 128, height: 128}}
+                      data={{...image, width: 336, height: 336}}
                       alt=""
-                      sizes="56px"
+                      sizes="(max-width: 359px) 96px, (max-width: 767px) 104px, 112px"
+                      loading="lazy"
                       className="mr-addon-image"
                     />
                   ) : (

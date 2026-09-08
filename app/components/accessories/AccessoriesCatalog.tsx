@@ -158,13 +158,13 @@ function AccessoryCard({product}: {product: AccessoryListProduct}) {
         prefetch="intent"
         to={`/products/${product.handle}`}
       >
-        <div className="flex aspect-square items-center justify-center bg-gradient-cream p-5">
+        <div className="mr-accessory-photo flex aspect-square items-center justify-center bg-gradient-cream p-2">
           {product.featuredImage ? (
             <Image
               alt={product.featuredImage.altText || product.title}
               className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
               data={product.featuredImage}
-              sizes="(min-width: 1024px) 23vw, (min-width: 768px) 31vw, 46vw"
+              sizes="(min-width: 768px) 31vw, 46vw"
             />
           ) : (
             <span className="text-sm text-muted-foreground">No image</span>

@@ -275,19 +275,19 @@
 .mr-addons-trigger svg.is-open {transform:rotate(180deg)}
 .mr-addons-intro {padding:0 16px 14px;font-size:.8rem;line-height:1.65;color:#526079}
 .mr-addons-list {margin:0;padding:0;list-style:none}
-.mr-addon {position:relative;border-top:1px solid #e4e9f1;padding:14px 14px 12px;background:white}
+.mr-addon {--mr-addon-image-size:112px;position:relative;border-top:1px solid #e4e9f1;padding:14px 14px 12px;background:white}
 .mr-addon.is-selected {background:#f5f8fe}
 .mr-addon-select {display:flex;align-items:center;gap:12px;cursor:pointer;min-height:64px}
-.mr-addon-image {width:56px;height:56px;object-fit:contain;flex-shrink:0;background:#fff;border-radius:6px;mix-blend-mode:multiply}
+.mr-addon-image {width:var(--mr-addon-image-size);height:var(--mr-addon-image-size);object-fit:contain;flex-shrink:0;background:#fff;border-radius:6px;mix-blend-mode:multiply}
 .mr-addon-copy {flex:1;min-width:0}
 .mr-addon-title {display:block;font-size:.85rem;font-weight:650;line-height:1.5;overflow-wrap:anywhere}
 .mr-addon-price {display:block;font-size:.85rem;font-weight:600;line-height:1.55;margin-top:4px}
 .mr-addon-price small {font-size:.7rem;font-weight:400;color:#526079;white-space:nowrap}
 .mr-addon-delivery {display:block;color:#715020;font-size:.7rem;margin-top:4px}
 .mr-addon-select input {appearance:auto;width:22px;height:22px;min-width:22px;accent-color:#2155ed;margin:0 3px}
-.mr-addon-details {display:inline-flex;align-items:center;min-height:36px;margin-left:68px;font-size:.74rem;text-decoration:underline;text-underline-offset:3px;color:#526079}
+.mr-addon-details {display:inline-flex;align-items:center;min-height:36px;margin-left:calc(var(--mr-addon-image-size) + 12px);font-size:.74rem;text-decoration:underline;text-underline-offset:3px;color:#526079}
 .mr-addon-added {display:inline-flex;align-items:center;gap:4px;margin-left:12px;color:#2155ed;font-size:.68rem}
-.mr-addon-options {display:block;margin:12px 0 0 68px}
+.mr-addon-options {display:block;margin:12px 0 0 calc(var(--mr-addon-image-size) + 12px)}
 .mr-addon-options>span {display:block;font-size:.75rem;color:#526079;margin-bottom:5px}
 .mr-addon-options select {display:block;width:100%;min-height:44px;padding:9px 12px;font-size:16px;line-height:1.5;border:1px solid #ccd6e5;border-radius:6px;background:#fff;color:#101b35}
 .mr-addons-more {padding:13px 16px;min-height:48px;font-size:.8rem;font-weight:650;text-align:center;width:100%;color:#2155ed;border-top:1px solid #e1e6ef}
@@ -328,6 +328,7 @@
  .mr-product-vat>div {min-width:180px}
  .mr-purchase-total-price {font-size:1.4rem}
  .mr-addon-added {display:none}
+ .mr-addon {--mr-addon-image-size:104px}
  .mr-product-video {margin-top:42px}
  .mr-product-details,.mr-product-related,.mr-product-page #reviews {margin-top:44px}
  .mr-product-related-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -336,7 +337,7 @@
  .mr-product-choices>div[class*='grid'] {font-size:.8rem}
 }
 @media (max-width:359px) {
- .mr-addon-select {gap:8px}.mr-addon-image{width:44px;height:44px}.mr-addon-details,.mr-addon-options{margin-left:52px}
+ .mr-addon {--mr-addon-image-size:96px}.mr-addon-select {gap:8px}.mr-addon-details,.mr-addon-options{margin-left:calc(var(--mr-addon-image-size) + 8px)}
  .mr-purchase-total {flex-wrap:wrap}
  .mr-product-page .product-mobile-atc>div{grid-template-columns:minmax(0,1fr) 145px;gap:8px}
 }
