@@ -24,7 +24,7 @@ describe('isFormEmailConfigured', () => {
 describe('resolveResendFrom', () => {
   it('falls back away from onboarding@resend.dev', () => {
     expect(resolveResendFrom('XSTO UK <onboarding@resend.dev>')).toBe(
-      'XSTO UK <noreply@mobilityrobot.co.uk>',
+      'Mobility Robot <noreply@mobilityrobot.co.uk>',
     );
   });
 

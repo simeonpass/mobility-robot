@@ -11,7 +11,6 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
-import favicon from '~/assets/favicon.png';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
@@ -43,7 +42,11 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
   // revalidate when manually revalidating via useRevalidator
   if (currentUrl.toString() === nextUrl.toString()) return true;
-  if (currentUrl.searchParams.get('country') !== nextUrl.searchParams.get('country')) return true;
+  if (
+    currentUrl.searchParams.get('country') !==
+    nextUrl.searchParams.get('country')
+  )
+    return true;
 
   // Defaulting to no revalidation for root loader data to improve performance.
   // When using this feature, you risk your UI getting out of sync with your server.
@@ -76,7 +79,7 @@ export function links() {
     },
     {
       rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap',
+      href: 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap',
     },
     {
       rel: 'preconnect',
@@ -90,9 +93,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://cdn.judge.me',
     },
-    {rel: 'icon', type: 'image/png', href: favicon},
-    {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
-    {rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png'},
+    {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'},
   ];
 }
 
@@ -107,8 +108,7 @@ export async function loader(args: Route.LoaderArgs) {
     ga4Id: env.PUBLIC_GA4_ID ?? null,
     shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,
-    inboxExternalId:
-      env.PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID || undefined,
+    inboxExternalId: env.PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID || undefined,
     // Inclusive catalog by default. Set PUBLIC_SHOPIFY_PRICES_EX_VAT=true only for net Admin prices.
     pricesExVat: env.PUBLIC_SHOPIFY_PRICES_EX_VAT === 'true',
     judgeme: getJudgemeConfig(env),
@@ -147,6 +147,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="theme-color" content="#101b35" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <JsonLd data={sitewideJsonLdGraph(true)} />
@@ -211,12 +212,17 @@ export function ErrorBoundary() {
       <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
         {errorStatus}
       </p>
-      <h1 className="mt-2 text-3xl font-bold text-foreground">Something went wrong</h1>
+      <h1 className="mt-2 text-3xl font-bold text-foreground">
+        Something went wrong
+      </h1>
       <p className="mt-3 max-w-md text-muted-foreground">
-        We couldn&apos;t load this page. Please try again or return to the homepage.
+        We couldn&apos;t load this page. Please try again or return to the
+        homepage.
       </p>
       {errorMessage && errorStatus >= 500 ? (
-        <p className="mt-4 max-w-lg text-xs text-muted-foreground">{errorMessage}</p>
+        <p className="mt-4 max-w-lg text-xs text-muted-foreground">
+          {errorMessage}
+        </p>
       ) : null}
       <a className="btn-atc mt-8" href="/">
         Back to homepage

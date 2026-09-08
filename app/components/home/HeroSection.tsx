@@ -1,92 +1,88 @@
-import {BadgePercent} from 'lucide-react';
-import {motion, useReducedMotion} from 'framer-motion';
+import {ArrowRight, ArrowUpRight, Check, Play} from 'lucide-react';
 import {Link} from 'react-router';
-import {HeroVideoBackground} from '~/components/home/HeroVideoBackground';
-import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
+import type {HomeProduct} from '~/components/home/ProductRangeGrid';
+import {
+  HOMEPAGE_PRODUCT_THUMBS,
+  SHOPIFY_HOME_PRODUCT_HANDLES,
+} from '~/lib/homepage-data';
 
-const fadeUp = (delay: number, reducedMotion: boolean) =>
-  reducedMotion
-    ? {}
-    : {
-        initial: {opacity: 0, y: 20},
-        animate: {opacity: 1, y: 0},
-        transition: {duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const},
-      };
-
-export function HeroSection() {
-  const reducedMotion = useReducedMotion() ?? false;
-  const x12Url = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`;
+export function HeroSection({product}: {product?: HomeProduct}) {
+  const image = product?.featuredImage;
+  const source = image?.url ?? HOMEPAGE_PRODUCT_THUMBS['xsto-x12'];
+  const imageUrl = new URL(source);
+  imageUrl.searchParams.set('width', '1000');
 
   return (
-    <section
-      aria-label="Hero"
-      className="home-hero relative min-h-[min(92svh,34rem)] overflow-hidden bg-navy !p-0 md:min-h-[100svh]"
-    >
-      <div aria-hidden className="home-hero-media absolute inset-0">
-        <HeroVideoBackground />
-      </div>
-
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-[1] bg-black/30"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-32 bg-gradient-to-b from-black/45 to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[55%] bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-      />
-
-      <div className="relative z-10 mx-auto flex min-h-[min(92svh,34rem)] w-full max-w-[1400px] flex-col justify-end px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:min-h-[100svh] md:px-8 md:pb-20 md:pt-36 lg:pb-24">
-        <div className="home-hero-copy w-full max-w-2xl text-left text-white">
-          <motion.h1
-            className="home-hero-title font-display text-white"
-            style={{textShadow: '0 2px 28px rgba(0,0,0,0.6)'}}
-            {...fadeUp(0.1, reducedMotion)}
-          >
-            Introducing the{' '}
-            <span className="home-hero-title-product">XSTO X12</span>
-          </motion.h1>
-
-          <motion.p
-            className="home-hero-support font-sans"
-            style={{textShadow: '0 1px 16px rgba(0,0,0,0.5)'}}
-            {...fadeUp(0.2, reducedMotion)}
-          >
-            Stair-climbing and all-terrain mobility — climbs steps up to 40°
-            with AI-powered mode switching.
-          </motion.p>
-
-          <motion.div
-            className="home-hero-cta-group"
-            {...fadeUp(0.3, reducedMotion)}
-          >
-            <Link
-              className="btn-hero-primary font-display inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-base font-semibold uppercase tracking-[0.14em] text-navy no-underline shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-colors hover:bg-white/95 hover:text-navy hover:no-underline sm:px-8 md:h-14 md:px-10 md:text-[0.9375rem]"
-              to={x12Url}
-            >
-              Shop the X12
-            </Link>
-
-            <Link
-              className="btn-hero-secondary font-display inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/55 bg-black/20 px-4 text-center text-[0.9375rem] font-medium leading-snug tracking-wide text-white/90 no-underline backdrop-blur-sm transition-colors hover:border-white/80 hover:bg-black/35 hover:text-white hover:no-underline sm:px-6 md:h-14 md:text-sm"
-              to="/vat-relief"
-            >
-              <BadgePercent
-                aria-hidden
-                className="size-4 shrink-0 text-white/85 md:size-4"
-                strokeWidth={1.5}
-              />
-              <span className="sm:hidden">VAT relief — pay no VAT</span>
-              <span className="hidden sm:inline">
-                Eligible customers pay no VAT.
-              </span>
-            </Link>
-          </motion.div>
+    <>
+      <aside className="mr-transition" aria-label="Our new website">
+        <div className="xsto-container mr-transition-inner">
+          <p>
+            <strong>Bentech Medical’s XSTO range has a new home.</strong>{' '}
+            Welcome to Mobility Robot.
+          </p>
+          <Link to="/about#our-brand">
+            Our story <ArrowRight size={16} aria-hidden />
+          </Link>
         </div>
-      </div>
-    </section>
+      </aside>
+      <section className="mr-hero">
+        <div className="xsto-container mr-hero-grid">
+          <div className="mr-hero-copy">
+            <p className="mr-eyebrow">
+              Intelligent mobility. More possibilities.
+            </p>
+            <h1>
+              A bigger world.
+              <br />A smarter way
+              <br />
+              <span>to move.</span>
+            </h1>
+            <p className="mr-hero-intro">
+              Discover XSTO powered wheelchairs that rethink the everyday. From
+              self-levelling comfort to stair-climbing capability. Find the one
+              that moves you.
+            </p>
+            <div className="mr-actions">
+              <Link className="mr-button" to="/#product-range">
+                Explore the range <ArrowRight size={18} aria-hidden />
+              </Link>
+              <Link className="mr-button mr-button-outline" to="/videos">
+                <Play size={17} aria-hidden /> See it in action
+              </Link>
+            </div>
+            <p className="mr-hero-note">
+              <Check size={18} aria-hidden /> XSTO technology. Bentech Medical
+              expertise.
+            </p>
+          </div>
+          <div className="mr-hero-art">
+            <span className="mr-hero-word" aria-hidden>
+              X12
+            </span>
+            <img
+              src={imageUrl.toString()}
+              alt="XSTO X12 stair-climbing powered wheelchair"
+              width={image?.width ?? 1000}
+              height={image?.height ?? 1000}
+              fetchPriority="high"
+              decoding="async"
+            />
+            <Link
+              className="mr-hero-tag"
+              to={`/products/${product?.handle ?? SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`}
+              prefetch="intent"
+            >
+              <strong>
+                Meet the XSTO X12 <ArrowUpRight size={18} aria-hidden />
+              </strong>
+              <span>Stair-climbing. Self-levelling. More possibility.</span>
+            </Link>
+            <small className="mr-hero-caption">
+              Photography may show optional equipment.
+            </small>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

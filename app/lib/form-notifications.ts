@@ -24,7 +24,7 @@ export type FormNotificationResult =
 
 const DEFAULT_TO = COMPANY.email;
 /** Verified Resend domain — never use onboarding@resend.dev in production. */
-const DEFAULT_FROM = 'XSTO UK <noreply@mobilityrobot.co.uk>';
+const DEFAULT_FROM = 'Mobility Robot <noreply@mobilityrobot.co.uk>';
 const VERIFIED_FROM_EMAIL = 'noreply@mobilityrobot.co.uk';
 
 export function isFormEmailConfigured(env: FormNotificationEnv): boolean {
@@ -53,7 +53,7 @@ export function resolveResendFrom(raw?: string | null): string {
   }
 
   if (angle) {
-    const name = value.slice(0, value.indexOf('<')).trim() || 'XSTO UK';
+    const name = value.slice(0, value.indexOf('<')).trim() || 'Mobility Robot';
     return `${name} <${email}>`;
   }
 

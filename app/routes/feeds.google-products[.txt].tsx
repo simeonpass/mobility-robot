@@ -1,4 +1,5 @@
 import type {LoaderFunctionArgs} from 'react-router';
+import type {GoogleMerchantProductsQuery} from 'storefrontapi.generated';
 import {
   googleMerchantFeedRows,
   googleMerchantTsv,
@@ -51,9 +52,10 @@ export async function loader({context: {storefront}}: LoaderFunctionArgs) {
   let hasNext = true;
 
   while (hasNext) {
-    const data = await storefront.query(PRODUCTS_QUERY, {
-      variables: {cursor},
-    });
+    const data: GoogleMerchantProductsQuery =
+      await storefront.query(PRODUCTS_QUERY, {
+        variables: {cursor},
+      });
     const connection = data?.products;
     products.push(...(connection?.nodes ?? []));
     hasNext = Boolean(connection?.pageInfo?.hasNextPage);

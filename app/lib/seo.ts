@@ -167,10 +167,11 @@ export function organizationJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Bentech Medical Ltd',
-    alternateName: [SITE_NAME, 'XSTO UK', 'XSTO'],
+    name: 'Bentech Medical Limited',
+    legalName: 'Bentech Medical Limited',
+    alternateName: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/images/xsto-bentech-header.png`,
+    logo: `${SITE_URL}/images/mobility-robot-logo.svg`,
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Unit 2 Old Forge Road',
@@ -276,7 +277,7 @@ export function productJsonLd({
       availability: availableForSale
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
-      seller: {'@type': 'Organization', name: 'Bentech Medical Ltd'},
+      seller: {'@type': 'Organization', name: 'Bentech Medical Limited'},
     },
   };
 }
@@ -376,10 +377,10 @@ export function articleJsonLd({
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Bentech Medical Ltd',
+      name: 'Bentech Medical Limited',
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/images/xsto-bentech-header.png`,
+        url: `${SITE_URL}/images/mobility-robot-logo.svg`,
       },
     },
     mainEntityOfPage: absoluteUrl(path),

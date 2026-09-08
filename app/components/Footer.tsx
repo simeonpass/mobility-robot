@@ -3,7 +3,7 @@ import {FooterNewsletter} from '~/components/footer/FooterNewsletter';
 
 export function Footer() {
   return (
-    <footer className="mt-auto">
+    <footer className="mr-footer mt-auto">
       <FooterNewsletter />
       <FooterMain />
     </footer>

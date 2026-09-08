@@ -1,5 +1,6 @@
 import {useId, useMemo, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
+import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
 import {Link} from 'react-router';
 import {Check} from 'lucide-react';
 import {
@@ -15,10 +16,7 @@ export type AddonVariant = {
   id: string;
   title: string;
   availableForSale: boolean;
-  price: {
-    amount: string;
-    currencyCode: string;
-  };
+  price: Pick<MoneyV2, 'amount' | 'currencyCode'>;
   image?: {
     url: string;
     altText?: string | null;
@@ -46,10 +44,7 @@ export type AddonProduct = {
     height?: number | null;
   } | null;
   priceRange: {
-    minVariantPrice: {
-      amount: string;
-      currencyCode: string;
-    };
+    minVariantPrice: Pick<MoneyV2, 'amount' | 'currencyCode'>;
   };
   variants?: {
     nodes: AddonVariant[];

@@ -11,10 +11,10 @@ export type VatSelectedOption = {
   value: string;
 };
 
-export type VatPricedVariant = {
+export type VatPricedVariant<Currency extends string = string> = {
   id: string;
   availableForSale?: boolean | null;
-  price?: Pick<MoneyV2, 'amount' | 'currencyCode'> | null;
+  price?: ListPriceMoney<Currency> | null;
   selectedOptions?: VatSelectedOption[] | null;
   sellingPlanAllocations?: unknown;
 };
@@ -171,24 +171,26 @@ export function moneyAmount(price?: Pick<MoneyV2, 'amount'> | null): number {
   return Number(price?.amount ?? 0);
 }
 
-type ListPriceMoney = Pick<MoneyV2, 'amount' | 'currencyCode'>;
+type ListPriceMoney<Currency extends string = string> = Pick<MoneyV2, 'amount'> & {
+  currencyCode: Currency;
+};
 
 /**
  * Catalog “From” / card price: Standard (gross) when dual VAT variants exist.
  * Shopify `priceRange.min` is the cheaper VAT Relief SKU after dual pricing —
  * never use that alone for marketing list prices.
  */
-export function getProductListPrice(product: {
+export function getProductListPrice<Currency extends string>(product: {
   priceRange: {
-    minVariantPrice: ListPriceMoney;
-    maxVariantPrice?: ListPriceMoney | null;
+    minVariantPrice: ListPriceMoney<Currency>;
+    maxVariantPrice?: ListPriceMoney<Currency> | null;
   };
-  variants?: {nodes?: VatPricedVariant[] | null} | null;
-}): ListPriceMoney {
+  variants?: {nodes?: VatPricedVariant<Currency>[] | null} | null;
+}): ListPriceMoney<Currency> {
   const nodes = product.variants?.nodes ?? [];
   if (variantsHaveVatOption(nodes)) {
     const standards = filterStandardVatVariants(nodes);
-    let cheapest: VatPricedVariant | null = null;
+    let cheapest: VatPricedVariant<Currency> | null = null;
     for (const variant of standards) {
       if (!variant.price) continue;
       if (

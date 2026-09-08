@@ -25,7 +25,7 @@ export function sumMoneyV2(
   amounts: Array<Pick<MoneyV2, 'amount' | 'currencyCode'> | null | undefined>,
 ): MoneyV2 | null {
   let total = 0;
-  let currencyCode: string | null = null;
+  let currencyCode: MoneyV2['currencyCode'] | null = null;
 
   for (const money of amounts) {
     if (!money?.amount || !money.currencyCode) continue;

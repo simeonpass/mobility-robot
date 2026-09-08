@@ -36,6 +36,11 @@ jobs:
         run: npm ci
 
       - name: Build and Publish to Oxygen
-        run: npx shopify hydrogen deploy
+        run: |
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            npx shopify hydrogen deploy
+          else
+            npx shopify hydrogen deploy --preview
+          fi
         env:
           SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000159321 }}

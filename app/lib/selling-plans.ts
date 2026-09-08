@@ -1,3 +1,4 @@
+import type {CurrencyCode} from '@shopify/hydrogen/storefront-api-types';
 import {formatProductPrice} from '~/lib/product-pricing';
 import {
   catalogToExVatAmount,
@@ -5,21 +6,21 @@ import {
 } from '~/lib/pricing-mode';
 import {roundMoney} from '~/lib/vat-math';
 
-type MoneyLike = {
+type MoneyLike<Currency extends string = string> = {
   amount: string;
-  currencyCode?: string;
+  currencyCode?: Currency;
 };
 
 /** Stashed on selectedVariant → optimistic merchandise so cart UI can show deposit before the cart query returns. */
 export const OPTIMISTIC_SELLING_PLAN_ALLOCATION_KEY =
   'optimisticSellingPlanAllocation' as const;
 
-export type SellingPlanAllocationNode = {
-  checkoutChargeAmount?: MoneyLike | null;
-  remainingBalanceChargeAmount?: MoneyLike | null;
+export type SellingPlanAllocationNode<Currency extends string = CurrencyCode> = {
+  checkoutChargeAmount?: MoneyLike<Currency> | null;
+  remainingBalanceChargeAmount?: MoneyLike<Currency> | null;
   priceAdjustments?: Array<{
-    price?: MoneyLike | null;
-    compareAtPrice?: MoneyLike | null;
+    price?: MoneyLike<Currency> | null;
+    compareAtPrice?: MoneyLike<Currency> | null;
   }> | null;
   sellingPlan: {
     id: string;
@@ -44,7 +45,9 @@ export type CartLineSellingPlanSource = {
   } | null;
   merchandise?: {
     price?: MoneyLike | null;
-    [OPTIMISTIC_SELLING_PLAN_ALLOCATION_KEY]?: SellingPlanAllocationNode | null;
+    [OPTIMISTIC_SELLING_PLAN_ALLOCATION_KEY]?:
+      | SellingPlanAllocationNode<string>
+      | null;
   } | null;
   cost?: {
     totalAmount?: MoneyLike | null;
@@ -60,8 +63,8 @@ export type PurchaseOption =
       sellingPlanId: string;
       name: string;
       description?: string | null;
-      checkoutCharge: MoneyLike;
-      remainingBalance: MoneyLike | null;
+      checkoutCharge: MoneyLike<CurrencyCode>;
+      remainingBalance: MoneyLike<CurrencyCode> | null;
       /** Display amount for the deposit (respects VAT-relief toggle when provided). */
       depositDisplay: string;
       remainingDisplay: string | null;
@@ -101,7 +104,7 @@ export function pickDepositAllocation(
 
 export function getDepositChargeAmount(
   allocation: SellingPlanAllocationNode,
-): MoneyLike | null {
+): MoneyLike<CurrencyCode> | null {
   if (allocation.checkoutChargeAmount?.amount) {
     return allocation.checkoutChargeAmount;
   }
@@ -168,7 +171,7 @@ export function isDepositPurchaseOption(
  */
 export function resolveLineSellingPlanAllocation(
   line: CartLineSellingPlanSource | null | undefined,
-): SellingPlanAllocationNode | null {
+): SellingPlanAllocationNode<string> | null {
   if (!line) return null;
   const live = line.sellingPlanAllocation;
   if (live?.sellingPlan?.id) {

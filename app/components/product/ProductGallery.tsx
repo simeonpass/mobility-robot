@@ -42,8 +42,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
     items.length > 1 ? (
       <ul
         aria-label="Product thumbnails"
-        className="scrollbar-hide flex gap-2 overflow-x-auto pb-1 lg:max-h-[min(640px,72vh)] lg:w-[4.5rem] lg:shrink-0 lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0"
-        role="listbox"
+        className="mr-product-thumbnails scrollbar-hide"
       >
         {items.map((item, index) => {
           const selected = index === activeIndex;
@@ -54,25 +53,24 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
               : `Show image ${index + 1} of ${items.length}`;
 
           return (
-            <li className="shrink-0" key={item.id} role="presentation">
+            <li className="shrink-0" key={item.id}>
               <button
                 aria-controls={`${groupId}-main-media`}
                 aria-label={label}
-                aria-selected={selected}
+                aria-pressed={selected}
                 className={[
-                  'relative size-11 shrink-0 overflow-hidden rounded-md border transition-all sm:size-[4.75rem]',
+                  'mr-product-thumbnail relative shrink-0 overflow-hidden border transition-colors',
                   selected
-                    ? 'border-foreground ring-1 ring-foreground/20'
-                    : 'border-border/80 opacity-70 hover:border-foreground/30 hover:opacity-100',
+                    ? 'is-selected'
+                    : '',
                 ].join(' ')}
                 onClick={() => selectItem(index)}
-                role="option"
                 type="button"
               >
                 {thumbUrl ? (
                   <img
                     alt=""
-                    className="size-full object-cover"
+                    className="size-full object-contain"
                     height={76}
                     loading="lazy"
                     src={thumbUrl}
@@ -101,19 +99,16 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
     ) : null;
 
   return (
-    <div className="flex min-w-0 flex-col gap-3 lg:flex-row">
-      {thumbList ? (
-        <div className="order-2 lg:order-1 lg:mt-0">{thumbList}</div>
-      ) : null}
+    <div className="mr-product-gallery">
 
       <div
         aria-label={`${productTitle} gallery`}
         aria-roledescription="carousel"
-        className="relative order-1 min-w-0 flex-1 lg:order-2"
+        className="relative min-w-0"
         id={`${groupId}-main-media`}
         role="region"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border/60 bg-white sm:aspect-square">
+        <div className="mr-product-gallery-stage relative w-full overflow-hidden">
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               animate={{opacity: 1}}
@@ -124,12 +119,12 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
               transition={{duration: reducedMotion ? 0 : 0.2}}
             >
               {activeItem.type === 'image' ? (
-                <div className="flex size-full items-center justify-center p-3 sm:p-4 md:p-6">
+                <div className="mr-product-gallery-image flex size-full items-center justify-center">
                   <Image
                     alt={activeItem.altText || productTitle}
                     className="max-h-full max-w-full object-contain"
                     data={activeItem}
-                    sizes="(min-width: 1024px) 55vw, 100vw"
+                    sizes="(min-width: 1440px) 680px, (min-width: 1024px) 52vw, 100vw"
                   />
                 </div>
               ) : (
@@ -145,16 +140,16 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
           {items.length > 1 ? (
             <>
               <button
-                aria-label="Previous image"
-                className="absolute left-2 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-soft backdrop-blur-sm transition-colors hover:bg-background sm:left-3 sm:size-9"
+                aria-label="Previous product image or video"
+                className="mr-product-gallery-arrow absolute left-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground transition-colors hover:bg-background"
                 onClick={goPrev}
                 type="button"
               >
                 <ChevronLeft aria-hidden className="size-4" strokeWidth={1.75} />
               </button>
               <button
-                aria-label="Next image"
-                className="absolute right-2 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-soft backdrop-blur-sm transition-colors hover:bg-background sm:right-3 sm:size-9"
+                aria-label="Next product image or video"
+                className="mr-product-gallery-arrow absolute right-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground transition-colors hover:bg-background"
                 onClick={goNext}
                 type="button"
               >
@@ -164,6 +159,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
           ) : null}
         </div>
       </div>
+      {thumbList}
     </div>
   );
 }

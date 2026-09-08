@@ -16,6 +16,7 @@ import {ProductVideoHero} from '~/components/product/ProductVideoHero';
 import {RelatedProducts} from '~/components/product/RelatedProducts';
 import {ProductAppDownload} from '~/components/product/ProductAppDownload';
 import {ProductReviews} from '~/components/product/ProductReviews';
+import productRedesignStyles from '~/styles/product-redesign.css?url';
 import {
   ACCESSORIES_COLLECTION_HANDLE,
   isAccessoryCompatibleWithChair,
@@ -51,6 +52,10 @@ import {
   X12_PRO_SHOPIFY_HANDLE,
   x12MergedPath,
 } from '~/lib/x12-lineup';
+
+export const links: Route.LinksFunction = () => [
+  {rel: 'stylesheet', href: productRedesignStyles},
+];
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -142,7 +147,7 @@ async function loadRelatedProducts({context}: Route.LoaderArgs) {
   const data = await storefront.query(RELATED_PRODUCTS_QUERY);
   const nodes = [data?.m4, data?.m4Pro, data?.m4b, data?.x12].filter(
     (product): product is NonNullable<typeof product> =>
-      Boolean(product) && !isHiddenStorefrontProductHandle(product.handle),
+      product != null && !isHiddenStorefrontProductHandle(product.handle),
   );
 
   return nodes;
@@ -310,7 +315,7 @@ export default function Product() {
   });
 
   return (
-    <div className="product-page product-page--has-mobile-atc bg-background pb-0">
+    <div className="product-page product-page--has-mobile-atc mr-product-page bg-background pb-0">
       <Ga4ProductView
         currencyCode={selectedVariant?.price.currencyCode ?? 'GBP'}
         id={selectedVariant?.id ?? product.id}
@@ -319,12 +324,16 @@ export default function Product() {
         vendor={product.vendor}
       />
       <JsonLd data={productSchema} />
-      <div className="xsto-container py-3 md:py-6">
+      <div className="xsto-container mr-product-container">
         <ProductBreadcrumbs title={displayName} />
 
-        <div className="product grid gap-5 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,400px)] lg:items-start lg:gap-10 xl:gap-12">
-          <div className="min-w-0">
+        <div className="product mr-product-layout">
+          <div className="mr-product-media min-w-0">
             <ProductGallery items={galleryItems} productTitle={displayName} />
+            <p className="mr-product-photo-note">
+              Product photography may show optional accessories. Check your
+              chosen configuration before ordering.
+            </p>
           </div>
 
           <div className="product-main min-w-0">

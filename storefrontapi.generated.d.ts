@@ -1315,6 +1315,30 @@ export type AccessoriesForShopAllQuery = {
   }>;
 };
 
+export type GoogleMerchantProductsQueryVariables = StorefrontAPI.Exact<{
+  cursor?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['String']['input']>;
+}>;
+
+export type GoogleMerchantProductsQuery = {
+  products: {
+    pageInfo: Pick<StorefrontAPI.PageInfo, 'hasNextPage' | 'endCursor'>;
+    nodes: Array<
+      Pick<StorefrontAPI.Product, 'id' | 'handle'> & {
+        variants: {
+          nodes: Array<
+            Pick<StorefrontAPI.ProductVariant, 'id'> & {
+              price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+              selectedOptions: Array<
+                Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+              >;
+            }
+          >;
+        };
+      }
+    >;
+  };
+};
+
 export type PageQueryVariables = StorefrontAPI.Exact<{
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -2597,6 +2621,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  query AccessoriesForShopAll(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      products(first: 50, sortKey: TITLE) {\n        nodes {\n          ...ShopAllProductCard\n        }\n      }\n    }\n  }\n  #graphql\n  fragment ShopAllProductCard on Product {\n    id\n    handle\n    title\n    tags\n    productType\n    featuredImage {\n      id\n      altText\n      url\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n      maxVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    variants(first: 50) {\n      nodes {\n        id\n        price {\n          amount\n          currencyCode\n        }\n        selectedOptions {\n          name\n          value\n        }\n      }\n    }\n  }\n\n': {
     return: AccessoriesForShopAllQuery;
     variables: AccessoriesForShopAllQueryVariables;
+  };
+  '#graphql\n  query GoogleMerchantProducts($cursor: String) {\n    products(first: 50, after: $cursor) {\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      nodes {\n        id\n        handle\n        variants(first: 100) {\n          nodes {\n            id\n            price {\n              amount\n              currencyCode\n            }\n            selectedOptions {\n              name\n              value\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: GoogleMerchantProductsQuery;
+    variables: GoogleMerchantProductsQueryVariables;
   };
   '#graphql\n  query Page(\n    $language: LanguageCode,\n    $country: CountryCode,\n    $handle: String!\n  )\n  @inContext(language: $language, country: $country) {\n    page(handle: $handle) {\n      handle\n      id\n      title\n      body\n      seo {\n        description\n        title\n      }\n    }\n  }\n': {
     return: PageQuery;

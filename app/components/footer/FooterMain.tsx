@@ -4,11 +4,7 @@ import {
   FOOTER_QUICK_LINKS,
   FOOTER_SUPPORT_LINKS,
 } from '~/lib/site-navigation';
-import {
-  FOOTER_LOGO,
-  FOOTER_LOGO_DISPLAY_HEIGHT,
-  footerLogoDisplayWidth,
-} from '~/lib/site-branding';
+import {MobilityRobotBrand} from '~/components/Header';
 import {DistributorDisclaimer} from '~/components/footer/DistributorDisclaimer';
 import {FooterBottom} from '~/components/footer/FooterBottom';
 import {SafetyDisclaimer} from '~/components/footer/SafetyDisclaimer';
@@ -23,21 +19,25 @@ const LEGAL_LINKS = FOOTER_SUPPORT_LINKS.filter((link) =>
 
 export function FooterMain() {
   return (
-    <div className="bg-navy text-white">
+    <div className="mr-footer-main text-white">
       <div className="xsto-container py-10 md:py-14">
         <div className="grid gap-10 md:grid-cols-12 md:gap-8 lg:gap-12">
           <div className="md:col-span-5 lg:col-span-4">
-            <img
-              alt={FOOTER_LOGO.alt}
-              className="h-11 w-auto max-w-[min(100%,12rem)] rounded-none object-contain object-left sm:h-12 sm:max-w-[14rem]"
-              decoding="async"
-              height={FOOTER_LOGO_DISPLAY_HEIGHT}
-              src={FOOTER_LOGO.src}
-              width={footerLogoDisplayWidth()}
-            />
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">
-              Self-balancing powered wheelchairs — UK sales, delivery and
-              support from Bentech Medical Ltd.
+            <NavLink
+              aria-label="Mobility Robot by Bentech Medical — home"
+              className="mr-footer-brand-link"
+              end
+              prefetch="intent"
+              to="/"
+            >
+              <MobilityRobotBrand light />
+            </NavLink>
+            <p className="mt-5 max-w-sm text-base leading-relaxed text-white/85">
+              Intelligent mobility. More possibilities.
+            </p>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">
+              XSTO products. UK advice, demonstrations and aftercare from
+              Bentech Medical Limited.
             </p>
             <address className="mt-5 space-y-1.5 not-italic text-sm leading-relaxed text-white/65">
               <p>
@@ -56,7 +56,7 @@ export function FooterMain() {
                   {COMPANY.email}
                 </a>
               </p>
-              <p className="text-white/55">
+              <p className="text-white/70">
                 {COMPANY.address}
                 <br />
                 {COMPANY.city}, {COMPANY.postcode}
@@ -114,7 +114,7 @@ function FooterLinkColumn({
 }) {
   return (
     <nav aria-label={title} className={className}>
-      <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-white/45">
+      <p className="font-display text-sm font-semibold tracking-wide text-white/70">
         {title}
       </p>
       <ul className="mt-4 space-y-2.5">

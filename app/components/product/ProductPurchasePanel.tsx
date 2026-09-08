@@ -43,6 +43,7 @@ import {
   type SellingPlanAllocationNode,
 } from '~/lib/selling-plans';
 import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
+import {isXstoRangeProduct} from '~/lib/product-specs';
 import {
   filterStandardVatVariants,
   filterVisibleProductOptions,
@@ -598,12 +599,12 @@ export function ProductPurchasePanel({
   };
 
   return (
-    <div className="product-buy-box lg:sticky lg:top-24">
-      <header className="mb-3 border-b border-border/70 pb-3 sm:mb-4 sm:pb-4">
-        <p className="mb-1.5 text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-primary">
-          XSTO UK
+    <div className="product-buy-box mr-product-buy-box">
+      <header className="mr-product-heading">
+        <p className="mr-product-eyebrow">
+          Mobility Robot <span>by Bentech Medical</span>
         </p>
-        <h1 className="font-display text-[1.45rem] font-semibold leading-[1.15] tracking-[-0.03em] text-navy sm:text-[1.65rem] md:text-[1.85rem]">
+        <h1 className="mr-product-title font-display">
           {displayName ?? title}
         </h1>
         <ProductReviewSummary
@@ -611,7 +612,7 @@ export function ProductPurchasePanel({
           productId={productId}
         />
         {tagline ? (
-          <p className="mt-1.5 text-sm leading-snug text-slate sm:mt-2">
+          <p className="mr-product-tagline">
             {tagline}
           </p>
         ) : null}
@@ -646,7 +647,7 @@ export function ProductPurchasePanel({
         vatSavings={vatSavings}
       />
 
-      <div className="mt-3 space-y-3 sm:mt-4">
+      <div className="mr-product-choices space-y-5">
         {x12Edition ? (
           <ProductX12EditionOptions
             onChange={handleX12ChoiceChange}
@@ -693,6 +694,12 @@ export function ProductPurchasePanel({
           sellingPlanId={selectedSellingPlanId}
           soldOutLabel={soldOutLabel}
         />
+
+        {isXstoRangeProduct(pageHandle) ? (
+          <Link className="mr-product-demo" prefetch="intent" to="/demo">
+            Book a demonstration <span aria-hidden>↗</span>
+          </Link>
+        ) : null}
 
         {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
 
@@ -857,7 +864,7 @@ function VatReliefCard({
   return (
     <section
       aria-labelledby="vat-relief-heading"
-      className="rounded-lg border border-navy/10 bg-navy/[0.03] px-3.5 py-3"
+      className="mr-product-vat rounded-lg border border-navy/10 bg-navy/[0.03] px-3.5 py-3"
     >
       <div className="flex items-start gap-2.5">
         <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-navy text-white">

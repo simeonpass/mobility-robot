@@ -204,7 +204,7 @@ export const homepageFAQs: ProductFAQ[] = [
     answer: m4FAQs[5].answer,
   },
   {
-    question: 'Is XSTO UK the manufacturer?',
+    question: 'Is Mobility Robot the manufacturer?',
     answer:
       'No. Bentech Medical Ltd is the Official UK Distributor of XSTO products. We handle all UK sales, delivery, warranty and after-sales support. XSTO International is the manufacturer.',
   },
