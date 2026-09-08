@@ -77,3 +77,15 @@ Original source photographs (the query requests a maximum width; M4 Pro's actual
 Preparation is recorded in scripts/prepare-hero-cutouts.py. It uses the approved original photos, background masking, edge decontamination and resizing, with no generative reconstruction of the products. Its M4 Pro floor mask is specific to the recorded source size. The exported alpha channels and transparent corners were checked, and the cut-outs were visually inspected against pale-blue and navy backgrounds.
 
 The production build, TypeScript and changed-source lint pass, and all 222 existing tests pass. Shopify still blocks hosted browser verification, so the image checks are asset checks, not a live-page or checkout sign-off. This update remains on the review branch and Oxygen preview.
+
+## Mobile homepage refinement — 8 September 2026
+
+The source and responsive-style audit found three consecutive presentations of the same chairs on phones: the three-product hero, the four-model shopping grid and four full-size video cards. The mobile homepage now starts with a shorter introduction and presents the range once as the main shopping grid. Desktop keeps its photographic hero and all the restored homepage sections. A desktop-only picture source avoids downloading the hidden hero photographs on phones.
+
+The range retains two columns down to 320px, equal image areas and uncropped photographs. Each card is one labelled link with a concise mobile description, larger price/VAT text and a single “View model” action. Both VAT-inclusive prices and eligibility wording remain. Small duplicate badges and repeated model names in links are removed on phones.
+
+Buyer guides and videos become compact, full-row controls on phones; all three guides and four videos remain accessible. Support copy uses smaller headings and closer spacing. The local review fallback shows two reviews initially with an explicit button for the remaining four; desktop still shows all six. The configured Judge.me carousel is unchanged. Mobile search moves to a prominent link at the top of the menu, leaving menu and basket controls alongside the existing wordmark. Header controls retain 44px touch targets.
+
+The purchase/accessory CSS was also reviewed: large optional-accessory photographs, selection disclosures, combined totals and the conditional sticky purchase button remain in place. This pass makes no checkout or product-price calculation changes.
+
+Validation: all 222 existing tests pass, along with the production build, TypeScript and changed-source lint. Hosted phone rendering and real checkout remain unverified because of the previously recorded browser access block. This is a source-based mobile audit and a review preview, not a live-device or checkout sign-off.

@@ -63,13 +63,18 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
               XSTO powered wheelchairs · UK distributor
             </p>
             <h1 id="homepage-heading">
-              A bigger world.
-              <br />A smarter way <span>to move.</span>
+              <span className="mr-hero-opening">
+                A bigger world.
+                <br />
+              </span>
+              A smarter way <span>to move.</span>
             </h1>
             <p className="mr-hero-intro">
-              From everyday journeys to new possibilities. Find your XSTO
-              powered wheelchair, with personal advice and UK support from
-              Bentech Medical.
+              <span className="mr-desktop-copy">
+                From everyday journeys to new possibilities.{' '}
+              </span>
+              Find your XSTO powered wheelchair, with personal advice and UK
+              support from Bentech Medical.
             </p>
             <div className="mr-actions">
               <Link className="mr-button" to="/#product-range">
@@ -109,21 +114,27 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
                       aria-label={`Explore ${name}`}
                     >
                       <div className="mr-hero-model-photo">
-                        <img
-                          src={large}
-                          srcSet={`${small} 360w, ${large} 720w`}
-                          sizes={
-                            featured
-                              ? '(max-width: 767px) 58vw, (max-width: 1023px) 36vw, 280px'
-                              : '(max-width: 767px) 48vw, (max-width: 1023px) 30vw, 230px'
-                          }
-                          alt={`${name} powered wheelchair`}
-                          width={width}
-                          height={height}
-                          loading="eager"
-                          fetchPriority={featured ? 'high' : 'auto'}
-                          decoding="async"
-                        />
+                        {/* Phones use the shopping grid, so skip the desktop hero downloads. */}
+                        <picture>
+                          <source
+                            media="(min-width: 768px)"
+                            srcSet={`${small} 360w, ${large} 720w`}
+                            sizes={
+                              featured
+                                ? '(max-width: 1023px) 36vw, 280px'
+                                : '(max-width: 1023px) 30vw, 230px'
+                            }
+                          />
+                          <img
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                            alt={`${name} powered wheelchair`}
+                            width={width}
+                            height={height}
+                            loading="eager"
+                            fetchPriority={featured ? 'high' : 'auto'}
+                            decoding="async"
+                          />
+                        </picture>
                       </div>
                       <span className="mr-hero-model-name">
                         {name} <ArrowUpRight size={15} aria-hidden />

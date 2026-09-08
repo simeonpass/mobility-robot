@@ -75,7 +75,7 @@ export function BrandStorySections() {
           </div>
         </div>
       </section>
-      <section className="mr-section mr-soft">
+      <section className="mr-section mr-soft mr-support-section">
         <div className="xsto-container">
           <div className="mr-section-intro">
             <div>
@@ -98,7 +98,7 @@ export function BrandStorySections() {
           </div>
         </div>
       </section>
-      <section className="mr-section">
+      <section className="mr-section mr-guides-section">
         <div className="xsto-container">
           <div className="mr-section-intro">
             <div>
@@ -113,15 +113,15 @@ export function BrandStorySections() {
           </div>
           <div className="mr-three-grid">
             {guides.map(([label, title, copy, slug]) => (
-              <article className="mr-guide-card" key={slug}>
+              <Link className="mr-guide-card" key={slug} to={`/guides/${slug}`}>
                 <p className="mr-eyebrow">{label}</p>
                 <h3>{title}</h3>
                 <p>{copy}</p>
-                <Link className="mr-text-link" to={`/guides/${slug}`}>
-                  Read the guide <ArrowRight size={18} aria-hidden />
-                  <span className="sr-only">: {title}</span>
-                </Link>
-              </article>
+                <span className="mr-text-link" aria-hidden>
+                  <span className="mr-desktop-copy">Read the guide</span>
+                  <ArrowRight size={18} />
+                </span>
+              </Link>
             ))}
           </div>
         </div>

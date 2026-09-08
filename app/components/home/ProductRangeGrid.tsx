@@ -23,6 +23,12 @@ const descriptions: Record<HomepageFlagshipHandle, string> = {
   'xsto-x12':
     'Stair-climbing capability for suitable stairs, with assessment and training.',
 };
+const mobileDescriptions: Record<HomepageFlagshipHandle, string> = {
+  'xsto-m4': 'Everyday self-levelling',
+  'xsto-m4b': 'Updated wheels & footrest',
+  'xsto-m4-pro': 'Extra seating adjustment',
+  'xsto-x12': 'Stair climbing, with assessment & training',
+};
 function productImageSrc(url: string, width: number): string {
   const parsed = new URL(url);
   parsed.searchParams.set('width', String(width));
@@ -46,8 +52,7 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
             <p className="mr-eyebrow">The XSTO range</p>
             <h2>
               Four models.
-              <br />
-              A world of possibilities.
+              <br />A world of possibilities.
             </h2>
             <p>
               Start with the way you want to live. We’ll help you find the chair
@@ -71,46 +76,51 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
               return (
                 <article className="mr-product-card" key={product.id}>
                   <Link
-                    className="mr-card-visual"
+                    className="mr-product-card-link"
                     to={`/products/${product.handle}`}
                     prefetch="intent"
-                    aria-label={`Explore ${name}`}
+                    aria-labelledby={`range-${product.handle}`}
                   >
-                    <span className="mr-card-badge">{meta.badge}</span>
-                    {image ? (
-                      <img
-                        alt={image.altText || name}
-                        src={productImageSrc(image.url, 800)}
-                        srcSet={`${productImageSrc(image.url, 400)} 400w, ${productImageSrc(image.url, 600)} 600w, ${productImageSrc(image.url, 800)} 800w`}
-                        sizes="(min-width: 1200px) 23vw, (min-width: 360px) 46vw, 90vw"
-                        width={image.width ?? 800}
-                        height={image.height ?? 800}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : null}
-                  </Link>
-                  <div className="mr-card-body">
-                    <h3>
-                      <Link to={`/products/${product.handle}`}>
-                        {meta.shortName}
-                      </Link>
-                    </h3>
-                    <p>{descriptions[slot]}</p>
-                    <div className="mr-card-pricing">
-                      <span>From </span>
-                      <strong>{getExVatDisplay(price)}</strong>
-                      <p>With VAT relief, if eligible</p>
-                      <p>{getIncVatDisplay(price)} including VAT</p>
+                    <div className="mr-card-visual">
+                      <span className="mr-card-badge">{meta.badge}</span>
+                      {image ? (
+                        <img
+                          alt={image.altText || name}
+                          src={productImageSrc(image.url, 800)}
+                          srcSet={`${productImageSrc(image.url, 400)} 400w, ${productImageSrc(image.url, 600)} 600w, ${productImageSrc(image.url, 800)} 800w`}
+                          sizes="(min-width: 1200px) 23vw, 46vw"
+                          width={image.width ?? 800}
+                          height={image.height ?? 800}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ) : null}
                     </div>
-                    <Link
-                      className="mr-text-link"
-                      to={`/products/${product.handle}`}
-                      prefetch="intent"
-                    >
-                      {meta.exploreLabel} <ArrowUpRight size={18} aria-hidden />
-                    </Link>
-                  </div>
+                    <div className="mr-card-body">
+                      <h3 id={`range-${product.handle}`}>{meta.shortName}</h3>
+                      <p>
+                        <span className="mr-desktop-copy">
+                          {descriptions[slot]}
+                        </span>
+                        <span className="mr-mobile-copy">
+                          {mobileDescriptions[slot]}
+                        </span>
+                      </p>
+                      <div className="mr-card-pricing">
+                        <span>From </span>
+                        <strong>{getExVatDisplay(price)}</strong>
+                        <p>With VAT relief, if eligible</p>
+                        <p>{getIncVatDisplay(price)} including VAT</p>
+                      </div>
+                      <span className="mr-text-link">
+                        <span className="mr-desktop-copy">
+                          {meta.exploreLabel}
+                        </span>
+                        <span className="mr-mobile-copy">View model</span>
+                        <ArrowUpRight size={18} aria-hidden />
+                      </span>
+                    </div>
+                  </Link>
                 </article>
               );
             })}

@@ -224,6 +224,7 @@
 .mr-shell .site-header-mobile-label {margin-bottom:9px;font-size:.68rem;letter-spacing:.1em}
 .mr-shell .site-header-mobile-footer {padding-top:18px}
 .mr-shell .site-header-mobile-account {font-size:.85rem;min-height:44px}
+.mr-shell .mr-mobile-search {display:flex;align-items:center;gap:12px;min-height:48px;margin-bottom:12px;padding:12px 14px;border:1px solid #dfe6ef;border-radius:8px;background:#f5f7fb;color:#526079;font-size:1rem}
 .mr-footer-links-desktop {display:block}
 .mr-footer-links-heading {font-family:var(--font-display);font-size:.9rem;font-weight:600;line-height:1.5;color:#fff}
 .mr-footer-links {margin-top:16px;list-style:none;padding:0}
@@ -271,6 +272,7 @@
  .mr-site-header .site-header-cta--compact,.mr-site-header .site-header-account-link {display:none}
  .mr-site-header .site-header-ctas {gap:0}
  .mr-site-header .site-header-icon-btn {width:44px;min-width:44px;min-height:44px;padding:10px}
+ .mr-site-header .site-header-search-toggle {display:none}
  .mr-site-header .site-header-cart-btn {position:relative;margin-left:0}
  .mr-site-header .site-header-cart-label {display:none}
  .mr-cart-icon {display:block;width:21px;height:21px}

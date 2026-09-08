@@ -1,6 +1,6 @@
 import {Suspense, useEffect, useId, useRef, useState} from 'react';
 import {Await, Link, NavLink, useAsyncValue, useLocation} from 'react-router';
-import {ArrowRight} from 'lucide-react';
+import {ArrowRight, Search} from 'lucide-react';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -316,6 +316,9 @@ function MobileNav({
       className="site-header-mobile"
       role="navigation"
     >
+      <Link className="mr-mobile-search" to="/search" onClick={close}>
+        <Search size={20} aria-hidden /> Search products
+      </Link>
       {isLoggedIn ? (
         <NavLink
           className={navLinkClass(false, 'site-header-mobile-account')}
@@ -471,7 +474,7 @@ function SearchToggle() {
   return (
     <button
       aria-label="Search"
-      className="site-header-icon-btn"
+      className="site-header-icon-btn site-header-search-toggle"
       onClick={() => open('search')}
       type="button"
     >

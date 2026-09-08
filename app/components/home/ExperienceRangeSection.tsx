@@ -26,7 +26,7 @@ export function ExperienceRangeSection() {
             title="Experience the"
           />
 
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mr-video-grid grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {HOMEPAGE_VIDEO_ITEMS.map((item, index) => {
               const thumbSrc = item.videoUrl
                 ? heroPosterDesktop
@@ -35,13 +35,13 @@ export function ExperienceRangeSection() {
               return (
                 <button
                   aria-label={`Play ${item.title}`}
-                  className="group overflow-hidden rounded-2xl border border-border/70 bg-card text-left shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary animate-fade-in-up"
+                  className="mr-video-card group overflow-hidden rounded-2xl border border-border/70 bg-card text-left shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary animate-fade-in-up"
                   key={item.id}
                   onClick={() => setActiveVideoKey(item.id)}
                   style={{animationDelay: `${index * 80}ms`}}
                   type="button"
                 >
-                  <div className="relative aspect-video overflow-hidden bg-navy">
+                  <div className="mr-video-thumb relative aspect-video overflow-hidden bg-navy">
                     <img
                       alt=""
                       className="size-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
@@ -52,7 +52,7 @@ export function ExperienceRangeSection() {
                       height={270}
                     />
                     <div className="absolute inset-0 bg-navy/25 transition-colors group-hover:bg-navy/15" />
-                    <span className="absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary-foreground/95 text-navy shadow-luxe transition-transform group-hover:scale-105">
+                    <span className="mr-video-play absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary-foreground/95 text-navy shadow-luxe transition-transform group-hover:scale-105">
                       <Play
                         aria-hidden
                         className="ml-0.5 size-6 fill-current"
@@ -60,8 +60,10 @@ export function ExperienceRangeSection() {
                       />
                     </span>
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-semibold text-foreground">{item.title}</h3>
+                  <div className="mr-video-copy p-5">
+                    <h3 className="font-semibold text-foreground">
+                      {item.title}
+                    </h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                       {item.description}
                     </p>
