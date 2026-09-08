@@ -1,6 +1,8 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import '~/styles/home-redesign.css';
+import {BrandStorySections} from '~/components/home/BrandStorySections';
+import {ExperienceRangeSection} from '~/components/home/ExperienceRangeSection';
 import {FaqPreview} from '~/components/home/FaqPreview';
 import {HeroSection} from '~/components/home/HeroSection';
 import {HomeCtaSection} from '~/components/home/HomeCtaSection';
@@ -50,14 +52,11 @@ export default function Homepage() {
 
   return (
     <div className="mr-home">
-      <HeroSection
-        product={products.find(
-          (product) =>
-            product.handle === SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12'],
-        )}
-      />
+      <HeroSection products={products} />
       <TrustBar />
       <ProductRangeGrid products={products} />
+      <BrandStorySections />
+      <ExperienceRangeSection />
       <ReviewsSection />
       <FaqPreview />
       <HomeCtaSection />

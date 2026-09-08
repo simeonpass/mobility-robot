@@ -44,7 +44,11 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
         <div className="mr-section-intro">
           <div>
             <p className="mr-eyebrow">The XSTO range</p>
-            <h2>Choose your wheelchair.</h2>
+            <h2>
+              Four models.
+              <br />
+              A world of possibilities.
+            </h2>
             <p>
               Start with the way you want to live. We’ll help you find the chair
               to match.

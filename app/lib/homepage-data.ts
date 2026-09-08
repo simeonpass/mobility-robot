@@ -82,7 +82,7 @@ export const HOMEPAGE_VIDEO_ITEMS: readonly HomepageVideoItem[] = [
     youtubeId: 'ihXdzLuNz2s',
     title: 'XSTO X12 — Stair Climber',
     description:
-      'See the X12 climb stairs and tackle rough terrain. Choose X12 or X12 Pro (electric elevating leg rest) at checkout',
+      'See the X12 in action on suitable stairs and outdoor routes. Compare X12 and X12 Pro with its electric elevating leg rest on the product page',
   },
 ];
 

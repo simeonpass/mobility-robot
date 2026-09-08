@@ -138,23 +138,33 @@ function FooterLinkColumn({
 }) {
   return (
     <nav aria-label={title} className={className}>
+      <div className="mr-footer-links-desktop">
+        <h2 className="mr-footer-links-heading">{title}</h2>
+        <FooterLinks links={links} />
+      </div>
       <details className="mr-footer-link-group">
         <summary>{title}</summary>
-        <ul>
-          {links.map((link) => (
-            <li key={link.url}>
-              <NavLink
-                className="text-sm text-white/70 transition-colors hover:text-white"
-                prefetch="intent"
-                to={link.url}
-              >
-                {link.title}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+        <FooterLinks links={links} />
       </details>
     </nav>
+  );
+}
+
+function FooterLinks({links}: {links: Array<{title: string; url: string}>}) {
+  return (
+    <ul className="mr-footer-links">
+      {links.map((link) => (
+        <li key={link.url}>
+          <NavLink
+            className="text-sm text-white/70 transition-colors hover:text-white"
+            prefetch="intent"
+            to={link.url}
+          >
+            {link.title}
+          </NavLink>
+        </li>
+      ))}
+    </ul>
   );
 }
 

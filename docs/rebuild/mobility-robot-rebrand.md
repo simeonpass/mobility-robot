@@ -49,3 +49,15 @@ Only retain or configure old-domain redirects if the manufacturer permits that u
 Use Mobility Robot as the store name and Bentech Medical Limited as the business in structured data and business listings. Keep XSTO in product names, manufacturer fields and useful guide content. Ask relevant partners to update their links through the normal approved communication process. No partner messages were sent in this work.
 
 The new guides serve real buyer questions and link to the relevant models and demonstrations. Expand only with original, useful material: product demonstrations, exact configuration details, genuine customer stories and verified aftercare information. Do not add fabricated reviews, location pages without real service coverage, or guaranteed ranking claims.
+
+## Homepage restoration and range hero — 8 September 2026
+
+The user compared the earlier full homepage with the simplified preview and preferred the richer content. The homepage now restores the lifestyle feature, Bentech Medical support section, three buyer guides, four product videos and the new-brand explanation. The newsletter is visible again and desktop footer navigation is expanded; phone footer links retain native accordions.
+
+The current motion wordmark remains, enlarged to 34px in the desktop header and 30px in the footer, with responsive sizing on phones. Desktop navigation already changes to compact controls below 1280px.
+
+The hero now features M4B, X12 and M4 Pro together using real Shopify product photography and canonical product links. Desktop shows the three chairs together on a pale blue background. Phones use a larger featured X12 above the M4B and M4 Pro, rather than shrinking three images into one narrow row. The restored headline reads “A bigger world. A smarter way to move.” Actions lead to the product range and restored demonstration videos. Images retain their source proportions and use responsive CDN widths; only the featured image receives high fetch priority.
+
+The restored video player uses a named native dialog with keyboard Escape, focus containment and focus return. Media loads only after a customer chooses a video. Edition-selection copy now points to the product page.
+
+The production build, all 222 existing tests, changed-source lint and TypeScript checks pass. This update changes presentation and content; the previously audited checkout, VAT and SEO fixes remain. Hosted visual verification is still unavailable because Shopify blocks the testing browser; no further challenge attempts or alternate access routes were used. Review the new layout in the Oxygen preview before production approval.
