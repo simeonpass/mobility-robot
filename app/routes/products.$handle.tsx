@@ -33,7 +33,7 @@ import {buildProductTabContent, getProductSpecs} from '~/lib/product-specs';
 import {Ga4ProductView} from '~/components/Ga4ProductView';
 import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
-import {resolveProductSeo} from '~/lib/product-seo';
+import {resolveProductSeo, resolveProductOffer} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 import {getProductDisplayName} from '~/lib/product-content';
@@ -302,18 +302,35 @@ export default function Product() {
     proEditionVariants[0] ??
     null;
 
-  const productSchema = productJsonLd({
-    name: displayName,
-    description: seo.description,
-    handle: product.handle,
-    sku: selectedVariant?.sku,
-    image: selectedVariant?.image?.url || product.images.nodes[0]?.url,
-    price: selectedVariant?.price.amount ?? '0',
-    currencyCode: selectedVariant?.price.currencyCode ?? 'GBP',
-    availableForSale: selectedVariant?.availableForSale ?? false,
-    ratingValue: reviewSummary.count > 0 ? reviewSummary.average : undefined,
-    reviewCount: reviewSummary.count > 0 ? reviewSummary.count : undefined,
+  const isProEdition =
+    isX12CanonicalHandle(product.handle) &&
+    x12Choice === 'electric' &&
+    Boolean(proEditionVariant);
+  const offer = resolveProductOffer({
+    selectedVariant: selectedVariant ?? null,
+    variants: pageVariants,
+    proVariant: proEditionVariant,
+    proVariants: proEditionVariants,
+    isPro: isProEdition,
   });
+  const productSchema = offer
+    ? productJsonLd({
+        name: isProEdition ? 'XSTO X12 Pro' : displayName,
+        description: seo.description,
+        handle: product.handle,
+        sku: offer.variant.sku,
+        image: offer.variant.image?.url || product.images.nodes[0]?.url,
+        price: offer.price.amount,
+        currencyCode: offer.price.currencyCode,
+        availableForSale: offer.variant.availableForSale ?? false,
+        quantityAvailable: offer.variant.quantityAvailable,
+        variantId: offer.variant.id,
+        isProEdition,
+        ratingValue:
+          reviewSummary.count > 0 ? reviewSummary.average : undefined,
+        reviewCount: reviewSummary.count > 0 ? reviewSummary.count : undefined,
+      })
+    : null;
 
   return (
     <div className="product-page product-page--has-mobile-atc mr-product-page bg-background pb-0">
@@ -324,7 +341,7 @@ export default function Product() {
         title={displayName}
         vendor={product.vendor}
       />
-      <JsonLd data={productSchema} />
+      {productSchema ? <JsonLd data={productSchema} /> : null}
       <div className="xsto-container mr-product-container">
         <ProductBreadcrumbs title={displayName} />
 

@@ -5,6 +5,7 @@ import {
   SITE_NAME,
   SITE_URL,
 } from '~/lib/const';
+import {getDeliveryInfo} from '~/lib/product-delivery';
 
 export {SITE_URL, SITE_NAME} from '~/lib/const';
 
@@ -35,6 +36,9 @@ type ProductJsonLdInput = {
   price: string;
   currencyCode: string;
   availableForSale: boolean;
+  quantityAvailable?: number | null;
+  variantId?: string;
+  isProEdition?: boolean;
   ratingValue?: number;
   reviewCount?: number;
 };
@@ -67,10 +71,16 @@ const MAX_TITLE = 60;
 const MAX_DESCRIPTION = 160;
 
 export function truncateTitle(title: string): string {
-  const withSuffix = title.includes(SITE_NAME) ? title : `${title}${TITLE_SUFFIX}`;
+  const normalized = title.trim().replace(/\s+/g, ' ');
+  if (normalized.includes(SITE_NAME)) return normalized;
+  const withSuffix = `${normalized}${TITLE_SUFFIX}`;
   if (withSuffix.length <= MAX_TITLE) return withSuffix;
   const budget = MAX_TITLE - TITLE_SUFFIX.length - 1;
-  return `${title.slice(0, Math.max(budget, 20)).trim()}…${TITLE_SUFFIX}`;
+  const clipped = normalized
+    .slice(0, budget)
+    .replace(/\s+\S*$/, '')
+    .trim();
+  return `${clipped || normalized.slice(0, budget)}…${TITLE_SUFFIX}`;
 }
 
 export function truncateDescription(description: string): string {
@@ -102,8 +112,8 @@ export function buildMeta({
   description,
   path,
   image,
-  imageWidth = DEFAULT_OG_IMAGE_WIDTH,
-  imageHeight = DEFAULT_OG_IMAGE_HEIGHT,
+  imageWidth,
+  imageHeight,
   ogType = 'website',
   robots,
 }: BuildMetaInput) {
@@ -123,14 +133,26 @@ export function buildMeta({
     {property: 'og:url', content: url},
     {property: 'og:type', content: ogType},
     {property: 'og:image', content: ogImage},
-    {property: 'og:image:width', content: String(imageWidth)},
-    {property: 'og:image:height', content: String(imageHeight)},
     {name: 'twitter:card', content: 'summary_large_image'},
     {name: 'twitter:title', content: fullTitle},
     {name: 'twitter:description', content: metaDescription},
     {name: 'twitter:image', content: ogImage},
     {tagName: 'link', rel: 'alternate', hrefLang: 'en-GB', href: url},
   ];
+
+  // Do not describe every portrait/square product photo as the default 1200×630.
+  if (!image || (imageWidth && imageHeight)) {
+    tags.push(
+      {
+        property: 'og:image:width',
+        content: String(imageWidth || DEFAULT_OG_IMAGE_WIDTH),
+      },
+      {
+        property: 'og:image:height',
+        content: String(imageHeight || DEFAULT_OG_IMAGE_HEIGHT),
+      },
+    );
+  }
 
   if (robots) {
     tags.push({name: 'robots', content: robots});
@@ -246,9 +268,21 @@ export function productJsonLd({
   price,
   currencyCode,
   availableForSale,
+  quantityAvailable,
+  variantId,
+  isProEdition,
   ratingValue,
   reviewCount,
 }: ProductJsonLdInput) {
+  const delivery = getDeliveryInfo({
+    handle,
+    availableForSale,
+    quantityAvailable,
+  });
+  const offerUrl = new URL(absoluteUrl(`/products/${handle}`));
+  if (variantId)
+    offerUrl.searchParams.set('variant', variantId.split('/').pop()!);
+  if (isProEdition) offerUrl.searchParams.set('legrest', 'electric');
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -270,21 +304,26 @@ export function productJsonLd({
       : {}),
     offers: {
       '@type': 'Offer',
-      url: absoluteUrl(`/products/${handle}`),
+      url: offerUrl.toString(),
       priceCurrency: currencyCode || 'GBP',
       price,
       itemCondition: 'https://schema.org/NewCondition',
-      availability: availableForSale
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
-      seller: {'@type': 'Organization', name: 'Bentech Medical Limited'},
+      availability:
+        delivery.status === 'sold_out'
+          ? 'https://schema.org/OutOfStock'
+          : delivery.status === 'preorder'
+            ? 'https://schema.org/PreOrder'
+            : 'https://schema.org/InStock',
+      seller: {
+        '@id': `${SITE_URL}/#organization`,
+        '@type': 'Organization',
+        name: 'Bentech Medical Limited',
+      },
     },
   };
 }
 
-export function faqJsonLd(
-  items: Array<{question: string; answer: string}>,
-) {
+export function faqJsonLd(items: Array<{question: string; answer: string}>) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -321,9 +360,7 @@ export function localBusinessJsonLd(dealer: LocalBusinessInput) {
   };
 }
 
-export function localBusinessListJsonLd(
-  dealers: LocalBusinessInput[],
-) {
+export function localBusinessListJsonLd(dealers: LocalBusinessInput[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -371,10 +408,9 @@ export function articleJsonLd({
     description: truncateDescription(description),
     datePublished: publishedAt,
     dateModified: modifiedAt || publishedAt,
-    author: {
-      '@type': 'Person',
-      name: author || 'Mobility Robot',
-    },
+    author: author
+      ? {'@type': 'Person', name: author}
+      : {'@id': `${SITE_URL}/#organization`},
     publisher: {
       '@type': 'Organization',
       name: 'Bentech Medical Limited',
@@ -392,6 +428,6 @@ export function jsonLdScript(
   data: Record<string, unknown> | Array<Record<string, unknown>>,
 ) {
   return {
-    __html: JSON.stringify(data),
+    __html: JSON.stringify(data).replace(/</g, '\\u003c'),
   };
 }

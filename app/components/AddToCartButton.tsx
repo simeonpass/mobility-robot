@@ -1,6 +1,7 @@
 import {CartForm, type OptimisticCartLineInput} from '@shopify/hydrogen';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackAddToCart} from '~/lib/analytics';
+import {CartFeedback} from '~/components/CartFeedback';
 
 export function AddToCartButton({
   analytics,
@@ -74,6 +75,9 @@ export function AddToCartButton({
           >
             {fetcher.state !== 'idle' ? 'Adding…' : children}
           </button>
+          {fetcher.state === 'idle' ? (
+            <CartFeedback data={fetcher.data} />
+          ) : null}
         </>
       )}
     </CartForm>

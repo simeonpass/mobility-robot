@@ -1,5 +1,6 @@
 import {useOptimisticCart} from '@shopify/hydrogen';
-import {Link} from 'react-router';
+import {Link, useFetchers} from 'react-router';
+import {CartFeedback} from '~/components/CartFeedback';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
@@ -37,6 +38,16 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const cart = useOptimisticCart(originalCart);
   const {close} = useAside();
   const isAside = layout === 'aside';
+  const fetchers = useFetchers();
+  const feedback = fetchers
+    .filter(
+      (fetcher) =>
+        fetcher.state === 'idle' &&
+        fetcher.data &&
+        typeof fetcher.data === 'object' &&
+        'action' in fetcher.data,
+    )
+    .map((fetcher) => <CartFeedback key={fetcher.key} data={fetcher.data} />);
 
   const lines = cart?.lines?.nodes ?? [];
   const linesCount = lines.length > 0;
@@ -73,10 +84,14 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         </div>
 
         {!linesCount ? (
-          <CartEmpty onContinue={close} variant="drawer" />
+          <div className="overflow-y-auto px-4">
+            {feedback}
+            <CartEmpty onContinue={close} variant="drawer" />
+          </div>
         ) : (
           <>
             <div className="overflow-y-auto overscroll-contain px-4 py-3">
+              {feedback}
               <ul className="space-y-2" aria-label="Cart line items">
                 {lines.map((line) => {
                   if (
@@ -107,6 +122,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
 
   return (
     <section aria-label="Cart page" className="mx-auto max-w-3xl">
+      {feedback}
       {!linesCount ? (
         <CartEmpty variant="page" />
       ) : (

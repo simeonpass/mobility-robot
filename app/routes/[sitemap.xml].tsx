@@ -9,6 +9,9 @@ export async function loader({
   const response = await getSitemapIndex({
     storefront,
     request: canonicalSitemapRequest(request),
+    // Blog articles use /blog/:handle in the custom content sitemap. There
+    // are no /articles or metaobject pages in this storefront.
+    types: ['products', 'collections', 'pages'],
     customChildSitemaps: ['/sitemap.content.xml'],
   });
 

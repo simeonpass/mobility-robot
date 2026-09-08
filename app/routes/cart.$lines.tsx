@@ -1,5 +1,9 @@
 import {redirect} from 'react-router';
 import type {Route} from './+types/cart.$lines';
+import {getCartErrors} from '~/lib/cart-feedback';
+import {NOINDEX_HEADERS} from '~/lib/seo';
+
+export const headers: Route.HeadersFunction = () => NOINDEX_HEADERS;
 
 /**
  * Automatically creates a new cart based on the URL and redirects straight to checkout.
@@ -23,10 +27,22 @@ export async function loader({request, context, params}: Route.LoaderArgs) {
   const {cart} = context;
   const {lines} = params;
   if (!lines) return redirect('/cart');
+  if (
+    !/^\d+:[1-9]\d*(,\d+:[1-9]\d*)*$/.test(lines) ||
+    lines.split(',').length > 250
+  ) {
+    throw new Response(
+      'This basket link is not valid. Please choose your products from the shop.',
+      {status: 400},
+    );
+  }
   const linesMap = lines.split(',').map((line) => {
     const lineDetails = line.split(':');
     const variantId = lineDetails[0];
     const quantity = parseInt(lineDetails[1], 10);
+    if (!Number.isSafeInteger(quantity) || quantity > 2147483647) {
+      throw new Response('This basket quantity is not valid.', {status: 400});
+    }
 
     return {
       merchandiseId: `gid://shopify/ProductVariant/${variantId}`,
@@ -48,7 +64,7 @@ export async function loader({request, context, params}: Route.LoaderArgs) {
 
   const cartResult = result.cart;
 
-  if (result.errors?.length || !cartResult) {
+  if (getCartErrors(result).length || !cartResult) {
     throw new Response('Link may be expired. Try checking the URL.', {
       status: 410,
     });

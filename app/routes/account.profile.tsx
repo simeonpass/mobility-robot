@@ -1,3 +1,4 @@
+import {noindexMeta} from '~/lib/seo';
 import type {CustomerFragment} from 'customer-accountapi.generated';
 import type {CustomerUpdateInput} from '@shopify/hydrogen/customer-account-api-types';
 import {CUSTOMER_UPDATE_MUTATION} from '~/graphql/customer-account/CustomerUpdateMutation';
@@ -16,7 +17,11 @@ export type ActionResponse = {
 };
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Profile'}];
+  return noindexMeta({
+    title: 'Your Profile',
+    description: 'Manage your Mobility Robot profile.',
+    path: '/account/profile',
+  });
 };
 
 export async function loader({context}: Route.LoaderArgs) {

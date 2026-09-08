@@ -11,12 +11,11 @@ import {buildMeta, itemListJsonLd, breadcrumbJsonLd} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const collection = data?.collection;
-  const title =
-    collection?.seo?.title || collection?.title || 'Collection';
+  const title = collection?.seo?.title || collection?.title || 'Collection';
   const description =
     collection?.seo?.description ||
     collection?.description ||
-    `Shop ${collection?.title ?? 'XSTO products'} from Mobility Robot, the official UK XSTO store.`;
+    `Shop ${collection?.title ?? 'XSTO products'} from Mobility Robot by Bentech Medical, the official UK distributor for XSTO.`;
 
   return buildMeta({
     title,
@@ -109,7 +108,9 @@ export default function Collection() {
         }))}
       />
       <JsonLd data={[breadcrumbJsonLd(breadcrumbItems), listSchema]} />
-      <h1 className="text-3xl font-bold text-foreground md:text-4xl">{collection.title}</h1>
+      <h1 className="text-3xl font-bold text-foreground md:text-4xl">
+        {collection.title}
+      </h1>
       <p className="collection-description">{collection.description}</p>
       <PaginatedResourceSection<ProductItemFragment>
         connection={collection.products}

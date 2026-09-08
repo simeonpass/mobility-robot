@@ -1,4 +1,5 @@
 import type {Route} from './+types/[sitemap.content.xml]';
+import type {BlogArticleHandlesQuery} from 'storefrontapi.generated';
 import {BLOG_ARTICLE_HANDLES_QUERY, BLOG_HANDLE} from '~/lib/blog-queries';
 import {STATIC_SITEMAP_ROUTES} from '~/lib/static-routes';
 import {SITE_URL} from '~/lib/seo';
@@ -8,10 +9,24 @@ export async function loader({context}: Route.LoaderArgs) {
 
   let blogArticles: Array<{handle: string; publishedAt?: string | null}> = [];
   try {
-    const {blog} = await storefront.query(BLOG_ARTICLE_HANDLES_QUERY, {
-      variables: {blogHandle: BLOG_HANDLE},
-    });
-    blogArticles = blog?.articles?.nodes ?? [];
+    let after: string | null = null;
+    const cursors = new Set<string>();
+    do {
+      const result: BlogArticleHandlesQuery = await storefront.query(
+        BLOG_ARTICLE_HANDLES_QUERY,
+        {
+          variables: {blogHandle: BLOG_HANDLE, after},
+        },
+      );
+      const articles = result.blog?.articles;
+      blogArticles.push(...(articles?.nodes ?? []));
+      const next = articles?.pageInfo.hasNextPage
+        ? articles.pageInfo.endCursor
+        : null;
+      if (!next || cursors.has(next)) break;
+      cursors.add(next);
+      after = next;
+    } while (after);
   } catch {
     blogArticles = [];
   }

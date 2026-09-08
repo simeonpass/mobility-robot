@@ -111,12 +111,14 @@ export type BlogArticleQuery = {
 
 export type BlogArticleHandlesQueryVariables = StorefrontAPI.Exact<{
   blogHandle: StorefrontAPI.Scalars['String']['input'];
+  after?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['String']['input']>;
 }>;
 
 export type BlogArticleHandlesQuery = {
   blog?: StorefrontAPI.Maybe<{
     articles: {
       nodes: Array<Pick<StorefrontAPI.Article, 'handle' | 'publishedAt'>>;
+      pageInfo: Pick<StorefrontAPI.PageInfo, 'hasNextPage' | 'endCursor'>;
     };
   }>;
 };
@@ -2562,7 +2564,7 @@ interface GeneratedQueryTypes {
     return: BlogArticleQuery;
     variables: BlogArticleQueryVariables;
   };
-  '#graphql\n  query BlogArticleHandles($blogHandle: String!) {\n    blog(handle: $blogHandle) {\n      articles(first: 250) {\n        nodes {\n          handle\n          publishedAt\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query BlogArticleHandles($blogHandle: String!, $after: String) {\n    blog(handle: $blogHandle) {\n      articles(first: 250, after: $after) {\n        nodes {\n          handle\n          publishedAt\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n': {
     return: BlogArticleHandlesQuery;
     variables: BlogArticleHandlesQueryVariables;
   };

@@ -1,3 +1,4 @@
+import {noindexMeta} from '~/lib/seo';
 import {
   Link,
   useLoaderData,
@@ -30,7 +31,11 @@ type OrdersLoaderData = {
 };
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Orders'}];
+  return noindexMeta({
+    title: 'Your Orders',
+    description: 'View your Mobility Robot orders.',
+    path: '/account/orders',
+  });
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {

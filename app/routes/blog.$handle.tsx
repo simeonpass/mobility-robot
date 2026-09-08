@@ -68,7 +68,7 @@ export default function BlogArticlePage() {
             path: `/blog/${article.handle}`,
             publishedAt: article.publishedAt,
             modifiedAt: article.publishedAt,
-            author: article.author?.name || 'XSTO Team',
+            author: article.author?.name,
             image: article.image?.url,
           }),
         ]}
@@ -110,24 +110,32 @@ export default function BlogArticlePage() {
       </article>
 
       {relatedArticles.length > 0 ? (
-        <section aria-labelledby="related-articles" className="mt-12 border-t border-border pt-10">
-          <h2 className="text-xl font-semibold text-foreground" id="related-articles">
+        <section
+          aria-labelledby="related-articles"
+          className="mt-12 border-t border-border pt-10"
+        >
+          <h2
+            className="text-xl font-semibold text-foreground"
+            id="related-articles"
+          >
             Related articles
           </h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-3">
-            {relatedArticles.map((related: {id: string; handle: string; title: string}) => (
-              <li key={related.id}>
-                <Link
-                  className="block rounded-xl border border-border p-4 no-underline hover:border-gold"
-                  prefetch="intent"
-                  to={`/blog/${related.handle}`}
-                >
-                  <h3 className="text-sm font-semibold text-foreground">
-                    {related.title}
-                  </h3>
-                </Link>
-              </li>
-            ))}
+            {relatedArticles.map(
+              (related: {id: string; handle: string; title: string}) => (
+                <li key={related.id}>
+                  <Link
+                    className="block rounded-xl border border-border p-4 no-underline hover:border-gold"
+                    prefetch="intent"
+                    to={`/blog/${related.handle}`}
+                  >
+                    <h3 className="text-sm font-semibold text-foreground">
+                      {related.title}
+                    </h3>
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
         </section>
       ) : null}

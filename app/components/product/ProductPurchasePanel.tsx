@@ -121,10 +121,7 @@ export function ProductPurchasePanel({
     return () => observer.disconnect();
   }, []);
 
-  const [x12Choice, setX12Choice] = useState<X12LegRestChoice>(() => {
-    if (x12Edition?.initialChoice) return x12Edition.initialChoice;
-    return parseX12ChoiceFromSearch(searchParams);
-  });
+  const x12Choice = parseX12ChoiceFromSearch(searchParams);
 
   const activeEdition: ChairPurchaseSource = useMemo(() => {
     if (!x12Edition) {
@@ -291,7 +288,6 @@ export function ProductPurchasePanel({
 
   const handleX12ChoiceChange = (next: X12LegRestChoice) => {
     if (next === 'electric' && !x12Edition?.pro) return;
-    setX12Choice(next);
     setSearchParams(x12ChoiceSearchParams(searchParams, next), {
       replace: true,
       preventScrollReset: true,

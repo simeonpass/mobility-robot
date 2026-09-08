@@ -109,12 +109,16 @@ export const BLOG_ARTICLE_QUERY = `#graphql
 ` as const;
 
 export const BLOG_ARTICLE_HANDLES_QUERY = `#graphql
-  query BlogArticleHandles($blogHandle: String!) {
+  query BlogArticleHandles($blogHandle: String!, $after: String) {
     blog(handle: $blogHandle) {
-      articles(first: 250) {
+      articles(first: 250, after: $after) {
         nodes {
           handle
           publishedAt
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }

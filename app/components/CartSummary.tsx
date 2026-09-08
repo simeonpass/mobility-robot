@@ -2,7 +2,8 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, type OptimisticCart} from '@shopify/hydrogen';
 import {useId} from 'react';
-import {Link} from 'react-router';
+import {Link, useFetchers} from 'react-router';
+import {isCartMutationPending} from '~/lib/cart-feedback';
 import {useConsent} from '~/components/ConsentBanner';
 import {toGa4Item, trackBeginCheckout} from '~/lib/analytics';
 import {withOnlineStoreChannel, lineHasVatRelief} from '~/lib/cart-utils';
@@ -18,6 +19,9 @@ type CartSummaryProps = {
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
   const isAside = layout === 'aside';
+  const fetchers = useFetchers();
+  const checkoutPending =
+    Boolean(cart.isOptimistic) || isCartMutationPending(fetchers);
   const summaryId = useId();
   const discountCodeInputId = useId();
   const {analyticsAllowed} = useConsent();
@@ -127,31 +131,36 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   ) : null;
 
   const checkoutSection = checkoutUrl ? (
-    <a
-      className="btn-checkout w-full py-3.5 !text-white no-underline hover:!text-white aria-disabled:opacity-60"
-      href={checkoutUrl}
-      aria-disabled={cart.isOptimistic || undefined}
-      onClick={(event) => {
-        if (cart.isOptimistic) {
-          event.preventDefault();
-          return;
-        }
-        if (!analyticsAllowed || !cart?.lines?.nodes?.length || !totals) return;
-        const items = cart.lines.nodes.map((line) =>
-          toGa4Item({
-            id: line.merchandise.id,
-            title: line.merchandise.product.title,
-            price: line.merchandise.price.amount,
-            quantity: line.quantity,
-          }),
-        );
-        trackBeginCheckout(items, totals.total, currencyCode);
-      }}
-    >
-      <span className="text-white">
-        {cart.isOptimistic ? 'Updating basket…' : 'Secure checkout'}
-      </span>
-    </a>
+    checkoutPending ? (
+      <button
+        type="button"
+        disabled
+        aria-busy="true"
+        className="btn-checkout w-full py-3.5 !text-white opacity-60"
+      >
+        Updating basket…
+      </button>
+    ) : (
+      <a
+        className="btn-checkout w-full py-3.5 !text-white no-underline hover:!text-white aria-disabled:opacity-60"
+        href={checkoutUrl}
+        onClick={() => {
+          if (!analyticsAllowed || !cart?.lines?.nodes?.length || !totals)
+            return;
+          const items = cart.lines.nodes.map((line) =>
+            toGa4Item({
+              id: line.merchandise.id,
+              title: line.merchandise.product.title,
+              price: line.merchandise.price.amount,
+              quantity: line.quantity,
+            }),
+          );
+          trackBeginCheckout(items, totals.total, currencyCode);
+        }}
+      >
+        <span className="text-white">Secure checkout</span>
+      </a>
+    )
   ) : null;
 
   if (isAside) {
@@ -241,8 +250,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
               VAT relief on eligible items
             </p>
             <p className="mt-1 text-muted-foreground">
-              Checkout uses your declaration email. With VAT relief variants,
-              you pay the listed ex-VAT price (no tax line confusion).
+              Your VAT declaration is included with your basket. Check the final
+              VAT relief and total at checkout.
               <Link
                 className="ml-1 font-medium text-foreground hover:underline"
                 to="/account/login"
@@ -323,7 +332,7 @@ function CartDiscounts({
               {applicableCodes.join(', ')}
             </code>
           </span>
-          <UpdateDiscountForm discountCodes={applicableCodes}>
+          <UpdateDiscountForm discountCodes={[]}>
             <button
               aria-label="Remove discount code"
               className="text-xs text-muted-foreground hover:text-foreground"
@@ -344,7 +353,7 @@ function CartDiscounts({
             className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
             id={discountCodeInputId}
             name="discountCode"
-            placeholder="Discount code (e.g. JENNI10)"
+            placeholder="Discount code"
             type="text"
           />
           <button
