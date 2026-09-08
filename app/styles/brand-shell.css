@@ -37,10 +37,9 @@
 .mr-header-inner .site-header-logo:hover,
 .mr-footer .mr-footer-brand-link:hover { text-decoration: none; }
 .mr-brand { display: inline-flex; flex-shrink: 0; align-items: center; gap: 12px; color: #101b35; }
-.mr-brand-mark { width: 43px; height: 43px; flex-shrink: 0; overflow: visible; }
 .mr-brand-type { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
-.mr-brand-name { font-family: var(--font-display); font-size: 27px; line-height: 1.02; font-weight: 800; letter-spacing: -1.2px; }
-.mr-brand-name > span { display: block; margin-top: 5px; font-size: 15px; font-weight: 600; letter-spacing: 4px; }
+.mr-brand-name { font-family: var(--font-display); font-size: 27px; line-height: 1.02; font-weight: 800; letter-spacing: -1.2px; white-space: nowrap; }
+.mr-brand-dot { color: #f2a23a; }
 .mr-brand-byline { color: #536177; font-size: 13px; font-weight: 500; line-height: 1.2; letter-spacing: 0; white-space: nowrap; }
 .mr-brand--light { color: #fff; }
 .mr-brand--light .mr-brand-byline { color: #d4dded; }
@@ -167,9 +166,7 @@
   .mr-announcement-international { display: none; }
   .mr-shell { --announcement-bar-height: 36px; }
   .mr-brand { gap: 8px; }
-  .mr-brand-mark { width: 33px; height: 33px; }
   .mr-brand-name { font-size: 23px; }
-  .mr-brand-name > span { margin-top: 4px; font-size: 12px; letter-spacing: 3px; }
   .mr-brand-type { gap: 6px; }
   .mr-brand-byline { font-size: 12px; }
   .mr-site-header .site-header-link { font-size: 13px; }
@@ -189,7 +186,6 @@
   .mr-site-header .site-header-cta--compact { display: none; }
   .mr-header-inner { gap: 0; }
   .mr-site-header .mr-brand { gap: 7px; }
-  .mr-site-header .mr-brand-mark { width: 29px; height: 29px; }
   .mr-site-header .mr-brand-name { font-size: 21px; }
   .mr-site-header .site-header-ctas { gap: 0; }
 }
@@ -230,9 +226,7 @@
 .mr-newsletter-disclosure {background:#152540;color:#fff;border-bottom:1px solid #ffffff20}
 .mr-newsletter-disclosure>summary {max-width:1344px;margin:auto;padding:18px 32px;cursor:pointer;font-size:.85rem;font-weight:500}
 .mr-newsletter-disclosure .mr-footer-newsletter {border:0}
-.mr-footer .mr-brand-name>span {display:inline;margin:0 0 0 3px;font-size:1em;letter-spacing:-1px;text-transform:lowercase}
 .mr-footer .mr-brand-name {font-size:23px}
-.mr-footer .mr-brand-mark {width:36px;height:36px}
 .mr-footer-link-columns {align-items:start}
 .mr-cart-icon {display:none}
 .mr-accessory-tip {max-width:620px;margin-bottom:22px;color:#526079;font-size:.93rem;line-height:1.7}
@@ -262,9 +256,7 @@
  .mr-announcement-inner {min-height:30px;font-size:10.5px;padding-block:6px}
  .mr-site-header .mr-header-inner {gap:4px;padding-inline:16px}
  .mr-site-header .mr-brand {gap:6px}
- .mr-site-header .mr-brand-mark {width:25px;height:25px}
- .mr-site-header .mr-brand-name {font-size:18px;letter-spacing:-.7px}
- .mr-site-header .mr-brand-name>span {display:inline;margin:0;font-size:1em;font-weight:700;letter-spacing:-.7px;text-transform:lowercase}
+ .mr-site-header .mr-brand-name {font-size:22px;letter-spacing:-.8px}
  .mr-site-header .mr-brand-type {gap:5px}
  .mr-site-header .mr-brand-byline {font-size:10.5px}
  .mr-site-header .site-header-cta--compact,.mr-site-header .site-header-account-link {display:none}
@@ -288,4 +280,8 @@
  .mr-accessory-results h2 {font-size:1.13rem}
  .accessories-page h1 {font-size:2rem;line-height:1.2}
  .mr-accessory-tip {font-size:.85rem}
+}
+
+@media (max-width:359px) {
+ .mr-site-header .mr-brand-name {font-size:20px}
 }

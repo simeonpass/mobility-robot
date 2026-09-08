@@ -30,29 +30,12 @@ interface HeaderProps {
 export function MobilityRobotBrand({light = false}: {light?: boolean}) {
   return (
     <span className={`mr-brand${light ? ' mr-brand--light' : ''}`}>
-      <svg
-        aria-hidden="true"
-        className="mr-brand-mark"
-        viewBox="0 0 48 48"
-        fill="none"
-      >
-        <path
-          d="M35 8a20 20 0 1 0 6 27"
-          stroke={light ? '#83A6FF' : '#2155ED'}
-          strokeWidth="7"
-          strokeLinecap="round"
-        />
-        <path
-          d="M24 24 41 7M29 7h12v12"
-          stroke="#F2A23A"
-          strokeWidth="7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
       <span className="mr-brand-type">
         <span className="mr-brand-name">
-          mobility<span>ROBOT</span>
+          mobility robot
+          <span className="mr-brand-dot" aria-hidden="true">
+            .
+          </span>
         </span>
         <span className="mr-brand-byline">by Bentech Medical</span>
       </span>
