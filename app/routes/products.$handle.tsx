@@ -10,6 +10,7 @@ import {
 } from '@shopify/hydrogen';
 import {ProductGallery} from '~/components/product/ProductGallery';
 import {ProductBreadcrumbs} from '~/components/product/ProductBreadcrumbs';
+import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductPurchasePanel} from '~/components/product/ProductPurchasePanel';
 import {ProductSpecTabs} from '~/components/product/ProductSpecTabs';
 import {ProductVideoHero} from '~/components/product/ProductVideoHero';
@@ -28,10 +29,7 @@ import {
   collectGalleryMedia,
   normalizeYoutubeEmbed,
 } from '~/lib/product-gallery';
-import {
-  buildProductTabContent,
-  getProductSpecs,
-} from '~/lib/product-specs';
+import {buildProductTabContent, getProductSpecs} from '~/lib/product-specs';
 import {Ga4ProductView} from '~/components/Ga4ProductView';
 import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
@@ -106,7 +104,8 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const selectedOptions = withX12EditionSelectedOptions(
     handle,
     getSelectedProductOptions(request).filter(
-      (option) => !['variant', 'country', 'currency'].includes(option.name.toLowerCase()),
+      (option) =>
+        !['variant', 'country', 'currency'].includes(option.name.toLowerCase()),
     ),
     request.url,
   );
@@ -168,19 +167,17 @@ async function loadAccessoryAddons(
   ]);
 
   const nodes = prioritizeAccessoryAddons(
-    mergeAccessoryProducts(
-      collectionData?.collection?.products?.nodes ?? [],
-      [forcedData?.rearCoverM4],
-    ).filter(
-      (product: {handle: string; title: string; tags?: string[]}) =>
-        isAccessoryCompatibleWithChair(
-          {
-            handle: product.handle,
-            title: product.title,
-            tags: product.tags,
-          },
-          productHandle,
-        ),
+    mergeAccessoryProducts(collectionData?.collection?.products?.nodes ?? [], [
+      forcedData?.rearCoverM4,
+    ]).filter((product: {handle: string; title: string; tags?: string[]}) =>
+      isAccessoryCompatibleWithChair(
+        {
+          handle: product.handle,
+          title: product.title,
+          tags: product.tags,
+        },
+        productHandle,
+      ),
     ),
   );
 
@@ -292,12 +289,16 @@ export default function Product() {
     ? variantsForX12Edition(pageVariants, 'electric')
     : siblingVariants;
   const standardEditionVariant =
-    standardEditionVariants.find((variant) => variant?.id === selectedVariant?.id) ??
+    standardEditionVariants.find(
+      (variant) => variant?.id === selectedVariant?.id,
+    ) ??
     standardEditionVariants[0] ??
     selectedVariant;
   const proEditionVariant =
     proEditionVariants.find((variant) => variant?.id === selectedVariant?.id) ??
-    proEditionVariants.find((variant) => variant?.id === proSelectedVariant?.id) ??
+    proEditionVariants.find(
+      (variant) => variant?.id === proSelectedVariant?.id,
+    ) ??
     proEditionVariants[0] ??
     null;
 
@@ -328,11 +329,20 @@ export default function Product() {
         <ProductBreadcrumbs title={displayName} />
 
         <div className="product mr-product-layout">
+          <header className="mr-product-heading">
+            <h1 className="mr-product-title font-display">{displayName}</h1>
+            <ProductReviewSummary
+              productHandle={product.handle}
+              productId={product.id}
+            />
+            <p className="mr-product-tagline">
+              {staticContent?.tagline ?? tabContent.tagline}
+            </p>
+          </header>
           <div className="mr-product-media min-w-0">
             <ProductGallery items={galleryItems} productTitle={displayName} />
             <p className="mr-product-photo-note">
-              Product photography may show optional accessories. Check your
-              chosen configuration before ordering.
+              Optional accessories may be shown.
             </p>
           </div>
 
@@ -347,9 +357,7 @@ export default function Product() {
                 (
                   product as typeof product & {
                     variants?: {
-                      nodes?: Array<
-                        NonNullable<typeof selectedVariant>
-                      >;
+                      nodes?: Array<NonNullable<typeof selectedVariant>>;
                     };
                   }
                 ).variants?.nodes ?? []

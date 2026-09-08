@@ -6,6 +6,39 @@ import {
   isShopifyPricesExVat,
 } from '~/lib/pricing-mode';
 import {roundMoney} from '~/lib/vat-math';
+import {
+  resolveVatPurchaseVariant,
+  variantsHaveVatOption,
+  type VatPricedVariant,
+} from '~/lib/product-vat-variants';
+
+/** A displayed line amount, resolved before summing chairs and accessories. */
+export function getPurchaseDisplayPrice(
+  price: MoneyV2 | null | undefined,
+  dualVatPricing: boolean,
+  vatRelief: boolean,
+): MoneyV2 | null {
+  if (!price) return null;
+  const amount = dualVatPricing
+    ? Number(price.amount)
+    : vatRelief
+      ? catalogToExVatAmount(price.amount)
+      : catalogToIncVatAmount(price.amount);
+  return {...price, amount: roundMoney(amount).toFixed(2)};
+}
+
+export function getVariantDisplayPrice(
+  selected: VatPricedVariant<MoneyV2['currencyCode']> | null | undefined,
+  variants: VatPricedVariant<MoneyV2['currencyCode']>[],
+  vatRelief: boolean,
+): MoneyV2 | null {
+  const resolved = resolveVatPurchaseVariant(selected, variants, vatRelief);
+  return getPurchaseDisplayPrice(
+    resolved?.price,
+    variantsHaveVatOption(variants),
+    vatRelief,
+  );
+}
 
 export function formatProductPrice(
   amount: number,

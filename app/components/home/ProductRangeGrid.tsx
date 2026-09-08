@@ -43,11 +43,8 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
       <div className="xsto-container">
         <div className="mr-section-intro">
           <div>
-            <p className="mr-eyebrow">Meet your next move</p>
-            <h2>
-              Four models.
-              <br />A world of possibilities.
-            </h2>
+            <p className="mr-eyebrow">The XSTO range</p>
+            <h2>Choose your wheelchair.</h2>
             <p>
               Start with the way you want to live. We’ll help you find the chair
               to match.
@@ -81,7 +78,7 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
                         alt={image.altText || name}
                         src={productImageSrc(image.url, 800)}
                         srcSet={`${productImageSrc(image.url, 400)} 400w, ${productImageSrc(image.url, 600)} 600w, ${productImageSrc(image.url, 800)} 800w`}
-                        sizes="(min-width: 1200px) 23vw, (min-width: 600px) 46vw, 90vw"
+                        sizes="(min-width: 1200px) 23vw, (min-width: 360px) 46vw, 90vw"
                         width={image.width ?? 800}
                         height={image.height ?? 800}
                         loading="lazy"

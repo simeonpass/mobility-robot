@@ -67,11 +67,12 @@ export function AddToCartButton({
           />
           <button
             className={`${className} w-full disabled:cursor-not-allowed disabled:opacity-60`}
-            disabled={disabled ?? fetcher.state !== 'idle'}
+            disabled={Boolean(disabled) || fetcher.state !== 'idle'}
+            aria-busy={fetcher.state !== 'idle'}
             onClick={handleClick}
             type="submit"
           >
-            {children}
+            {fetcher.state !== 'idle' ? 'Adding…' : children}
           </button>
         </>
       )}

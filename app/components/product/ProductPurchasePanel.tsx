@@ -1,8 +1,10 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {Link, useSearchParams} from 'react-router';
-import {BadgePercent, Check, Pencil} from 'lucide-react';
-import type {MappedProductOptions, OptimisticCartLineInput} from '@shopify/hydrogen';
-import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
+import {BadgePercent, Check} from 'lucide-react';
+import type {
+  MappedProductOptions,
+  OptimisticCartLineInput,
+} from '@shopify/hydrogen';
 import type {ProductFragment} from 'storefrontapi.generated';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
@@ -11,10 +13,13 @@ import {
   ProductAccessoryAddons,
   type AddonProduct,
 } from '~/components/product/ProductAccessoryAddons';
+import {
+  getAccessoryVariants,
+  getSelectedAccessories,
+} from '~/lib/product-accessories';
 import {ProductCheckoutTrust} from '~/components/product/ProductCheckoutTrust';
 import {ProductDeliveryEta} from '~/components/product/ProductDeliveryEta';
 import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions';
-import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {ProductX12EditionOptions} from '~/components/product/ProductX12EditionOptions';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
@@ -27,15 +32,10 @@ import {
   buildVatCartAttributes,
   formatProductPrice,
   getExVatDisplay,
-  getIncVatDisplay,
-  getKlarnaInstallmentDisplay,
-  getVatSavingsDisplay,
+  getPurchaseDisplayPrice,
+  getVariantDisplayPrice,
   sumMoneyV2,
 } from '~/lib/product-pricing';
-import {
-  catalogToExVatAmount,
-  catalogToIncVatAmount,
-} from '~/lib/pricing-mode';
 import {
   buildPurchaseOptions,
   isDepositPurchaseOption,
@@ -45,7 +45,6 @@ import {
 import {isVatDeclarationComplete} from '~/lib/vat-relief-types';
 import {isXstoRangeProduct} from '~/lib/product-specs';
 import {
-  filterStandardVatVariants,
   filterVisibleProductOptions,
   resolveVatPurchaseVariant,
   variantsHaveVatOption,
@@ -87,15 +86,15 @@ type ProductPurchasePanelProps = {
   };
 };
 
+const EMPTY_CHAIR_VARIANTS: ChairVariant[] = [];
+
 export function ProductPurchasePanel({
   productHandle: pageHandle,
-  productId,
   title,
   displayName,
-  tagline,
   selectedVariant: pageSelectedVariant,
   productOptions: pageProductOptions,
-  productVariants: pageProductVariants = [],
+  productVariants: pageProductVariants = EMPTY_CHAIR_VARIANTS,
   accessoryAddons = [],
   x12Edition,
 }: ProductPurchasePanelProps) {
@@ -107,6 +106,20 @@ export function ProductPurchasePanel({
   } = useVatRelief();
   const {open} = useAside();
   const [searchParams, setSearchParams] = useSearchParams();
+  const isChair = isXstoRangeProduct(pageHandle);
+  const purchaseRef = useRef<HTMLDivElement>(null);
+  const [inlinePurchaseVisible, setInlinePurchaseVisible] = useState(false);
+
+  useEffect(() => {
+    const target = purchaseRef.current;
+    if (!target || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInlinePurchaseVisible(entry.isIntersecting),
+      {threshold: 0.5, rootMargin: '-110px 0px -90px 0px'},
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
 
   const [x12Choice, setX12Choice] = useState<X12LegRestChoice>(() => {
     if (x12Edition?.initialChoice) return x12Edition.initialChoice;
@@ -138,17 +151,17 @@ export function ProductPurchasePanel({
   const productHandle = activeEdition.handle;
   const selectedVariant = activeEdition.selectedVariant;
   const productOptions = activeEdition.productOptions;
-  const productVariants = activeEdition.productVariants ?? [];
+  const productVariants = activeEdition.productVariants ?? EMPTY_CHAIR_VARIANTS;
   const editionLabel =
     x12Edition && x12Choice === 'electric'
       ? X12_LEG_REST_OPTIONS[1].label
-      : displayName ?? title;
+      : (displayName ?? title);
 
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(
     () => new Set(),
   );
-  const [paymentChoice, setPaymentChoice] = useState<'full' | 'deposit'>(
-    () => (isForcedPreorder(productHandle) ? 'deposit' : 'full'),
+  const [paymentChoice, setPaymentChoice] = useState<'full' | 'deposit'>(() =>
+    isForcedPreorder(productHandle) ? 'deposit' : 'full',
   );
   const paymentChoiceTouched = useRef(false);
 
@@ -180,15 +193,14 @@ export function ProductPurchasePanel({
   const price = dualVatPricing
     ? purchaseVariant?.price
     : colourBaseVariant?.price;
-  const compareAtPrice = colourBaseVariant?.compareAtPrice;
 
   const purchaseOptions = useMemo(
     () =>
       isForcedInStock(productHandle)
         ? [{kind: 'full' as const}]
         : buildPurchaseOptions({
-            allocations: purchaseVariant?.sellingPlanAllocations
-              ?.nodes as SellingPlanAllocationNode[] | undefined,
+            allocations: purchaseVariant?.sellingPlanAllocations?.nodes as
+              SellingPlanAllocationNode[] | undefined,
             vatReliefEnabled: productVatReliefEnabled && !dualVatPricing,
           }),
     [dualVatPricing, productHandle, productVatReliefEnabled, purchaseVariant],
@@ -222,9 +234,23 @@ export function ProductPurchasePanel({
       ? null
       : depositOption?.sellingPlanId;
 
+  const selectedAccessories = useMemo(
+    () =>
+      getSelectedAccessories(
+        accessoryAddons,
+        selectedAddonIds,
+        vatReliefActive,
+      ),
+    [accessoryAddons, selectedAddonIds, vatReliefActive],
+  );
+  const unavailableAddon = selectedAccessories.some(
+    (item) => !item.purchaseVariant.availableForSale,
+  );
+
   const canAddToCart =
     Boolean(purchaseVariant?.availableForSale) &&
-    (!productVatReliefEnabled || vatFormComplete);
+    (!productVatReliefEnabled || vatFormComplete) &&
+    !unavailableAddon;
 
   const cartAttributes = useMemo(() => {
     const vat = productVatReliefEnabled
@@ -236,26 +262,30 @@ export function ProductPurchasePanel({
 
   const standardEditionPriceLabel = x12Edition
     ? getExVatDisplay(
-        (resolveVatPurchaseVariant(
-          x12Edition.standard.selectedVariant,
-          x12Edition.standard.productVariants ??
-            (x12Edition.standard.selectedVariant
-              ? [x12Edition.standard.selectedVariant]
-              : []),
-          false,
-        ) ?? x12Edition.standard.selectedVariant)?.price,
+        (
+          resolveVatPurchaseVariant(
+            x12Edition.standard.selectedVariant,
+            x12Edition.standard.productVariants ??
+              (x12Edition.standard.selectedVariant
+                ? [x12Edition.standard.selectedVariant]
+                : []),
+            false,
+          ) ?? x12Edition.standard.selectedVariant
+        )?.price,
       )
     : null;
   const proEditionPriceLabel = x12Edition?.pro
     ? getExVatDisplay(
-        (resolveVatPurchaseVariant(
-          x12Edition.pro.selectedVariant,
-          x12Edition.pro.productVariants ??
-            (x12Edition.pro.selectedVariant
-              ? [x12Edition.pro.selectedVariant]
-              : []),
-          false,
-        ) ?? x12Edition.pro.selectedVariant)?.price,
+        (
+          resolveVatPurchaseVariant(
+            x12Edition.pro.selectedVariant,
+            x12Edition.pro.productVariants ??
+              (x12Edition.pro.selectedVariant
+                ? [x12Edition.pro.selectedVariant]
+                : []),
+            false,
+          ) ?? x12Edition.pro.selectedVariant
+        )?.price,
       )
     : null;
 
@@ -268,36 +298,16 @@ export function ProductPurchasePanel({
     });
   };
 
-  const addonLines = useMemo(() => {
-    const lines: OptimisticCartLineInput[] = [];
-    for (const product of accessoryAddons) {
-      const variants = product.variants?.nodes ?? [];
-      const pickerVariants = filterStandardVatVariants(
-        variants.filter((variant) => variant.availableForSale),
-      );
-      const fallback =
-        product.selectedOrFirstAvailableVariant?.availableForSale
-          ? [product.selectedOrFirstAvailableVariant]
-          : [];
-      const colourChoices = pickerVariants.length ? pickerVariants : fallback;
-      const colourVariant = colourChoices.find((item) =>
-        selectedAddonIds.has(item.id),
-      );
-      if (!colourVariant?.id) continue;
-
-      const purchaseAddon =
-        resolveVatPurchaseVariant(colourVariant, variants, vatReliefActive) ??
-        colourVariant;
-
-      lines.push({
-        merchandiseId: purchaseAddon.id,
+  const addonLines = useMemo<OptimisticCartLineInput[]>(
+    () =>
+      selectedAccessories.map(({purchaseVariant}) => ({
+        merchandiseId: purchaseVariant.id,
         quantity: 1,
-        selectedVariant: purchaseAddon,
+        selectedVariant: purchaseVariant,
         ...(cartAttributes.length ? {attributes: cartAttributes} : {}),
-      });
-    }
-    return lines;
-  }, [accessoryAddons, cartAttributes, selectedAddonIds, vatReliefActive]);
+      })),
+    [selectedAccessories, cartAttributes],
+  );
 
   const addonCount = addonLines.length;
 
@@ -312,8 +322,7 @@ export function ProductPurchasePanel({
         },
         ...addonLines.flatMap((line) => {
           const variant = line.selectedVariant as
-            | {product?: {handle?: string | null} | null}
-            | undefined;
+            {product?: {handle?: string | null} | null} | undefined;
           const handle =
             variant?.product?.handle ??
             accessoryAddons.find(
@@ -337,207 +346,102 @@ export function ProductPurchasePanel({
       ])
     : null;
 
-  const standardPackagePrice = useMemo(() => {
-    if (!dualVatPricing) return null;
-    const standardChair =
-      resolveVatPurchaseVariant(colourBaseVariant, allChairVariants, false) ??
-      colourBaseVariant;
-    const addonStandards: Array<MoneyV2 | null | undefined> = [];
-    for (const product of accessoryAddons) {
-      const variants = product.variants?.nodes ?? [];
-      const pickerVariants = filterStandardVatVariants(
-        variants.filter((variant) => variant.availableForSale),
-      );
-      const colourVariant = pickerVariants.find((item) =>
-        selectedAddonIds.has(item.id),
-      );
-      if (!colourVariant) continue;
-      const standardAddon =
-        resolveVatPurchaseVariant(colourVariant, variants, false) ??
-        colourVariant;
-      addonStandards.push(standardAddon.price);
-    }
-    return sumMoneyV2([standardChair?.price, ...addonStandards]);
-  }, [
-    accessoryAddons,
-    allChairVariants,
+  const chairStandardPrice = getVariantDisplayPrice(
     colourBaseVariant,
-    dualVatPricing,
-    selectedAddonIds,
-  ]);
-
-  // Always resolve the Relief package for display — do not reuse the active
-  // purchase variant (that is Standard until relief is claimed).
-  const reliefPackagePrice = useMemo(() => {
-    if (!dualVatPricing) return null;
-    const reliefChair =
-      resolveVatPurchaseVariant(colourBaseVariant, allChairVariants, true) ??
-      colourBaseVariant;
-    const addonReliefs: Array<MoneyV2 | null | undefined> = [];
-    for (const product of accessoryAddons) {
-      const variants = product.variants?.nodes ?? [];
-      const pickerVariants = filterStandardVatVariants(
-        variants.filter((variant) => variant.availableForSale),
-      );
-      const colourVariant = pickerVariants.find((item) =>
-        selectedAddonIds.has(item.id),
-      );
-      if (!colourVariant) continue;
-      const reliefAddon =
-        resolveVatPurchaseVariant(colourVariant, variants, true) ??
-        colourVariant;
-      addonReliefs.push(reliefAddon.price);
-    }
-    return sumMoneyV2([reliefChair?.price, ...addonReliefs]);
-  }, [
-    accessoryAddons,
     allChairVariants,
+    false,
+  );
+  const chairReliefPrice = getVariantDisplayPrice(
     colourBaseVariant,
-    dualVatPricing,
-    selectedAddonIds,
-  ]);
-
-  const packagePrice = useMemo(
-    () =>
-      dualVatPricing
-        ? sumMoneyV2([
-            purchaseVariant?.price,
-            ...addonLines.map(
-              (line) =>
-                (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
-                  ?.price,
-            ),
-          ])
-        : sumMoneyV2([
-            colourBaseVariant?.price,
-            ...addonLines.map(
-              (line) =>
-                (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
-                  ?.price,
-            ),
-          ]),
-    [
-      addonLines,
-      colourBaseVariant?.price,
-      dualVatPricing,
-      purchaseVariant?.price,
-    ],
+    allChairVariants,
+    true,
   );
-
-  const dueTodayPrice = useMemo(() => {
-    if (paymentChoice === 'deposit' && depositOption?.checkoutCharge) {
-      return sumMoneyV2([
-        {
-          amount: depositOption.checkoutCharge.amount,
-          currencyCode:
-            depositOption.checkoutCharge.currencyCode ??
-            price?.currencyCode ??
-            'GBP',
-        },
-        ...addonLines.map(
-          (line) =>
-            (line.selectedVariant as {price?: MoneyV2 | null} | undefined)
-              ?.price,
-        ),
-      ]);
-    }
-    return packagePrice;
-  }, [
-    addonLines,
-    depositOption,
-    packagePrice,
-    paymentChoice,
-    price?.currencyCode,
+  const standardPackagePrice = sumMoneyV2([
+    chairStandardPrice,
+    ...selectedAccessories.map(({product, standardVariant}) =>
+      getVariantDisplayPrice(
+        standardVariant,
+        getAccessoryVariants(product),
+        false,
+      ),
+    ),
   ]);
-
-  const incVatDisplay = getIncVatDisplay(
-    dualVatPricing
-      ? standardPackagePrice
-      : (colourBaseVariant?.price ?? packagePrice),
-  );
-  const exVatDisplay = dualVatPricing
+  const reliefPackagePrice = sumMoneyV2([
+    chairReliefPrice,
+    ...selectedAccessories.map(({product, standardVariant}) =>
+      getVariantDisplayPrice(
+        standardVariant,
+        getAccessoryVariants(product),
+        true,
+      ),
+    ),
+  ]);
+  const packagePrice = vatReliefActive
     ? reliefPackagePrice
-      ? formatProductPrice(
-          Number(reliefPackagePrice.amount),
-          reliefPackagePrice.currencyCode,
-          {fractionDigits: 2},
-        )
-      : null
-    : getExVatDisplay(colourBaseVariant?.price ?? packagePrice);
-
-  const dualSavings =
-    dualVatPricing && standardPackagePrice && reliefPackagePrice
-      ? formatProductPrice(
-          Math.max(
-            0,
-            Number(standardPackagePrice.amount) -
-              Number(reliefPackagePrice.amount),
+    : standardPackagePrice;
+  const dueTodayPrice =
+    paymentChoice === 'deposit' && depositOption?.checkoutCharge
+      ? sumMoneyV2([
+          getPurchaseDisplayPrice(
+            {
+              amount: depositOption.checkoutCharge.amount,
+              currencyCode:
+                depositOption.checkoutCharge.currencyCode ??
+                price?.currencyCode ??
+                'GBP',
+            },
+            dualVatPricing,
+            vatReliefActive,
           ),
-          standardPackagePrice.currencyCode,
-          {fractionDigits: 2},
-        )
-      : null;
-
-  const vatSavings = dualVatPricing
-    ? dualSavings
-    : getVatSavingsDisplay(colourBaseVariant?.price ?? packagePrice);
-  const klarnaInstallment = getKlarnaInstallmentDisplay(
-    dualVatPricing
-      ? standardPackagePrice
-      : (colourBaseVariant?.price ?? packagePrice),
-  );
-  const activePriceDisplay =
-    productVatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
-
-  const dueTodayDisplay = useMemo(() => {
-    if (!dueTodayPrice) return null;
-    if (dualVatPricing) {
-      return formatProductPrice(
+          ...selectedAccessories.map(({product, standardVariant}) =>
+            getVariantDisplayPrice(
+              standardVariant,
+              getAccessoryVariants(product),
+              vatReliefActive,
+            ),
+          ),
+        ])
+      : packagePrice;
+  const activePriceDisplay = packagePrice
+    ? formatProductPrice(
+        Number(packagePrice.amount),
+        packagePrice.currencyCode,
+        {fractionDigits: 2},
+      )
+    : null;
+  const dueTodayDisplay = dueTodayPrice
+    ? formatProductPrice(
         Number(dueTodayPrice.amount),
         dueTodayPrice.currencyCode,
         {fractionDigits: 2},
-      );
-    }
-    if (productVatReliefEnabled) {
-      return formatProductPrice(
-        catalogToExVatAmount(dueTodayPrice.amount),
-        dueTodayPrice.currencyCode,
+      )
+    : null;
+  const klarnaInstallment = packagePrice
+    ? formatProductPrice(
+        Number(packagePrice.amount) / 3,
+        packagePrice.currencyCode,
         {fractionDigits: 2},
-      );
-    }
-    return paymentChoice === 'deposit'
-      ? formatProductPrice(
-          catalogToIncVatAmount(dueTodayPrice.amount),
-          dueTodayPrice.currencyCode,
-          {fractionDigits: 2},
-        )
-      : getIncVatDisplay(dueTodayPrice);
-  }, [
-    dualVatPricing,
-    dueTodayPrice,
-    paymentChoice,
-    productVatReliefEnabled,
+      )
+    : null;
+  // The declaration modal expects catalogue amounts; displayed totals above
+  // resolve each product's VAT setup separately before adding the amounts.
+  const declarationPrice = sumMoneyV2([
+    colourBaseVariant?.price,
+    ...selectedAccessories.map(({standardVariant}) => standardVariant.price),
   ]);
 
   const priceForLabel =
     paymentChoice === 'deposit' ? dueTodayDisplay : activePriceDisplay;
-  const baseLabel = priceForLabel
-    ? paymentChoice === 'deposit'
-      ? `Reserve with deposit — ${priceForLabel}`
-      : `Add to cart — ${priceForLabel}`
-    : paymentChoice === 'deposit'
-      ? 'Reserve with deposit'
-      : 'Add to cart';
   const addToCartLabel =
-    addonCount > 0
-      ? `${baseLabel} · ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'}`
-      : baseLabel;
+    paymentChoice === 'deposit' ? 'Reserve with deposit' : 'Add to basket';
 
-  const soldOutLabel = purchaseVariant?.availableForSale
-    ? productVatReliefEnabled && !vatFormComplete
-      ? 'Complete VAT declaration'
-      : 'Sold out'
-    : 'Sold out';
+  const soldOutLabel = unavailableAddon
+    ? 'Review unavailable accessory'
+    : purchaseVariant?.availableForSale
+      ? productVatReliefEnabled && !vatFormComplete
+        ? 'Complete VAT declaration'
+        : 'Sold out'
+      : 'Sold out';
 
   const cartLines: OptimisticCartLineInput[] = purchaseVariant
     ? [
@@ -566,16 +470,10 @@ export function ProductPurchasePanel({
   const stickyPrice = priceForLabel;
   const stickyPriceHint =
     paymentChoice === 'deposit'
-      ? addonCount > 0
-        ? 'Deposit + accessories due today'
-        : '10% deposit due today'
-      : addonCount > 0
-        ? productVatReliefEnabled
-          ? `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · VAT relief`
-          : `Total with ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'} · inc. VAT`
-        : productVatReliefEnabled
-          ? 'VAT relief price'
-          : 'inc. VAT';
+      ? 'Due today'
+      : vatReliefActive
+        ? 'Total with VAT relief'
+        : 'Total incl. VAT';
 
   const toggleAddon = (variantId: string) => {
     setSelectedAddonIds((prev) => {
@@ -600,54 +498,30 @@ export function ProductPurchasePanel({
 
   return (
     <div className="product-buy-box mr-product-buy-box">
-      <header className="mr-product-heading">
-        <p className="mr-product-eyebrow">
-          Mobility Robot <span>by Bentech Medical</span>
-        </p>
-        <h1 className="mr-product-title font-display">
-          {displayName ?? title}
-        </h1>
-        <ProductReviewSummary
-          productHandle={pageHandle}
-          productId={productId}
-        />
-        {tagline ? (
-          <p className="mr-product-tagline">
-            {tagline}
-          </p>
-        ) : null}
-      </header>
-
-      <section aria-label="Pricing" className="product-price-card mb-3 sm:mb-4">
+      <section aria-label="Product price" className="product-price-card">
         <ProductPriceDisplay
-          addonCount={addonCount}
-          compareAtPrice={compareAtPrice}
-          exVatDisplay={exVatDisplay}
-          incVatDisplay={incVatDisplay}
-          vatReliefEnabled={productVatReliefEnabled}
-          vatSavings={vatSavings}
+          incVatDisplay={
+            chairStandardPrice
+              ? formatProductPrice(
+                  Number(chairStandardPrice.amount),
+                  chairStandardPrice.currencyCode,
+                  {fractionDigits: 2},
+                )
+              : null
+          }
+          exVatDisplay={
+            chairReliefPrice
+              ? formatProductPrice(
+                  Number(chairReliefPrice.amount),
+                  chairReliefPrice.currencyCode,
+                  {fractionDigits: 2},
+                )
+              : null
+          }
         />
       </section>
 
-      <VatReliefCard
-        enabled={productVatReliefEnabled}
-        exVatDisplay={exVatDisplay}
-        onOpen={() =>
-          openProductModal({
-            price:
-              (dualVatPricing ? standardPackagePrice : packagePrice) ??
-              price ??
-              undefined,
-            initialEnabled: productVatReliefEnabled,
-            initialDeclaration: declaration,
-            onComplete: setProductVatRelief,
-          })
-        }
-        vatFormComplete={vatFormComplete}
-        vatSavings={vatSavings}
-      />
-
-      <div className="mr-product-choices space-y-5">
+      <div className="mr-product-choices space-y-5" id="choose-options">
         {x12Edition ? (
           <ProductX12EditionOptions
             onChange={handleX12ChoiceChange}
@@ -658,52 +532,88 @@ export function ProductPurchasePanel({
           />
         ) : null}
 
-        {depositOption ? (
-          <ProductPaymentOptions
-            depositAmountLabel={depositOption.depositDisplay}
-            depositPlanName={
-              /deposit/i.test(depositOption.name)
-                ? depositOption.name
-                : 'Pay 10% deposit'
+        <ProductForm
+          addToCartClassName="btn-atc w-full mr-primary-purchase"
+          addToCartLabel={addToCartLabel}
+          cartAttributes={cartAttributes}
+          linesOverride={cartLines}
+          purchaseRef={purchaseRef}
+          disabled={!canAddToCart}
+          productOptions={visibleProductOptions}
+          selectedVariant={purchaseVariant}
+          sellingPlanId={selectedSellingPlanId}
+          soldOutLabel={soldOutLabel}
+        >
+          <VatReliefCard
+            enabled={productVatReliefEnabled}
+            vatFormComplete={vatFormComplete}
+            onOpen={() =>
+              openProductModal({
+                price: declarationPrice ?? price ?? undefined,
+                initialEnabled: productVatReliefEnabled,
+                initialDeclaration: declaration,
+                onComplete: setProductVatRelief,
+              })
             }
-            onChange={handlePaymentChoiceChange}
-            remainingAmountLabel={depositOption.remainingDisplay}
-            value={paymentChoice}
           />
-        ) : null}
-
-        {accessoryAddons.length ? (
+          {depositOption ? (
+            <ProductPaymentOptions
+              depositAmountLabel={depositOption.depositDisplay}
+              depositPlanName={
+                /deposit/i.test(depositOption.name)
+                  ? depositOption.name
+                  : 'Pay 10% deposit'
+              }
+              onChange={handlePaymentChoiceChange}
+              remainingAmountLabel={depositOption.remainingDisplay}
+              value={paymentChoice}
+            />
+          ) : null}
           <ProductAccessoryAddons
             chairLabel={editionLabel}
             onSelectVariant={selectAddonVariant}
             onToggle={toggleAddon}
             products={accessoryAddons}
             selectedIds={selectedAddonIds}
+            vatReliefActive={vatReliefActive}
           />
-        ) : null}
+          <div
+            className="mr-purchase-total"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <div>
+              <strong>
+                {paymentChoice === 'deposit' ? 'Due today' : 'Your total'}
+              </strong>
+              <span>
+                {addonCount
+                  ? `Chair + ${addonCount} accessor${addonCount === 1 ? 'y' : 'ies'}`
+                  : isChair
+                    ? 'Chair only'
+                    : (displayName ?? title)}{' '}
+                · {vatReliefActive ? 'VAT relief applied' : 'including VAT'}
+              </span>
+            </div>
+            <strong className="mr-purchase-total-price">{priceForLabel}</strong>
+          </div>
+          {unavailableAddon ? (
+            <p role="alert" className="mr-addon-unavailable">
+              A selected accessory is unavailable. Remove it or choose another
+              option before adding to your basket.
+            </p>
+          ) : null}
+        </ProductForm>
 
-        <ProductForm
-          addToCartClassName="btn-atc hidden w-full lg:inline-flex"
-          addToCartLabel={addToCartLabel}
-          addonLines={addonLines}
-          cartAttributes={cartAttributes}
-          disabled={!canAddToCart}
-          productHandle={productHandle}
-          productOptions={visibleProductOptions}
-          selectedVariant={purchaseVariant}
-          sellingPlanId={selectedSellingPlanId}
-          soldOutLabel={soldOutLabel}
-        />
-
-        {isXstoRangeProduct(pageHandle) ? (
+        {isChair ? (
           <Link className="mr-product-demo" prefetch="intent" to="/demo">
-            Book a demonstration <span aria-hidden>↗</span>
+            Prefer to try it first? Book a demo <span aria-hidden>↗</span>
           </Link>
         ) : null}
 
         {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
 
-        <ProductTrustBadges productHandle={productHandle} />
+        {isChair ? <ProductTrustBadges productHandle={productHandle} /> : null}
 
         <ProductCheckoutTrust
           klarnaInstallment={
@@ -712,51 +622,26 @@ export function ProductPurchasePanel({
         />
       </div>
 
-      <p className="mt-4 text-center text-[0.6875rem] text-slate">
-        <Link
-          className="font-medium text-navy underline-offset-2 hover:underline"
-          to="/vat-relief"
-        >
-          How VAT relief works
-        </Link>
-        <span aria-hidden className="mx-1.5 text-border">
-          ·
-        </span>
-        <Link
-          className="font-medium text-navy underline-offset-2 hover:underline"
-          to="/faq"
-        >
-          Eligibility FAQ
-        </Link>
-      </p>
-
-      <div className="product-mobile-atc">
+      <div
+        className={`product-mobile-atc${inlinePurchaseVisible ? ' is-inline-visible' : ''}`}
+        aria-label="Quick purchase"
+      >
         <div className="mx-auto flex max-w-[1400px] items-center gap-3">
           {stickyPrice ? (
             <div className="min-w-0 shrink">
               <p className="truncate font-display text-lg font-semibold tabular-nums leading-none tracking-[-0.03em] text-navy">
                 {stickyPrice}
               </p>
-              <p className="mt-0.5 truncate text-sm text-slate">
-                {stickyPriceHint}
-              </p>
+              <p className="mt-1 text-xs text-slate">{stickyPriceHint}</p>
             </div>
           ) : null}
           <AddToCartButton
-            className="btn-atc min-h-12 flex-1 px-4 text-sm"
+            className="btn-atc min-h-12 px-4 text-sm"
             disabled={!canAddToCart}
             lines={cartLines}
             onClick={() => open('cart')}
           >
-            {!selectedVariant?.availableForSale
-              ? soldOutLabel
-              : !canAddToCart
-                ? soldOutLabel
-                : stickyPrice
-                  ? paymentChoice === 'deposit'
-                    ? `Deposit — ${stickyPrice}`
-                    : `Add — ${stickyPrice}`
-                  : 'Add to cart'}
+            {canAddToCart ? addToCartLabel : soldOutLabel}
           </AddToCartButton>
         </div>
       </div>
@@ -767,83 +652,16 @@ export function ProductPurchasePanel({
 function ProductPriceDisplay({
   incVatDisplay,
   exVatDisplay,
-  compareAtPrice,
-  vatSavings,
-  vatReliefEnabled,
-  addonCount,
 }: {
   incVatDisplay: string | null;
   exVatDisplay: string | null;
-  compareAtPrice?: MoneyV2 | null;
-  vatSavings: string | null;
-  vatReliefEnabled: boolean;
-  addonCount: number;
 }) {
   if (!incVatDisplay) return null;
-
-  const primaryPrice =
-    vatReliefEnabled && exVatDisplay ? exVatDisplay : incVatDisplay;
-
   return (
-    <div aria-label="Price" role="group">
-      <div className="flex items-baseline justify-between gap-3">
-        <p
-          className={[
-            'font-display text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.04em] sm:text-[2rem] md:text-[2.15rem]',
-            vatReliefEnabled ? 'text-vat-price' : 'text-navy',
-          ].join(' ')}
-          key={`${primaryPrice}-${addonCount}`}
-        >
-          {primaryPrice}
-        </p>
-        {compareAtPrice && addonCount === 0 ? (
-          <p className="text-right text-[0.65rem] uppercase tracking-[0.12em] text-slate">
-            <span className="block">RRP</span>
-            <span className="text-sm font-medium normal-case tracking-normal line-through tabular-nums">
-              {getIncVatDisplay(compareAtPrice)}
-            </span>
-          </p>
-        ) : null}
-      </div>
-
-      <p className="mt-1.5 text-sm leading-snug text-slate">
-        {vatReliefEnabled ? (
-          <>
-            <span className="font-medium text-vat-price">VAT relief price</span>
-            <span className="mx-1.5 text-border" aria-hidden>
-              ·
-            </span>
-            <span className="line-through tabular-nums">{incVatDisplay}</span>
-            <span> inc. VAT</span>
-          </>
-        ) : (
-          <>
-            <span className="tabular-nums text-navy/80">{incVatDisplay}</span>
-            <span> inc. VAT</span>
-            {exVatDisplay ? (
-              <>
-                <span className="mx-1.5 text-border" aria-hidden>
-                  ·
-                </span>
-                <span className="font-semibold tabular-nums text-vat-price">
-                  {exVatDisplay}
-                </span>
-                <span className="text-vat-price"> with VAT relief</span>
-                {vatSavings ? (
-                  <span className="text-vat-price"> (save {vatSavings})</span>
-                ) : null}
-              </>
-            ) : null}
-          </>
-        )}
-      </p>
-
-      {addonCount > 0 ? (
-        <p className="mt-1.5 text-[0.75rem] font-medium text-primary">
-          Includes {addonCount} selected accessor
-          {addonCount === 1 ? 'y' : 'ies'}
-        </p>
-      ) : null}
+    <div className="mr-chair-price">
+      <strong>{exVatDisplay ?? incVatDisplay}</strong>
+      <p>{exVatDisplay ? 'With VAT relief, if eligible' : 'Including VAT'}</p>
+      {exVatDisplay ? <p>{incVatDisplay} including VAT</p> : null}
     </div>
   );
 }
@@ -851,89 +669,39 @@ function ProductPriceDisplay({
 function VatReliefCard({
   enabled,
   vatFormComplete,
-  exVatDisplay,
-  vatSavings,
   onOpen,
 }: {
   enabled: boolean;
   vatFormComplete: boolean;
-  exVatDisplay: string | null;
-  vatSavings: string | null;
   onOpen: () => void;
 }) {
+  const complete = enabled && vatFormComplete;
   return (
-    <section
-      aria-labelledby="vat-relief-heading"
-      className="mr-product-vat rounded-lg border border-navy/10 bg-navy/[0.03] px-3.5 py-3"
-    >
-      <div className="flex items-start gap-2.5">
-        <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-navy text-white">
-          <BadgePercent aria-hidden className="size-3.5" strokeWidth={1.75} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h2
-            className="text-sm font-semibold text-navy"
-            id="vat-relief-heading"
-          >
-            HMRC VAT relief
-          </h2>
-          <p className="mt-0.5 text-[0.8125rem] leading-snug text-slate">
-            {enabled && vatFormComplete ? (
-              <>
-                Declaration saved
-                {exVatDisplay && vatSavings ? (
-                  <>
-                    {' '}
-                    — pay{' '}
-                    <strong className="font-semibold tabular-nums text-navy">
-                      {exVatDisplay}
-                    </strong>{' '}
-                    (save {vatSavings})
-                  </>
-                ) : null}
-              </>
-            ) : (
-              <>
-                Eligible? Pay the ex-VAT price
-                {vatSavings ? (
-                  <>
-                    {' '}
-                    and save{' '}
-                    <strong className="font-semibold tabular-nums text-navy">
-                      {vatSavings}
-                    </strong>
-                  </>
-                ) : null}
-                .
-              </>
-            )}
-          </p>
-
-          <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
-            {enabled && vatFormComplete ? (
-              <p className="inline-flex items-center gap-1.5 text-xs font-medium text-vat-price">
-                <Check aria-hidden className="size-3.5 shrink-0" />
-                Ready at checkout
-              </p>
-            ) : null}
-
-            <button
-              className="inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-navy-light"
-              onClick={onOpen}
-              type="button"
-            >
-              {enabled ? (
-                <>
-                  <Pencil aria-hidden className="size-3" />
-                  {vatFormComplete ? 'Edit declaration' : 'Complete declaration'}
-                </>
-              ) : (
-                'Check eligibility & claim relief'
-              )}
-            </button>
-          </div>
-        </div>
+    <section className="mr-product-vat" aria-label="VAT relief">
+      <div>
+        {complete ? (
+          <Check size={19} aria-hidden />
+        ) : (
+          <BadgePercent size={19} aria-hidden />
+        )}
+        <span>
+          <strong>
+            {complete ? 'VAT relief applied' : 'Eligible for VAT relief?'}
+          </strong>
+          <small>
+            {complete
+              ? 'Your declaration is saved.'
+              : 'Complete a declaration to pay the VAT-relief price.'}
+          </small>
+        </span>
       </div>
+      <button type="button" onClick={onOpen}>
+        {complete
+          ? 'Edit'
+          : enabled
+            ? 'Complete declaration'
+            : 'Claim VAT relief'}
+      </button>
     </section>
   );
 }

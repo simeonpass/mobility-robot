@@ -1,10 +1,4 @@
-import {
-  Suspense,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import {Suspense, useEffect, useId, useRef, useState} from 'react';
 import {Await, Link, NavLink, useAsyncValue, useLocation} from 'react-router';
 import {ArrowRight} from 'lucide-react';
 import {
@@ -36,7 +30,12 @@ interface HeaderProps {
 export function MobilityRobotBrand({light = false}: {light?: boolean}) {
   return (
     <span className={`mr-brand${light ? ' mr-brand--light' : ''}`}>
-      <svg aria-hidden="true" className="mr-brand-mark" viewBox="0 0 48 48" fill="none">
+      <svg
+        aria-hidden="true"
+        className="mr-brand-mark"
+        viewBox="0 0 48 48"
+        fill="none"
+      >
         <path
           d="M35 8a20 20 0 1 0 6 27"
           stroke={light ? '#83A6FF' : '#2155ED'}
@@ -52,7 +51,9 @@ export function MobilityRobotBrand({light = false}: {light?: boolean}) {
         />
       </svg>
       <span className="mr-brand-type">
-        <span className="mr-brand-name">mobility<span>ROBOT</span></span>
+        <span className="mr-brand-name">
+          mobility<span>ROBOT</span>
+        </span>
         <span className="mr-brand-byline">by Bentech Medical</span>
       </span>
     </span>
@@ -82,11 +83,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
 type Viewport = 'desktop' | 'mobile';
 
 function navLinkClass(isActive: boolean, extra = '') {
-  return [
-    'site-header-link',
-    isActive ? 'site-header-link--active' : '',
-    extra,
-  ]
+  return ['site-header-link', isActive ? 'site-header-link--active' : '', extra]
     .filter(Boolean)
     .join(' ');
 }
@@ -111,12 +108,7 @@ export function HeaderMenu({
   const isMobile = viewport === 'mobile';
 
   if (isMobile) {
-    return (
-      <MobileNav
-        close={close}
-        isLoggedIn={isLoggedIn}
-      />
-    );
+    return <MobileNav close={close} isLoggedIn={isLoggedIn} />;
   }
 
   return (
@@ -211,15 +203,12 @@ function ModelsDropdown() {
         ref={triggerRef}
         type="button"
       >
-        The range
+        Wheelchairs
         <ChevronIcon open={open} />
       </button>
 
       {open ? (
-        <div
-          className="site-header-dropdown-panel"
-          id={menuId}
-        >
+        <div className="site-header-dropdown-panel" id={menuId}>
           <div className="site-header-dropdown-intro">
             <p className="site-header-dropdown-eyebrow">Shop XSTO</p>
             <p className="site-header-dropdown-tagline">
@@ -360,7 +349,7 @@ function MobileNav({
       ) : null}
 
       <div className="site-header-mobile-section">
-        <p className="site-header-mobile-label">Models</p>
+        <p className="site-header-mobile-label">Shop wheelchairs</p>
         {PRODUCT_NAV_ITEMS.map((item) => (
           <MobileNavLink close={close} item={item} key={item.url} />
         ))}
@@ -387,13 +376,7 @@ function MobileNav({
   );
 }
 
-function MobileNavLink({
-  item,
-  close,
-}: {
-  item: NavItem;
-  close: () => void;
-}) {
+function MobileNavLink({item, close}: {item: NavItem; close: () => void}) {
   return (
     <NavLink
       className={({isActive}) =>
@@ -531,7 +514,7 @@ function CartBadge({count}: {count: number}) {
 
   return (
     <button
-      aria-label={count > 0 ? `Cart, ${count} items` : 'Cart'}
+      aria-label={count > 0 ? `Basket, ${count} items` : 'Basket'}
       className="site-header-icon-btn site-header-cart-btn"
       onClick={() => {
         open('cart');
@@ -544,7 +527,18 @@ function CartBadge({count}: {count: number}) {
       }}
       type="button"
     >
-      <span className="site-header-cart-label">Cart</span>
+      <svg
+        className="mr-cart-icon"
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+      >
+        <path d="M5 7h14l1 14H4L5 7Z" />
+        <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+      </svg>
+      <span className="site-header-cart-label">Basket</span>
       <span className="site-header-cart-count">{count}</span>
     </button>
   );

@@ -688,3 +688,69 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* A calmer storefront: product-led and quick to browse. */
+.mr-hero-grid {min-height:480px;padding-top:44px;padding-bottom:36px;gap:32px}
+.mr-hero h1 {max-width:540px;font-size:clamp(2.5rem,4.8vw,4.5rem);line-height:1.12;margin-bottom:22px}
+.mr-hero-intro {font-size:1rem;max-width:470px}
+.mr-hero-video-link {min-height:44px;font-size:.86rem}
+.mr-hero-art {min-height:400px}
+.mr-hero-art>img {height:390px;margin-top:-8px}
+.mr-hero-tag {padding:12px 16px;bottom:24px;left:28px;box-shadow:none}
+.mr-hero-tag strong {font-size:.85rem}
+.mr-section {padding:64px 0}
+.mr-home h2 {font-size:clamp(1.85rem,3.2vw,2.7rem)}
+.mr-section-intro {margin-bottom:28px}
+.mr-section-intro p:not(.mr-eyebrow) {font-size:.95rem;margin-top:13px}
+.mr-card-body h3 {font-size:1.4rem}
+.mr-card-body {padding:21px 18px}
+.mr-card-body>p {font-size:.82rem;margin-bottom:18px}
+.mr-card-pricing strong {font-size:1.35rem}
+.mr-final-cta {padding:40px;border-top-width:3px;box-shadow:none}
+.mr-final-cta h2 {font-size:2.2rem}
+.mr-faq-grid {gap:50px}
+@media (max-width:767px) {
+ .mr-home .xsto-container {padding-inline:20px}
+ .mr-hero-grid {grid-template-columns:1fr;padding-top:30px;padding-bottom:24px;gap:4px;min-height:0}
+ .mr-hero h1 {font-size:2.65rem;max-width:400px;letter-spacing:-.045em;margin-bottom:20px}
+ .mr-hero h1 span {text-decoration-thickness:3px;text-underline-offset:6px}
+ .mr-hero .mr-eyebrow {margin-bottom:14px;font-size:.63rem!important}
+ .mr-hero-intro {font-size:.94rem;line-height:1.65;margin-bottom:20px}
+ .mr-hero .mr-actions {gap:20px}
+ .mr-hero .mr-button {min-height:48px;padding:12px 16px;font-size:.87rem}
+ .mr-hero-note {margin-top:15px;font-size:.66rem}
+ .mr-hero-art {min-height:270px;max-width:390px}
+ .mr-hero-art>img {height:260px;margin:0}
+ .mr-hero-tag {left:0;bottom:18px;padding:8px 12px;border-radius:6px}
+ .mr-hero-tag strong {font-size:.72rem}
+ .mr-hero-caption {font-size:.6rem;right:0;bottom:0}
+ .mr-trust ul {gap:16px 10px;padding-block:18px}
+ .mr-trust svg {width:20px;height:20px}
+ .mr-trust a {font-size:.78rem}
+ .mr-trust span {font-size:.65rem}
+ .mr-section {padding:42px 0}
+ .mr-section-intro {margin-bottom:23px}
+ .mr-section-intro>.mr-text-link {margin-top:15px;font-size:.82rem}
+ .mr-product-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .mr-card-visual {aspect-ratio:1.1}
+ .mr-card-visual img {padding:28px 8px 6px}
+ .mr-card-badge {top:9px;left:9px;padding:3px 7px;font-size:.57rem}
+ .mr-card-body {padding:15px 12px}
+ .mr-card-body h3 {font-size:1.15rem;margin-bottom:8px;letter-spacing:-.03em}
+ .mr-card-body>p {font-size:.75rem;line-height:1.6;margin-bottom:14px}
+ .mr-card-pricing {padding-top:12px;margin-bottom:14px}
+ .mr-card-pricing strong {font-size:1.13rem;display:block;margin-top:2px}
+ .mr-card-pricing>span {font-size:.66rem}
+ .mr-card-pricing p {font-size:.64rem;line-height:1.65;margin-top:4px}
+ .mr-card-body .mr-text-link {font-size:.74rem;gap:5px;min-height:36px}
+ .mr-card-body .mr-text-link svg {width:14px;height:14px}
+ .mr-range-note {font-size:.68rem;line-height:1.65}
+ .mr-faq-grid {gap:26px}
+ .mr-faq-grid details {padding:17px 0}
+ .mr-faq-grid summary {font-size:.88rem}
+ .mr-faq-grid details p {font-size:.86rem}
+ .mr-final-cta {padding:30px 23px}
+ .mr-final-cta h2 {font-size:1.9rem}
+ .mr-final-cta p {font-size:.9rem}
+}
+@media (max-width:359px) {.mr-product-grid {grid-template-columns:1fr}.mr-hero h1 {font-size:2.35rem}.mr-card-pricing strong{display:inline;font-size:1.4rem}.mr-card-body{padding:20px}.mr-card-body h3{font-size:1.4rem}.mr-card-body>p{font-size:.86rem}}

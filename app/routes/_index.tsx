@@ -1,8 +1,6 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
-import {BrandStorySections} from '~/components/home/BrandStorySections';
 import '~/styles/home-redesign.css';
-import {ExperienceRangeSection} from '~/components/home/ExperienceRangeSection';
 import {FaqPreview} from '~/components/home/FaqPreview';
 import {HeroSection} from '~/components/home/HeroSection';
 import {HomeCtaSection} from '~/components/home/HomeCtaSection';
@@ -60,8 +58,6 @@ export default function Homepage() {
       />
       <TrustBar />
       <ProductRangeGrid products={products} />
-      <BrandStorySections />
-      <ExperienceRangeSection />
       <ReviewsSection />
       <FaqPreview />
       <HomeCtaSection />

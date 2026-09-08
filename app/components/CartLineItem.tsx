@@ -1,6 +1,11 @@
 import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import type {CartLayout, LineItemChildrenMap} from '~/components/CartMain';
-import {CartForm, Image, Money, type OptimisticCartLine} from '@shopify/hydrogen';
+import {
+  CartForm,
+  Image,
+  Money,
+  type OptimisticCartLine,
+} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {useAside} from './Aside';
@@ -24,10 +29,12 @@ export function CartLineItem({
   layout,
   line,
   childrenMap,
+  isAttachedAccessory = false,
 }: {
   layout: CartLayout;
   line: CartLine;
   childrenMap: LineItemChildrenMap;
+  isAttachedAccessory?: boolean;
 }) {
   const {id, merchandise, quantity, attributes, cost} = line;
   const sellingPlanAllocation = resolveLineSellingPlanAllocation(line);
@@ -85,7 +92,9 @@ export function CartLineItem({
   };
 
   return (
-    <li className="list-none">
+    <li
+      className={`list-none${isAttachedAccessory ? ' mr-cart-attached-accessory' : ''}`}
+    >
       <div
         className={[
           'rounded-lg border border-border/70 bg-card',
@@ -117,9 +126,11 @@ export function CartLineItem({
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  {accessory ? 'Accessory' : product.vendor || 'XSTO'}
-                </p>
+                {!isAttachedAccessory ? (
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {accessory ? 'Accessory' : product.vendor || 'XSTO'}
+                  </p>
+                ) : null}
                 <Link
                   className={[
                     'mt-0.5 block font-semibold leading-tight text-foreground hover:text-gold',
@@ -132,9 +143,11 @@ export function CartLineItem({
                   {displayName}
                 </Link>
                 {title !== product.title && title !== 'Default Title' ? (
-                  <p className="mt-0.5 text-xs text-muted-foreground">{title}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {title}
+                  </p>
                 ) : null}
-                {!isDepositLine ? (
+                {!isDepositLine && quantity > 1 ? (
                   <div className="mt-0.5 text-xs text-muted-foreground">
                     <Money data={merchandise.price} /> each
                   </div>
@@ -164,13 +177,13 @@ export function CartLineItem({
                 </span>
               ) : null}
               {filterVisibleSelectedOptions(selectedOptions).map((option) => (
-                  <span
-                    className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground"
-                    key={option.name}
-                  >
-                    {option.name}: {option.value}
-                  </span>
-                ))}
+                <span
+                  className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground"
+                  key={option.name}
+                >
+                  {option.name}: {option.value}
+                </span>
+              ))}
             </div>
 
             {isDepositLine ? (
@@ -210,16 +223,18 @@ export function CartLineItem({
               </p>
             ) : null}
 
-            <button
-              className="mt-2 text-xs font-medium text-foreground underline-offset-2 hover:underline"
-              onClick={openLineVatModal}
-              type="button"
-            >
-              {vatRelief ? 'Edit VAT declaration' : 'Claim VAT relief'}
-            </button>
+            {!isAttachedAccessory ? (
+              <button
+                className="mt-2 text-xs font-medium text-foreground underline-offset-2 hover:underline"
+                onClick={openLineVatModal}
+                type="button"
+              >
+                {vatRelief ? 'Edit VAT declaration' : 'Claim VAT relief'}
+              </button>
+            ) : null}
 
             <CartLineQuantity
-              compact={isAside}
+              compact={isAside || isAttachedAccessory}
               line={line}
               onRemove={() => {
                 if (!analyticsAllowed) return;
@@ -239,13 +254,17 @@ export function CartLineItem({
       </div>
 
       {lineItemChildren ? (
-        <ul className="ml-3 mt-2 space-y-2 border-l border-border pl-3">
+        <ul
+          aria-label={`Accessories for ${displayName}`}
+          className="mr-cart-accessories ml-3 mt-2 space-y-2 border-l border-border pl-3"
+        >
           {lineItemChildren.map((childLine) => (
             <CartLineItem
               childrenMap={childrenMap}
               key={childLine.id}
               layout={layout}
               line={childLine}
+              isAttachedAccessory
             />
           ))}
         </ul>

@@ -13,9 +13,22 @@ This review branch integrates the approved Mobility Robot design into the existi
 - Default notification sender label updated. An explicitly configured FORMS_FROM_EMAIL value is still respected and should be reviewed in Oxygen.
 - Non-main GitHub branches explicitly use Oxygen --preview. Non-production hosts return X-Robots-Tag: noindex, nofollow.
 
+## Simplified purchase and mobile design
+
+- Shorter homepage, compact mobile logo/header, clearer shop navigation, and collapsible newsletter/footer sections.
+- Product name before the gallery on phones; a single ordered choice/purchase area with the main button visible in the page. The mobile bottom button is hidden while the main purchase control is visible.
+- Compatible accessories are optional extras in a closed disclosure: three choices first, an option to see all, colour selection where available, and one combined total. Existing Shopify compatibility rules and parent/child cart lines remain in use.
+- The accessories catalogue shows each product once, with model filters. Attached basket accessories use a quieter presentation and share the chair's VAT-declaration action.
+- Per-product VAT calculation keeps displayed accessory prices and package totals consistent, including mixed legacy/dual-VAT products and deposits. Prices in the purchase area retain pennies.
+- Repeat add-to-basket clicks are disabled while submitting/loading. Checkout navigation waits for optimistic basket updates to finish.
+
 ## Validation
 
-The final suite passed all 176 tests across 22 files; npx tsc --noEmit and npm run build both passed. Affected production-source ESLint passed with one existing hook dependency warning. Including test files in ESLint is blocked by the baseline Jest plugin configuration (this project uses Vitest); the changed notification test passes under Vitest. The build emits an optional bundle-analysis warning about a missing metafile, but client and server build successfully. Several baseline currency and feed-query TypeScript errors were resolved with type-only changes; generated Storefront query types were refreshed. Product purchase behavior was preserved in code review. No test orders, payments, customer account changes or enquiry emails were submitted.
+All 191 tests across 25 files pass, including regression cases for accessory filters, available Standard SKU selection, same-colour VAT siblings, mixed VAT pricing, deposit totals and pending purchase buttons. Route type generation completed and npx tsc --noEmit passes. The production client/server build passes; its optional bundle-analysis metafile warning remains non-blocking.
+
+Changed production-source ESLint passes. A broader production-source lint run still finds eight pre-existing errors and four warnings in unchanged consent, payment/edition controls, video, review and VAT-modal code. The baseline Jest lint configuration also prevents linting Vitest test files; the tests pass under Vitest.
+
+Hosted visual and end-to-end checkout verification remain outstanding. Shopify's account-access page presented Cloudflare verification; the user's authorised attempt did not clear it. The browser was not retried through an alternate route. Local visual inspection was also unavailable in this environment. No test orders, payments, customer-account mutations or enquiry emails were submitted. Review this preview on real phones and verify the commercial checkout before production approval.
 
 ## Launch sequence
 

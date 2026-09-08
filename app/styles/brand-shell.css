@@ -203,3 +203,88 @@
 @media (min-width: 1280px) {
   .mr-site-header .site-header-cta--compact { display: none; }
 }
+
+/* Compact navigation and fewer competing elements, especially on phones. */
+.mr-shell {--header-height:84px}
+.mr-header-inner {gap:12px}
+.mr-shell input:not([type=checkbox]):not([type=radio]),.mr-shell select,.mr-shell textarea {font-size:16px}
+.mr-shell .overlay>aside {background:#fff;box-shadow:0 10px 36px #101b351c}
+.mr-shell .overlay>aside>header {height:68px;border-color:#e1e6ef}
+.mr-shell .overlay>aside>header .close {min-width:44px;min-height:44px;border-radius:8px;font-size:26px;font-weight:400}
+.mr-shell .site-header-mobile {gap:0}
+.mr-shell .site-header-mobile-section {padding-block:14px}
+.mr-shell .site-header-mobile-link {min-height:50px;padding:8px 10px;border-radius:7px}
+.mr-shell .site-header-mobile-link-desc {display:none}
+.mr-shell .site-header-mobile-link-thumb {width:38px;height:38px;min-width:38px}
+.mr-shell .site-header-mobile-link-thumb-img {width:38px;height:38px;object-fit:contain}
+.mr-shell .site-header-mobile-label {margin-bottom:9px;font-size:.68rem;letter-spacing:.1em}
+.mr-shell .site-header-mobile-footer {padding-top:18px}
+.mr-shell .site-header-mobile-account {font-size:.85rem;min-height:44px}
+.mr-footer-link-group {border-bottom:1px solid #ffffff20;padding-bottom:12px}
+.mr-footer-link-group summary {min-height:44px;display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:.9rem;font-weight:600;cursor:pointer;list-style:none}
+.mr-footer-link-group summary::-webkit-details-marker {display:none}
+.mr-footer-link-group summary::after {content:'+';font-size:20px;font-weight:400}
+.mr-footer-link-group[open] summary::after {content:'−'}
+.mr-footer-link-group a {display:inline-flex;align-items:center;min-height:38px;line-height:1.5}
+.mr-footer-link-group ul {margin-top:8px;list-style:none}
+.mr-newsletter-disclosure {background:#152540;color:#fff;border-bottom:1px solid #ffffff20}
+.mr-newsletter-disclosure>summary {max-width:1344px;margin:auto;padding:18px 32px;cursor:pointer;font-size:.85rem;font-weight:500}
+.mr-newsletter-disclosure .mr-footer-newsletter {border:0}
+.mr-footer .mr-brand-name>span {display:inline;margin:0 0 0 3px;font-size:1em;letter-spacing:-1px;text-transform:lowercase}
+.mr-footer .mr-brand-name {font-size:23px}
+.mr-footer .mr-brand-mark {width:36px;height:36px}
+.mr-footer-link-columns {align-items:start}
+.mr-cart-icon {display:none}
+.mr-accessory-tip {max-width:620px;margin-bottom:22px;color:#526079;font-size:.93rem;line-height:1.7}
+.mr-accessory-filters {display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid #e1e6ef;padding-bottom:22px}
+.mr-accessory-filters a {min-height:42px;border-radius:7px}
+.mr-accessory-results {display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin:30px 0 20px}
+.mr-accessory-results h2 {font-size:1.3rem;font-weight:650;letter-spacing:-.025em}
+.mr-accessory-results>span {font-size:.8rem;color:#526079}
+.mr-accessory-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;list-style:none;margin:0;padding:0}
+.mr-accessory-tax {font-size:.74rem;line-height:1.65;color:#526079;margin-top:4px}
+.mr-accessory-grid>li {min-width:0}
+.mr-accessory-card h3 {overflow-wrap:anywhere}
+.mr-accessory-card img {mix-blend-mode:multiply}
+.mr-shell .mr-cart-attached-accessory>div {background:#f6f8fc;border:0;border-radius:8px;box-shadow:none;padding:12px}
+.mr-shell .mr-cart-attached-accessory img {mix-blend-mode:multiply}
+.mr-shell .mr-cart-attached-accessory a.relative {width:48px;height:48px}
+.mr-shell .mr-cart-attached-accessory a.font-semibold {font-size:.85rem}
+.mr-shell .overlay--cart button[aria-label*='quantity'] {min-height:44px;min-width:40px}
+.mr-shell .overlay--cart form>button.text-xs {min-height:44px;padding-inline:6px}
+@media (max-width:1023px) {
+ .mr-accessory-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
+ .mr-shell:has(.product-mobile-atc) .mr-footer {padding-bottom:calc(84px + env(safe-area-inset-bottom));background:#08162d}
+}
+@media (max-width:767px) {
+ .mr-shell {--header-height:70px;--announcement-bar-height:30px}
+ .mr-announcement-inner {min-height:30px;font-size:10.5px;padding-block:6px}
+ .mr-site-header .mr-header-inner {gap:4px;padding-inline:16px}
+ .mr-site-header .mr-brand {gap:6px}
+ .mr-site-header .mr-brand-mark {width:25px;height:25px}
+ .mr-site-header .mr-brand-name {font-size:18px;letter-spacing:-.7px}
+ .mr-site-header .mr-brand-name>span {display:inline;margin:0;font-size:1em;font-weight:700;letter-spacing:-.7px;text-transform:lowercase}
+ .mr-site-header .mr-brand-type {gap:5px}
+ .mr-site-header .mr-brand-byline {font-size:10.5px}
+ .mr-site-header .site-header-cta--compact,.mr-site-header .site-header-account-link {display:none}
+ .mr-site-header .site-header-ctas {gap:0}
+ .mr-site-header .site-header-icon-btn {width:44px;min-width:44px;min-height:44px;padding:10px}
+ .mr-site-header .site-header-cart-btn {position:relative;margin-left:0}
+ .mr-site-header .site-header-cart-label {display:none}
+ .mr-cart-icon {display:block;width:21px;height:21px}
+ .mr-site-header .site-header-cart-count {position:absolute;top:1px;right:0;min-width:17px;height:17px;font-size:10px;padding:1px 4px;line-height:15px;border-radius:20px}
+ .mr-footer-link-columns {grid-template-columns:1fr;gap:8px}
+ .mr-footer-link-columns>.col-span-2 {grid-column:span 1}
+ .mr-newsletter-disclosure>summary {padding:17px 20px;font-size:.82rem}
+ .mr-footer .xsto-container {padding-top:30px}
+ .mr-accessory-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .mr-accessory-card h3 {font-size:.85rem;line-height:1.5}
+ .mr-accessory-card> a>div:last-child {padding:13px}
+ .mr-accessory-card> a>div:first-child {padding:14px}
+ .mr-accessory-card .mr-accessory-tax {font-size:.68rem}
+ .mr-accessory-card .text-lg {font-size:1.05rem}
+ .mr-accessory-card .tracking-\[0\.12em\] {font-size:.6rem;letter-spacing:0;line-height:1.5;text-transform:none}
+ .mr-accessory-results h2 {font-size:1.13rem}
+ .accessories-page h1 {font-size:2rem;line-height:1.2}
+ .mr-accessory-tip {font-size:.85rem}
+}

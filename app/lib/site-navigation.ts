@@ -60,21 +60,14 @@ export const PRODUCT_NAV_ITEMS: NavItem[] = PRODUCT_NAV_GROUPS.flatMap(
 
 /** Secondary links in the desktop header (kept lean). */
 export const HEADER_SECONDARY_NAV: NavItem[] = [
-  {title: 'Compare models', url: '/compare'},
-  {title: 'See it in action', url: '/videos'},
-  {title: 'Advice & support', url: '/guides'},
+  {title: 'Accessories', url: '/collections/accessories'},
+  {title: 'Compare', url: '/compare'},
+  {title: 'Help & advice', url: '/support'},
 ];
 
 /** Extra links shown in the mobile menu under Explore. */
 export const HEADER_MOBILE_EXTRA_NAV: NavItem[] = [
-  {title: 'Accessories', url: '/collections/accessories'},
-  {title: 'Find a stockist', url: '/stockists'},
-  {title: 'FAQ', url: '/faq'},
-  {title: 'About Mobility Robot', url: '/about'},
   {title: 'Contact us', url: '/contact'},
-  {title: 'International enquiries', url: '/international'},
-  {title: 'Blog', url: '/blog'},
-  {title: 'Request a quote', url: '/quote'},
 ];
 
 export const HEADER_CTA: NavItem = {

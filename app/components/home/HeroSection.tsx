@@ -14,39 +14,22 @@ export function HeroSection({product}: {product?: HomeProduct}) {
 
   return (
     <>
-      <aside className="mr-transition" aria-label="Our new website">
-        <div className="xsto-container mr-transition-inner">
-          <p>
-            <strong>Bentech Medical’s XSTO range has a new home.</strong>{' '}
-            Welcome to Mobility Robot.
-          </p>
-          <Link to="/about#our-brand">
-            Our story <ArrowRight size={16} aria-hidden />
-          </Link>
-        </div>
-      </aside>
       <section className="mr-hero">
         <div className="xsto-container mr-hero-grid">
           <div className="mr-hero-copy">
-            <p className="mr-eyebrow">
-              Intelligent mobility. More possibilities.
-            </p>
+            <p className="mr-eyebrow">XSTO powered wheelchairs</p>
             <h1>
-              A bigger world.
-              <br />A smarter way
-              <br />
-              <span>to move.</span>
+              A smarter way <span>to move.</span>
             </h1>
             <p className="mr-hero-intro">
-              Discover XSTO powered wheelchairs that rethink the everyday. From
-              self-levelling comfort to stair-climbing capability. Find the one
-              that moves you.
+              Find the right chair for your everyday, with expert advice and UK
+              support from Bentech Medical.
             </p>
             <div className="mr-actions">
               <Link className="mr-button" to="/#product-range">
-                Explore the range <ArrowRight size={18} aria-hidden />
+                Shop wheelchairs <ArrowRight size={18} aria-hidden />
               </Link>
-              <Link className="mr-button mr-button-outline" to="/videos">
+              <Link className="mr-text-link mr-hero-video-link" to="/videos">
                 <Play size={17} aria-hidden /> See it in action
               </Link>
             </div>
@@ -56,9 +39,6 @@ export function HeroSection({product}: {product?: HomeProduct}) {
             </p>
           </div>
           <div className="mr-hero-art">
-            <span className="mr-hero-word" aria-hidden>
-              X12
-            </span>
             <img
               src={imageUrl.toString()}
               alt="XSTO X12 stair-climbing powered wheelchair"
@@ -75,7 +55,6 @@ export function HeroSection({product}: {product?: HomeProduct}) {
               <strong>
                 Meet the XSTO X12 <ArrowUpRight size={18} aria-hidden />
               </strong>
-              <span>Stair-climbing. Self-levelling. More possibility.</span>
             </Link>
             <small className="mr-hero-caption">
               Photography may show optional equipment.

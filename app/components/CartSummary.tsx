@@ -128,9 +128,14 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   const checkoutSection = checkoutUrl ? (
     <a
-      className="btn-checkout w-full flex-col gap-0.5 py-3.5 !text-white no-underline hover:!text-white"
+      className="btn-checkout w-full py-3.5 !text-white no-underline hover:!text-white aria-disabled:opacity-60"
       href={checkoutUrl}
-      onClick={() => {
+      aria-disabled={cart.isOptimistic || undefined}
+      onClick={(event) => {
+        if (cart.isOptimistic) {
+          event.preventDefault();
+          return;
+        }
         if (!analyticsAllowed || !cart?.lines?.nodes?.length || !totals) return;
         const items = cart.lines.nodes.map((line) =>
           toGa4Item({
@@ -143,12 +148,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         trackBeginCheckout(items, totals.total, currencyCode);
       }}
     >
-      <span className="text-white">Proceed to checkout</span>
-      {totals ? (
-        <span className="text-sm font-semibold text-white/95">
-          {formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})}
-        </span>
-      ) : null}
+      <span className="text-white">
+        {cart.isOptimistic ? 'Updating basket…' : 'Secure checkout'}
+      </span>
     </a>
   ) : null;
 
@@ -167,7 +169,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         {totals?.hasVatRelief ? (
           <p className="mb-2 text-xs text-muted-foreground">
             VAT relief applied to eligible items.
-            {!totals.vatReliefApplied ? ' Exact amount confirmed at checkout.' : null}
+            {!totals.vatReliefApplied
+              ? ' Exact amount confirmed at checkout.'
+              : null}
           </p>
         ) : null}
 
@@ -175,7 +179,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
         {delivery.status === 'preorder' ? (
           <p className="mt-2 text-xs leading-snug text-muted-foreground">
-            <span className="font-medium text-foreground">{delivery.headline}.</span>{' '}
+            <span className="font-medium text-foreground">
+              {delivery.headline}.
+            </span>{' '}
             {delivery.etaLabel}
           </p>
         ) : null}
@@ -190,7 +196,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           </span>
           <span className="text-base font-semibold text-foreground">
             {totals
-              ? formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})
+              ? formatProductPrice(totals.total, currencyCode, {
+                  fractionDigits: 2,
+                })
               : '—'}
           </span>
         </div>
@@ -219,13 +227,19 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Estimated UK delivery
           </p>
-          <p className="text-sm font-medium text-foreground">{delivery.headline}</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">{delivery.etaLabel}</p>
+          <p className="text-sm font-medium text-foreground">
+            {delivery.headline}
+          </p>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            {delivery.etaLabel}
+          </p>
         </div>
 
         {totals?.hasVatRelief ? (
           <div className="rounded-lg border border-border bg-secondary/30 p-3 text-sm">
-            <p className="font-medium text-foreground">VAT relief on eligible items</p>
+            <p className="font-medium text-foreground">
+              VAT relief on eligible items
+            </p>
             <p className="mt-1 text-muted-foreground">
               Checkout uses your declaration email. With VAT relief variants,
               you pay the listed ex-VAT price (no tax line confusion).
@@ -240,7 +254,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           </div>
         ) : (
           <div className="rounded-lg border border-border bg-secondary/30 p-3">
-            <p className="text-sm font-medium text-foreground">VAT relief available</p>
+            <p className="text-sm font-medium text-foreground">
+              VAT relief available
+            </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
               Claim HMRC VAT relief on chairs and accessories in your cart.
             </p>
@@ -273,7 +289,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           </span>
           <span className="text-lg font-semibold text-foreground">
             {totals
-              ? formatProductPrice(totals.total, currencyCode, {fractionDigits: 2})
+              ? formatProductPrice(totals.total, currencyCode, {
+                  fractionDigits: 2,
+                })
               : '—'}
           </span>
         </div>
