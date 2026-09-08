@@ -268,23 +268,27 @@
 .mr-product-vat strong {font-size:.875rem;font-weight:650;display:block;line-height:1.5}
 .mr-product-vat small {display:block;margin-top:3px;font-size:.77rem;line-height:1.6;color:#526079}
 .mr-product-vat>button {color:#2155ed;min-height:44px;font-size:.82rem;font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:5px 0}
-.mr-addons {border:1px solid #dce3ee;border-radius:10px;overflow:hidden;background:white}
+.mr-addons {width:100%;max-width:100%;min-width:0;border:1px solid #dce3ee;border-radius:10px;overflow:hidden;background:white}
 .mr-addons-trigger {display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;text-align:left;min-height:68px;padding:14px 16px;font-size:.95rem;font-weight:650;color:#101b35}
 .mr-addons-trigger small {display:block;font-size:.76rem;color:#526079;font-weight:400;margin-top:4px}
 .mr-addons-trigger svg {flex-shrink:0;transition:transform .15s}
 .mr-addons-trigger svg.is-open {transform:rotate(180deg)}
 .mr-addons-intro {padding:0 16px 14px;font-size:.8rem;line-height:1.65;color:#526079}
 .mr-addons-list {margin:0;padding:0;list-style:none}
-.mr-addon {--mr-addon-image-size:112px;position:relative;border-top:1px solid #e4e9f1;padding:14px 14px 12px;background:white}
+.mr-addon {--mr-addon-image-size:128px;position:relative;min-width:0;margin:0;border-top:1px solid #e4e9f1;padding:14px 14px 12px;background:white}
 .mr-addon.is-selected {background:#f5f8fe}
-.mr-addon-select {display:flex;align-items:center;gap:12px;cursor:pointer;min-height:64px}
-.mr-addon-image {width:var(--mr-addon-image-size);height:var(--mr-addon-image-size);object-fit:contain;flex-shrink:0;background:#fff;border-radius:6px;mix-blend-mode:multiply}
-.mr-addon-copy {flex:1;min-width:0}
+.mr-addon-select {display:grid;grid-template-columns:var(--mr-addon-image-size) minmax(0,1fr) 28px;align-items:center;gap:12px;cursor:pointer;width:100%;min-width:0}
+/* Hydrogen images are fluid by default. Bound the parent rather than letting
+   an inline width:100% image become a non-shrinking sibling of the copy. */
+.mr-addon-photo {display:flex;align-items:center;justify-content:center;width:var(--mr-addon-image-size);height:var(--mr-addon-image-size);max-width:100%;min-width:0;overflow:hidden;background:#f7f9fc;border-radius:8px}
+.mr-addon-image {display:block;max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;mix-blend-mode:multiply}
+.mr-addon-no-image {font-size:.8rem;color:#526079;padding:12px;text-align:center}
+.mr-addon-copy {display:block;min-width:0;overflow-wrap:anywhere}
 .mr-addon-title {display:block;font-size:.85rem;font-weight:650;line-height:1.5;overflow-wrap:anywhere}
 .mr-addon-price {display:block;font-size:.85rem;font-weight:600;line-height:1.55;margin-top:4px}
-.mr-addon-price small {font-size:.7rem;font-weight:400;color:#526079;white-space:nowrap}
+.mr-addon-price small {font-size:.7rem;font-weight:400;color:#526079}
 .mr-addon-delivery {display:block;color:#715020;font-size:.7rem;margin-top:4px}
-.mr-addon-select input {appearance:auto;width:22px;height:22px;min-width:22px;accent-color:#2155ed;margin:0 3px}
+.mr-addon-select input {appearance:auto;width:24px;height:24px;min-width:24px;accent-color:#2155ed;margin:0;justify-self:center}
 .mr-addon-details {display:inline-flex;align-items:center;min-height:36px;margin-left:calc(var(--mr-addon-image-size) + 12px);font-size:.74rem;text-decoration:underline;text-underline-offset:3px;color:#526079}
 .mr-addon-added {display:inline-flex;align-items:center;gap:4px;margin-left:12px;color:#2155ed;font-size:.68rem}
 .mr-addon-options {display:block;margin:12px 0 0 calc(var(--mr-addon-image-size) + 12px)}
@@ -328,7 +332,14 @@
  .mr-product-vat>div {min-width:180px}
  .mr-purchase-total-price {font-size:1.4rem}
  .mr-addon-added {display:none}
- .mr-addon {--mr-addon-image-size:104px}
+ .mr-addon {padding:16px}
+ .mr-addon-select {grid-template-columns:minmax(0,1fr) 28px;gap:14px}
+ .mr-addon-photo {grid-column:1 / -1;width:100%;height:220px}
+ .mr-addon-title {font-size:1rem;line-height:1.5}
+ .mr-addon-price {font-size:.95rem;margin-top:6px}
+ .mr-addon-price small,.mr-addon-delivery {font-size:.8rem}
+ .mr-addon-options {margin:14px 0 0}
+ .mr-addon-details {margin-left:0;min-height:44px;margin-top:4px;font-size:.875rem}
  .mr-product-video {margin-top:42px}
  .mr-product-details,.mr-product-related,.mr-product-page #reviews {margin-top:44px}
  .mr-product-related-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -337,7 +348,7 @@
  .mr-product-choices>div[class*='grid'] {font-size:.8rem}
 }
 @media (max-width:359px) {
- .mr-addon {--mr-addon-image-size:96px}.mr-addon-select {gap:8px}.mr-addon-details,.mr-addon-options{margin-left:calc(var(--mr-addon-image-size) + 8px)}
+ .mr-addon-photo {height:200px}
  .mr-purchase-total {flex-wrap:wrap}
  .mr-product-page .product-mobile-atc>div{grid-template-columns:minmax(0,1fr) 145px;gap:8px}
 }

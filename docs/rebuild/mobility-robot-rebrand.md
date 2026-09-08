@@ -18,13 +18,14 @@ This review branch integrates the approved Mobility Robot design into the existi
 - Shorter homepage, compact mobile logo/header, clearer shop navigation, and collapsible newsletter/footer sections.
 - Product name before the gallery on phones; a single ordered choice/purchase area with the main button visible in the page. The mobile bottom button is hidden while the main purchase control is visible.
 - Compatible accessories are optional extras in a closed disclosure: three choices first, an option to see all, colour selection where available, and one combined total. Existing Shopify compatibility rules and parent/child cart lines remain in use.
+- Mobile accessory cards place a 200–220px-high photo above the name, price and selection checkbox. A bounded image wrapper fixes Hydrogen's inline full-width image pushing the copy off-screen. Real source dimensions replace fabricated square dimensions, preserving portrait proportions and higher-resolution image choices. Desktop cards use 128px photos. Shopify Inbox uses its supported 120px vertical offset to clear the mobile purchase bar.
 - The accessories catalogue shows each product once, with model filters. Attached basket accessories use a quieter presentation and share the chair's VAT-declaration action.
 - Per-product VAT calculation keeps displayed accessory prices and package totals consistent, including mixed legacy/dual-VAT products and deposits. Prices in the purchase area retain pennies.
 - Repeat add-to-basket clicks are disabled while submitting/loading. Checkout navigation waits for optimistic basket updates to finish.
 
 ## Validation
 
-All 191 tests across 25 files pass, including regression cases for accessory filters, available Standard SKU selection, same-colour VAT siblings, mixed VAT pricing, deposit totals and pending purchase buttons. Route type generation completed and npx tsc --noEmit passes. The production client/server build passes; its optional bundle-analysis metafile warning remains non-blocking.
+The purchase-flow simplification passed all 191 tests across 25 files, including regression cases for accessory filters, available Standard SKU selection, same-colour VAT siblings, mixed VAT pricing, deposit totals and pending purchase buttons. The subsequent mobile accessory fix passes two new regression tests using the real Hydrogen Image component, covering image containment, uncapped image choices and portrait source proportions. Route type generation completed and npx tsc --noEmit passes. The production client/server build passes; its optional bundle-analysis metafile warning remains non-blocking.
 
 Changed production-source ESLint passes. A broader production-source lint run still finds eight pre-existing errors and four warnings in unchanged consent, payment/edition controls, video, review and VAT-modal code. The baseline Jest lint configuration also prevents linting Vitest test files; the tests pass under Vitest.
 

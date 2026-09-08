@@ -137,17 +137,26 @@ export function ProductAccessoryAddons({
                 key={product.id}
               >
                 <label className="mr-addon-select">
-                  {image ? (
-                    <Image
-                      data={{...image, width: 336, height: 336}}
-                      alt=""
-                      sizes="(max-width: 359px) 96px, (max-width: 767px) 104px, 112px"
-                      loading="lazy"
-                      className="mr-addon-image"
-                    />
-                  ) : (
-                    <span className="mr-addon-image" />
-                  )}
+                  <span className="mr-addon-photo" aria-hidden="true">
+                    {image ? (
+                      <Image
+                        data={image}
+                        alt=""
+                        sizes="(max-width: 767px) calc(100vw - 64px), 128px"
+                        loading="lazy"
+                        className="mr-addon-image"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          aspectRatio: 'auto',
+                        }}
+                      />
+                    ) : (
+                      <span className="mr-addon-no-image">
+                        Image unavailable
+                      </span>
+                    )}
+                  </span>
                   <span className="mr-addon-copy">
                     <span className="mr-addon-title">{product.title}</span>
                     <span className="mr-addon-price">
