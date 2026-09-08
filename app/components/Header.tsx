@@ -32,7 +32,7 @@ export function MobilityRobotBrand({light = false}: {light?: boolean}) {
     <span className={`mr-brand${light ? ' mr-brand--light' : ''}`}>
       <span className="mr-brand-type">
         <span className="mr-brand-name">
-          mobility robot
+          mobility <span className="mr-brand-robot">robot</span>
           <span className="mr-brand-dot" aria-hidden="true">
             .
           </span>
