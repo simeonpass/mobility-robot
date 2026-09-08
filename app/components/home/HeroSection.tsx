@@ -1,29 +1,46 @@
 import {ArrowRight, ArrowUpRight, Check, Play} from 'lucide-react';
 import {Link} from 'react-router';
+import m4bSmall from '~/assets/hero/m4b-360.webp';
+import m4bLarge from '~/assets/hero/m4b-720.webp';
+import m4ProSmall from '~/assets/hero/m4-pro-360.webp';
+import m4ProLarge from '~/assets/hero/m4-pro-720.webp';
+import x12Small from '~/assets/hero/x12-360.webp';
+import x12Large from '~/assets/hero/x12-720.webp';
 import type {HomeProduct} from '~/components/home/ProductRangeGrid';
 import {
   getHomepageProductSlot,
-  HOMEPAGE_PRODUCT_THUMBS,
   SHOPIFY_HOME_PRODUCT_HANDLES,
 } from '~/lib/homepage-data';
 
 const heroModels = [
-  {slot: 'xsto-m4b', name: 'XSTO M4B', detail: 'Everyday freedom'},
-  {slot: 'xsto-x12', name: 'XSTO X12', detail: 'Go a step further'},
+  {
+    slot: 'xsto-m4b',
+    name: 'XSTO M4B',
+    detail: 'Everyday freedom',
+    small: m4bSmall,
+    large: m4bLarge,
+    width: 720,
+    height: 781,
+  },
+  {
+    slot: 'xsto-x12',
+    name: 'XSTO X12',
+    detail: 'Go a step further',
+    small: x12Small,
+    large: x12Large,
+    width: 720,
+    height: 924,
+  },
   {
     slot: 'xsto-m4-pro',
     name: 'XSTO M4 Pro',
     detail: 'Make yourself comfortable',
+    small: m4ProSmall,
+    large: m4ProLarge,
+    width: 720,
+    height: 799,
   },
 ] as const;
-
-function imageSource(source: string, width: number) {
-  const url = new URL(source);
-  url.searchParams.set('width', String(width));
-  url.searchParams.delete('height');
-  url.searchParams.delete('crop');
-  return url.toString();
-}
 
 export function HeroSection({products}: {products: HomeProduct[]}) {
   return (
@@ -71,48 +88,51 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
             </p>
           </div>
           <div className="mr-hero-showcase">
-            <div className="mr-hero-lineup" aria-label="Explore the XSTO range">
-              {heroModels.map(({slot, name, detail}) => {
-                const product = products.find(
-                  (item) => getHomepageProductSlot(item.handle) === slot,
-                );
-                const photo = product?.featuredImage;
-                const source = photo?.url ?? HOMEPAGE_PRODUCT_THUMBS[slot];
-                const featured = slot === 'xsto-x12';
+            <div
+              className="mr-hero-lineup"
+              role="group"
+              aria-label="Explore the XSTO range"
+            >
+              {heroModels.map(
+                ({slot, name, detail, small, large, width, height}) => {
+                  const product = products.find(
+                    (item) => getHomepageProductSlot(item.handle) === slot,
+                  );
+                  const featured = slot === 'xsto-x12';
 
-                return (
-                  <Link
-                    key={slot}
-                    className={`mr-hero-model${featured ? ' mr-hero-model-featured' : ''}`}
-                    to={`/products/${product?.handle ?? SHOPIFY_HOME_PRODUCT_HANDLES[slot]}`}
-                    prefetch="intent"
-                    aria-label={`Explore ${name}`}
-                  >
-                    <div className="mr-hero-model-photo">
-                      <img
-                        src={imageSource(source, 720)}
-                        srcSet={[240, 360, 540, 720]
-                          .map(
-                            (width) =>
-                              `${imageSource(source, width)} ${width}w`,
-                          )
-                          .join(', ')}
-                        sizes="(max-width: 767px) 48vw, (max-width: 1100px) 24vw, 280px"
-                        alt={`${name} powered wheelchair`}
-                        width={photo?.width ?? 600}
-                        height={photo?.height ?? 600}
-                        loading="eager"
-                        fetchPriority={featured ? 'high' : 'auto'}
-                        decoding="async"
-                      />
-                    </div>
-                    <span className="mr-hero-model-name">
-                      {name} <ArrowUpRight size={15} aria-hidden />
-                    </span>
-                    <span className="mr-hero-model-detail">{detail}</span>
-                  </Link>
-                );
-              })}
+                  return (
+                    <Link
+                      key={slot}
+                      className={`mr-hero-model${featured ? ' mr-hero-model-featured' : ''}`}
+                      to={`/products/${product?.handle ?? SHOPIFY_HOME_PRODUCT_HANDLES[slot]}`}
+                      prefetch="intent"
+                      aria-label={`Explore ${name}`}
+                    >
+                      <div className="mr-hero-model-photo">
+                        <img
+                          src={large}
+                          srcSet={`${small} 360w, ${large} 720w`}
+                          sizes={
+                            featured
+                              ? '(max-width: 767px) 58vw, (max-width: 1023px) 36vw, 280px'
+                              : '(max-width: 767px) 48vw, (max-width: 1023px) 30vw, 230px'
+                          }
+                          alt={`${name} powered wheelchair`}
+                          width={width}
+                          height={height}
+                          loading="eager"
+                          fetchPriority={featured ? 'high' : 'auto'}
+                          decoding="async"
+                        />
+                      </div>
+                      <span className="mr-hero-model-name">
+                        {name} <ArrowUpRight size={15} aria-hidden />
+                      </span>
+                      <span className="mr-hero-model-detail">{detail}</span>
+                    </Link>
+                  );
+                },
+              )}
             </div>
             <div className="mr-hero-showcase-footer">
               <Link className="mr-text-link" to="/compare">

@@ -61,3 +61,19 @@ The hero now features M4B, X12 and M4 Pro together using real Shopify product ph
 The restored video player uses a named native dialog with keyboard Escape, focus containment and focus return. Media loads only after a customer chooses a video. Edition-selection copy now points to the product page.
 
 The production build, all 222 existing tests, changed-source lint and TypeScript checks pass. This update changes presentation and content; the previously audited checkout, VAT and SEO fixes remain. Hosted visual verification is still unavailable because Shopify blocks the testing browser; no further challenge attempts or alternate access routes were used. Review the new layout in the Oxygen preview before production approval.
+
+## Transparent hero photography — 8 September 2026
+
+The user approved direct background removal from the original product photographs after the image editor returned opaque chequered backgrounds. Those generated images are not used. The M4B and M4 Pro hero photos now have actual transparent alpha, including the large openings through their frames. The M4 Pro's original studio-floor shadow was removed. The existing transparent X12 photograph was retained.
+
+The hero uses bundled WebP cut-outs at 360px and 720px widths, accurate intrinsic dimensions, and responsive image selection. It no longer uses the opaque Shopify featured images or blend-mode simulation for its artwork. Product links still resolve from the Shopify product data. Total image sizes are approximately 75 KiB for the smaller three exports and 193 KiB for the larger three. Styling adds subtle contact shadows and refines the shared background, label size and spacing; the larger mobile arrangement remains.
+
+Original source photographs (the query requests a maximum width; M4 Pro's actual original remains 667 × 667):
+
+- M4B: https://cdn.shopify.com/s/files/1/0904/4541/4778/files/M4B.png?width=1200
+- M4 Pro: https://cdn.shopify.com/s/files/1/0904/4541/4778/files/xsto-m4-pro-mobility-wheelchair-adjustable-seat-backrest-9425362.jpg?width=1200
+- X12: https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-optional-supports.webp?width=1200
+
+Preparation is recorded in scripts/prepare-hero-cutouts.py. It uses the approved original photos, background masking, edge decontamination and resizing, with no generative reconstruction of the products. Its M4 Pro floor mask is specific to the recorded source size. The exported alpha channels and transparent corners were checked, and the cut-outs were visually inspected against pale-blue and navy backgrounds.
+
+The production build, TypeScript and changed-source lint pass, and all 222 existing tests pass. Shopify still blocks hosted browser verification, so the image checks are asset checks, not a live-page or checkout sign-off. This update remains on the review branch and Oxygen preview.
