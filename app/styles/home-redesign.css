@@ -1,5 +1,5 @@
 .mr-home {
-  color: #203048;
+  color: #101b35;
   background: #fff;
 }
 .mr-home h1,
@@ -8,7 +8,7 @@
   font-family: 'Manrope', sans-serif;
   font-weight: 750;
   letter-spacing: -0.045em;
-  color: #203048;
+  color: #101b35;
   text-wrap: balance;
 }
 .mr-home h2 {
@@ -26,7 +26,7 @@
   max-width: 1344px;
 }
 .mr-transition {
-  background: #f3f4f6;
+  background: #f0f4fa;
   border-bottom: 1px solid #dfe6f0;
   font-size: 0.83rem;
   color: #42516a;
@@ -40,7 +40,7 @@
   padding-bottom: 12px;
 }
 .mr-transition strong {
-  color: #203048;
+  color: #101b35;
   font-weight: 650;
 }
 .mr-transition a {
@@ -49,14 +49,14 @@
   gap: 10px;
   white-space: nowrap;
   font-weight: 700;
-  color: #203048;
+  color: #101b35;
 }
 .mr-eyebrow {
   font-size: 0.72rem !important;
   font-weight: 750;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #d02030;
+  color: #2155ed;
   margin-bottom: 18px;
 }
 .mr-actions {
@@ -73,7 +73,7 @@
   min-height: 50px;
   padding: 13px 20px;
   border: 1px solid transparent;
-  background: #d02030;
+  background: #2155ed;
   color: #fff;
   font-size: 0.9rem;
   font-weight: 700;
@@ -85,23 +85,23 @@
   text-align: center;
 }
 .mr-button:hover {
-  background: #af1b29;
-  box-shadow: 0 6px 16px #d0203020;
+  background: #1944c5;
+  box-shadow: 0 6px 16px #2155ed20;
 }
 .mr-button-outline {
   border-color: #ccd5e4;
   background: transparent;
-  color: #203048;
+  color: #101b35;
 }
 .mr-button-outline:hover {
-  background: #eceef2;
+  background: #e8eef8;
 }
 .mr-button-amber {
-  background: #d02030;
-  color: #fff;
+  background: #f2a23a;
+  color: #101b35;
 }
 .mr-button-amber:hover {
-  background: #af1b29;
+  background: #e59125;
 }
 .mr-trust {
   background: #fff;
@@ -125,7 +125,7 @@
   border: 0;
 }
 .mr-trust svg {
-  color: #d02030;
+  color: #2155ed;
   flex-shrink: 0;
 }
 .mr-trust a {
@@ -145,7 +145,7 @@
   padding: 84px 0;
 }
 .mr-soft {
-  background: #f5f6f8;
+  background: #f4f7fc;
 }
 .mr-section-intro {
   display: flex;
@@ -166,7 +166,7 @@
   gap: 10px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #d02030;
+  color: #2155ed;
   line-height: 1.5;
 }
 .mr-text-link:hover {
@@ -188,7 +188,7 @@
   transition: box-shadow 0.18s;
 }
 .mr-product-card:hover {
-  box-shadow: 0 12px 24px #20304810;
+  box-shadow: 0 12px 24px #101b3510;
 }
 .mr-product-card-link {
   display: flex;
@@ -197,7 +197,7 @@
   flex-direction: column;
 }
 .mr-product-card:focus-within {
-  outline: 3px solid #d02030;
+  outline: 3px solid #2155ed;
   outline-offset: 3px;
 }
 .mr-mobile-copy,
@@ -211,7 +211,7 @@
   min-height: 0;
   aspect-ratio: 1;
   overflow: hidden;
-  background: #f4f5f7;
+  background: #f5f7fb;
 }
 .mr-card-visual img {
   /* Keep portrait photography from determining the card's image-area height. */
@@ -293,7 +293,7 @@
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
   border-radius: 16px;
-  background: #203048;
+  background: #101b35;
 }
 .mr-feature-image {
   min-height: 430px;
@@ -317,7 +317,7 @@
   margin-bottom: 22px;
 }
 .mr-feature-copy .mr-eyebrow {
-  color: #ff929c;
+  color: #f2a23a;
 }
 .mr-feature-copy > p:not(.mr-eyebrow) {
   font-size: 0.96rem;
@@ -351,7 +351,7 @@
 .mr-guide-card {
   display: flex;
   flex-direction: column;
-  background: #f5f6f8;
+  background: #f4f7fc;
   border: 1px solid #e2e8f2;
   padding: 32px;
   border-radius: 10px;
@@ -371,8 +371,8 @@
   margin-top: auto;
 }
 .mr-final-cta {
-  background: #203048;
-  border-top: 5px solid #d02030;
+  background: #101b35;
+  border-top: 5px solid #f2a23a;
   color: #cbd5e6;
   border-radius: 14px;
   padding: 54px;
@@ -386,7 +386,7 @@
   margin-bottom: 17px;
 }
 .mr-final-cta .mr-eyebrow {
-  color: #ff929c;
+  color: #f2a23a;
 }
 .mr-final-cta > div:first-child {
   max-width: 620px;
@@ -434,12 +434,12 @@
   margin-top: 14px;
 }
 .mr-home :is(a, button, summary):focus-visible {
-  outline: 3px solid #d02030;
+  outline: 3px solid #2155ed;
   outline-offset: 5px;
 }
 .mr-feature :is(a, button):focus-visible,
 .mr-final-cta :is(a, button):focus-visible {
-  outline-color: #ff929c;
+  outline-color: #f2a23a;
 }
 @media (max-width: 1100px) {
   .mr-product-grid {
@@ -715,7 +715,7 @@
 /* The photographic hero is reserved for larger screens; phones shop the range once. */
 .mr-hero {
   overflow: hidden;
-  background: linear-gradient(115deg, #fff 22%, #f4f5f7 100%);
+  background: linear-gradient(115deg, #fff 22%, #f1f5fc 100%);
 }
 .mr-hero-grid {
   display: grid;
@@ -739,7 +739,7 @@
 .mr-hero h1 > span:not(.mr-hero-opening) {
   white-space: nowrap;
   text-decoration: underline;
-  text-decoration-color: #d02030;
+  text-decoration-color: #f2a23a;
   text-decoration-thickness: 4px;
   text-underline-offset: 9px;
   text-decoration-skip-ink: none;
@@ -763,7 +763,7 @@
   color: #526079;
 }
 .mr-hero-note svg {
-  color: #d02030;
+  color: #2155ed;
   flex-shrink: 0;
 }
 .mr-hero-showcase {
@@ -786,9 +786,9 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse at 50% 62%,
-    #e4e7ec 0,
-    #eef0f3 43%,
-    #f4f5f700 72%
+    #dae6fc 0,
+    #e8effc 43%,
+    #edf3fc00 72%
   );
 }
 .mr-hero-model {
@@ -843,10 +843,10 @@
   font-family: 'Manrope', sans-serif;
   font-size: 1.02rem;
   font-weight: 800;
-  color: #203048;
+  color: #101b35;
 }
 .mr-hero-model-name svg {
-  color: #d02030;
+  color: #2155ed;
   flex-shrink: 0;
 }
 .mr-hero-model-detail {
