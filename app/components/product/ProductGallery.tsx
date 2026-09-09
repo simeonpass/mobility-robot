@@ -35,14 +35,16 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
   }, [activeIndex, items.length]);
 
   if (!activeItem) {
-    return <div className="aspect-square w-full rounded-lg bg-secondary/60" />;
+    return (
+      <div className="aspect-[4/3] w-full rounded-lg bg-secondary/60" />
+    );
   }
 
   const thumbList =
     items.length > 1 ? (
       <ul
         aria-label="Product thumbnails"
-        className="scrollbar-hide flex gap-2 overflow-x-auto pb-1 lg:max-h-[min(640px,72vh)] lg:w-[4.5rem] lg:shrink-0 lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0"
+        className="scrollbar-hide flex gap-2 overflow-x-auto pb-1"
         role="listbox"
       >
         {items.map((item, index) => {
@@ -60,7 +62,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
                 aria-label={label}
                 aria-selected={selected}
                 className={[
-                  'relative size-11 shrink-0 overflow-hidden rounded-md border transition-all sm:size-[4.75rem]',
+                  'relative size-14 shrink-0 overflow-hidden rounded-md border transition-all sm:size-16',
                   selected
                     ? 'border-foreground ring-1 ring-foreground/20'
                     : 'border-border/80 opacity-70 hover:border-foreground/30 hover:opacity-100',
@@ -73,10 +75,10 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
                   <img
                     alt=""
                     className="size-full object-cover"
-                    height={76}
+                    height={64}
                     loading="lazy"
                     src={thumbUrl}
-                    width={76}
+                    width={64}
                   />
                 ) : (
                   <span className="flex size-full items-center justify-center bg-secondary text-xs text-muted-foreground">
@@ -101,43 +103,39 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
     ) : null;
 
   return (
-    <div className="flex min-w-0 flex-col gap-3 lg:flex-row">
-      {thumbList ? (
-        <div className="order-2 lg:order-1 lg:mt-0">{thumbList}</div>
-      ) : null}
-
+    <div className="flex min-w-0 flex-col gap-2">
       <div
         aria-label={`${productTitle} gallery`}
         aria-roledescription="carousel"
-        className="relative order-1 min-w-0 flex-1 lg:order-2"
+        className="relative min-w-0"
         id={`${groupId}-main-media`}
         role="region"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border/60 bg-white sm:aspect-square">
+        <div className="relative overflow-hidden rounded-lg border border-border/60 bg-white">
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               animate={{opacity: 1}}
-              className="absolute inset-0"
+              className="flex w-full items-center justify-center p-2 sm:p-3"
               exit={{opacity: 0}}
               initial={reducedMotion ? false : {opacity: 0}}
               key={activeItem.id}
               transition={{duration: reducedMotion ? 0 : 0.2}}
             >
               {activeItem.type === 'image' ? (
-                <div className="flex size-full items-center justify-center p-3 sm:p-4 md:p-6">
-                  <Image
-                    alt={activeItem.altText || productTitle}
-                    className="max-h-full max-w-full object-contain"
-                    data={activeItem}
-                    sizes="(min-width: 1024px) 55vw, 100vw"
+                <Image
+                  alt={activeItem.altText || productTitle}
+                  className="product-gallery-image"
+                  data={activeItem}
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                />
+              ) : (
+                <div className="aspect-video w-full">
+                  <ProductVideoPlayer
+                    className="size-full border-0 object-contain"
+                    src={activeItem.embedUrl}
+                    title={activeItem.title}
                   />
                 </div>
-              ) : (
-                <ProductVideoPlayer
-                  className="size-full border-0 object-contain"
-                  src={activeItem.embedUrl}
-                  title={activeItem.title}
-                />
               )}
             </motion.div>
           </AnimatePresence>
@@ -164,6 +162,7 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
           ) : null}
         </div>
       </div>
+      {thumbList}
     </div>
   );
 }
