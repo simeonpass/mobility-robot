@@ -3,14 +3,12 @@ import {PaymentLogos} from '~/components/footer/PaymentLogos';
 
 export function FooterBottom() {
   return (
-    <div className="mt-8 flex flex-col items-center justify-between gap-5 border-t border-white/10 pt-6 md:flex-row md:items-end">
+    <div className="flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 md:flex-row md:items-center">
       <p className="text-center text-xs text-white/70 md:text-left">
         © {new Date().getFullYear()} {COMPANY.name}
       </p>
       <div className="w-full md:w-auto">
-        <p className="mb-2.5 text-center font-display text-xs font-semibold uppercase tracking-[0.16em] text-white/70 md:text-right">
-          Accepted at checkout
-        </p>
+        <p className="sr-only">Accepted at checkout</p>
         <PaymentLogos size="compact" />
       </div>
     </div>

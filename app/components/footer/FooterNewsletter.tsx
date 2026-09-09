@@ -21,24 +21,20 @@ export function FooterNewsletter() {
 
   return (
     <div className="mr-footer-newsletter border-b border-white/10">
-      <div className="xsto-container flex flex-col gap-5 py-8 md:flex-row md:items-end md:justify-between md:gap-10 md:py-10">
+      <div className="mr-footer-signup xsto-container flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-8">
         <div className="max-w-md">
-          <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-white/70">
-            Newsletter
+          <p className="font-display text-lg font-semibold tracking-tight text-white">
+            Stay in the loop
           </p>
-          <p className="mt-2 font-display text-xl font-semibold tracking-tight text-white md:text-2xl">
-            More possibilities, in your inbox
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-white/75">
-            Product news, practical advice and offers from Mobility Robot by
-            Bentech Medical.
+          <p className="mt-1 text-sm leading-relaxed text-white/75">
+            Product news and offers from Mobility Robot.
           </p>
         </div>
 
         <div className="w-full max-w-lg">
           <fetcher.Form
             action="/api/newsletter"
-            className="flex flex-col gap-3 sm:flex-row sm:items-stretch"
+            className="flex gap-2 items-stretch"
             method="post"
           >
             <div
@@ -68,16 +64,19 @@ export function FooterNewsletter() {
               type="email"
             />
             <button
-              className="mr-newsletter-button min-h-12 shrink-0 px-6 text-sm"
+              className="mr-newsletter-button min-h-12 shrink-0 px-3 text-sm md:px-5"
               disabled={isSubmitting}
               type="submit"
             >
               {isSubmitting ? 'Subscribing…' : 'Subscribe'}
             </button>
           </fetcher.Form>
-          <p className="mt-3 text-xs leading-relaxed text-white/70">
-            Read how we use your details in our{' '}
-            <Link className="underline underline-offset-4" to="/privacy">privacy policy</Link>.
+          <p className="mt-2 text-xs leading-relaxed text-white/70">
+            How we use your details: our{' '}
+            <Link className="underline underline-offset-4" to="/privacy">
+              privacy policy
+            </Link>
+            .
           </p>
 
           {result?.success ? (

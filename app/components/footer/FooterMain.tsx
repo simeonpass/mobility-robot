@@ -20,8 +20,8 @@ const LEGAL_LINKS = FOOTER_SUPPORT_LINKS.filter((link) =>
 export function FooterMain() {
   return (
     <div className="mr-footer-main text-white">
-      <div className="xsto-container py-10 md:py-14">
-        <div className="grid gap-10 md:grid-cols-12 md:gap-8 lg:gap-12">
+      <div className="mr-footer-content xsto-container">
+        <div className="grid gap-6 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-5 lg:col-span-4">
             <NavLink
               aria-label="Mobility Robot by Bentech Medical — home"
@@ -32,14 +32,11 @@ export function FooterMain() {
             >
               <MobilityRobotBrand light />
             </NavLink>
-            <p className="mt-5 max-w-sm text-base leading-relaxed text-white/85">
-              Intelligent mobility. More possibilities.
-            </p>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">
               XSTO products. UK advice, demonstrations and aftercare from
               Bentech Medical Limited.
             </p>
-            <address className="mt-5 space-y-1.5 not-italic text-sm leading-relaxed text-white/65">
+            <address className="mt-3 space-y-1 not-italic text-sm leading-relaxed text-white/65">
               <p>
                 <a
                   className="text-white/85 transition-colors hover:text-white"
@@ -62,7 +59,7 @@ export function FooterMain() {
                 {COMPANY.city}, {COMPANY.postcode}
               </p>
             </address>
-            <div className="mt-6 flex items-center gap-2">
+            <div className="mt-3 flex items-center gap-2">
               <SocialLink
                 href="https://www.facebook.com/xstouk"
                 label="Facebook"
@@ -116,10 +113,13 @@ export function FooterMain() {
           </div>
         </div>
 
-        <div className="mt-12 space-y-5 border-t border-white/10 pt-8">
-          <SafetyDisclaimer />
-          <DistributorDisclaimer />
-        </div>
+        <details className="mr-footer-notices">
+          <summary>Product safety &amp; distributor information</summary>
+          <div className="space-y-4 pb-4">
+            <SafetyDisclaimer />
+            <DistributorDisclaimer />
+          </div>
+        </details>
 
         <FooterBottom />
       </div>
