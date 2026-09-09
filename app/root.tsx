@@ -13,6 +13,7 @@ import {
 import type {Route} from './+types/root';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
+import warmPremiumStyles from '~/styles/warm-premium.css?url';
 import {PageLayout} from './components/PageLayout';
 import {applyReferralDiscount} from '~/lib/referral-discount';
 import {legacyRedirect} from '~/lib/redirects';
@@ -144,16 +145,17 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
 
   return (
-    <html lang={HTML_LANG}>
+    <html lang={HTML_LANG} className="mr-warm">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <meta name="theme-color" content="#203048" />
+        <meta name="theme-color" content="#25282A" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <JsonLd data={sitewideJsonLdGraph(true)} />
         <Meta />
         <Links />
+        <link rel="stylesheet" href={warmPremiumStyles} />
       </head>
       <body>
         {children}
