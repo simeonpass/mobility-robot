@@ -336,11 +336,3 @@
 @media (max-width: 359px) {
   .mr-site-header .mr-brand-image { width: 175px; }
 }
-
-/* Stacked header logo, with room around the original artwork. */
-.mr-shell { --header-height: 124px; }
-.mr-site-header .mr-brand-image--stacked { width: 190px; height: auto; }
-@media (max-width: 767px) {
-  .mr-shell { --header-height: 92px; }
-  .mr-site-header .mr-brand-image--stacked { width: 135px; }
-}

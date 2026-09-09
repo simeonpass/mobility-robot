@@ -27,26 +27,18 @@ interface HeaderProps {
 }
 
 /** Customer-facing brand, with the legal business as its supporting byline. */
-export function MobilityRobotBrand({
-  light = false,
-  stacked = false,
-}: {
-  light?: boolean;
-  stacked?: boolean;
-}) {
+export function MobilityRobotBrand({light = false}: {light?: boolean}) {
   return (
     <img
-      className={`mr-brand-image${light ? ' mr-brand-image--light' : ''}${stacked ? ' mr-brand-image--stacked' : ''}`}
+      className={`mr-brand-image${light ? ' mr-brand-image--light' : ''}`}
       src={
-        stacked
-          ? '/images/mobility-robot-stacked-chosen.svg'
-          : light
-            ? '/images/mobility-robot-approved-light.svg'
-            : '/images/mobility-robot-approved.svg'
+        light
+          ? '/images/mobility-robot-approved-light.svg'
+          : '/images/mobility-robot-approved.svg'
       }
       alt="mobility Robot. by Bentech Medical"
-      width={stacked ? 1000 : 1366}
-      height={stacked ? 546 : 251}
+      width={1366}
+      height={251}
     />
   );
 }
@@ -62,7 +54,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
           prefetch="intent"
           to="/"
         >
-          <MobilityRobotBrand stacked />
+          <MobilityRobotBrand />
         </NavLink>
         <HeaderMenu isLoggedIn={isLoggedIn} viewport="desktop" />
         <HeaderCtas cart={cart} isLoggedIn={isLoggedIn} />
