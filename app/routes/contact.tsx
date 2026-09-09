@@ -38,16 +38,14 @@ export const meta: Route.MetaFunction = () =>
     path: '/contact',
   });
 
-const breadcrumbs = [
-  {name: 'Home', path: '/'},
-  {name: 'Contact'},
-] as const;
+const breadcrumbs = [{name: 'Home', path: '/'}, {name: 'Contact'}] as const;
 
 export default function ContactPage() {
-  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
-    schema: contactFormSchema,
-    action: '/api/contact',
-  });
+  const {errors, formError, loading, success, handleSubmit} =
+    useValidatedApiForm({
+      schema: contactFormSchema,
+      action: '/api/contact',
+    });
 
   return (
     <PageShell>
@@ -130,7 +128,10 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <nav aria-label="Breadcrumb" className="mt-5 text-xs text-muted-foreground">
+      <nav
+        aria-label="Breadcrumb"
+        className="mt-5 text-xs text-muted-foreground"
+      >
         <ol className="flex flex-wrap items-center gap-2">
           <li>
             <Link className="hover:text-gold" prefetch="intent" to="/">
@@ -226,11 +227,7 @@ export default function ContactPage() {
         <ul className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {CONTACT_HELP_LINKS.map((item) => (
             <li key={item.url}>
-              <Link
-                className="group block"
-                prefetch="intent"
-                to={item.url}
-              >
+              <Link className="group block" prefetch="intent" to={item.url}>
                 <span className="text-base font-semibold text-foreground group-hover:text-gold">
                   {item.title}
                 </span>
@@ -268,11 +265,17 @@ export default function ContactPage() {
               </FormSuccess>
             </div>
           ) : (
-            <form
-              className="mt-8 space-y-6"
-              noValidate
-              onSubmit={handleSubmit}
-            >
+            <form className="mt-8 space-y-6" noValidate onSubmit={handleSubmit}>
+              <div hidden aria-hidden="true">
+                <label htmlFor="contact-website">Leave this field empty</label>
+                <input
+                  id="contact-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
               <fieldset className="space-y-4">
                 <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-navy/55">
                   Your details
@@ -314,7 +317,12 @@ export default function ContactPage() {
                 </legend>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <FormField error={errors.topic} id="topic" label="Topic">
-                    <SelectInput id="topic" name="topic" required defaultValue="">
+                    <SelectInput
+                      id="topic"
+                      name="topic"
+                      required
+                      defaultValue=""
+                    >
                       <option disabled value="">
                         Select a topic
                       </option>
@@ -350,7 +358,9 @@ export default function ContactPage() {
                 </FormField>
               </fieldset>
 
-              {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
+              {formError ? (
+                <FormErrorBanner>{formError}</FormErrorBanner>
+              ) : null}
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <SubmitButton loading={loading}>Send message</SubmitButton>
@@ -430,7 +440,10 @@ export default function ContactPage() {
               />
               <span>
                 Need a hands-on session?{' '}
-                <Link className="font-medium text-gold hover:text-gold-dark" to="/demo">
+                <Link
+                  className="font-medium text-gold hover:text-gold-dark"
+                  to="/demo"
+                >
                   Request a demo
                 </Link>{' '}
                 in Dorset or London.
