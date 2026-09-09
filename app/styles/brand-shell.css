@@ -326,3 +326,13 @@
 .mr-shell .btn-atc:hover {background:var(--mr-accent-hover)}
 .mr-shell .leaflet-container a {color:var(--mr-accent)}
 .mr-shell .leaflet-zoom-box {border-color:var(--mr-accent)}
+
+/* Approved outlined artwork: independent of web fonts at every screen size. */
+.mr-brand-image { display: block; width: 250px; height: auto; flex-shrink: 0; }
+.mr-footer .mr-brand-image { width: 260px; max-width: 100%; }
+@media (max-width: 767px) {
+  .mr-site-header .mr-brand-image { width: 205px; }
+}
+@media (max-width: 359px) {
+  .mr-site-header .mr-brand-image { width: 175px; }
+}

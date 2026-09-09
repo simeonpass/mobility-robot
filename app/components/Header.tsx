@@ -29,17 +29,17 @@ interface HeaderProps {
 /** Customer-facing brand, with the legal business as its supporting byline. */
 export function MobilityRobotBrand({light = false}: {light?: boolean}) {
   return (
-    <span className={`mr-brand${light ? ' mr-brand--light' : ''}`}>
-      <span className="mr-brand-type">
-        <span className="mr-brand-name">
-          mobility <span className="mr-brand-robot">Robot</span>
-          <span className="mr-brand-dot" aria-hidden="true">
-            .
-          </span>
-        </span>
-        <span className="mr-brand-byline">by Bentech Medical</span>
-      </span>
-    </span>
+    <img
+      className={`mr-brand-image${light ? ' mr-brand-image--light' : ''}`}
+      src={
+        light
+          ? '/images/mobility-robot-approved-light.svg'
+          : '/images/mobility-robot-approved.svg'
+      }
+      alt="mobility Robot. by Bentech Medical"
+      width={1366}
+      height={251}
+    />
   );
 }
 
