@@ -13,16 +13,16 @@ const STATUS_STYLES = {
     container: 'border-emerald-200/80 bg-emerald-50/60',
   },
   low_stock: {
-    dot: 'bg-orange-500',
-    ring: 'ring-orange-500/25',
+    dot: 'bg-primary',
+    ring: 'ring-primary/25',
     icon: AlertTriangle,
-    container: 'border-orange-300/90 bg-orange-50/80',
+    container: 'border-primary/30 bg-primary/5',
   },
   preorder: {
-    dot: 'bg-amber-500',
-    ring: 'ring-amber-500/20',
+    dot: 'bg-navy',
+    ring: 'ring-navy/20',
     icon: CalendarClock,
-    container: 'border-amber-200/80 bg-amber-50/60',
+    container: 'border-border bg-secondary/60',
   },
   sold_out: {
     dot: 'bg-muted-foreground',

@@ -93,7 +93,8 @@ export function links() {
       rel: 'preconnect',
       href: 'https://cdn.judge.me',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'},
+    {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg?v=navy-red'},
+    {rel: 'apple-touch-icon', href: '/apple-touch-icon.png?v=navy-red'},
   ];
 }
 
@@ -147,7 +148,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <meta name="theme-color" content="#101b35" />
+        <meta name="theme-color" content="#203048" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <JsonLd data={sitewideJsonLdGraph(true)} />

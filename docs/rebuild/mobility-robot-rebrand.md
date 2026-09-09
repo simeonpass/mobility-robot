@@ -89,3 +89,27 @@ Buyer guides and videos become compact, full-row controls on phones; all three g
 The purchase/accessory CSS was also reviewed: large optional-accessory photographs, selection disclosures, combined totals and the conditional sticky purchase button remain in place. This pass makes no checkout or product-price calculation changes.
 
 Validation: all 222 existing tests pass, along with the production build, TypeScript and changed-source lint. Hosted phone rendering and real checkout remain unverified because of the previously recorded browser access block. This is a source-based mobile audit and a review preview, not a live-device or checkout sign-off.
+
+## Complete navy-and-red storefront — 9 September 2026
+
+The user selected navy and red for brand continuity and requested that the entire storefront follow it. The earlier colour comparison changed the shell and homepage but missed the independently styled product and discovery routes. Those styles now consume shared `--mr-*` colour tokens in `app/styles/app.css`; primary actions, hover states, focus outlines and selection controls follow the same red palette.
+
+| Area | Colour coverage |
+| --- | --- |
+| Homepage, header, footer | Current video hero retained; navy/red wordmark, links, calls to action and compact footer |
+| Four chair pages and accessories | Gallery selection, product headings, add-to-basket buttons, radio/checkbox selections, optional extras, VAT controls, related products and mobile purchase bar |
+| Shop and search | Shared palette, catalogue stock labels and product links |
+| Compare, buyer guides, support and international enquiries | Separate discovery stylesheet converted, including tables, numbered steps, sidebars and demonstration buttons |
+| About, contact, demo, quote, FAQ, videos and policy pages | Shared theme and shell colours; dedicated about-page styles converted |
+| Basket and account pages | Shared theme, checkout-link gradient, feedback and deposit labels |
+| Dealer finder | Red CSS map pins replace the default blue marker images; selection, zoom and popups retain their existing behaviour |
+| Reviews | Local stars use the red theme; Judge.me widget stars have a scoped colour override, based on the vendor's documented `.jdgm-star` selector |
+| Browser and saved-site branding | Navy theme colour, navy/red SVG favicon, matching PNG/ICO exports, and current lowercase metadata wordmark |
+
+The source scan found no remaining electric-blue/amber brand hex values or blue/amber/orange Tailwind utility colours in the storefront source. Legacy token names such as `gold` remain aliases for red to preserve component compatibility. Product colour names, authentic photography, payment-provider logos and semantic success/error colours retain their meaning.
+
+The old Apple home-screen icon still displayed XSTO. It has been replaced with a PNG rendering of the Mobility Robot SVG favicon, with a matching ICO fallback and an explicit versioned Apple icon link. PNG/ICO exports are format conversions of the SVG; no generated product imagery is involved. The icon and metadata wordmark exports were visually inspected.
+
+Validation: production build, TypeScript, changed-source lint and all 222 existing tests pass. Primary text/button colour pairs meet a 4.5:1 contrast ratio. Source and stylesheet inspection covers the page families above; Shopify's previously recorded access block still prevents hosted visual/playback verification. Shopify-hosted checkout, account authentication screens and external app settings are separate from these storefront styles and were not changed. No orders, payments, enquiry emails or production deployment were made.
+
+Judge.me reference: https://judge.me/help/en/articles/8415813-customizing-the-reviews-carousel . Scoped storefront CSS is used; external review settings were not edited.
