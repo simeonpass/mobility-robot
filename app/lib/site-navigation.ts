@@ -61,15 +61,14 @@ export const PRODUCT_NAV_ITEMS: NavItem[] = PRODUCT_NAV_GROUPS.flatMap(
 /** Secondary links in the desktop header (kept lean). */
 export const HEADER_SECONDARY_NAV: NavItem[] = [
   {title: 'Accessories', url: '/collections/accessories'},
-  {title: 'Stockists', url: '/stockists'},
-  {title: 'FAQ', url: '/faq'},
+  {title: 'Compare', url: '/compare'},
+  {title: 'Find a dealer', url: '/stockists'},
+  {title: 'Help & advice', url: '/support'},
 ];
 
 /** Extra links shown in the mobile menu under Explore. */
 export const HEADER_MOBILE_EXTRA_NAV: NavItem[] = [
-  {title: 'Videos', url: '/videos'},
-  {title: 'Blog', url: '/blog'},
-  {title: 'Request a quote', url: '/quote'},
+  {title: 'Contact us', url: '/contact'},
 ];
 
 export const HEADER_CTA: NavItem = {
@@ -87,7 +86,8 @@ export const MAIN_NAV: NavItem[] = [
 ];
 
 export const FOOTER_QUICK_LINKS: NavItem[] = [
-  {title: 'Shop All', url: '/collections/all'},
+  {title: 'All wheelchairs', url: '/collections/all'},
+  {title: 'Compare models', url: '/compare'},
   {title: 'M4', url: productUrl('xsto-m4')},
   {title: 'M4B', url: productUrl('xsto-m4b')},
   {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
@@ -99,7 +99,9 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
 ];
 
 export const FOOTER_SUPPORT_LINKS: NavItem[] = [
-  {title: 'About', url: '/about'},
+  {title: 'About Mobility Robot', url: '/about'},
+  {title: 'Buyer guides', url: '/guides'},
+  {title: 'International enquiries', url: '/international'},
   {title: 'FAQ', url: '/faq'},
   {title: 'Warranty Information', url: '/warranty'},
   {title: 'Delivery', url: '/delivery'},
@@ -129,7 +131,7 @@ export const FOOTER_LEGAL_LINKS: NavItem[] = [
 ];
 
 export const COMPANY = {
-  name: 'Bentech Medical Ltd',
+  name: 'Bentech Medical Limited',
   address: 'Unit 2 Old Forge Road',
   city: 'Wimborne, Dorset',
   postcode: 'BH21 7RR',
@@ -137,5 +139,5 @@ export const COMPANY = {
   phoneHref: 'tel:+442080504849',
   email: 'sales@bentechmeduk.com',
   disclaimer:
-    'Official UK Distributor of XSTO. XSTO is a registered trademark of its manufacturer.',
+    'Official UK distributor of XSTO. XSTO is a registered trademark of its manufacturer.',
 } as const;

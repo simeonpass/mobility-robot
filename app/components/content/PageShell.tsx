@@ -1,6 +1,6 @@
 import type {ReactNode} from 'react';
 import {Link} from 'react-router';
-import {type BreadcrumbItem, breadcrumbJsonLd} from '~/lib/seo';
+import {type BreadcrumbItem, breadcrumbJsonLd, jsonLdScript} from '~/lib/seo';
 
 export function JsonLd({
   data,
@@ -9,7 +9,7 @@ export function JsonLd({
 }) {
   return (
     <script
-      dangerouslySetInnerHTML={{__html: JSON.stringify(data)}}
+      dangerouslySetInnerHTML={jsonLdScript(data)}
       type="application/ld+json"
     />
   );
@@ -43,21 +43,33 @@ export function PageHeader({
       {breadcrumbs && breadcrumbs.length > 0 ? (
         <>
           <JsonLd data={breadcrumbJsonLd(breadcrumbs)} />
-          <nav aria-label="Breadcrumb" className="mb-4 text-xs text-muted-foreground">
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-4 text-xs text-muted-foreground"
+          >
             <ol className="flex flex-wrap items-center gap-2">
               {breadcrumbs.map((crumb, index) => {
                 const isLast = index === breadcrumbs.length - 1;
                 return (
-                  <li className="flex items-center gap-2" key={`${crumb.name}-${index}`}>
+                  <li
+                    className="flex items-center gap-2"
+                    key={crumb.path ?? crumb.name}
+                  >
                     {index > 0 ? <span aria-hidden>/</span> : null}
                     {crumb.path && !isLast ? (
-                      <Link className="hover:text-gold" prefetch="intent" to={crumb.path}>
+                      <Link
+                        className="hover:text-gold"
+                        prefetch="intent"
+                        to={crumb.path}
+                      >
                         {crumb.name}
                       </Link>
                     ) : (
                       <span
                         aria-current={isLast ? 'page' : undefined}
-                        className={isLast ? 'font-medium text-foreground' : undefined}
+                        className={
+                          isLast ? 'font-medium text-foreground' : undefined
+                        }
                       >
                         {crumb.name}
                       </span>
@@ -69,7 +81,9 @@ export function PageHeader({
           </nav>
         </>
       ) : null}
-      <h1 className="text-3xl font-bold text-foreground md:text-4xl">{title}</h1>
+      <h1 className="text-3xl font-bold text-foreground md:text-4xl">
+        {title}
+      </h1>
       {description ? (
         <p className="mt-3 text-lg text-muted-foreground">{description}</p>
       ) : null}

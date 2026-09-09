@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {Link} from 'react-router';
 import {Play} from 'lucide-react';
 import type {ProductVideo} from '~/lib/product-content';
 import {extractYoutubeVideoId} from '~/lib/product-gallery';
@@ -14,12 +15,20 @@ export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
   const youtubeId = extractYoutubeVideoId(video.embedUrl);
 
   return (
-    <section className="mt-10 md:mt-12">
-      <h2 className="mb-4 text-center font-display text-xl font-semibold tracking-[-0.02em] text-navy md:text-2xl">
-        {video.title}
-      </h2>
+    <section className="mr-product-video">
+      <div className="mr-product-video-copy">
+        <p className="mr-product-section-eyebrow">See the difference</p>
+        <h2 className="font-display">Meet the {productName} in motion.</h2>
+        <p>
+          Watch the technology at work, then talk to our team about the way you
+          want to move.
+        </p>
+        <Link className="mr-product-demo" prefetch="intent" to="/demo">
+          Arrange a demonstration <span aria-hidden>↗</span>
+        </Link>
+      </div>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-navy shadow-medium">
+      <div className="mr-product-video-player overflow-hidden bg-navy">
         {playing ? (
           <div className="aspect-video">
             <ProductVideoPlayer
@@ -40,7 +49,10 @@ export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
                 alt={`${productName} — ${video.title}`}
                 className="size-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.02]"
                 decoding="async"
+                height={720}
+                loading="lazy"
                 src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+                width={1280}
               />
             ) : (
               /* Direct/local MP4s: never attach src until play — posters would fetch hundreds of MB. */

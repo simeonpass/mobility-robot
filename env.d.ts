@@ -36,7 +36,7 @@ declare global {
     FORMSPREE_ENDPOINT?: string;
     /** Inbox address for form notifications (default: sales@bentechmeduk.com) */
     FORMS_TO_EMAIL?: string;
-    /** Verified Resend from address, e.g. "XSTO UK <noreply@mobilityrobot.co.uk>" */
+    /** Verified Resend from address, e.g. "Mobility Robot <noreply@mobilityrobot.co.uk>" */
     FORMS_FROM_EMAIL?: string;
   }
 }

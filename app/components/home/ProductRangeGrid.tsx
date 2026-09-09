@@ -1,9 +1,7 @@
 import {Link} from 'react-router';
 import {ArrowUpRight} from 'lucide-react';
-import {SectionIntro} from '~/components/home/SectionIntro';
 import type {HomeProductFragment} from 'storefrontapi.generated';
 import {
-  formatHomepageFromPrice,
   getHomepageProductSlot,
   HOMEPAGE_FLAGSHIP_HANDLES,
   HOMEPAGE_PRODUCT_BADGES,
@@ -12,152 +10,138 @@ import {
 } from '~/lib/homepage-data';
 import {getProductDisplayName} from '~/lib/product-content';
 import {getProductListPrice} from '~/lib/product-vat-variants';
+import {getExVatDisplay, getIncVatDisplay} from '~/lib/product-pricing';
 
 export type HomeProduct = HomeProductFragment;
-
-type ProductRangeGridProps = {
-  products: HomeProduct[];
+const descriptions: Record<HomepageFlagshipHandle, string> = {
+  'xsto-m4':
+    'Self-levelling control and electric seat lifting for your everyday.',
+  'xsto-m4b':
+    'A fresh take on the M4 platform, with redesigned front wheels and a folding footrest.',
+  'xsto-m4-pro':
+    'More seating adjustment, an integrated headrest and electric folding.',
+  'xsto-x12':
+    'Stair-climbing capability for suitable stairs, with assessment and training.',
 };
-
-/** Shopify CDN URL scaled by width only — never height/crop. */
-function productImageSrc(url: string, width = 800): string {
-  try {
-    const parsed = new URL(url);
-    parsed.searchParams.set('width', String(width));
-    parsed.searchParams.delete('height');
-    parsed.searchParams.delete('crop');
-    return parsed.toString();
-  } catch {
-    return url;
-  }
+const mobileDescriptions: Record<HomepageFlagshipHandle, string> = {
+  'xsto-m4': 'Everyday self-levelling',
+  'xsto-m4b': 'Updated wheels & footrest',
+  'xsto-m4-pro': 'Extra seating adjustment',
+  'xsto-x12': 'Stair climbing, with assessment & training',
+};
+function productImageSrc(url: string, width: number): string {
+  const parsed = new URL(url);
+  parsed.searchParams.set('width', String(width));
+  parsed.searchParams.delete('height');
+  parsed.searchParams.delete('crop');
+  return parsed.toString();
 }
 
-export function ProductRangeGrid({products}: ProductRangeGridProps) {
-  const flagshipProducts = HOMEPAGE_FLAGSHIP_HANDLES.map((slot) => {
-    const handle = SHOPIFY_HOME_PRODUCT_HANDLES[slot];
-    return products.find((product) => product.handle === handle) ?? null;
-  }).filter(Boolean) as HomeProduct[];
-
-  if (!flagshipProducts.length) {
-    return (
-      <section className="xsto-section bg-background" id="product-range">
-        <div className="xsto-container">
-          <SectionIntro
-            accent="XSTO"
-            description="Flagship models across the XSTO range — from self-levelling daily chairs to stair-climbing. Every chair ships with full UK warranty and free delivery."
-            label="Shop the range"
-            suffix="for you."
-            title="Find the"
-          />
-          <p className="text-center text-muted-foreground">
-            Product details are loading. Please check back shortly.
-          </p>
-        </div>
-      </section>
+export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
+  const flagshipProducts = HOMEPAGE_FLAGSHIP_HANDLES.flatMap((slot) => {
+    const product = products.find(
+      (item) => item.handle === SHOPIFY_HOME_PRODUCT_HANDLES[slot],
     );
-  }
-
-  const modelCountLabel =
-    flagshipProducts.length === 1
-      ? 'One model'
-      : `${flagshipProducts.length} models`;
-
+    return product ? [product] : [];
+  });
   return (
-    <section className="xsto-section bg-background" id="product-range">
+    <section className="mr-section" id="product-range">
       <div className="xsto-container">
-        <SectionIntro
-          accent="XSTO"
-          description={`${modelCountLabel} across the XSTO range — from self-levelling daily chairs to stair-climbing. Every chair ships with full UK warranty and free delivery.`}
-          label="Shop the range"
-          suffix="for you."
-          title="Find the"
-        />
-
-        <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-          {flagshipProducts.map((product, index) => {
-            const slot = getHomepageProductSlot(product.handle) as
-              | HomepageFlagshipHandle
-              | undefined;
-            const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
-            const name = getProductDisplayName(product.handle, product.title);
-            const listPrice = getProductListPrice(product);
-            const exVatPrice = formatHomepageFromPrice(
-              slot,
-              listPrice.amount,
-              listPrice.currencyCode,
-            );
-            const image = product.featuredImage;
-
-            return (
-              <article
-                className="group flex flex-col rounded-2xl border border-border/40 bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-medium animate-fade-in-up"
-                key={product.id}
-                style={{animationDelay: `${index * 80}ms`}}
-              >
-                <Link
-                  className="relative flex flex-1 flex-col"
-                  prefetch="intent"
-                  to={`/products/${product.handle}`}
-                >
-                  {meta ? (
-                    <span className="absolute left-3 top-3 z-10 rounded-full border border-border/50 bg-white/95 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-foreground shadow-soft backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:text-xs">
-                      {meta.badge}
-                    </span>
-                  ) : null}
-
-                  {/*
-                    size-full + object-contain is the reliable mobile fit:
-                    the img box fills the aspect frame, and object-contain
-                    letterboxes the photo so nothing is clipped on the right.
-                  */}
-                  <div className="relative aspect-[5/4] w-full bg-white sm:aspect-[4/3]">
-                    {image ? (
-                      <img
-                        alt={image.altText || name}
-                        className="absolute inset-0 box-border size-full object-contain object-center p-5 transition-transform duration-500 group-hover:scale-[1.03] sm:p-7"
-                        decoding="async"
-                        loading={index < 2 ? 'eager' : 'lazy'}
-                        src={productImageSrc(image.url, 900)}
-                        srcSet={[
-                          `${productImageSrc(image.url, 400)} 400w`,
-                          `${productImageSrc(image.url, 600)} 600w`,
-                          `${productImageSrc(image.url, 900)} 900w`,
-                        ].join(', ')}
-                        sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
-                      />
-                    ) : null}
-                  </div>
-
-                  <div className="flex flex-1 flex-col border-t border-border/30 px-4 py-4 sm:px-5 sm:py-5">
-                    <h3 className="text-base font-semibold text-foreground sm:text-lg">
-                      {meta?.shortName ?? name}
-                    </h3>
-                    <p className="mt-1.5 text-lg font-semibold text-gold sm:mt-2 sm:text-xl">
-                      From {exVatPrice}
-                    </p>
-                    <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-gold sm:mt-5 sm:min-h-0">
-                      {meta?.exploreLabel ?? 'View details'}
-                      <ArrowUpRight
-                        aria-hidden
-                        className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                        strokeWidth={1.75}
-                      />
-                    </span>
-                  </div>
-                </Link>
-              </article>
-            );
-          })}
-        </div>
-
-        <p className="mt-10 text-center">
-          <Link
-            className="text-sm font-semibold text-gold underline-offset-4 hover:underline"
-            prefetch="intent"
-            to="/quote"
-          >
-            Need help choosing?
+        <div className="mr-section-intro">
+          <div>
+            <p className="mr-eyebrow">The XSTO range</p>
+            <h2>
+              Four models.
+              <br />A world of possibilities.
+            </h2>
+            <p>
+              Start with the way you want to live. We’ll help you find the chair
+              to match.
+            </p>
+          </div>
+          <Link className="mr-text-link" to="/compare">
+            Compare all models <ArrowUpRight size={18} aria-hidden />
           </Link>
+        </div>
+        {flagshipProducts.length ? (
+          <div className="mr-product-grid">
+            {flagshipProducts.map((product) => {
+              const slot = getHomepageProductSlot(
+                product.handle,
+              ) as HomepageFlagshipHandle;
+              const meta = HOMEPAGE_PRODUCT_BADGES[slot];
+              const name = getProductDisplayName(product.handle, product.title);
+              const price = getProductListPrice(product);
+              const image = product.featuredImage;
+              return (
+                <article className="mr-product-card" key={product.id}>
+                  <Link
+                    className="mr-product-card-link"
+                    to={`/products/${product.handle}`}
+                    prefetch="intent"
+                    aria-labelledby={`range-${product.handle}`}
+                  >
+                    <div className="mr-card-visual">
+                      <span className="mr-card-badge">{meta.badge}</span>
+                      {image ? (
+                        <img
+                          alt={image.altText || name}
+                          src={productImageSrc(image.url, 800)}
+                          srcSet={`${productImageSrc(image.url, 400)} 400w, ${productImageSrc(image.url, 600)} 600w, ${productImageSrc(image.url, 800)} 800w`}
+                          sizes="(min-width: 1200px) 23vw, 46vw"
+                          width={image.width ?? 800}
+                          height={image.height ?? 800}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ) : null}
+                    </div>
+                    <div className="mr-card-body">
+                      <h3 id={`range-${product.handle}`}>{meta.shortName}</h3>
+                      <p>
+                        <span className="mr-desktop-copy">
+                          {descriptions[slot]}
+                        </span>
+                        <span className="mr-mobile-copy">
+                          {mobileDescriptions[slot]}
+                        </span>
+                      </p>
+                      <div className="mr-card-pricing">
+                        <span>From </span>
+                        <strong>{getExVatDisplay(price)}</strong>
+                        <p>With VAT relief, if eligible</p>
+                        <p>{getIncVatDisplay(price)} including VAT</p>
+                      </div>
+                      <span className="mr-text-link">
+                        <span className="mr-desktop-copy">
+                          {meta.exploreLabel}
+                        </span>
+                        <span className="mr-mobile-copy">View model</span>
+                        <ArrowUpRight size={18} aria-hidden />
+                      </span>
+                    </div>
+                  </Link>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <p>
+            Explore the{' '}
+            <Link className="mr-text-link" to="/collections/all">
+              full product range
+            </Link>{' '}
+            or{' '}
+            <Link className="mr-text-link" to="/contact">
+              ask our team
+            </Link>{' '}
+            for current availability.
+          </p>
+        )}
+        <p className="mr-range-note">
+          All prices in GBP. VAT relief requires eligibility and a declaration.
+          Photography may show optional equipment.{' '}
+          <Link to="/vat-relief">VAT relief explained</Link>.
         </p>
       </div>
     </section>

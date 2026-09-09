@@ -1,6 +1,8 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
-import {ComparisonStrip} from '~/components/home/ComparisonStrip';
+import '~/styles/home-redesign.css';
+import {AwardsStrip} from '~/components/home/AwardsStrip';
+import {BrandStorySections} from '~/components/home/BrandStorySections';
 import {ExperienceRangeSection} from '~/components/home/ExperienceRangeSection';
 import {FaqPreview} from '~/components/home/FaqPreview';
 import {HeroSection} from '~/components/home/HeroSection';
@@ -14,30 +16,18 @@ import {TrustBar} from '~/components/TrustBar';
 import {
   HOMEPAGE_FLAGSHIP_HANDLES,
   SHOPIFY_HOME_PRODUCT_HANDLES,
-  heroYoutubePosterUrl,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 import {buildMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
-    title: 'XSTO Powered Wheelchairs UK',
+    title: 'XSTO Powered Wheelchairs | Mobility Robot',
     description:
-      'Official UK store for XSTO foldable powered wheelchairs. M4, M4B, M4 Pro and X12 — free UK delivery, VAT relief eligible.',
+      'Explore XSTO M4, M4B, M4 Pro and X12 at Mobility Robot by Bentech Medical, the official UK distributor. Compare powered wheelchairs and book a demo.',
     path: '/',
     image: undefined,
   });
-
-export function links() {
-  return [
-    {
-      rel: 'preload',
-      as: 'image',
-      href: heroYoutubePosterUrl(),
-      fetchPriority: 'high',
-    },
-  ];
-}
 
 export async function loader({context}: Route.LoaderArgs) {
   const {storefront} = context;
@@ -62,11 +52,12 @@ export default function Homepage() {
   const {products} = useLoaderData<typeof loader>();
 
   return (
-    <div className="home">
+    <div className="mr-home">
       <HeroSection />
+      <AwardsStrip />
       <TrustBar />
       <ProductRangeGrid products={products} />
-      <ComparisonStrip />
+      <BrandStorySections />
       <ExperienceRangeSection />
       <ReviewsSection />
       <FaqPreview />
@@ -108,7 +99,8 @@ function resolveHomeProducts(
 
   for (const slot of HOMEPAGE_FLAGSHIP_HANDLES) {
     const aliasKey = HANDLE_QUERY_KEYS[slot];
-    const aliasProduct = aliasData?.[aliasKey as keyof AliasProductData] ?? null;
+    const aliasProduct =
+      aliasData?.[aliasKey as keyof AliasProductData] ?? null;
 
     if (aliasProduct?.handle && !usedHandles.has(aliasProduct.handle)) {
       resolved.push(aliasProduct);

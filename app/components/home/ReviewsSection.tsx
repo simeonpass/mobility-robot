@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Link} from 'react-router';
 import {ReviewCard} from '~/components/reviews/ReviewCard';
 import {StarRating} from '~/components/reviews/StarRating';
@@ -15,6 +16,7 @@ import {
 import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 
 export function ReviewsSection() {
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const judgeme = useJudgemeConfig();
   const featured = getHomepageFeaturedReviews(6);
   const summary = summarizeReviews(getAllReviews());
@@ -59,7 +61,10 @@ export function ReviewsSection() {
   if (summary.count === 0) return null;
 
   return (
-    <section aria-label="Customer reviews" className="xsto-section bg-[#f7f6f4]">
+    <section
+      aria-label="Customer reviews"
+      className="xsto-section bg-[#f7f6f4]"
+    >
       <div className="xsto-container">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionIntro
@@ -82,11 +87,28 @@ export function ReviewsSection() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <div
+          className="mr-review-grid mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
+          id="homepage-featured-reviews"
+          data-expanded={showAllReviews}
+        >
           {featured.map((review) => (
             <ReviewCard compact key={review.id} review={review} />
           ))}
         </div>
+        {featured.length > 2 ? (
+          <button
+            className="mr-mobile-review-toggle mr-button mr-button-outline"
+            type="button"
+            aria-controls="homepage-featured-reviews"
+            aria-expanded={showAllReviews}
+            onClick={() => setShowAllReviews((expanded) => !expanded)}
+          >
+            {showAllReviews
+              ? 'Show fewer reviews'
+              : `Show ${featured.length - 2} more reviews`}
+          </button>
+        ) : null}
 
         <p className="mt-8 text-center">
           <Link

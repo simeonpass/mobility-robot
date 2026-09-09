@@ -38,14 +38,13 @@ export function ShopChat({shopDomain, inboxExternalId}: ShopifyInboxProps) {
     c: 'black',
     s: 'icon',
     p: 'button_right',
-    vp: 'lowest',
+    // Inbox's supported 120px offset leaves room for the mobile purchase bar.
+    vp: 'highest',
     t: 'chat_with_us',
     i: 'chat_bubble',
   });
 
   const src = `https://cdn.shopify.com/shopifycloud/shopify_chat/storefront/shopifyChatV1.js?${params.toString()}`;
 
-  return (
-    <Script async id="shopify-inbox" src={src} suppressHydrationWarning />
-  );
+  return <Script async id="shopify-inbox" src={src} suppressHydrationWarning />;
 }

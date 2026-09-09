@@ -1,6 +1,11 @@
 import {CartForm} from '@shopify/hydrogen';
+import {CartFeedback} from '~/components/CartFeedback';
+import {getCartFeedback} from '~/lib/cart-feedback';
 import type {FetcherWithComponents} from 'react-router';
-import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
+import type {
+  MoneyV2,
+  AttributeInput,
+} from '@shopify/hydrogen/storefront-api-types';
 import {BadgePercent, Check, ShieldCheck, X} from 'lucide-react';
 import {useEffect, useId, useRef} from 'react';
 import {Link} from 'react-router';
@@ -9,7 +14,10 @@ import {
   getIncVatDisplay,
   getVatSavingsDisplay,
 } from '~/lib/product-pricing';
-import {mergeVatAttributes, stripVatAttributes} from '~/lib/vat-relief-attributes';
+import {
+  mergeVatAttributes,
+  stripVatAttributes,
+} from '~/lib/vat-relief-attributes';
 import {
   resolveCartMerchandiseId,
   type CartVatMerchandise,
@@ -18,7 +26,6 @@ import {
   isVatDeclarationComplete,
   type VatDeclaration,
 } from '~/lib/vat-relief-types';
-import type {AttributeInput} from '@shopify/hydrogen/storefront-api-types';
 
 export type VatReliefModalCartLine = {
   id: string;
@@ -157,7 +164,9 @@ export function VatReliefModal({
           {price && incVatDisplay && exVatDisplay && vatSavings ? (
             <div className="mt-4 rounded-xl border border-white/15 bg-white/10 px-4 py-3">
               <p className="text-sm text-white/80">
-                <span className="line-through tabular-nums">{incVatDisplay}</span>
+                <span className="line-through tabular-nums">
+                  {incVatDisplay}
+                </span>
                 <span className="mx-2 text-white/40">→</span>
                 <span className="text-lg font-semibold tabular-nums text-white">
                   {exVatDisplay}
@@ -196,8 +205,13 @@ export function VatReliefModal({
               </div>
             </section>
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4">
+            <label
+              aria-label="I confirm I am eligible for HMRC VAT relief"
+              htmlFor={`${titleId}-eligible`}
+              className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4"
+            >
               <input
+                id={`${titleId}-eligible`}
                 checked={vatReliefEnabled}
                 className="mt-1 size-4 rounded border-border"
                 onChange={(event) =>
@@ -269,13 +283,19 @@ export function VatReliefModal({
             ) : null}
 
             <p className="text-xs text-muted-foreground">
-              <Link className="font-medium text-foreground hover:underline" to="/vat-relief">
+              <Link
+                className="font-medium text-foreground hover:underline"
+                to="/vat-relief"
+              >
                 Full VAT relief guide
               </Link>
               <span aria-hidden className="mx-1.5">
                 ·
               </span>
-              <Link className="font-medium text-foreground hover:underline" to="/faq">
+              <Link
+                className="font-medium text-foreground hover:underline"
+                to="/faq"
+              >
                 Eligibility FAQ
               </Link>
             </p>
@@ -298,7 +318,9 @@ export function VatReliefModal({
               onClick={handleProductSubmit}
               type="button"
             >
-              {vatReliefEnabled ? 'Save VAT declaration' : 'Continue without relief'}
+              {vatReliefEnabled
+                ? 'Save VAT declaration'
+                : 'Continue without relief'}
             </button>
           ) : (
             <VatReliefCartApplyForm
@@ -325,6 +347,7 @@ type CartUpdateLine = {
 
 type CartActionData = {
   errors?: Array<{message?: string}> | null;
+  warnings?: Array<{message?: string}> | null;
 };
 
 function VatReliefCartApplyForm({
@@ -389,8 +412,7 @@ function VatReliefCartApplyButton({
 
     wasSubmitting.current = false;
 
-    const errors = fetcher.data?.errors;
-    if (errors?.length) return;
+    if (!fetcher.data || getCartFeedback(fetcher.data).length) return;
 
     onCartComplete?.(vatReliefEnabled, declaration);
     onClose();
@@ -404,17 +426,20 @@ function VatReliefCartApplyButton({
   ]);
 
   return (
-    <button
-      className="btn-checkout inline-flex h-11 w-full items-center justify-center px-5 sm:min-w-[12rem]"
-      disabled={submitDisabled || fetcher.state !== 'idle'}
-      type="submit"
-    >
-      {fetcher.state !== 'idle'
-        ? 'Applying…'
-        : vatReliefEnabled
-          ? 'Apply VAT relief'
-          : 'Remove VAT relief'}
-    </button>
+    <>
+      {fetcher.state === 'idle' ? <CartFeedback data={fetcher.data} /> : null}
+      <button
+        className="btn-checkout inline-flex h-11 w-full items-center justify-center px-5 sm:min-w-[12rem]"
+        disabled={submitDisabled || fetcher.state !== 'idle'}
+        type="submit"
+      >
+        {fetcher.state !== 'idle'
+          ? 'Applying…'
+          : vatReliefEnabled
+            ? 'Apply VAT relief'
+            : 'Remove VAT relief'}
+      </button>
+    </>
   );
 }
 
@@ -437,7 +462,10 @@ function VatField({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-medium text-foreground" htmlFor={id}>
+      <label
+        className="mb-1 block text-xs font-medium text-foreground"
+        htmlFor={id}
+      >
         {label}
       </label>
       <input
@@ -467,7 +495,10 @@ function VatTextArea({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-medium text-foreground" htmlFor={id}>
+      <label
+        className="mb-1 block text-xs font-medium text-foreground"
+        htmlFor={id}
+      >
         {label}
       </label>
       <textarea

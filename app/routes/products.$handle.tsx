@@ -10,12 +10,14 @@ import {
 } from '@shopify/hydrogen';
 import {ProductGallery} from '~/components/product/ProductGallery';
 import {ProductBreadcrumbs} from '~/components/product/ProductBreadcrumbs';
+import {ProductReviewSummary} from '~/components/product/ProductReviewSummary';
 import {ProductPurchasePanel} from '~/components/product/ProductPurchasePanel';
 import {ProductSpecTabs} from '~/components/product/ProductSpecTabs';
 import {ProductVideoHero} from '~/components/product/ProductVideoHero';
 import {RelatedProducts} from '~/components/product/RelatedProducts';
 import {ProductAppDownload} from '~/components/product/ProductAppDownload';
 import {ProductReviews} from '~/components/product/ProductReviews';
+import productRedesignStyles from '~/styles/product-redesign.css?url';
 import {
   ACCESSORIES_COLLECTION_HANDLE,
   isAccessoryCompatibleWithChair,
@@ -27,14 +29,11 @@ import {
   collectGalleryMedia,
   normalizeYoutubeEmbed,
 } from '~/lib/product-gallery';
-import {
-  buildProductTabContent,
-  getProductSpecs,
-} from '~/lib/product-specs';
+import {buildProductTabContent, getProductSpecs} from '~/lib/product-specs';
 import {Ga4ProductView} from '~/components/Ga4ProductView';
 import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
-import {resolveProductSeo} from '~/lib/product-seo';
+import {resolveProductSeo, resolveProductOffer} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
 import {getProductDisplayName} from '~/lib/product-content';
@@ -51,6 +50,10 @@ import {
   X12_PRO_SHOPIFY_HANDLE,
   x12MergedPath,
 } from '~/lib/x12-lineup';
+
+export const links: Route.LinksFunction = () => [
+  {rel: 'stylesheet', href: productRedesignStyles},
+];
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
@@ -101,7 +104,8 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const selectedOptions = withX12EditionSelectedOptions(
     handle,
     getSelectedProductOptions(request).filter(
-      (option) => !['variant', 'country', 'currency'].includes(option.name.toLowerCase()),
+      (option) =>
+        !['variant', 'country', 'currency'].includes(option.name.toLowerCase()),
     ),
     request.url,
   );
@@ -142,7 +146,7 @@ async function loadRelatedProducts({context}: Route.LoaderArgs) {
   const data = await storefront.query(RELATED_PRODUCTS_QUERY);
   const nodes = [data?.m4, data?.m4Pro, data?.m4b, data?.x12].filter(
     (product): product is NonNullable<typeof product> =>
-      Boolean(product) && !isHiddenStorefrontProductHandle(product.handle),
+      product != null && !isHiddenStorefrontProductHandle(product.handle),
   );
 
   return nodes;
@@ -163,19 +167,17 @@ async function loadAccessoryAddons(
   ]);
 
   const nodes = prioritizeAccessoryAddons(
-    mergeAccessoryProducts(
-      collectionData?.collection?.products?.nodes ?? [],
-      [forcedData?.rearCoverM4],
-    ).filter(
-      (product: {handle: string; title: string; tags?: string[]}) =>
-        isAccessoryCompatibleWithChair(
-          {
-            handle: product.handle,
-            title: product.title,
-            tags: product.tags,
-          },
-          productHandle,
-        ),
+    mergeAccessoryProducts(collectionData?.collection?.products?.nodes ?? [], [
+      forcedData?.rearCoverM4,
+    ]).filter((product: {handle: string; title: string; tags?: string[]}) =>
+      isAccessoryCompatibleWithChair(
+        {
+          handle: product.handle,
+          title: product.title,
+          tags: product.tags,
+        },
+        productHandle,
+      ),
     ),
   );
 
@@ -287,30 +289,51 @@ export default function Product() {
     ? variantsForX12Edition(pageVariants, 'electric')
     : siblingVariants;
   const standardEditionVariant =
-    standardEditionVariants.find((variant) => variant?.id === selectedVariant?.id) ??
+    standardEditionVariants.find(
+      (variant) => variant?.id === selectedVariant?.id,
+    ) ??
     standardEditionVariants[0] ??
     selectedVariant;
   const proEditionVariant =
     proEditionVariants.find((variant) => variant?.id === selectedVariant?.id) ??
-    proEditionVariants.find((variant) => variant?.id === proSelectedVariant?.id) ??
+    proEditionVariants.find(
+      (variant) => variant?.id === proSelectedVariant?.id,
+    ) ??
     proEditionVariants[0] ??
     null;
 
-  const productSchema = productJsonLd({
-    name: displayName,
-    description: seo.description,
-    handle: product.handle,
-    sku: selectedVariant?.sku,
-    image: selectedVariant?.image?.url || product.images.nodes[0]?.url,
-    price: selectedVariant?.price.amount ?? '0',
-    currencyCode: selectedVariant?.price.currencyCode ?? 'GBP',
-    availableForSale: selectedVariant?.availableForSale ?? false,
-    ratingValue: reviewSummary.count > 0 ? reviewSummary.average : undefined,
-    reviewCount: reviewSummary.count > 0 ? reviewSummary.count : undefined,
+  const isProEdition =
+    isX12CanonicalHandle(product.handle) &&
+    x12Choice === 'electric' &&
+    Boolean(proEditionVariant);
+  const offer = resolveProductOffer({
+    selectedVariant: selectedVariant ?? null,
+    variants: pageVariants,
+    proVariant: proEditionVariant,
+    proVariants: proEditionVariants,
+    isPro: isProEdition,
   });
+  const productSchema = offer
+    ? productJsonLd({
+        name: isProEdition ? 'XSTO X12 Pro' : displayName,
+        description: seo.description,
+        handle: product.handle,
+        sku: offer.variant.sku,
+        image: offer.variant.image?.url || product.images.nodes[0]?.url,
+        price: offer.price.amount,
+        currencyCode: offer.price.currencyCode,
+        availableForSale: offer.variant.availableForSale ?? false,
+        quantityAvailable: offer.variant.quantityAvailable,
+        variantId: offer.variant.id,
+        isProEdition,
+        ratingValue:
+          reviewSummary.count > 0 ? reviewSummary.average : undefined,
+        reviewCount: reviewSummary.count > 0 ? reviewSummary.count : undefined,
+      })
+    : null;
 
   return (
-    <div className="product-page product-page--has-mobile-atc bg-background pb-0">
+    <div className="product-page product-page--has-mobile-atc mr-product-page bg-background pb-0">
       <Ga4ProductView
         currencyCode={selectedVariant?.price.currencyCode ?? 'GBP'}
         id={selectedVariant?.id ?? product.id}
@@ -318,13 +341,26 @@ export default function Product() {
         title={displayName}
         vendor={product.vendor}
       />
-      <JsonLd data={productSchema} />
-      <div className="xsto-container py-3 md:py-6">
+      {productSchema ? <JsonLd data={productSchema} /> : null}
+      <div className="xsto-container mr-product-container">
         <ProductBreadcrumbs title={displayName} />
 
-        <div className="product grid gap-5 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,400px)] lg:items-start lg:gap-10 xl:gap-12">
-          <div className="min-w-0">
+        <div className="product mr-product-layout">
+          <header className="mr-product-heading">
+            <h1 className="mr-product-title font-display">{displayName}</h1>
+            <ProductReviewSummary
+              productHandle={product.handle}
+              productId={product.id}
+            />
+            <p className="mr-product-tagline">
+              {staticContent?.tagline ?? tabContent.tagline}
+            </p>
+          </header>
+          <div className="mr-product-media min-w-0">
             <ProductGallery items={galleryItems} productTitle={displayName} />
+            <p className="mr-product-photo-note">
+              Optional accessories may be shown.
+            </p>
           </div>
 
           <div className="product-main min-w-0">
@@ -338,9 +374,7 @@ export default function Product() {
                 (
                   product as typeof product & {
                     variants?: {
-                      nodes?: Array<
-                        NonNullable<typeof selectedVariant>
-                      >;
+                      nodes?: Array<NonNullable<typeof selectedVariant>>;
                     };
                   }
                 ).variants?.nodes ?? []

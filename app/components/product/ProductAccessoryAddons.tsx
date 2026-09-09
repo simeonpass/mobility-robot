@@ -1,63 +1,23 @@
-import {useId, useMemo, useState} from 'react';
+import {useId, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {Link} from 'react-router';
-import {Check} from 'lucide-react';
-import {
-  FEATURED_ADDON_HANDLES,
-  accessoryFitsX12,
-  formatCompatibilityLabel,
-  resolveAccessoryCompatibility,
-} from '~/lib/accessories';
+import {ChevronDown, Check} from 'lucide-react';
+import {accessoryFitsX12} from '~/lib/accessories';
 import {X12_ACCESSORY_PREORDER_LABEL} from '~/lib/product-delivery';
-import {formatExVatPrice} from '~/lib/homepage-data';
+import {
+  formatProductPrice,
+  getVariantDisplayPrice,
+} from '~/lib/product-pricing';
+import {resolveVatPurchaseVariant} from '~/lib/product-vat-variants';
+import {
+  getAccessoryChoices,
+  getAccessoryVariants,
+  type AddonProduct,
+  type AddonVariant,
+} from '~/lib/product-accessories';
+export type {AddonProduct, AddonVariant} from '~/lib/product-accessories';
 
-export type AddonVariant = {
-  id: string;
-  title: string;
-  availableForSale: boolean;
-  price: {
-    amount: string;
-    currencyCode: string;
-  };
-  image?: {
-    url: string;
-    altText?: string | null;
-  } | null;
-  selectedOptions?: Array<{
-    name: string;
-    value: string;
-  }> | null;
-  product?: {
-    title: string;
-    handle: string;
-  };
-};
-
-export type AddonProduct = {
-  id: string;
-  handle: string;
-  title: string;
-  tags?: string[];
-  featuredImage?: {
-    id?: string | null;
-    url: string;
-    altText?: string | null;
-    width?: number | null;
-    height?: number | null;
-  } | null;
-  priceRange: {
-    minVariantPrice: {
-      amount: string;
-      currencyCode: string;
-    };
-  };
-  variants?: {
-    nodes: AddonVariant[];
-  } | null;
-  selectedOrFirstAvailableVariant?: AddonVariant | null;
-};
-
-type ProductAccessoryAddonsProps = {
+type Props = {
   products: AddonProduct[];
   selectedIds: Set<string>;
   onToggle: (variantId: string) => void;
@@ -66,42 +26,17 @@ type ProductAccessoryAddonsProps = {
     nextVariantId: string,
   ) => void;
   chairLabel?: string;
+  vatReliefActive: boolean;
 };
 
-function colourLabel(variant: AddonVariant): string {
-  const colourOption = variant.selectedOptions?.find(
+function optionLabel(variant: AddonVariant): string {
+  const options = variant.selectedOptions?.filter(
     (option) =>
-      /colour|color/i.test(option.name) &&
-      option.name.trim().toLowerCase() !== 'vat',
+      option.name.toLowerCase() !== 'vat' && option.value !== 'Default Title',
   );
-  if (colourOption?.value) return colourOption.value;
-  if (variant.title && variant.title !== 'Default Title') {
-    // Avoid showing "Standard / VAT Relief" as a colour name.
-    if (!/vat relief/i.test(variant.title) && variant.title !== 'Standard') {
-      return variant.title;
-    }
-  }
-  return 'Standard';
-}
-
-function availableVariants(product: AddonProduct): AddonVariant[] {
-  const nodes = product.variants?.nodes?.filter(
-    (variant) => variant.availableForSale,
-  );
-  const list = nodes?.length
-    ? nodes
-    : product.selectedOrFirstAvailableVariant?.availableForSale
-      ? [product.selectedOrFirstAvailableVariant]
-      : [];
-
-  // Colour picker should only list Standard (or non-VAT) variants.
-  const standardOnly = list.filter((variant) => {
-    const vat = variant.selectedOptions?.find(
-      (option) => option.name.trim().toLowerCase() === 'vat',
-    );
-    return !vat || vat.value === 'Standard';
-  });
-  return standardOnly.length ? standardOnly : list;
+  return options?.length
+    ? options.map((option) => option.value).join(' / ')
+    : 'Standard';
 }
 
 export function ProductAccessoryAddons({
@@ -110,191 +45,207 @@ export function ProductAccessoryAddons({
   onToggle,
   onSelectVariant,
   chairLabel,
-}: ProductAccessoryAddonsProps) {
-  const headingId = useId();
-  const [colourByProduct, setColourByProduct] = useState<Record<string, string>>(
-    {},
+  vatReliefActive,
+}: Props) {
+  const id = useId();
+  const [expanded, setExpanded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const [choices, setChoices] = useState<Record<string, string>>({});
+  const available = products.filter(
+    (product) => getAccessoryChoices(product).length,
   );
-
-  const available = useMemo(
-    () => products.filter((product) => availableVariants(product).length > 0),
-    [products],
-  );
-
   if (!available.length) return null;
+  const selectedCount = available.filter((product) =>
+    getAccessoryChoices(product).some((variant) => selectedIds.has(variant.id)),
+  ).length;
+  // Selected extras remain visible if the customer collapses the full list.
+  const visible = showAll
+    ? available
+    : available.filter(
+        (product, index) =>
+          index < 3 ||
+          getAccessoryChoices(product).some((variant) =>
+            selectedIds.has(variant.id),
+          ),
+      );
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="rounded-lg border border-border/80 bg-background"
-    >
-      <header className="flex items-baseline justify-between gap-3 border-b border-border/70 px-4 py-3.5">
-        <div>
-          <h2
-            className="text-base font-semibold uppercase tracking-[0.1em] text-navy"
-            id={headingId}
-          >
-            Choose accessories
-          </h2>
-          <p className="mt-1.5 text-base leading-snug text-slate">
-            {chairLabel
-              ? `Optional extras that fit ${chairLabel}. Tick any you want to add.`
-              : 'Optional extras for this chair. Tick any you want to add.'}
-          </p>
-        </div>
-        {selectedIds.size > 0 ? (
-          <span className="shrink-0 text-base font-semibold tabular-nums text-primary">
-            {selectedIds.size} selected
+    <section className="mr-addons" aria-labelledby={`${id}-title`}>
+      <h2 id={`${id}-title`}>
+        <button
+          type="button"
+          className="mr-addons-trigger"
+          aria-expanded={expanded}
+          aria-controls={`${id}-list`}
+          onClick={() => setExpanded(!expanded)}
+        >
+          <span>
+            Add accessories{' '}
+            <small>
+              Optional{selectedCount ? ` · ${selectedCount} selected` : ''}
+            </small>
           </span>
-        ) : null}
-      </header>
-
-      <ul className="max-h-[min(36rem,65vh)] divide-y divide-border/60 overflow-y-auto overscroll-contain">
-        {available.map((product) => {
-          const variants = availableVariants(product);
-          const selectedVariantFromSet = variants.find((variant) =>
-            selectedIds.has(variant.id),
-          );
-          const preferredVariantId =
-            colourByProduct[product.id] ??
-            selectedVariantFromSet?.id ??
-            variants[0]?.id;
-          const variant =
-            variants.find((item) => item.id === preferredVariantId) ??
-            variants[0];
-          if (!variant?.id) return null;
-
-          const checked = selectedIds.has(variant.id);
-          const isFeatured = FEATURED_ADDON_HANDLES.includes(
-            product.handle as (typeof FEATURED_ADDON_HANDLES)[number],
-          );
-          const hasColours = variants.length > 1;
-          const exVat = formatExVatPrice(
-            variant.price.amount,
-            variant.price.currencyCode,
-          );
-          const slots = resolveAccessoryCompatibility(product);
-          const image = variant.image ?? product.featuredImage;
-
-          return (
-            <li
-              className={isFeatured ? 'bg-navy/[0.02]' : undefined}
-              key={product.id}
-            >
-              <div
-                className={[
-                  'flex items-start gap-3.5 px-4 py-4 transition-colors',
-                  checked ? 'bg-navy/[0.03]' : 'hover:bg-secondary/40',
-                ].join(' ')}
+          <ChevronDown
+            size={20}
+            aria-hidden
+            className={expanded ? 'is-open' : ''}
+          />
+        </button>
+      </h2>
+      <div id={`${id}-list`} hidden={!expanded}>
+        <p className="mr-addons-intro">
+          {chairLabel
+            ? `Compatible with your ${chairLabel}.`
+            : 'Compatible with this chair.'}{' '}
+          Selected extras are added with your chair.
+        </p>
+        <ul className="mr-addons-list">
+          {visible.map((product) => {
+            const variants = getAccessoryChoices(product);
+            const selected = variants.find((variant) =>
+              selectedIds.has(variant.id),
+            );
+            const variant =
+              selected ??
+              variants.find((item) => item.id === choices[product.id]) ??
+              variants[0];
+            const allVariants = getAccessoryVariants(product);
+            const purchase =
+              resolveVatPurchaseVariant(
+                variant,
+                allVariants,
+                vatReliefActive,
+              ) ?? variant;
+            const checked = Boolean(selected);
+            const displayPrice = getVariantDisplayPrice(
+              variant,
+              allVariants,
+              vatReliefActive,
+            );
+            const price = displayPrice
+              ? formatProductPrice(
+                  Number(displayPrice.amount),
+                  displayPrice.currencyCode,
+                  {fractionDigits: 2},
+                )
+              : null;
+            const image = variant.image ?? product.featuredImage;
+            const unavailable = !purchase.availableForSale;
+            return (
+              <li
+                className={`mr-addon${checked ? ' is-selected' : ''}`}
+                key={product.id}
               >
-                <label className="relative mt-0.5 flex size-8 shrink-0 cursor-pointer items-center justify-center">
-                  <input
-                    checked={checked}
-                    className="peer sr-only"
-                    onChange={() => onToggle(variant.id)}
-                    type="checkbox"
-                  />
-                  <span
-                    aria-hidden
-                    className={[
-                      'flex size-8 items-center justify-center rounded border-2 transition-colors',
-                      checked
-                        ? 'border-navy bg-navy text-white'
-                        : 'border-border bg-white',
-                    ].join(' ')}
-                  >
-                    {checked ? (
-                      <Check className="size-5" strokeWidth={3} />
+                <label className="mr-addon-select">
+                  <span className="mr-addon-photo" aria-hidden="true">
+                    {image ? (
+                      <Image
+                        data={image}
+                        alt=""
+                        sizes="(max-width: 767px) calc(100vw - 64px), 128px"
+                        loading="lazy"
+                        className="mr-addon-image"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          aspectRatio: 'auto',
+                        }}
+                      />
+                    ) : (
+                      <span className="mr-addon-no-image">
+                        Image unavailable
+                      </span>
+                    )}
+                  </span>
+                  <span className="mr-addon-copy">
+                    <span className="mr-addon-title">{product.title}</span>
+                    <span className="mr-addon-price">
+                      + {price}{' '}
+                      <small>
+                        {vatReliefActive ? 'with VAT relief' : 'incl. VAT'}
+                      </small>
+                    </span>
+                    {accessoryFitsX12(
+                      product.handle,
+                      product.title,
+                      product.tags,
+                    ) ? (
+                      <small className="mr-addon-delivery">
+                        Pre-order · {X12_ACCESSORY_PREORDER_LABEL}
+                      </small>
                     ) : null}
                   </span>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={unavailable && !checked}
+                    onChange={() => onToggle(variant.id)}
+                    aria-label={`Add ${product.title}`}
+                  />
                 </label>
-
-                {image?.url ? (
-                  <span className="mt-0.5 flex size-16 shrink-0 items-center justify-center overflow-hidden rounded bg-white ring-1 ring-border/70">
-                    <Image
-                      alt={image.altText || product.title}
-                      className="max-h-full w-full object-contain p-0.5"
-                      data={{
-                        url: image.url,
-                        altText: image.altText ?? product.title,
-                        width: 128,
-                        height: 128,
+                {checked && variants.length > 1 ? (
+                  <label className="mr-addon-options">
+                    <span>Choose an option</span>
+                    <select
+                      aria-label={`Option for ${product.title}`}
+                      value={variant.id}
+                      onChange={(event) => {
+                        const next = event.target.value;
+                        setChoices({...choices, [product.id]: next});
+                        onSelectVariant(selected?.id ?? null, next);
                       }}
-                      sizes="64px"
-                    />
+                    >
+                      {variants.map((option) => (
+                        <option value={option.id} key={option.id}>
+                          {optionLabel(option)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
+                {unavailable ? (
+                  <p className="mr-addon-unavailable">
+                    Unavailable with your current VAT selection. Remove this
+                    extra or choose another option.
+                  </p>
+                ) : null}
+                <Link
+                  className="mr-addon-details"
+                  to={`/products/${product.handle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Details{' '}
+                  <span className="sr-only">
+                    for {product.title} (opens in a new tab)
+                  </span>
+                </Link>
+                {checked ? (
+                  <span className="mr-addon-added">
+                    <Check size={13} aria-hidden /> Added to your selection
                   </span>
                 ) : null}
-
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-lg font-semibold leading-snug text-navy">
-                        {product.title}
-                      </p>
-                      <p className="mt-1 text-base leading-snug text-slate">
-                        {hasColours ? 'Choose a colour · ' : ''}
-                        {formatCompatibilityLabel(slots)}
-                        {accessoryFitsX12(product.handle, product.title, product.tags)
-                          ? ` · Pre-order ${X12_ACCESSORY_PREORDER_LABEL}`
-                          : ''}
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-lg font-semibold tabular-nums text-navy">
-                        {exVat}
-                      </p>
-                      <Link
-                        className="mt-1 block text-base font-semibold text-navy underline underline-offset-2 hover:text-primary"
-                        prefetch="intent"
-                        to={`/products/${product.handle}`}
-                      >
-                        Details
-                      </Link>
-                    </div>
-                  </div>
-
-                  {hasColours ? (
-                    <label className="mt-3 block">
-                      <span className="sr-only">Colour for {product.title}</span>
-                      <select
-                        className="min-h-12 w-full rounded-md border border-border bg-white px-3 py-3 text-base font-medium text-navy outline-none focus:border-navy"
-                        onChange={(event) => {
-                          const nextId = event.target.value;
-                          const previousId = selectedVariantFromSet?.id ?? null;
-                          setColourByProduct((prev) => ({
-                            ...prev,
-                            [product.id]: nextId,
-                          }));
-                          if (checked) {
-                            onSelectVariant(previousId, nextId);
-                          }
-                        }}
-                        value={variant.id}
-                      >
-                        {variants.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {colourLabel(option)}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  ) : null}
-                </div>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-
-      <div className="border-t border-border/70 px-4 py-3.5">
-        <Link
-          className="text-base font-semibold text-navy underline underline-offset-2 hover:text-primary"
-          prefetch="intent"
-          to="/collections/accessories"
-        >
-          Browse full accessories catalogue
-        </Link>
+              </li>
+            );
+          })}
+        </ul>
+        {available.length > 3 ? (
+          <button
+            type="button"
+            className="mr-addons-more"
+            onClick={() => setShowAll(!showAll)}
+          >
+            {showAll
+              ? 'Show fewer accessories'
+              : `View all ${available.length} compatible accessories`}
+          </button>
+        ) : null}
       </div>
+      {!expanded && selectedCount ? (
+        <p className="mr-addons-collapsed-note">
+          {selectedCount} selected · included in your total below.
+        </p>
+      ) : null}
     </section>
   );
 }

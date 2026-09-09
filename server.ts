@@ -1,6 +1,7 @@
 import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
+import {SITE_URL} from '~/lib/const';
 
 /**
  * Export a fetch handler in module format.
@@ -43,6 +44,11 @@ export default {
         hydrogenContext.session.get('marketCountry')
       ) {
         response.headers.set('Cache-Control', 'private, no-store');
+      }
+
+      // Review and local hosts should not compete with the public storefront.
+      if (new URL(request.url).hostname !== new URL(SITE_URL).hostname) {
+        response.headers.set('X-Robots-Tag', 'noindex, nofollow');
       }
 
       if (response.status === 404) {

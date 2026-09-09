@@ -11,6 +11,7 @@ import {
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import '~/styles/brand-shell.css';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -25,13 +26,14 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
-      <div className="flex min-h-screen flex-col">
+      <div className="mr-shell flex min-h-screen flex-col">
+        <a className="mr-skip-link" href="#main-content">Skip to content</a>
         <AnnouncementBar />
         <CartAside cart={cart} />
         <SearchAside />
         <MobileMenuAside isLoggedIn={isLoggedIn} />
         <Header cart={cart} isLoggedIn={isLoggedIn} />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1" id="main-content" tabIndex={-1}>{children}</main>
         <Footer />
       </div>
     </Aside.Provider>
@@ -62,6 +64,7 @@ function SearchAside() {
           {({fetchResults, goToSearch, inputRef}) => (
             <>
               <input
+                aria-label="Search products, guides and pages"
                 list={queriesDatalistId}
                 name="q"
                 onChange={fetchResults}

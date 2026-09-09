@@ -3,6 +3,36 @@ import {
   type HomepageProductHandle,
 } from '~/lib/homepage-data';
 import {getProductContent} from '~/lib/product-content';
+import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
+import {getVariantDisplayPrice} from '~/lib/product-pricing';
+import {
+  resolveVatPurchaseVariant,
+  type VatPricedVariant,
+} from '~/lib/product-vat-variants';
+
+/** Resolve the public, VAT-inclusive offer for the edition actually displayed. */
+export function resolveProductOffer<
+  T extends VatPricedVariant<MoneyV2['currencyCode']>,
+>({
+  selectedVariant,
+  variants,
+  proVariant,
+  proVariants = [],
+  isPro = false,
+}: {
+  selectedVariant: T | null;
+  variants: T[];
+  proVariant?: T | null;
+  proVariants?: T[];
+  isPro?: boolean;
+}) {
+  const active = isPro && proVariant ? proVariant : selectedVariant;
+  const choices = isPro && proVariant ? proVariants : variants;
+  const availableChoices = choices.length ? choices : active ? [active] : [];
+  const variant = resolveVatPurchaseVariant(active, availableChoices, false);
+  const price = getVariantDisplayPrice(variant, availableChoices, false);
+  return variant && price && Number(price.amount) > 0 ? {variant, price} : null;
+}
 
 /**
  * Curated PDP meta when Shopify Admin SEO fields are empty.
@@ -59,17 +89,14 @@ export function resolveProductSeo({
   const content = getProductContent(handle);
 
   const title =
-    seoTitle?.trim() ||
-    curated?.title ||
-    content?.displayName ||
-    productTitle;
+    seoTitle?.trim() || curated?.title || content?.displayName || productTitle;
 
   const description =
     seoDescription?.trim() ||
     curated?.description ||
     content?.overview ||
     productDescription?.trim() ||
-    `Buy ${productTitle} from Mobility Robot, the official UK XSTO store. Free UK delivery and full warranty.`;
+    `Buy ${productTitle} from Mobility Robot by Bentech Medical, the official UK distributor for XSTO. UK delivery and support.`;
 
   return {title, description};
 }

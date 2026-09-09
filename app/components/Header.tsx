@@ -1,13 +1,6 @@
-import {
-  Suspense,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type CSSProperties,
-} from 'react';
+import {Suspense, useEffect, useId, useRef, useState} from 'react';
 import {Await, Link, NavLink, useAsyncValue, useLocation} from 'react-router';
-import {ArrowRight} from 'lucide-react';
+import {ArrowRight, Search} from 'lucide-react';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -15,11 +8,6 @@ import {
 } from '@shopify/hydrogen';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
-import {
-  HEADER_LOGO,
-  HEADER_LOGO_DISPLAY_HEIGHT,
-  headerLogoDisplayWidth,
-} from '~/lib/site-branding';
 import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
@@ -38,58 +26,37 @@ interface HeaderProps {
   isLoggedIn: Promise<boolean>;
 }
 
-const SCROLL_BLEND_DISTANCE = 180;
+/** Customer-facing brand, with the legal business as its supporting byline. */
+export function MobilityRobotBrand({light = false}: {light?: boolean}) {
+  return (
+    <span className={`mr-brand${light ? ' mr-brand--light' : ''}`}>
+      <span className="mr-brand-type">
+        <span className="mr-brand-name">
+          mobility <span className="mr-brand-robot">robot</span>
+          <span className="mr-brand-dot" aria-hidden="true">
+            .
+          </span>
+        </span>
+        <span className="mr-brand-byline">by Bentech Medical</span>
+      </span>
+    </span>
+  );
+}
 
 export function Header({isLoggedIn, cart}: HeaderProps) {
-  const {pathname} = useLocation();
-  const isHome = pathname === '/';
-  const [scrollBlend, setScrollBlend] = useState(isHome ? 0 : 1);
-
-  useEffect(() => {
-    if (!isHome) {
-      setScrollBlend(1);
-      return;
-    }
-
-    const onScroll = () => {
-      setScrollBlend(Math.min(window.scrollY / SCROLL_BLEND_DISTANCE, 1));
-    };
-
-    onScroll();
-    window.addEventListener('scroll', onScroll, {passive: true});
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [isHome]);
-
-  const headerClass = isHome
-    ? 'site-header site-header--home'
-    : 'site-header site-header--solid';
-  const headerStyle = isHome
-    ? ({'--header-scroll-blend': scrollBlend} as CSSProperties)
-    : undefined;
-
   return (
-    <header className={headerClass} style={headerStyle}>
-      <div className="xsto-container flex h-[4.75rem] items-center gap-1.5 sm:h-[4.75rem] sm:gap-3 lg:h-[5.25rem] lg:gap-4">
+    <header className="site-header site-header--solid mr-site-header">
+      <div className="xsto-container mr-header-inner">
         <NavLink
-          aria-label="Mobility Robot home"
+          aria-label="Mobility Robot by Bentech Medical — home"
           className="site-header-logo min-w-0 shrink-0"
           end
           prefetch="intent"
           to="/"
         >
-          <img
-            alt={HEADER_LOGO.dark.alt}
-            className="h-16 w-auto max-w-[min(100%,15rem)] overflow-hidden rounded-none bg-transparent object-contain object-left sm:h-16 sm:max-w-[15rem] lg:h-14 lg:max-w-[14rem] xl:h-16 xl:max-w-[16rem]"
-            decoding="async"
-            fetchPriority="high"
-            height={HEADER_LOGO_DISPLAY_HEIGHT}
-            src={HEADER_LOGO.dark.src}
-            width={headerLogoDisplayWidth()}
-          />
+          <MobilityRobotBrand />
         </NavLink>
-
         <HeaderMenu isLoggedIn={isLoggedIn} viewport="desktop" />
-
         <HeaderCtas cart={cart} isLoggedIn={isLoggedIn} />
       </div>
     </header>
@@ -99,11 +66,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
 type Viewport = 'desktop' | 'mobile';
 
 function navLinkClass(isActive: boolean, extra = '') {
-  return [
-    'site-header-link',
-    isActive ? 'site-header-link--active' : '',
-    extra,
-  ]
+  return ['site-header-link', isActive ? 'site-header-link--active' : '', extra]
     .filter(Boolean)
     .join(' ');
 }
@@ -128,12 +91,7 @@ export function HeaderMenu({
   const isMobile = viewport === 'mobile';
 
   if (isMobile) {
-    return (
-      <MobileNav
-        close={close}
-        isLoggedIn={isLoggedIn}
-      />
-    );
+    return <MobileNav close={close} isLoggedIn={isLoggedIn} />;
   }
 
   return (
@@ -173,6 +131,7 @@ function ModelsDropdown() {
   const {pathname} = useLocation();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
   const active = isProductNavActive(pathname);
 
@@ -186,7 +145,10 @@ function ModelsDropdown() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     };
 
     document.addEventListener('mousedown', onPointerDown);
@@ -202,11 +164,18 @@ function ModelsDropdown() {
   }, [pathname]);
 
   return (
-    <div className="site-header-dropdown" ref={rootRef}>
+    <div
+      className="site-header-dropdown"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setOpen(false);
+        }
+      }}
+      ref={rootRef}
+    >
       <button
         aria-controls={menuId}
         aria-expanded={open}
-        aria-haspopup="menu"
         className={[
           'site-header-link site-header-dropdown-trigger',
           active || open ? 'site-header-link--active' : '',
@@ -214,23 +183,20 @@ function ModelsDropdown() {
           .filter(Boolean)
           .join(' ')}
         onClick={() => setOpen((value) => !value)}
+        ref={triggerRef}
         type="button"
       >
-        Models
+        Wheelchairs
         <ChevronIcon open={open} />
       </button>
 
       {open ? (
-        <div
-          className="site-header-dropdown-panel"
-          id={menuId}
-          role="menu"
-        >
+        <div className="site-header-dropdown-panel" id={menuId}>
           <div className="site-header-dropdown-intro">
             <p className="site-header-dropdown-eyebrow">Shop XSTO</p>
             <p className="site-header-dropdown-tagline">
-              Four models — everyday self-levelling chairs and the all-terrain
-              X12 stair climber.
+              Four models to explore, from everyday self-levelling chairs to the
+              X12 stair-climbing wheelchair.
             </p>
           </div>
 
@@ -250,7 +216,6 @@ function ModelsDropdown() {
                     }
                     onClick={() => setOpen(false)}
                     prefetch="intent"
-                    role="menuitem"
                     to={item.url}
                   >
                     {item.imageUrl ? (
@@ -351,6 +316,9 @@ function MobileNav({
       className="site-header-mobile"
       role="navigation"
     >
+      <Link className="mr-mobile-search" to="/search" onClick={close}>
+        <Search size={20} aria-hidden /> Search products
+      </Link>
       {isLoggedIn ? (
         <NavLink
           className={navLinkClass(false, 'site-header-mobile-account')}
@@ -367,7 +335,7 @@ function MobileNav({
       ) : null}
 
       <div className="site-header-mobile-section">
-        <p className="site-header-mobile-label">Models</p>
+        <p className="site-header-mobile-label">Shop wheelchairs</p>
         {PRODUCT_NAV_ITEMS.map((item) => (
           <MobileNavLink close={close} item={item} key={item.url} />
         ))}
@@ -394,13 +362,7 @@ function MobileNav({
   );
 }
 
-function MobileNavLink({
-  item,
-  close,
-}: {
-  item: NavItem;
-  close: () => void;
-}) {
+function MobileNavLink({item, close}: {item: NavItem; close: () => void}) {
   return (
     <NavLink
       className={({isActive}) =>
@@ -512,7 +474,7 @@ function SearchToggle() {
   return (
     <button
       aria-label="Search"
-      className="site-header-icon-btn"
+      className="site-header-icon-btn site-header-search-toggle"
       onClick={() => open('search')}
       type="button"
     >
@@ -538,7 +500,7 @@ function CartBadge({count}: {count: number}) {
 
   return (
     <button
-      aria-label={count > 0 ? `Cart, ${count} items` : 'Cart'}
+      aria-label={count > 0 ? `Basket, ${count} items` : 'Basket'}
       className="site-header-icon-btn site-header-cart-btn"
       onClick={() => {
         open('cart');
@@ -551,7 +513,18 @@ function CartBadge({count}: {count: number}) {
       }}
       type="button"
     >
-      <span className="site-header-cart-label">Cart</span>
+      <svg
+        className="mr-cart-icon"
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+      >
+        <path d="M5 7h14l1 14H4L5 7Z" />
+        <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+      </svg>
+      <span className="site-header-cart-label">Basket</span>
       <span className="site-header-cart-count">{count}</span>
     </button>
   );

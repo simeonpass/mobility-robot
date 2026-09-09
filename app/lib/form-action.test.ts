@@ -43,7 +43,7 @@ describe('form spam protection', () => {
     expect((await submit(valid)).status).toBe(200);
     expect(sendFormNotification).toHaveBeenCalledTimes(1);
   });
-  it.each([
+  it.each<Record<string, string>>([
     {},
     {origin: 'https://spam.example'},
     {origin: 'null'},
@@ -87,9 +87,11 @@ describe('form spam protection', () => {
       message: 'YrANaYpalxpMDTQGQz',
     });
     expect(response.status).toBe(400);
-    expect((await response.json()).fieldErrors.message).toContain(
-      'describe your enquiry',
-    );
+    expect(await response.json()).toMatchObject({
+      fieldErrors: {
+        message: expect.stringContaining('describe your enquiry'),
+      },
+    });
     expect(sendFormNotification).not.toHaveBeenCalled();
   });
   it.each(['李小明', 'Jean-Luc O’Neill', 'KwcoOrjFUGBUrYnPMJokYSd'])(

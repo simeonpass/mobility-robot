@@ -69,7 +69,7 @@ export async function geocodePostcode(
     const response = await fetch(url.toString(), {
       headers: {
         Accept: 'application/json',
-        'User-Agent': 'XSTO UK Hydrogen Storefront (sales@bentechmeduk.com)',
+        'User-Agent': 'Mobility Robot Storefront (sales@bentechmeduk.com)',
       },
     });
 

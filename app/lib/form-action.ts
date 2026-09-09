@@ -66,7 +66,13 @@ export async function handleValidatedFormAction<T extends z.ZodType>({
 
   const body = await request.json().catch(() => null);
   // Check before schema parsing, which can strip unknown fields.
-  if (body && typeof body.website === 'string' && body.website.trim()) {
+  if (
+    body !== null &&
+    typeof body === 'object' &&
+    'website' in body &&
+    typeof body.website === 'string' &&
+    body.website.trim()
+  ) {
     return json({ok: true as const});
   }
   const parsed = schema.safeParse(body);

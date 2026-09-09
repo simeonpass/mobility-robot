@@ -1,6 +1,6 @@
 import {Link} from 'react-router';
 import type {Route} from './+types/about';
-import {Handshake, Headphones, MapPin, ShieldCheck} from 'lucide-react';
+import {ArrowRight, Handshake, Headphones, ShieldCheck} from 'lucide-react';
 import {JsonLd, PageShell} from '~/components/content/PageShell';
 import {
   ABOUT_FACTS,
@@ -8,235 +8,114 @@ import {
   ABOUT_VALUE_PROPS,
   DISTRIBUTOR_DISCLAIMER,
 } from '~/lib/content/company';
-import {COMPANY} from '~/lib/site-navigation';
-import {breadcrumbJsonLd, pageMeta, SITE_URL} from '~/lib/seo';
+import {HOMEPAGE_PRODUCT_THUMBS} from '~/lib/homepage-data';
+import {breadcrumbJsonLd, pageMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
   pageMeta({
-    title: 'About Mobility Robot',
+    title: 'About Mobility Robot | Official UK XSTO Distributor',
     description:
-      'Mobility Robot is the UK storefront of Bentech Medical Ltd — official distributor of XSTO powered wheelchairs with clinical quality, UK support and expert fitting.',
+      'Meet Mobility Robot, operated by Bentech Medical Limited, the official UK distributor of XSTO powered wheelchairs and mobility technology.',
     path: '/about',
   });
 
-const VALUE_ICONS = [ShieldCheck, Headphones, Handshake] as const;
-
-const breadcrumbs = [
-  {name: 'Home', path: '/'},
-  {name: 'About'},
-] as const;
+const VALUE_ICONS = [Handshake, ShieldCheck, Headphones] as const;
+const breadcrumbs = [{name: 'Home', path: '/'}, {name: 'About'}] as const;
 
 export default function AboutPage() {
   return (
-    <PageShell>
-      <JsonLd
-        data={[
-          breadcrumbJsonLd([...breadcrumbs]),
-          {
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: COMPANY.name,
-            alternateName: 'Mobility Robot',
-            url: SITE_URL,
-            logo: `${SITE_URL}/images/xsto-bentech-header.png`,
-            description: DISTRIBUTOR_DISCLAIMER,
-            address: {
-              '@type': 'PostalAddress',
-              streetAddress: COMPANY.address,
-              addressLocality: COMPANY.city,
-              postalCode: COMPANY.postcode,
-              addressCountry: 'GB',
-            },
-            contactPoint: {
-              '@type': 'ContactPoint',
-              telephone: COMPANY.phone,
-              email: COMPANY.email,
-              contactType: 'customer service',
-              areaServed: ['GB', 'IE'],
-              availableLanguage: 'English',
-            },
-          },
-        ]}
-      />
-
-      <section className="relative isolate min-h-[min(72vh,36rem)] overflow-hidden rounded-2xl border border-border text-white">
-        <img
-          alt=""
-          aria-hidden
-          className="absolute inset-0 size-full object-cover"
-          decoding="async"
-          height={840}
-          loading="eager"
-          src="/images/about-hero.jpg"
-          width={1600}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-r from-[hsl(216_42%_10%/0.94)] via-[hsl(216_42%_12%/0.82)] to-[hsl(216_42%_14%/0.45)]"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[hsl(224_54%_8%/0.55)] via-transparent to-transparent"
-        />
-
-        <div className="relative flex min-h-[min(72vh,36rem)] flex-col justify-end px-5 py-10 sm:px-8 md:justify-center md:px-12 md:py-16">
-          <p className="animate-fade-in text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
-            Mobility Robot
+    <>
+      <JsonLd data={breadcrumbJsonLd([...breadcrumbs])} />
+      <section className="mr-about-head">
+        <div className="xsto-container">
+          <nav aria-label="Breadcrumb" className="mr-about-breadcrumb">
+            <Link prefetch="intent" to="/">Home</Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">About Mobility Robot</span>
+          </nav>
+          <p className="mr-about-eyebrow">Mobility Robot by Bentech Medical</p>
+          <h1>Intelligent technology.<br />Human support.</h1>
+          <p className="mr-about-lead">
+            We bring the XSTO range closer, with advice, demonstrations and
+            aftercare from a UK team.
           </p>
-          <h1 className="animate-fade-in-up mt-3 max-w-xl font-display text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
-            Official UK distributor of XSTO
-          </h1>
-          <p className="animate-fade-in-up mt-4 max-w-lg text-base leading-relaxed text-white/85 md:text-lg animate-delay-150">
-            Bentech Medical Ltd brings foldable powered wheelchairs to the UK
-            and Ireland — with local support, demos and a nationwide stockist
-            network.
-          </p>
-          <div className="animate-fade-in-up mt-8 flex flex-wrap gap-3 animate-delay-150">
-            <Link
-              className="btn-checkout inline-flex h-11 items-center px-5"
-              to="/collections/all"
-            >
-              Shop the range
-            </Link>
-            <Link
-              className="inline-flex h-11 items-center rounded-lg border border-white/30 bg-white/5 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10"
-              to="/demo"
-            >
-              Book a demo
-            </Link>
-          </div>
         </div>
       </section>
-
-      <nav aria-label="Breadcrumb" className="mt-6 text-xs text-muted-foreground">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li>
-            <Link className="hover:text-gold" prefetch="intent" to="/">
-              Home
-            </Link>
-          </li>
-          <li aria-hidden>/</li>
-          <li aria-current="page" className="font-medium text-foreground">
-            About
-          </li>
-        </ol>
-      </nav>
-
-      <section aria-labelledby="about-story-heading" className="mt-12">
-        <h2
-          className="font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl"
-          id="about-story-heading"
-        >
-          Who we are
-        </h2>
-        <div className="mt-6 max-w-3xl space-y-4 text-base leading-relaxed text-muted-foreground md:text-lg">
-          {ABOUT_INTRO.map((paragraph) => (
-            <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-          ))}
-        </div>
-      </section>
-
-      <section
-        aria-labelledby="about-facts-heading"
-        className="mt-14 border-y border-border py-8"
-      >
-        <h2 className="sr-only" id="about-facts-heading">
-          At a glance
-        </h2>
-        <dl className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {ABOUT_FACTS.map((fact) => (
-            <div key={fact.label}>
-              <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
-                {fact.label}
-              </dt>
-              <dd className="mt-2 text-sm font-medium leading-snug text-foreground md:text-base">
-                {fact.value}
-              </dd>
+      <PageShell className="mr-about-body">
+        <section aria-labelledby="about-story-heading" className="mr-about-story" id="our-brand">
+          <div>
+            <p className="mr-about-eyebrow">A new home for a familiar range</p>
+            <h2 id="about-story-heading">A new name.<br />A familiar connection.</h2>
+            <div className="mr-about-story-copy">
+              {ABOUT_INTRO.map((paragraph) => <p key={paragraph.slice(0, 48)}>{paragraph}</p>)}
             </div>
-          ))}
-        </dl>
-      </section>
+            <div className="mr-about-actions">
+              <Link className="mr-about-primary" prefetch="intent" to="/collections/all">
+                Meet the range <ArrowRight aria-hidden="true" size={18} />
+              </Link>
+              <Link className="mr-about-link" prefetch="intent" to="/contact">
+                Talk to us <ArrowRight aria-hidden="true" size={18} />
+              </Link>
+            </div>
+          </div>
+          <div className="mr-about-product">
+            <img
+              alt="XSTO M4B self-levelling powered wheelchair"
+              decoding="async"
+              height={700}
+              loading="lazy"
+              src={`${HOMEPAGE_PRODUCT_THUMBS['xsto-m4b']}?width=900`}
+              width={700}
+            />
+          </div>
+        </section>
 
-      <section aria-labelledby="about-values-heading" className="mt-14">
-        <h2
-          className="font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl"
-          id="about-values-heading"
-        >
-          Why buy with us
-        </h2>
-        <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
-          Engineering you can trust, support you can reach, and the chance to
-          try a chair before you commit.
-        </p>
-        <ul className="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
-          {ABOUT_VALUE_PROPS.map((prop, index) => {
-            const Icon = VALUE_ICONS[index] ?? ShieldCheck;
-            return (
-              <li key={prop.title}>
-                <Icon
-                  aria-hidden
-                  className="size-6 text-navy"
-                  strokeWidth={1.5}
-                />
-                <h3 className="mt-4 text-lg font-semibold text-foreground">
-                  {prop.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {prop.description}
-                </p>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+        <section aria-label="About our business" className="mr-about-facts">
+          <dl>
+            {ABOUT_FACTS.map((fact) => (
+              <div key={fact.label}>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
 
-      <section
-        aria-labelledby="about-next-heading"
-        className="mt-14 overflow-hidden rounded-2xl border border-border bg-gradient-navy px-5 py-10 text-white sm:px-8 md:px-10 md:py-12"
-      >
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">
-              Next step
-            </p>
-            <h2
-              className="mt-3 font-display text-2xl font-bold tracking-tight text-white md:text-3xl"
-              id="about-next-heading"
-            >
-              See an XSTO in person
-            </h2>
-            <p className="mt-3 text-base leading-relaxed text-white/80">
-              Book a hands-on demo, find a stockist near you, or speak to the
-              Wimborne team about the right model for your needs.
+        <section aria-labelledby="about-values-heading" className="mr-about-values">
+          <p className="mr-about-eyebrow">The people behind Mobility Robot</p>
+          <h2 id="about-values-heading">XSTO innovation.<br />Bentech Medical support.</h2>
+          <ul>
+            {ABOUT_VALUE_PROPS.map((prop, index) => {
+              const Icon = VALUE_ICONS[index] ?? Handshake;
+              return (
+                <li key={prop.title}>
+                  <Icon aria-hidden="true" size={28} strokeWidth={1.5} />
+                  <h3>{prop.title}</h3>
+                  <p>{prop.description}</p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section aria-labelledby="about-next-heading" className="mr-about-next">
+          <div>
+            <p className="mr-about-eyebrow">Let’s find your next move</p>
+            <h2 id="about-next-heading">Experience the difference.</h2>
+            <p>
+              Book a demonstration or speak to the Bentech Medical team about
+              the right model for your needs.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              className="btn-checkout inline-flex h-11 items-center px-5"
-              to="/demo"
-            >
-              Book a demo
+          <div className="mr-about-actions">
+            <Link className="mr-demo-button" prefetch="intent" to="/demo">
+              Book a demo <ArrowRight aria-hidden="true" size={18} />
             </Link>
-            <Link
-              className="inline-flex h-11 items-center rounded-lg border border-white/30 bg-white/5 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10"
-              to="/stockists"
-            >
-              Find a stockist
-            </Link>
-            <Link
-              className="inline-flex h-11 items-center gap-2 rounded-lg border border-white/30 bg-white/5 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10"
-              to="/contact"
-            >
-              <MapPin aria-hidden className="size-4" />
-              Contact us
-            </Link>
+            <Link className="mr-about-light-link" prefetch="intent" to="/stockists">Find a stockist</Link>
           </div>
-        </div>
-      </section>
-
-      <p className="mt-10 max-w-3xl text-xs leading-relaxed text-muted-foreground">
-        {DISTRIBUTOR_DISCLAIMER}
-      </p>
-    </PageShell>
+        </section>
+        <p className="mr-about-distributor">{DISTRIBUTOR_DISCLAIMER}</p>
+      </PageShell>
+    </>
   );
 }

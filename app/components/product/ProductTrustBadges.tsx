@@ -7,8 +7,8 @@ type Badge = {
 };
 
 const BASE_BADGES: Badge[] = [
-  {icon: Truck, label: 'Free UK delivery'},
-  {icon: ShieldCheck, label: '5-year warranty'},
+  {icon: Truck, label: 'Free UK mainland delivery'},
+  {icon: ShieldCheck, label: '5-year frame warranty'},
 ];
 
 /** M4-series models with travel-battery FAQ support for airline wording. */
@@ -56,7 +56,7 @@ export function ProductTrustBadges({productHandle}: ProductTrustBadgesProps) {
             className="size-3.5 text-navy"
             strokeWidth={1.5}
           />
-          <span className="text-[0.625rem] font-semibold leading-tight text-navy">
+          <span className="text-xs font-semibold leading-snug text-navy">
             {label}
           </span>
         </li>

@@ -1,3 +1,4 @@
+import {noindexMeta} from '~/lib/seo';
 import {Link, redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/account.orders.$id';
 import {Money, Image} from '@shopify/hydrogen';
@@ -8,7 +9,11 @@ import type {
 import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Order ${data?.order?.name}`}];
+  return noindexMeta({
+    title: data?.order?.name ? `Order ${data.order.name}` : 'Order Details',
+    description: 'View your Mobility Robot order.',
+    path: '/account/orders',
+  });
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {

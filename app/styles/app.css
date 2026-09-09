@@ -60,10 +60,10 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   /* Kept for class compat; resolves to display (logo has no serif) */
-  --font-serif: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Manrope', ui-sans-serif, system-ui, sans-serif;
 
   --breakpoint-2xl: 87.5rem;
 
@@ -96,26 +96,33 @@
 
 @layer base {
   :root {
-    /* XSTO Brand Palette — pure white, dark navy, Medical Blue accent. */
+    /* Mobility Robot — one navy-and-red palette across every storefront route. */
+    --mr-accent: hsl(var(--primary));
+    --mr-accent-hover: hsl(var(--gold-dark));
+    --mr-accent-soft: hsl(var(--primary) / 0.06);
+    --mr-accent-on-dark: #ff929c;
+    --mr-ink: #203048;
+    --mr-footer: #172438;
+    --mr-surface: #f5f6f8;
 
     --background: 0 0% 100%;
-    --foreground: 216 39% 14%;
+    --foreground: 216 42% 16%;
 
     --cream: 210 20% 99%;
     --cream-deep: 214 18% 96%;
 
     --card: 0 0% 100%;
-    --card-foreground: 216 39% 14%;
+    --card-foreground: 216 42% 16%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 216 39% 14%;
+    --popover-foreground: 216 42% 16%;
 
-    /* Brand red from logo flag / LTD (#d02030) */
+    /* Original red action colour, with darker shades for legible white button text. */
     --primary: 354 73% 47%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 214 18% 96%;
-    --secondary-foreground: 216 39% 14%;
+    --secondary-foreground: 216 42% 16%;
 
     --muted: 214 16% 93%;
     --muted-foreground: 216 12% 42%;
@@ -138,9 +145,9 @@
     --xsto-blue-dark: 224 54% 12%;
     --xsto-blue-muted: 216 14% 48%;
 
-    /* "Gold" tokens = brand red — names kept for component compat */
+    /* Legacy accent token names retained for component compatibility */
     --gold: 354 73% 47%;
-    --gold-light: 354 70% 56%;
+    --gold-light: 354 70% 44%;
     --gold-dark: 354 76% 38%;
     /* Darkened for WCAG AA contrast on white (~4.5:1+) */
     --vat-price: 160 78% 26%;
@@ -153,13 +160,13 @@
     --slate-light: 216 10% 54%;
 
     --xsto-orange: 354 73% 47%;
-    --xsto-orange-light: 354 70% 56%;
+    --xsto-orange-light: 354 70% 44%;
     --xsto-orange-dark: 354 76% 38%;
 
     --gradient-gold: linear-gradient(
       135deg,
       hsl(354 73% 47%) 0%,
-      hsl(354 70% 56%) 100%
+      hsl(354 70% 44%) 100%
     );
     --gradient-xsto: linear-gradient(
       135deg,
@@ -189,7 +196,7 @@
 
     --gradient-gold-sheen: linear-gradient(
       135deg,
-      hsl(354 70% 56%) 0%,
+      hsl(354 70% 44%) 0%,
       hsl(354 73% 47%) 45%,
       hsl(354 76% 38%) 100%
     );
@@ -206,7 +213,7 @@
     );
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 216 39% 14%;
+    --sidebar-foreground: 216 42% 16%;
     --sidebar-primary: 216 39% 20%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 214 18% 96%;
@@ -420,8 +427,8 @@
     @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-sm font-semibold text-white no-underline shadow-gold transition-all hover:brightness-105 hover:text-white disabled:cursor-not-allowed disabled:opacity-60;
     background-image: linear-gradient(
       135deg,
-      hsl(354 76% 42%) 0%,
-      hsl(354 70% 54%) 100%
+      hsl(var(--gold-dark)) 0%,
+      hsl(var(--primary)) 100%
     );
     color: #ffffff;
   }
@@ -1906,8 +1913,8 @@ a.btn-checkout,
 button.btn-checkout {
   background-image: linear-gradient(
     135deg,
-    hsl(354 76% 42%) 0%,
-    hsl(354 70% 54%) 100%
+    hsl(var(--gold-dark)) 0%,
+    hsl(var(--primary)) 100%
   ) !important;
   box-shadow: 0 4px 16px -2px hsl(354 73% 47% / 0.4);
 }

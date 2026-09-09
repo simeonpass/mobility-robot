@@ -1,3 +1,4 @@
+import {noindexMeta} from '~/lib/seo';
 import type {CustomerAddressInput} from '@shopify/hydrogen/customer-account-api-types';
 import type {
   AddressFragment,
@@ -28,7 +29,11 @@ export type ActionResponse = {
 };
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Addresses'}];
+  return noindexMeta({
+    title: 'Your Addresses',
+    description: 'Manage your delivery addresses.',
+    path: '/account/addresses',
+  });
 };
 
 export async function loader({context}: Route.LoaderArgs) {

@@ -5,6 +5,7 @@ import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
 import {syncVatExemptionCustomersFromCart} from '~/lib/shopify-admin-vat';
 import {NOINDEX_HEADERS, noindexMeta} from '~/lib/seo';
+import {getCartErrors, safeStorefrontRedirect} from '~/lib/cart-feedback';
 
 export const meta: Route.MetaFunction = () =>
   noindexMeta({
@@ -23,62 +24,82 @@ export async function action({request, context}: Route.ActionArgs) {
   const {action, inputs} = CartForm.getFormInput(formData);
 
   if (!action) {
-    throw new Error('No action provided');
+    return data(
+      {errors: [{message: 'Choose a basket action and try again.'}]},
+      {status: 400},
+    );
   }
 
   let status = 200;
   let result: CartQueryDataReturn;
 
-  switch (action) {
-    case CartForm.ACTIONS.LinesAdd:
-      result = await cart.addLines(inputs.lines);
-      break;
-    case CartForm.ACTIONS.LinesUpdate:
-      result = await cart.updateLines(inputs.lines);
-      break;
-    case CartForm.ACTIONS.LinesRemove:
-      result = await cart.removeLines(inputs.lineIds);
-      break;
-    case CartForm.ACTIONS.DiscountCodesUpdate: {
-      const formDiscountCode = inputs.discountCode;
+  try {
+    switch (action) {
+      case CartForm.ACTIONS.LinesAdd:
+        result = await cart.addLines(inputs.lines);
+        break;
+      case CartForm.ACTIONS.LinesUpdate:
+        result = await cart.updateLines(inputs.lines);
+        break;
+      case CartForm.ACTIONS.LinesRemove:
+        result = await cart.removeLines(inputs.lineIds);
+        break;
+      case CartForm.ACTIONS.DiscountCodesUpdate: {
+        const formDiscountCode = inputs.discountCode;
 
-      const discountCodes = (
-        formDiscountCode ? [formDiscountCode] : []
-      ) as string[];
+        const discountCodes = (
+          formDiscountCode ? [formDiscountCode] : []
+        ) as string[];
 
-      discountCodes.push(...inputs.discountCodes);
+        discountCodes.push(...(inputs.discountCodes ?? []));
 
-      result = await cart.updateDiscountCodes(discountCodes);
-      break;
+        result = await cart.updateDiscountCodes(discountCodes);
+        break;
+      }
+      case CartForm.ACTIONS.GiftCardCodesAdd: {
+        const formGiftCardCode = inputs.giftCardCode;
+
+        const giftCardCodes = (
+          formGiftCardCode ? [formGiftCardCode] : []
+        ) as string[];
+
+        result = await cart.addGiftCardCodes(giftCardCodes);
+        break;
+      }
+      case CartForm.ACTIONS.GiftCardCodesRemove: {
+        const appliedGiftCardIds = inputs.giftCardCodes as string[];
+        result = await cart.removeGiftCardCodes(appliedGiftCardIds);
+        break;
+      }
+      case CartForm.ACTIONS.BuyerIdentityUpdate: {
+        result = await cart.updateBuyerIdentity({
+          ...inputs.buyerIdentity,
+        });
+        break;
+      }
+      default:
+        return data(
+          {action, errors: [{message: 'This basket action is not supported.'}]},
+          {status: 400},
+        );
     }
-    case CartForm.ACTIONS.GiftCardCodesAdd: {
-      const formGiftCardCode = inputs.giftCardCode;
-
-      const giftCardCodes = (
-        formGiftCardCode ? [formGiftCardCode] : []
-      ) as string[];
-
-      result = await cart.addGiftCardCodes(giftCardCodes);
-      break;
-    }
-    case CartForm.ACTIONS.GiftCardCodesRemove: {
-      const appliedGiftCardIds = inputs.giftCardCodes as string[];
-      result = await cart.removeGiftCardCodes(appliedGiftCardIds);
-      break;
-    }
-    case CartForm.ACTIONS.BuyerIdentityUpdate: {
-      result = await cart.updateBuyerIdentity({
-        ...inputs.buyerIdentity,
-      });
-      break;
-    }
-    default:
-      throw new Error(`${action} cart action is not defined`);
+  } catch (error) {
+    console.error('Cart update failed', error);
+    return data(
+      {
+        action,
+        errors: [
+          {message: 'We could not update your basket. Please try again.'},
+        ],
+      },
+      {status: 503},
+    );
   }
 
   const cartId = result?.cart?.id;
   const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
-  let {cart: cartResult, errors, warnings} = result;
+  let {cart: cartResult, warnings} = result;
+  let errors = getCartErrors(result);
 
   if (cartResult?.lines?.nodes?.length) {
     await syncVatExemptionCustomersFromCart(env, cartResult.lines.nodes);
@@ -87,9 +108,10 @@ export async function action({request, context}: Route.ActionArgs) {
     // tax-exempt customer record — prefill cart buyer identity from the
     // VAT declaration.
     const vatEmail = cartResult.lines.nodes
-      .map((line) =>
-        line.attributes?.find((attr) => attr.key === 'VAT Declaration Email')
-          ?.value,
+      .map(
+        (line) =>
+          line.attributes?.find((attr) => attr.key === 'VAT Declaration Email')
+            ?.value,
       )
       .find((value) => Boolean(value?.trim()));
     if (vatEmail?.trim()) {
@@ -99,23 +121,31 @@ export async function action({request, context}: Route.ActionArgs) {
         });
         if (identityResult?.cart) {
           cartResult = identityResult.cart;
-          errors = identityResult.errors ?? errors;
-          warnings = identityResult.warnings ?? warnings;
         }
+        errors = [...errors, ...getCartErrors(identityResult)];
+        warnings = [...(warnings ?? []), ...(identityResult.warnings ?? [])];
       } catch (error) {
         console.error('VAT buyer identity update failed', error);
+        errors.push({
+          message:
+            'Your basket was updated, but we could not apply your declaration email. Please retry your VAT declaration before checkout.',
+        });
       }
     }
   }
 
-  const redirectTo = formData.get('redirectTo') ?? null;
-  if (typeof redirectTo === 'string') {
+  const redirectTo = safeStorefrontRedirect(
+    formData.get('redirectTo'),
+    request.url,
+  );
+  if (redirectTo && cartResult && !errors.length && !warnings?.length) {
     status = 303;
     headers.set('Location', redirectTo);
   }
 
   return data(
     {
+      action,
       cart: cartResult,
       errors,
       warnings,

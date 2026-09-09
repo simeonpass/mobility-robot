@@ -41,10 +41,7 @@ export default function Collection() {
   const {chairs, accessories} = useLoaderData<typeof loader>();
   const ordered = [...chairs, ...accessories];
 
-  const breadcrumbItems = [
-    {name: 'Home', path: '/'},
-    {name: 'Shop all'},
-  ];
+  const breadcrumbItems = [{name: 'Home', path: '/'}, {name: 'Shop all'}];
 
   const listSchema = itemListJsonLd({
     name: 'XSTO power chairs & accessories',
@@ -67,7 +64,7 @@ export default function Collection() {
         />
         <div className="xsto-container relative py-12 md:py-16 lg:py-20">
           <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-white/65">
-            Mobility Robot · Official UK XSTO store
+            Mobility Robot · Official UK distributor for XSTO
           </p>
           <h1 className="font-display mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl md:leading-tight">
             Shop the XSTO range
@@ -76,10 +73,7 @@ export default function Collection() {
             Power chairs first — M4, M4B, M4 Pro and X12 — then accessories for
             the chair you choose. Free UK delivery from Bentech Medical Ltd.
           </p>
-          <nav
-            aria-label="On this page"
-            className="mt-8 flex flex-wrap gap-3"
-          >
+          <nav aria-label="On this page" className="mt-8 flex flex-wrap gap-3">
             <a
               className="inline-flex min-h-11 items-center rounded-md border border-white/25 bg-white/10 px-4 text-sm font-semibold text-white no-underline backdrop-blur-sm transition-colors hover:bg-white/15 hover:no-underline"
               href="#power-chairs"

@@ -83,7 +83,7 @@ export const termsSections: ContentSection[] = [
     title: '1. Introduction',
     paragraphs: [
       'These terms govern your use of mobilityrobot.co.uk and purchases from Bentech Medical Ltd, the official UK distributor of XSTO powered wheelchairs. By using this website or placing an order you agree to these terms.',
-      'Bentech Medical Ltd trades as Mobility Robot. XSTO is a trademark of its manufacturer. We are not affiliated with XSTO Robot Technology Co., Ltd.',
+      'Mobility Robot is the trading name of Bentech Medical Limited, the official UK distributor of XSTO products. XSTO is a trademark of its manufacturer.',
     ],
   },
   {

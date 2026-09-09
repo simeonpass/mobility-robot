@@ -1,32 +1,27 @@
+import {ArrowRight, Phone} from 'lucide-react';
 import {Link} from 'react-router';
-import {SectionIntro} from '~/components/home/SectionIntro';
-import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 
 export function HomeCtaSection() {
-  const m4Url = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`;
-
   return (
-    <section className="xsto-section bg-background">
+    <section className="mr-section">
       <div className="xsto-container">
-        <div className="overflow-hidden rounded-3xl border border-border bg-gradient-cream px-6 py-12 text-center shadow-soft md:px-12 md:py-16">
-          <SectionIntro
-            accent="yourself."
-            description="From £3,500 ex VAT. Free UK delivery. Full UK warranty & support."
-            label="Take the next step"
-            title="Try it"
-          />
-
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <Link className="btn-accent min-w-[11rem]" prefetch="intent" to={m4Url}>
-              Buy now
+        <div className="mr-final-cta">
+          <div>
+            <p className="mr-eyebrow">Your next chapter starts here</p>
+            <h2>Let’s find your next move.</h2>
+            <p>
+              Tell us what matters to you. We’ll help you explore the range and
+              arrange a demonstration.
+            </p>
+          </div>
+          <div className="mr-actions">
+            <Link className="mr-button mr-button-amber" to="/demo">
+              Book a demonstration <ArrowRight size={18} aria-hidden />
             </Link>
-            <Link
-              className="inline-flex min-w-[11rem] items-center justify-center rounded-lg border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-gold hover:text-gold"
-              prefetch="intent"
-              to="/demo"
-            >
-              Book a demo
-            </Link>
+            <a className="mr-cta-phone" href="tel:+442080504849">
+              <Phone size={18} aria-hidden />
+              020 8050 4849
+            </a>
           </div>
         </div>
       </div>

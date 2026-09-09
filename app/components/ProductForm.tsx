@@ -1,3 +1,4 @@
+import type {ReactNode, RefObject} from 'react';
 import {Link, useNavigate} from 'react-router';
 import {
   type MappedProductOptions,
@@ -10,12 +11,10 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
-import {isAccessoryProduct} from '~/lib/cart-utils';
 import {withOptimisticSellingPlanAllocation} from '~/lib/selling-plans';
 import type {ProductFragment} from 'storefrontapi.generated';
 
 export function ProductForm({
-  productHandle,
   productOptions,
   selectedVariant,
   cartAttributes = [],
@@ -25,7 +24,13 @@ export function ProductForm({
   soldOutLabel = 'Sold out',
   addToCartLabel = 'Add to cart',
   addToCartClassName = 'btn-accent',
+  children,
+  linesOverride,
+  purchaseRef,
 }: {
+  children?: ReactNode;
+  linesOverride?: OptimisticCartLineInput[];
+  purchaseRef?: RefObject<HTMLDivElement>;
   productHandle?: string;
   productOptions: MappedProductOptions[];
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
@@ -40,36 +45,36 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
-  const silentAdd = productHandle ? isAccessoryProduct(productHandle) : false;
 
   const addDisabled =
-    disabled ??
-    (!selectedVariant || !selectedVariant.availableForSale);
+    disabled ?? (!selectedVariant || !selectedVariant.availableForSale);
 
-  const lines: OptimisticCartLineInput[] = selectedVariant
-    ? [
-        {
-          merchandiseId: selectedVariant.id,
-          quantity: 1,
-          selectedVariant: withOptimisticSellingPlanAllocation(
-            selectedVariant,
-            sellingPlanId,
-          ),
-          attributes: cartAttributes,
-          ...(sellingPlanId ? {sellingPlanId} : {}),
-        },
-        ...addonLines.map((line) => ({
-          ...line,
-          attributes: line.attributes?.length
-            ? line.attributes
-            : cartAttributes,
-          parent: line.parent ?? {merchandiseId: selectedVariant.id},
-        })),
-      ]
-    : [];
+  const lines: OptimisticCartLineInput[] =
+    linesOverride ??
+    (selectedVariant
+      ? [
+          {
+            merchandiseId: selectedVariant.id,
+            quantity: 1,
+            selectedVariant: withOptimisticSellingPlanAllocation(
+              selectedVariant,
+              sellingPlanId,
+            ),
+            attributes: cartAttributes,
+            ...(sellingPlanId ? {sellingPlanId} : {}),
+          },
+          ...addonLines.map((line) => ({
+            ...line,
+            attributes: line.attributes?.length
+              ? line.attributes
+              : cartAttributes,
+            parent: line.parent ?? {merchandiseId: selectedVariant.id},
+          })),
+        ]
+      : []);
 
   return (
-    <div className="space-y-6">
+    <div className="mr-product-form space-y-5">
       {productOptions.map((option) => {
         // Hide single-value options and the VAT Standard/Relief option
         // (storefront picks the sibling when relief is claimed).
@@ -122,6 +127,7 @@ export function ProductForm({
                   <button
                     className={optionClassName}
                     disabled={!exists}
+                    aria-pressed={selected}
                     key={option.name + name}
                     onClick={() => {
                       if (!selected) {
@@ -142,22 +148,24 @@ export function ProductForm({
         );
       })}
 
-      <AddToCartButton
-        className={addToCartClassName}
-        disabled={addDisabled}
-        onClick={() => {
-          if (!silentAdd) {
+      {children}
+
+      <div ref={purchaseRef}>
+        <AddToCartButton
+          className={addToCartClassName}
+          disabled={addDisabled}
+          onClick={() => {
             open('cart');
-          }
-        }}
-        lines={lines}
-      >
-        {!selectedVariant?.availableForSale
-          ? soldOutLabel
-          : addDisabled && disabled
+          }}
+          lines={lines}
+        >
+          {!selectedVariant?.availableForSale
             ? soldOutLabel
-            : addToCartLabel}
-      </AddToCartButton>
+            : addDisabled && disabled
+              ? soldOutLabel
+              : addToCartLabel}
+        </AddToCartButton>
+      </div>
     </div>
   );
 }

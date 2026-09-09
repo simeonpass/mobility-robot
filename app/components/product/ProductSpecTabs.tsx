@@ -62,24 +62,25 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
     : visibleTabs[0].id;
 
   return (
-    <section aria-labelledby={`${baseId}-heading`} className="mt-10 md:mt-12">
-      <h2 className="sr-only" id={`${baseId}-heading`}>
-        Product details
+    <section aria-labelledby={`${baseId}-heading`} className="mr-product-details">
+      <p className="mr-product-section-eyebrow">The detail matters</p>
+      <h2 className="mr-product-section-heading font-display" id={`${baseId}-heading`}>
+        Get to know your next move.
       </h2>
 
       <div
         aria-label="Product information"
-        className="flex gap-1 overflow-x-auto border-b border-border"
+        className="mr-product-tabs flex gap-1 overflow-x-auto border-b border-border"
         role="tablist"
       >
-        {visibleTabs.map((tab) => {
+        {visibleTabs.map((tab, index) => {
           const selected = tab.id === active;
           return (
             <button
               aria-controls={`${baseId}-panel-${tab.id}`}
               aria-selected={selected}
               className={[
-                'shrink-0 border-b-2 px-3 py-3 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors sm:px-3.5 sm:py-2.5',
+                'shrink-0 border-b-2 px-4 py-4 text-base font-semibold tracking-[-0.01em] transition-colors',
                 selected
                   ? 'border-navy text-navy'
                   : 'border-transparent text-slate hover:text-navy',
@@ -87,7 +88,31 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
               id={`${baseId}-tab-${tab.id}`}
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
+              onKeyDown={(event) => {
+                let nextIndex: number;
+                switch (event.key) {
+                  case 'ArrowRight':
+                    nextIndex = (index + 1) % visibleTabs.length;
+                    break;
+                  case 'ArrowLeft':
+                    nextIndex = (index - 1 + visibleTabs.length) % visibleTabs.length;
+                    break;
+                  case 'Home':
+                    nextIndex = 0;
+                    break;
+                  case 'End':
+                    nextIndex = visibleTabs.length - 1;
+                    break;
+                  default:
+                    return;
+                }
+                event.preventDefault();
+                const nextTab = visibleTabs[nextIndex];
+                setActiveTab(nextTab.id);
+                document.getElementById(`${baseId}-tab-${nextTab.id}`)?.focus();
+              }}
               role="tab"
+              tabIndex={selected ? 0 : -1}
               type="button"
             >
               {tab.label}
@@ -188,8 +213,8 @@ export function ProductSpecTabs({content, shopifyHandle}: ProductSpecTabsProps) 
             {isXstoRangeProduct(shopifyHandle) ? (
               <p className="mt-10 text-sm text-muted-foreground">
                 Compare all models on our{' '}
-                <Link className="font-semibold text-gold hover:underline" to="/#product-range">
-                  homepage comparison table
+                <Link className="font-semibold text-gold hover:underline" to="/compare">
+                  model comparison page
                 </Link>
                 .
               </p>
@@ -398,7 +423,7 @@ function TabPanel({
   children: React.ReactNode;
 }) {
   return (
-    <div aria-labelledby={labelledBy} id={id} role="tabpanel">
+    <div aria-labelledby={labelledBy} id={id} role="tabpanel" tabIndex={0}>
       {children}
     </div>
   );

@@ -1,5 +1,24 @@
 export const STATIC_SITEMAP_ROUTES = [
   {path: '/', changefreq: 'weekly', priority: 1.0},
+  {path: '/compare', changefreq: 'monthly', priority: 0.8},
+  {path: '/guides', changefreq: 'monthly', priority: 0.8},
+  {
+    path: '/guides/self-levelling-wheelchairs',
+    changefreq: 'monthly',
+    priority: 0.7,
+  },
+  {
+    path: '/guides/stair-climbing-wheelchairs',
+    changefreq: 'monthly',
+    priority: 0.7,
+  },
+  {
+    path: '/guides/choosing-an-xsto-wheelchair',
+    changefreq: 'monthly',
+    priority: 0.7,
+  },
+  {path: '/international', changefreq: 'monthly', priority: 0.6},
+  {path: '/support', changefreq: 'monthly', priority: 0.7},
   {path: '/stockists', changefreq: 'monthly', priority: 0.8},
   {path: '/faq', changefreq: 'monthly', priority: 0.8},
   {path: '/warranty', changefreq: 'monthly', priority: 0.7},
