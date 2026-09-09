@@ -1,21 +1,51 @@
 import {z} from 'zod';
 
-export const contactFormSchema = z.object({
-  name: z.string().trim().min(2, 'Please enter your name'),
-  email: z.string().trim().email('Please enter a valid email'),
-  phone: z.string().trim().min(7, 'Please enter a valid phone number'),
-  topic: z.enum([
-    'Product advice',
-    'Order or delivery',
-    'VAT relief',
-    'Warranty or parts',
-    'Demo booking',
-    'Trade or stockist',
-    'Something else',
-  ]),
-  orderRef: z.string().trim().optional(),
-  message: z.string().trim().min(10, 'Please enter a message (at least 10 characters)'),
-});
+// A narrow signal for automated random-letter payloads, not a language filter.
+// Require BOTH name and message to match; never reject a name on its own.
+function isRandomLetterToken(value: string): boolean {
+  if (!/^[A-Za-z]{12,}$/.test(value)) return false;
+  let changes = 0;
+  for (let i = 1; i < value.length; i++) {
+    if (
+      (value[i] === value[i].toUpperCase()) !==
+      (value[i - 1] === value[i - 1].toUpperCase())
+    )
+      changes++;
+  }
+  return changes >= 6;
+}
+
+export const contactFormSchema = z
+  .object({
+    website: z.string().optional(),
+    name: z.string().trim().min(2, 'Please enter your name'),
+    email: z.string().trim().email('Please enter a valid email'),
+    phone: z.string().trim().min(7, 'Please enter a valid phone number'),
+    topic: z.enum([
+      'Product advice',
+      'Order or delivery',
+      'VAT relief',
+      'Warranty or parts',
+      'Demo booking',
+      'Trade or stockist',
+      'Something else',
+    ]),
+    orderRef: z.string().trim().optional(),
+    message: z
+      .string()
+      .trim()
+      .min(10, 'Please enter a message (at least 10 characters)'),
+  })
+  .refine(
+    (values) =>
+      !(
+        isRandomLetterToken(values.name) && isRandomLetterToken(values.message)
+      ),
+    {
+      path: ['message'],
+      message: 'Please describe your enquiry in a few words so we can help.',
+    },
+  );
 
 export const warrantyRegisterSchema = z.object({
   name: z.string().trim().min(2, 'Please enter your name'),
@@ -51,10 +81,7 @@ export const vatReliefRegistrationSchema = z.object({
   name: z.string().trim().min(2, 'Please enter your full name'),
   email: z.string().trim().email('Please enter a valid email'),
   address: z.string().trim().min(10, 'Please enter your full address'),
-  condition: z
-    .string()
-    .trim()
-    .min(3, 'Please briefly describe your condition'),
+  condition: z.string().trim().min(3, 'Please briefly describe your condition'),
   declaration: z.enum(['yes'], {
     message:
       'You must confirm you are eligible for HMRC VAT relief on mobility aids',

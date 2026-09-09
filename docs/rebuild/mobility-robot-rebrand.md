@@ -113,3 +113,19 @@ The old Apple home-screen icon still displayed XSTO. It has been replaced with a
 Validation: production build, TypeScript, changed-source lint and all 222 existing tests pass. Primary text/button colour pairs meet a 4.5:1 contrast ratio. Source and stylesheet inspection covers the page families above; Shopify's previously recorded access block still prevents hosted visual/playback verification. Shopify-hosted checkout, account authentication screens and external app settings are separate from these storefront styles and were not changed. No orders, payments, enquiry emails or production deployment were made.
 
 Judge.me reference: https://judge.me/help/en/articles/8415813-customizing-the-reviews-carousel . Scoped storefront CSS is used; external review settings were not edited.
+
+## Verified awards and approved production release — 9 September 2026
+
+The user approved making the navy/red storefront live and requested product awards beneath the homepage video. `AwardsStrip` now sits directly after the video hero. A restrained grey background, navy type and red accents match the approved palette. Three linked winner records sit alongside an explicit **XSTO M4** heading; on phones they become compact full-width rows with 48px minimum touch targets. The text is rendered in the homepage HTML, with no extra image downloads or carousel script.
+
+| Model | Award | Year | Primary winner record |
+| --- | --- | --- | --- |
+| XSTO M4 | Red Dot Award: Product Design | 2025 | https://www.red-dot.org/project/xsto-mobility-robot-81361 |
+| XSTO M4 | iF Design Award: Product Design | 2025 | https://ifdesign.com/en/winner-ranking/project/xsto-mobility-robot/680124 |
+| XSTO M4 | Good Design Award, Japan; award no. 25G020123 | 2025 | https://www.g-mark.org/en/gallery/winners/33173?years=2025 |
+
+The award organisers list the entry as “XSTO Mobility Robot”. Manufacturer announcements explicitly identify it as the M4 and establish the year: https://www.xstomobility.com/blogs/news/xsto-mobility-robot-claims-both-if-and-red-dot-design-awards (13 June 2025) and https://www.xstomobility.com/blogs/news/xsto-wins-japans-g-mark-award-sweeping-the-global-design-oscars (17 October 2025). The iF winner entry was confirmed in its indexed official search result; direct retrieval returned 403. Good Design's indexed official result supplies the award number/year and manufacturer; its directly retrieved page omits the dynamic entry content. Red Dot's full winner page and both manufacturer announcements were readable. No award is attributed to the X12, M4B or M4 Pro. No award logos have been recreated or additional certification claims added.
+
+The current production contact-form spam fix, commit `a304ef9050209ba232658d7cd8191f74f6e4c5b9` from PR #56, is incorporated into this release before validation. TypeScript identified missing narrowing of the unknown request body and two test typing issues in that commit. The honeypot now explicitly checks for an object and the property before reading it; the tests use typed header records and a structural response assertion. Existing rejection and genuine-enquiry behaviour is preserved.
+
+Validation: the production build and all 238 tests across 32 files pass; after the typing correction, TypeScript, changed-source lint and the 16 form-action tests pass. Build output retains the existing non-blocking Hydrogen bundle-analyser and future-flag warnings. Production publication uses the existing PR #55 merge and main-branch Oxygen workflow. This explicit release approval supersedes the earlier preview-only status; no DNS or domain changes are required. Hosted visual/playback and real-payment checkout checks remain limited by the previously documented browser access block.

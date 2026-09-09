@@ -42,7 +42,39 @@ export async function handleValidatedFormAction<T extends z.ZodType>({
     return new Response('Method Not Allowed', {status: 405});
   }
 
+  // These endpoints serve our browser forms, not third-party integrations.
+  // Origin checks are one layer only: bots can forge request headers.
+  const source =
+    request.headers.get('origin') || request.headers.get('referer');
+  let sameOrigin = false;
+  try {
+    sameOrigin =
+      Boolean(source) &&
+      new URL(source!).origin === new URL(request.url).origin;
+  } catch {
+    sameOrigin = false;
+  }
+  if (!sameOrigin || request.headers.get('sec-fetch-site') === 'cross-site') {
+    return json(
+      {
+        ok: false,
+        error: 'Please send your enquiry using the form on our website.',
+      },
+      403,
+    );
+  }
+
   const body = await request.json().catch(() => null);
+  // Check before schema parsing, which can strip unknown fields.
+  if (
+    body !== null &&
+    typeof body === 'object' &&
+    'website' in body &&
+    typeof body.website === 'string' &&
+    body.website.trim()
+  ) {
+    return json({ok: true as const});
+  }
   const parsed = schema.safeParse(body);
 
   if (!parsed.success) {

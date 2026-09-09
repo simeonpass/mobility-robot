@@ -103,6 +103,127 @@
 .mr-button-amber:hover {
   background: var(--mr-accent-hover);
 }
+.mr-awards {
+  background: var(--mr-surface);
+}
+.mr-awards-inner {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) 2.4fr;
+  align-items: center;
+  gap: 32px;
+  padding-block: 24px;
+}
+.mr-awards-intro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.mr-awards-intro svg {
+  flex: 0 0 auto;
+  color: var(--mr-accent);
+}
+.mr-awards-intro p {
+  margin: 0 0 3px;
+  color: var(--mr-accent);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+.mr-home .mr-awards-intro h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+.mr-awards-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mr-awards-list li {
+  min-width: 0;
+  border-left: 1px solid #d9dfe7;
+  padding-inline: 22px;
+}
+.mr-awards-list a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: center;
+  align-items: center;
+  gap: 4px 8px;
+  min-height: 48px;
+  color: var(--mr-ink);
+  border-radius: 3px;
+}
+.mr-awards-name {
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+.mr-awards-detail {
+  grid-column: 1;
+  color: #526079;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+.mr-awards-list a > svg {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  color: var(--mr-accent);
+}
+.mr-awards-list a:hover .mr-awards-name {
+  color: var(--mr-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.mr-awards-list a:focus-visible {
+  outline: 2px solid var(--mr-accent);
+  outline-offset: 5px;
+}
+@media (max-width: 1023px) {
+  .mr-awards-inner {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .mr-awards-intro {
+    justify-content: center;
+  }
+  .mr-awards-list li:first-child {
+    border-left: 0;
+  }
+}
+@media (max-width: 599px) {
+  .mr-awards-inner {
+    padding-block: 20px 12px;
+    gap: 12px;
+  }
+  .mr-awards-intro {
+    justify-content: flex-start;
+  }
+  .mr-awards-list {
+    grid-template-columns: 1fr;
+  }
+  .mr-awards-list li {
+    border-left: 0;
+    border-top: 1px solid #d9dfe7;
+    padding: 0;
+  }
+  .mr-awards-list a {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 8px;
+    min-height: 48px;
+  }
+  .mr-awards-detail {
+    grid-column: 2;
+    font-size: 0.7rem;
+  }
+  .mr-awards-list a > svg {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
 .mr-trust {
   background: #fff;
   border-block: 1px solid #e2e7f0;
