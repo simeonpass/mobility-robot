@@ -1,82 +1,74 @@
 import {useEffect, useState} from 'react';
-import {useReducedMotion} from 'framer-motion';
+import {Pause, Play} from 'lucide-react';
 import {
   HOMEPAGE_HERO_YOUTUBE_ID,
   buildHeroYoutubeEmbedUrl,
   heroYoutubePosterUrl,
 } from '~/lib/homepage-data';
 
-type HeroVideoBackgroundProps = {
-  youtubeId?: string;
-};
-
-const DESKTOP_HERO_VIDEO_QUERY = '(min-width: 768px)';
-
-function readDesktopHeroVideoPreference() {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia(DESKTOP_HERO_VIDEO_QUERY).matches;
-}
-
-function usePrefersDesktopHeroVideo() {
-  const [enabled, setEnabled] = useState(readDesktopHeroVideoPreference);
+export function HeroVideoBackground() {
+  const [autoPlay, setAutoPlay] = useState(false);
+  const [choice, setChoice] = useState<boolean | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia(DESKTOP_HERO_VIDEO_QUERY);
-    const sync = () => setEnabled(media.matches);
+    const desktop = window.matchMedia('(min-width: 768px)');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setAutoPlay(desktop.matches && !reducedMotion.matches);
     sync();
-    media.addEventListener('change', sync);
-    return () => media.removeEventListener('change', sync);
+    desktop.addEventListener('change', sync);
+    reducedMotion.addEventListener('change', sync);
+    return () => {
+      desktop.removeEventListener('change', sync);
+      reducedMotion.removeEventListener('change', sync);
+    };
   }, []);
 
-  return enabled;
-}
-
-export function HeroVideoBackground({
-  youtubeId = HOMEPAGE_HERO_YOUTUBE_ID,
-}: HeroVideoBackgroundProps) {
-  const reducedMotion = useReducedMotion();
-  const desktopVideo = usePrefersDesktopHeroVideo();
-  const [ready, setReady] = useState(false);
-  const posterUrl = heroYoutubePosterUrl(youtubeId);
-  const posterOnly = Boolean(reducedMotion) || !desktopVideo;
-
-  if (posterOnly) {
-    return (
-      <img
-        alt=""
-        aria-hidden
-        className="hero-video-poster size-full object-cover"
-        decoding="async"
-        fetchPriority="high"
-        src={posterUrl}
-      />
-    );
-  }
-
+  const playing = choice ?? autoPlay;
   return (
-    <div
-      className={[
-        'hero-video-layer relative size-full',
-        ready ? 'hero-video-layer--playing' : '',
-      ].join(' ')}
-    >
+    <div className="mr-film-media">
       <img
-        alt=""
-        aria-hidden
-        className="hero-video-poster size-full object-cover"
-        decoding="async"
+        className="mr-film-poster"
+        src={heroYoutubePosterUrl()}
+        alt="XSTO X12 wheelchair demonstration"
+        width={1280}
+        height={720}
         fetchPriority="high"
-        src={posterUrl}
+        decoding="async"
       />
-      <div className="hero-youtube-embed">
-        <iframe
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          className="hero-youtube-iframe"
-          onLoad={() => setReady(true)}
-          src={buildHeroYoutubeEmbedUrl(youtubeId)}
-          title="XSTO X12 product video"
-        />
-      </div>
+      {playing ? (
+        <div
+          className={`mr-film-embed${ready ? ' mr-film-embed-ready' : ''}`}
+          aria-hidden
+        >
+          <iframe
+            className="mr-film-iframe"
+            src={buildHeroYoutubeEmbedUrl(HOMEPAGE_HERO_YOUTUBE_ID)}
+            title="XSTO X12 demonstration background video"
+            allow="autoplay; encrypted-media"
+            tabIndex={-1}
+            onLoad={() => setReady(true)}
+          />
+        </div>
+      ) : null}
+      <button
+        type="button"
+        className="mr-film-toggle"
+        aria-label={
+          playing ? 'Pause background video' : 'Play background video'
+        }
+        onClick={() => {
+          setReady(false);
+          setChoice(!playing);
+        }}
+      >
+        {playing ? (
+          <Pause size={16} aria-hidden />
+        ) : (
+          <Play size={16} aria-hidden />
+        )}
+        {playing ? 'Pause video' : 'Play video'}
+      </button>
     </div>
   );
 }

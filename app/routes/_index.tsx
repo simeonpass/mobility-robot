@@ -52,7 +52,7 @@ export default function Homepage() {
 
   return (
     <div className="mr-home">
-      <HeroSection products={products} />
+      <HeroSection />
       <TrustBar />
       <ProductRangeGrid products={products} />
       <BrandStorySections />
