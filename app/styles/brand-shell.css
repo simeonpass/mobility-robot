@@ -46,7 +46,7 @@
   transform-origin: left bottom;
   margin-right: .08em;
 }
-.mr-brand-dot { color: var(--mr-accent); }
+.mr-brand-dot { color: inherit; }
 .mr-brand-byline { color: #536177; font-size: 14px; font-weight: 500; line-height: 1.2; letter-spacing: 0; white-space: nowrap; }
 .mr-brand--light { color: #fff; }
 .mr-brand--light .mr-brand-robot { color: var(--mr-accent-on-dark); }
