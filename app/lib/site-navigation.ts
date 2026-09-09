@@ -62,6 +62,7 @@ export const PRODUCT_NAV_ITEMS: NavItem[] = PRODUCT_NAV_GROUPS.flatMap(
 export const HEADER_SECONDARY_NAV: NavItem[] = [
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Compare', url: '/compare'},
+  {title: 'Find a dealer', url: '/stockists'},
   {title: 'Help & advice', url: '/support'},
 ];
 
