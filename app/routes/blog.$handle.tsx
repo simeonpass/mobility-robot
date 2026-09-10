@@ -7,10 +7,10 @@ import {buildMeta, articleJsonLd, breadcrumbJsonLd} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const article = data?.article;
-  const title = article?.seo?.title || article?.title || 'Article';
+  const title = article?.title || article?.seo?.title || 'Article';
   const description =
-    article?.seo?.description ||
     article?.excerpt ||
+    article?.seo?.description ||
     'News and mobility guides from Mobility Robot.';
 
   return buildMeta({
@@ -19,6 +19,9 @@ export const meta: Route.MetaFunction = ({data}) => {
     path: `/blog/${data?.article?.handle ?? ''}`,
     ogType: 'article',
     image: data?.article?.image?.url,
+    robots: article?.contentHtml?.replace(/<[^>]*>/g, '').trim()
+      ? undefined
+      : 'noindex, follow',
   });
 };
 

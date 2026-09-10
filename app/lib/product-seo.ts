@@ -37,7 +37,7 @@ export function resolveProductOffer<
 /**
  * Reviewed search copy for the flagship range; catalogue SEO remains the fallback
  * for accessories. Older flagship Admin descriptions contain obsolete claims.
- * Titles stay short so `buildMeta` can append `| Mobility Robot` under 60 chars.
+ * Titles stay descriptive and concise, with the brand appended by `buildMeta`.
  */
 const PRODUCT_SEO: Record<
   HomepageProductHandle,

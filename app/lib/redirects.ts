@@ -35,6 +35,30 @@ import {x12MergedPath} from '~/lib/x12-lineup';
 
 /** Exact legacy path → new path (301). */
 export const LEGACY_REDIRECTS: Record<string, string> = {
+  // Replace old tourism-only location pages with the relevant dealer finder.
+  '/pages/mobility-wheelchair-in-ferndown-bh22-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-wimborne-bh21-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-stapehill-bh22-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-ameysford-bh22-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-hampreston-bh22-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-longham-bh22-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-pamphill-bh21-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-furzehill-bh21-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-colehill-bh21-dorset': '/stockists',
+  '/pages/mobility-wheelchair-in-chalbury-bh21-dorset': '/stockists',
+  '/pages/heavy-duty-power-chair-in-london': '/stockists',
+  '/pages/heavy-duty-power-chair-in-manchester': '/stockists',
+  '/pages/heavy-duty-power-chair-in-liverpool': '/stockists',
+  '/pages/heavy-duty-power-chair-in-birmingham': '/stockists',
+  '/pages/heavy-duty-power-chair-in-coventry': '/stockists',
+  '/pages/heavy-duty-power-chair-in-leicester': '/stockists',
+  '/pages/heavy-duty-power-chair-in-nottingham': '/stockists',
+  '/pages/heavy-duty-power-chair-in-newcastle': '/stockists',
+  '/pages/heavy-duty-power-chair-in-bristol': '/stockists',
+  '/pages/heavy-duty-power-chair-in-leeds': '/stockists',
+  '/pages/electric-wheelchair-with-elevating-seat-in-london': '/stockists',
+  '/pages/request-a-demo': '/demo',
+  '/pages/store-locator': '/stockists',
   // Shopify Online Store /pages/* legacy paths
   '/pages/about': '/about',
   '/pages/warranty': '/warranty',

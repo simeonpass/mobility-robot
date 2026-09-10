@@ -250,7 +250,9 @@ async function regularSearch({
         ...variables,
         term,
         modelHandle: modelHandle ?? '',
-        includeModel: Boolean(modelHandle) && !variables.endCursor && !variables.startCursor,
+        includeModel: Boolean(modelHandle) && !(
+          'endCursor' in variables ? variables.endCursor : variables.startCursor
+        ),
       },
     });
 

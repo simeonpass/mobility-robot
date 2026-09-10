@@ -5,7 +5,7 @@ import {pageMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data, params}) =>
   pageMeta({
-    title: data?.page.title ?? 'Page',
+    title: data?.page.seo?.title || data?.page.title || 'Page',
     description:
       data?.page.seo?.description ||
       'XSTO powered wheelchairs from Mobility Robot and Bentech Medical Ltd.',
