@@ -68,7 +68,7 @@ export default function Page() {
       <header>
         <h1>{page.title}</h1>
       </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      <div className="prose prose-neutral max-w-none" dangerouslySetInnerHTML={{__html: page.body}} />
     </div>
   );
 }

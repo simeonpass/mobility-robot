@@ -186,7 +186,7 @@ function ModelsDropdown() {
         ref={triggerRef}
         type="button"
       >
-        Wheelchairs
+        Our range
         <ChevronIcon open={open} />
       </button>
 
@@ -335,7 +335,7 @@ function MobileNav({
       ) : null}
 
       <div className="site-header-mobile-section">
-        <p className="site-header-mobile-label">Shop wheelchairs</p>
+        <p className="site-header-mobile-label">Our range</p>
         {PRODUCT_NAV_ITEMS.map((item) => (
           <MobileNavLink close={close} item={item} key={item.url} />
         ))}
@@ -500,7 +500,7 @@ function CartBadge({count}: {count: number}) {
 
   return (
     <button
-      aria-label={count > 0 ? `Basket, ${count} items` : 'Basket'}
+      aria-label={count > 0 ? `Basket, ${count} ${count === 1 ? 'item' : 'items'}` : 'Basket'}
       className="site-header-icon-btn site-header-cart-btn"
       onClick={() => {
         open('cart');

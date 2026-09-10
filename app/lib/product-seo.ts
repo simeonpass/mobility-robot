@@ -35,7 +35,8 @@ export function resolveProductOffer<
 }
 
 /**
- * Curated PDP meta when Shopify Admin SEO fields are empty.
+ * Reviewed search copy for the flagship range; catalogue SEO remains the fallback
+ * for accessories. Older flagship Admin descriptions contain obsolete claims.
  * Titles stay short so `buildMeta` can append `| Mobility Robot` under 60 chars.
  */
 const PRODUCT_SEO: Record<
@@ -43,29 +44,29 @@ const PRODUCT_SEO: Record<
   {title: string; description: string}
 > = {
   'xsto-m4': {
-    title: 'XSTO M4 Powered Wheelchair',
+    title: 'XSTO M4 Self-Levelling Wheelchair',
     description:
-      'Buy the XSTO M4 foldable powered wheelchair. Self-balancing chassis, electric height adjustment, free UK delivery and VAT relief eligible.',
+      'Explore the XSTO M4 self-levelling powered wheelchair with electric seat lifting. UK advice, demonstrations and support from Bentech Medical.',
   },
   'xsto-m4-pro': {
-    title: 'XSTO M4 Pro Wheelchair',
+    title: 'XSTO M4 Pro Powered Wheelchair',
     description:
-      'Buy the XSTO M4 Pro powered wheelchair. Seat tilt, recline, LED lighting, longer range — free UK delivery from the official distributor.',
+      'Discover the XSTO M4 Pro powered wheelchair with adjustable seating and electric folding. Compare options and book a demonstration with our UK team.',
   },
   'xsto-m4b': {
     title: 'XSTO M4B Powered Wheelchair',
     description:
-      'Buy the XSTO M4B powered wheelchair with redesigned front wheels and folding footrest. Self-balancing, free UK delivery, VAT relief eligible.',
+      'Explore the XSTO M4B powered wheelchair with redesigned front wheels and a folding footrest. Compare prices and book a UK demonstration.',
   },
   'xsto-x12': {
-    title: 'XSTO X12 Stair Climber',
+    title: 'XSTO X12 Stair-Climbing Wheelchair',
     description:
-      'Buy the XSTO X12 all-terrain stair-climbing mobility robot. Choose X12 or X12 Pro with an electric elevating leg rest. Climbs steps up to 40°, free UK delivery.',
+      'Compare the XSTO X12 and X12 Pro stair-climbing wheelchairs. Explore prices, suitable stairs, assessment and training with the official UK distributor.',
   },
   'xsto-x12-pro': {
-    title: 'XSTO X12 Stair Climber',
+    title: 'XSTO X12 Pro Stair-Climbing Wheelchair',
     description:
-      'Buy the XSTO X12 all-terrain stair-climbing mobility robot. Choose X12 or X12 Pro with an electric elevating leg rest, free UK delivery.',
+      'Explore the XSTO X12 Pro with an electric elevating leg rest. Ask our UK team about suitable stairs, assessment, training and current prices.',
   },
 };
 
@@ -89,11 +90,11 @@ export function resolveProductSeo({
   const content = getProductContent(handle);
 
   const title =
-    seoTitle?.trim() || curated?.title || content?.displayName || productTitle;
+    curated?.title || seoTitle?.trim() || content?.displayName || productTitle;
 
   const description =
-    seoDescription?.trim() ||
     curated?.description ||
+    seoDescription?.trim() ||
     content?.overview ||
     productDescription?.trim() ||
     `Buy ${productTitle} from Mobility Robot by Bentech Medical, the official UK distributor for XSTO. UK delivery and support.`;

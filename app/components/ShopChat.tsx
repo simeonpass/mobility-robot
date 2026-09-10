@@ -1,4 +1,5 @@
 import {Script} from '@shopify/hydrogen';
+import {useEffect, useState} from 'react';
 import {useLocation} from 'react-router';
 import {DEFAULT_SHOPIFY_INBOX_EXTERNAL_ID} from '~/lib/const';
 
@@ -25,8 +26,22 @@ function shouldHideChat(pathname: string): boolean {
 export function ShopChat({shopDomain, inboxExternalId}: ShopifyInboxProps) {
   const location = useLocation();
   const externalId = inboxExternalId || DEFAULT_SHOPIFY_INBOX_EXTERNAL_ID;
+  const [ready, setReady] = useState(false);
 
-  if (!shopDomain || !externalId) return null;
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const enableChat = () => {
+      timer = setTimeout(() => setReady(true), 750);
+    };
+    if (document.readyState === 'complete') enableChat();
+    else window.addEventListener('load', enableChat, {once: true});
+    return () => {
+      window.removeEventListener('load', enableChat);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  if (!ready || !shopDomain || !externalId) return null;
   if (shouldHideChat(location.pathname)) return null;
 
   const params = new URLSearchParams({

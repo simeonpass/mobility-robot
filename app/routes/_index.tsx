@@ -1,6 +1,8 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import '~/styles/home-redesign.css';
+import {AwardsStrip} from '~/components/home/AwardsStrip';
+import {BrandStoryStrip} from '~/components/home/BrandStoryStrip';
 import {BrandStorySections} from '~/components/home/BrandStorySections';
 import {ExperienceRangeSection} from '~/components/home/ExperienceRangeSection';
 import {FaqPreview} from '~/components/home/FaqPreview';
@@ -18,6 +20,15 @@ import {
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 import {buildMeta} from '~/lib/seo';
+import {getAllReviews, getHomepageFeaturedReviews} from '~/lib/reviews.server';
+import {summarizeReviews} from '~/lib/reviews';
+
+export const links: Route.LinksFunction = () => [{
+  rel: 'preload',
+  as: 'image',
+  type: 'image/webp',
+  href: 'https://img.youtube.com/vi_webp/ihXdzLuNz2s/maxresdefault.webp',
+}];
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
@@ -30,9 +41,19 @@ export const meta: Route.MetaFunction = () =>
 
 export async function loader({context}: Route.LoaderArgs) {
   const {storefront} = context;
+  const reviews = {
+    featured: getHomepageFeaturedReviews(6),
+    summary: summarizeReviews(getAllReviews()),
+  };
 
-  const [aliasData, catalogData, x12Data] = await Promise.all([
-    storefront.query(HOME_PRODUCTS_ALIAS_QUERY),
+  const aliasData = await storefront.query(HOME_PRODUCTS_ALIAS_QUERY);
+  const directProducts = resolveHomeProducts(aliasData, []);
+  // The normal homepage needs four chairs, not the whole accessory catalogue.
+  if (directProducts.length === HOMEPAGE_FLAGSHIP_HANDLES.length) {
+    return {products: directProducts, reviews};
+  }
+
+  const [catalogData, x12Data] = await Promise.all([
     storefront.query(HOME_PRODUCTS_CATALOG_QUERY),
     storefront.query(HOME_X12_PRODUCTS_QUERY),
   ]);
@@ -44,20 +65,22 @@ export async function loader({context}: Route.LoaderArgs) {
 
   const products = resolveHomeProducts(aliasData, catalogProducts);
 
-  return {products};
+  return {products, reviews};
 }
 
 export default function Homepage() {
-  const {products} = useLoaderData<typeof loader>();
+  const {products, reviews} = useLoaderData<typeof loader>();
 
   return (
     <div className="mr-home">
+      <BrandStoryStrip />
       <HeroSection />
+      <AwardsStrip />
       <TrustBar />
       <ProductRangeGrid products={products} />
       <BrandStorySections />
       <ExperienceRangeSection />
-      <ReviewsSection />
+      <ReviewsSection {...reviews} />
       <FaqPreview />
       <HomeCtaSection />
     </div>

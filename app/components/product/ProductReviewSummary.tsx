@@ -4,15 +4,15 @@ import {
   useJudgemeConfig,
 } from '~/components/reviews/Judgeme';
 import {StarRating} from '~/components/reviews/StarRating';
-import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
+import type {ReviewSummary} from '~/lib/reviews';
 
 type ProductReviewSummaryProps = {
-  productHandle: string;
+  summary: ReviewSummary;
   productId?: string;
 };
 
 export function ProductReviewSummary({
-  productHandle,
+  summary,
   productId,
 }: ProductReviewSummaryProps) {
   const judgeme = useJudgemeConfig();
@@ -28,7 +28,6 @@ export function ProductReviewSummary({
     );
   }
 
-  const summary = summarizeReviews(getReviewsForProduct(productHandle));
   if (summary.count === 0) return null;
 
   return (
@@ -38,7 +37,7 @@ export function ProductReviewSummary({
     >
       <StarRating rating={summary.average} />
       <span className="font-medium text-navy">{summary.averageDisplay}</span>
-      <span className="text-navy/45">
+      <span className="text-navy/70">
         ({summary.count.toLocaleString('en-GB')} reviews)
       </span>
     </Link>

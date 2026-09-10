@@ -1,15 +1,12 @@
-import {useMemo, useState} from 'react';
+import {useFetcher} from 'react-router';
+import type {loader} from '~/routes/api.reviews';
 import {
   JudgemeReviewWidget,
   useJudgemeConfig,
 } from '~/components/reviews/Judgeme';
 import {ReviewCard} from '~/components/reviews/ReviewCard';
 import {StarRating} from '~/components/reviews/StarRating';
-import {
-  getReviewsForProduct,
-  summarizeReviews,
-  type CustomerReview,
-} from '~/lib/reviews';
+import type {CustomerReview, ReviewSummary} from '~/lib/reviews';
 
 const PAGE_SIZE = 8;
 
@@ -17,20 +14,22 @@ type ProductReviewsProps = {
   productHandle: string;
   productId?: string;
   productTitle?: string;
+  initialReviews: CustomerReview[];
+  summary: ReviewSummary;
 };
 
 export function ProductReviews({
   productHandle,
   productId,
   productTitle,
+  initialReviews,
+  summary,
 }: ProductReviewsProps) {
   const judgeme = useJudgemeConfig();
-  const reviews = useMemo(
-    () => getReviewsForProduct(productHandle),
-    [productHandle],
-  );
-  const summary = summarizeReviews(reviews);
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const fetcher = useFetcher<typeof loader>();
+  const visible = fetcher.data?.handle === productHandle
+    ? fetcher.data.reviews
+    : initialReviews;
 
   if (judgeme && productId) {
     return (
@@ -56,8 +55,7 @@ export function ProductReviews({
 
   if (summary.count === 0) return null;
 
-  const visible = reviews.slice(0, visibleCount);
-  const hasMore = visibleCount < reviews.length;
+  const hasMore = visible.length < summary.count;
 
   return (
     <section
@@ -81,7 +79,7 @@ export function ProductReviews({
               {summary.averageDisplay}
             </span>
           </div>
-          <p className="mt-0.5 text-sm text-navy/55">
+          <p className="mt-0.5 text-sm text-navy/70">
             {summary.count.toLocaleString('en-GB')} reviews
           </p>
         </div>
@@ -97,10 +95,17 @@ export function ProductReviews({
         <div className="mt-8 text-center">
           <button
             className="inline-flex h-11 items-center justify-center rounded-lg border border-navy/20 bg-white px-5 text-sm font-semibold text-navy transition-colors hover:border-navy/40 hover:bg-navy/[0.02]"
-            onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+            disabled={fetcher.state !== 'idle'}
+            onClick={() => {
+              const query = new URLSearchParams({
+                product: productHandle,
+                limit: String(visible.length + PAGE_SIZE),
+              });
+              void fetcher.load(`/api/reviews?${query}`);
+            }}
             type="button"
           >
-            Show more reviews
+            {fetcher.state === 'idle' ? 'Show more reviews' : 'Loading reviews…'}
           </button>
         </div>
       ) : null}

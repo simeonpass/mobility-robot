@@ -47,10 +47,12 @@ export function BrandStorySections() {
           <div className="mr-feature">
             <div className="mr-feature-image">
               <img
-                src="/images/about-hero.jpg"
+                src="/images/about-hero-840.webp"
+                srcSet="/images/about-hero-480.webp 480w, /images/about-hero-840.webp 840w, /images/about-hero-1260.webp 1260w"
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 alt="Discover the XSTO powered wheelchair range with Bentech Medical"
-                width={1000}
-                height={750}
+                width={1600}
+                height={840}
                 loading="lazy"
                 decoding="async"
               />

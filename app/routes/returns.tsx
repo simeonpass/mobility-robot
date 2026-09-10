@@ -91,11 +91,9 @@ export default function ReturnsPage() {
           specialist pallet collection where required.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Shopify&apos;s built-in self-serve returns are designed for standard
-          Online Store themes. On this Hydrogen storefront we use a return{' '}
-          <em>request</em> workflow: your submission is reviewed by our team and
-          processed in Shopify Admin. You can also use the order status link from
-          your confirmation email if returns are enabled there.
+          Need help with your request? Contact our team with your order number.
+          We will explain the next steps and confirm the return arrangements
+          before you send the product back.
         </p>
       </section>
 

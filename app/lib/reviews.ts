@@ -1,6 +1,3 @@
-import reviewsJson from '~/data/reviews.json';
-import {getHomepageProductSlot} from '~/lib/homepage-data';
-
 export type CustomerReview = {
   id: string;
   author: string;
@@ -11,39 +8,6 @@ export type CustomerReview = {
   productName: string;
   createdAt: string;
 };
-
-/** Lovable export slug → canonical slot used across the storefront. */
-const PRODUCT_SLUG_ALIASES: Record<string, string> = {
-  'xsto-m4': 'xsto-m4',
-  'buy-robot-wheelchair': 'xsto-m4',
-};
-
-const ALL_REVIEWS = reviewsJson as CustomerReview[];
-
-export function getAllReviews(): CustomerReview[] {
-  return ALL_REVIEWS;
-}
-
-export function resolveReviewProductSlot(
-  productSlugOrHandle: string,
-): string | null {
-  const slot = getHomepageProductSlot(productSlugOrHandle);
-  if (slot) return slot;
-  return PRODUCT_SLUG_ALIASES[productSlugOrHandle] ?? null;
-}
-
-export function getReviewsForProduct(
-  productSlugOrHandle: string,
-): CustomerReview[] {
-  const slot = resolveReviewProductSlot(productSlugOrHandle);
-  if (!slot) return [];
-
-  return ALL_REVIEWS.filter((review) => {
-    const reviewSlot =
-      PRODUCT_SLUG_ALIASES[review.productSlug] ?? review.productSlug;
-    return reviewSlot === slot;
-  });
-}
 
 export type ReviewSummary = {
   count: number;
@@ -64,14 +28,6 @@ export function summarizeReviews(reviews: CustomerReview[]): ReviewSummary {
     average,
     averageDisplay: average.toFixed(1),
   };
-}
-
-export function getHomepageFeaturedReviews(limit = 6): CustomerReview[] {
-  // Prefer recent 5-star reviews with a title for the homepage strip.
-  const fiveStar = ALL_REVIEWS.filter(
-    (review) => review.rating >= 5 && review.title && review.body,
-  );
-  return fiveStar.slice(0, limit);
 }
 
 export function formatReviewDate(iso: string): string {

@@ -7,6 +7,7 @@ import {
   type RegularSearchReturn,
   type PredictiveSearchReturn,
   getEmptyPredictiveSearchResult,
+  getSearchModelHandle,
 } from '~/lib/search';
 import type {
   RegularSearchQuery,
@@ -168,7 +169,12 @@ export const SEARCH_QUERY = `#graphql
     $last: Int
     $term: String!
     $startCursor: String
+    $modelHandle: String!
+    $includeModel: Boolean!
   ) @inContext(country: $country, language: $language) {
+    model: product(handle: $modelHandle) @include(if: $includeModel) {
+      ...SearchProduct
+    }
     articles: search(
       query: $term,
       types: [ARTICLE],
@@ -231,14 +237,21 @@ async function regularSearch({
   const url = new URL(request.url);
   const variables = getPaginationVariables(request, {pageBy: 8});
   const term = String(url.searchParams.get('q') || '');
+  const modelHandle = getSearchModelHandle(term);
 
   // Search articles, pages, and products for the `q` term
   const {
     errors,
+    model,
     ...items
   }: {errors?: Array<{message: string}>} & RegularSearchQuery =
     await storefront.query(SEARCH_QUERY, {
-      variables: {...variables, term},
+      variables: {
+        ...variables,
+        term,
+        modelHandle: modelHandle ?? '',
+        includeModel: Boolean(modelHandle) && !variables.endCursor && !variables.startCursor,
+      },
     });
 
   if (!items) {
@@ -249,11 +262,14 @@ async function regularSearch({
     (product) =>
       !product?.handle || !isHiddenStorefrontProductHandle(product.handle),
   );
+  const rankedProducts = model
+    ? [model, ...visibleProducts.filter((product) => product.id !== model.id)]
+    : visibleProducts;
 
   const nextItems = {
     ...items,
     products: items.products
-      ? {...items.products, nodes: visibleProducts}
+      ? {...items.products, nodes: rankedProducts}
       : items.products,
   };
 
@@ -363,7 +379,12 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
     $limitScope: PredictiveSearchLimitScope!
     $term: String!
     $types: [PredictiveSearchType!]
+    $modelHandle: String!
+    $includeModel: Boolean!
   ) @inContext(country: $country, language: $language) {
+    model: product(handle: $modelHandle) @include(if: $includeModel) {
+      ...PredictiveProduct
+    }
     predictiveSearch(
       limit: $limit,
       limitScope: $limitScope,
@@ -407,7 +428,11 @@ async function predictiveSearch({
   const {storefront} = context;
   const url = new URL(request.url);
   const term = String(url.searchParams.get('q') || '').trim();
-  const limit = Number(url.searchParams.get('limit') || 10);
+  const requestedLimit = Number(url.searchParams.get('limit') || 5);
+  const limit = Number.isFinite(requestedLimit)
+    ? Math.max(1, Math.min(10, Math.floor(requestedLimit)))
+    : 5;
+  const modelHandle = getSearchModelHandle(term);
   const type = 'predictive';
 
   if (!term) return {type, term, result: getEmptyPredictiveSearchResult()};
@@ -415,6 +440,7 @@ async function predictiveSearch({
   // Predictively search articles, collections, pages, products, and queries (suggestions)
   const {
     predictiveSearch: items,
+    model,
     errors,
   }: PredictiveSearchQuery & {errors?: Array<{message: string}>} =
     await storefront.query(PREDICTIVE_SEARCH_QUERY, {
@@ -423,6 +449,8 @@ async function predictiveSearch({
         limit,
         limitScope: 'EACH',
         term,
+        modelHandle: modelHandle ?? '',
+        includeModel: Boolean(modelHandle),
       },
     });
 
@@ -438,10 +466,12 @@ async function predictiveSearch({
 
   const visibleItems = {
     ...items,
-    products: items.products.filter(
+    products: (model
+      ? [model, ...items.products.filter((product) => product.id !== model.id)]
+      : items.products).filter(
       (product) =>
         !product?.handle || !isHiddenStorefrontProductHandle(product.handle),
-    ),
+    ).slice(0, limit),
   };
 
   const total = Object.values(visibleItems).reduce(

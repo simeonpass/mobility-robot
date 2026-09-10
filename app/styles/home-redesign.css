@@ -51,6 +51,54 @@
   font-weight: 700;
   color: #101b35;
 }
+
+/* A compact link to the business story, including on phones. */
+.mr-home .mr-story-strip { display: block; font-size: 14px; }
+.mr-story-strip a { min-height: 44px; color: #2155ed; }
+.mr-story-strip .mr-transition-inner { padding-block: 5px; }
+
+.mr-design-awards {
+  background: #f3f6fc;
+  border-bottom: 1px solid #dfe6f0;
+  padding-block: 38px;
+}
+.mr-design-awards-grid { display: grid; grid-template-columns: 1fr 2.4fr; gap: 36px; align-items: center; }
+.mr-design-awards-intro .mr-eyebrow { margin-bottom: 10px; font-size: 12px !important; }
+.mr-home .mr-design-awards-intro h2 { font-size: clamp(1.6rem, 2.2vw, 2rem); line-height: 1.18; }
+.mr-design-awards-intro > p:not(.mr-eyebrow) { margin: 12px 0 8px; font-size: 14px; color: #526079; line-height: 1.6; }
+.mr-design-awards-intro a { min-height: 44px; font-size: 14px; }
+.mr-design-awards-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.mr-design-awards-list li { min-width: 0; }
+.mr-design-awards-list a {
+  display: flex; flex-direction: column; height: 100%; padding: 22px;
+  border: 1px solid #dce4f2; border-top: 3px solid #f2a23a;
+  border-radius: 10px; background: #fff; color: #101b35; text-decoration: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.mr-design-awards-list a:hover { border-color: #2155ed; box-shadow: 0 6px 20px #101b350b; }
+.mr-design-awards-list a:focus-visible { outline: 3px solid #2155ed; outline-offset: 4px; }
+.mr-design-award-year { display: flex; align-items: center; gap: 7px; margin-bottom: 20px; color: #2155ed; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+.mr-design-award-name { font-family: var(--font-display); font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.2; }
+.mr-design-award-category { font-size: 14px; color: #526079; margin-top: 6px; }
+.mr-design-award-detail { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid #e7ecf4; padding-top: 14px; margin-top: 22px; font-size: 12px; color: #526079; }
+.mr-design-award-detail svg { color: #2155ed; flex-shrink: 0; }
+@media (max-width: 1023px) {
+  .mr-design-awards-grid { grid-template-columns: 1fr; gap: 20px; }
+  .mr-design-awards-intro > p:not(.mr-eyebrow) { margin-top: 8px; }
+}
+@media (max-width: 600px) {
+  .mr-story-strip .mr-transition-inner { gap: 8px; padding-block: 10px; flex-direction: row; align-items: center; }
+  .mr-story-strip p { font-size: 13px; line-height: 1.5; }
+  .mr-story-strip a { font-size: 13px; gap: 4px; }
+  .mr-design-awards { padding-block: 24px; }
+  .mr-design-awards-list { grid-template-columns: 1fr; gap: 10px; }
+  .mr-design-awards-list a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 14px 16px; border-top-width: 1px; border-left: 3px solid #f2a23a; }
+  .mr-design-award-year { grid-column: 2; grid-row: 1; margin: 0; font-size: 12px; letter-spacing: .02em; }
+  .mr-design-award-year svg { width: 16px; height: 16px; }
+  .mr-design-award-name { grid-column: 1; grid-row: 1; font-size: 20px; }
+  .mr-design-award-category { grid-column: 1; grid-row: 2; margin: 0; font-size: 13px; }
+  .mr-design-award-detail { grid-column: 2; grid-row: 2; border: 0; margin: 0; padding: 0; font-size: 12px; }
+}
 .mr-eyebrow {
   font-size: 0.72rem !important;
   font-weight: 750;

@@ -27,7 +27,12 @@ export function HeroVideoBackground() {
   const playing = choice ?? autoPlay;
   return (
     <div className="mr-film-media">
-      <img
+      <picture>
+        <source
+          srcSet={`https://img.youtube.com/vi_webp/${HOMEPAGE_HERO_YOUTUBE_ID}/maxresdefault.webp`}
+          type="image/webp"
+        />
+        <img
         className="mr-film-poster"
         src={heroYoutubePosterUrl()}
         alt="XSTO X12 wheelchair demonstration"
@@ -35,7 +40,8 @@ export function HeroVideoBackground() {
         height={720}
         fetchPriority="high"
         decoding="async"
-      />
+        />
+      </picture>
       {playing ? (
         <div
           className={`mr-film-embed${ready ? ' mr-film-embed-ready' : ''}`}

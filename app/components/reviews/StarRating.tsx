@@ -10,7 +10,8 @@ export function StarRating({rating, size = 'sm', className}: StarRatingProps) {
 
   return (
     <span
-      aria-label={`${clamped} out of 5 stars`}
+      role="img"
+      aria-label={`${clamped.toFixed(1)} out of 5 stars`}
       className={[
         'inline-flex items-center gap-0.5 text-gold',
         sizeClass,

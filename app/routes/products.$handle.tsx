@@ -35,7 +35,8 @@ import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, productJsonLd} from '~/lib/seo';
 import {resolveProductSeo, resolveProductOffer} from '~/lib/product-seo';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import {getReviewsForProduct, summarizeReviews} from '~/lib/reviews';
+import {summarizeReviews} from '~/lib/reviews';
+import {getReviewsForProduct} from '~/lib/reviews.server';
 import {getProductDisplayName} from '~/lib/product-content';
 import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
 import {withRequestedShopifyVariant} from '~/lib/product-variant-url';
@@ -80,13 +81,20 @@ export const meta: Route.MetaFunction = ({data}) => {
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  const criticalData = await loadCriticalData(args);
-  const [relatedProducts, accessoryAddons] = await Promise.all([
+  const [criticalData, relatedProducts, accessoryAddons] = await Promise.all([
+    loadCriticalData(args),
     loadRelatedProducts(args),
-    loadAccessoryAddons(args, criticalData.product.handle),
+    loadAccessoryAddons(args, args.params.handle ?? ''),
   ]);
 
-  return {...criticalData, relatedProducts, accessoryAddons};
+  const reviews = getReviewsForProduct(criticalData.product.handle);
+  return {
+    ...criticalData,
+    relatedProducts,
+    accessoryAddons,
+    initialReviews: reviews.slice(0, 8),
+    reviewSummary: summarizeReviews(reviews),
+  };
 }
 
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
@@ -193,7 +201,7 @@ async function loadAccessoryAddons(
 }
 
 export default function Product() {
-  const {product, relatedProducts, accessoryAddons, x12ProProduct} =
+  const {product, relatedProducts, accessoryAddons, x12ProProduct, initialReviews, reviewSummary} =
     useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
@@ -262,8 +270,6 @@ export default function Product() {
     seoDescription: product.seo?.description,
   });
 
-  const productReviews = getReviewsForProduct(product.handle);
-  const reviewSummary = summarizeReviews(productReviews);
 
   const pageVariants =
     (
@@ -349,7 +355,7 @@ export default function Product() {
           <header className="mr-product-heading">
             <h1 className="mr-product-title font-display">{displayName}</h1>
             <ProductReviewSummary
-              productHandle={product.handle}
+              summary={reviewSummary}
               productId={product.id}
             />
             <p className="mr-product-tagline">
@@ -419,6 +425,9 @@ export default function Product() {
         <ProductSpecTabs content={tabContent} shopifyHandle={product.handle} />
 
         <ProductReviews
+          key={product.handle}
+          initialReviews={initialReviews}
+          summary={reviewSummary}
           productHandle={product.handle}
           productId={product.id}
           productTitle={displayName}
