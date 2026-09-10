@@ -13,6 +13,7 @@ import {
 import type {Route} from './+types/root';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
+import brandRedStyles from '~/styles/brand-red.css?url';
 import {PageLayout} from './components/PageLayout';
 import {applyReferralDiscount} from '~/lib/referral-discount';
 import {legacyRedirect} from '~/lib/redirects';
@@ -150,6 +151,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <JsonLd data={sitewideJsonLdGraph(true)} />
         <Meta />
         <Links />
+        <link rel="stylesheet" href={brandRedStyles} />
       </head>
       <body>
         {children}
