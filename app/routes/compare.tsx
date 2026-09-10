@@ -52,7 +52,7 @@ export default function ComparePage() {
           {name: 'Home', path: '/'},
           {name: 'Compare models', path: '/compare'},
         ]}
-        title="Different possibilities. One clear comparison."
+        title="Compare XSTO powered wheelchairs."
         description="Choose around your daily life: seating, transport, terrain and the places you want to reach."
       />
       <p className="mr-discovery-scroll-hint">
@@ -109,7 +109,7 @@ export default function ComparePage() {
               ))}
             </tr>
             <tr>
-              <th scope="row">Published total weight</th>
+              <th scope="row">Weight excluding batteries</th>
               {rows.map((model) => (
                 <td key={model.handle}>{model.weight}</td>
               ))}

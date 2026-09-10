@@ -1,6 +1,6 @@
 import {afterEach, describe, expect, it} from 'vitest';
 import {buildMeta, jsonLdScript, productJsonLd, truncateTitle} from './seo';
-import {resolveProductOffer} from './product-seo';
+import {resolveProductOffer, resolveProductSeo} from './product-seo';
 import {setShopifyPricesExVat} from './pricing-mode';
 
 afterEach(() => setShopifyPricesExVat(null));
@@ -12,6 +12,18 @@ const variant = (id: string, amount: string, vat = 'Standard') => ({
 });
 
 describe('product and page search data', () => {
+  it('uses reviewed flagship metadata instead of obsolete catalogue SEO', () => {
+    const meta = resolveProductSeo({
+      handle: 'buy-robot-wheelchair', productTitle: 'M4', productDescription: '',
+      seoTitle: 'Old title', seoDescription: 'Old claims',
+    });
+    expect(meta.title).toBe('XSTO M4 Self-Levelling Wheelchair');
+    expect(meta.description).toContain('Bentech Medical');
+  });
+  it('keeps complete descriptive titles for search engines to display', () => {
+    const title = 'XSTO X12 Stair-Climbing Wheelchair: Assessment and Training';
+    expect(truncateTitle(title)).toBe(`${title} | Mobility Robot`);
+  });
   it('uses the selected Pro edition and its public Standard VAT SKU', () => {
     const standard = variant('standard', '6000');
     const pro = variant('pro-standard', '6600');

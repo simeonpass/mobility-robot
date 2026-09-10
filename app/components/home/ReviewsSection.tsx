@@ -8,18 +8,15 @@ import {
   useJudgemeConfig,
 } from '~/components/reviews/Judgeme';
 import {SectionIntro} from '~/components/home/SectionIntro';
-import {
-  getAllReviews,
-  getHomepageFeaturedReviews,
-  summarizeReviews,
-} from '~/lib/reviews';
+import type {CustomerReview, ReviewSummary} from '~/lib/reviews';
 import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 
-export function ReviewsSection() {
+export function ReviewsSection({featured, summary}: {
+  featured: CustomerReview[];
+  summary: ReviewSummary;
+}) {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const judgeme = useJudgemeConfig();
-  const featured = getHomepageFeaturedReviews(6);
-  const summary = summarizeReviews(getAllReviews());
   const m4Path = `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-m4']}`;
 
   if (judgeme) {
@@ -81,7 +78,7 @@ export function ReviewsSection() {
                 {summary.averageDisplay}
               </span>
             </div>
-            <p className="mt-1 text-sm text-navy/55">
+            <p className="mt-1 text-sm text-navy/70">
               Based on {summary.count.toLocaleString('en-GB')} reviews
             </p>
           </div>

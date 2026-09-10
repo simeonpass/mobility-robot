@@ -67,20 +67,14 @@ type LocalBusinessInput = {
 };
 
 const TITLE_SUFFIX = ` | ${SITE_NAME}`;
-const MAX_TITLE = 60;
 const MAX_DESCRIPTION = 160;
 
 export function truncateTitle(title: string): string {
   const normalized = title.trim().replace(/\s+/g, ' ');
   if (normalized.includes(SITE_NAME)) return normalized;
-  const withSuffix = `${normalized}${TITLE_SUFFIX}`;
-  if (withSuffix.length <= MAX_TITLE) return withSuffix;
-  const budget = MAX_TITLE - TITLE_SUFFIX.length - 1;
-  const clipped = normalized
-    .slice(0, budget)
-    .replace(/\s+\S*$/, '')
-    .trim();
-  return `${clipped || normalized.slice(0, budget)}…${TITLE_SUFFIX}`;
+  // Preserve meaningful words. Google fits titles to the searcher's screen;
+  // cutting at 60 characters made different product titles indistinguishable.
+  return `${normalized}${TITLE_SUFFIX}`;
 }
 
 export function truncateDescription(description: string): string {

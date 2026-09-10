@@ -69,29 +69,22 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export function links() {
   return [
     {
-      rel: 'preconnect',
-      href: 'https://fonts.googleapis.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://fonts.gstatic.com',
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff',
+      href: '/fonts/dm-sans-latin.woff',
       crossOrigin: 'anonymous',
     },
     {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap',
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff',
+      href: '/fonts/manrope-latin.woff',
+      crossOrigin: 'anonymous',
     },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://shop.app',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://cdn.judge.me',
     },
     {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'},
   ];
@@ -148,6 +141,10 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="theme-color" content="#101b35" />
+        <style nonce={nonce}>{`
+          @font-face{font-family:'DM Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/dm-sans-latin.woff') format('woff')}
+          @font-face{font-family:'Manrope';font-style:normal;font-weight:500 800;font-display:swap;src:url('/fonts/manrope-latin.woff') format('woff')}
+        `}</style>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <JsonLd data={sitewideJsonLdGraph(true)} />

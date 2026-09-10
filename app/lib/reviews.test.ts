@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest';
 import {
   getReviewsForProduct,
-  summarizeReviews,
   resolveReviewProductSlot,
-} from '~/lib/reviews';
+} from '~/lib/reviews.server';
+import {summarizeReviews} from '~/lib/reviews';
 
 describe('reviews', () => {
   it('maps Shopify M4 handle to the review catalogue', () => {

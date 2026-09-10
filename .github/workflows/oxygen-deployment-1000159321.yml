@@ -35,6 +35,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate storefront types
+        run: npm run codegen
+
+      - name: Check types and storefront behaviour
+        run: |
+          npm run typecheck
+          npm test
+
+      # Validation updates these tracked generated outputs. Hydrogen generates
+      # fresh types again during its build; publish from the committed source.
+      - name: Restore generated validation outputs
+        run: git restore -- storefrontapi.generated.d.ts tsconfig.tsbuildinfo
+
       - name: Build and Publish to Oxygen
         run: |
           if [ "$GITHUB_REF" = "refs/heads/main" ]; then

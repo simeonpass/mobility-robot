@@ -66,7 +66,7 @@ export function PaymentLogos({
       >
         <span className={`${text} font-bold tracking-tight`}>
           <span className="text-[#003087]">Pay</span>
-          <span className="text-[#009CDE]">Pal</span>
+          <span className="text-[#0076A8]">Pal</span>
         </span>
       </PaymentBadge>
 

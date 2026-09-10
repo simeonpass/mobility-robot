@@ -33,6 +33,7 @@ export function SearchFormPredictive({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const aside = useAside();
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /** Reset the input value and blur the input */
   function resetInput(event: React.FormEvent<HTMLFormElement>) {
@@ -41,27 +42,36 @@ export function SearchFormPredictive({
     if (inputRef?.current?.value) {
       inputRef.current.blur();
     }
+    goToSearch();
   }
 
   /** Navigate to the search page with the current input value */
   function goToSearch() {
-    const term = inputRef?.current?.value;
-    void navigate(SEARCH_ENDPOINT + (term ? `?q=${term}` : ''));
+    const term = inputRef.current?.value.trim();
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    void navigate(SEARCH_ENDPOINT + (term ? `?${new URLSearchParams({q: term})}` : ''));
     aside.close();
   }
 
   /** Fetch search results based on the input value */
   function fetchResults(event: React.ChangeEvent<HTMLInputElement>) {
-    void fetcher.submit(
-      {q: event.target.value || '', limit: 5, predictive: true},
-      {method: 'GET', action: SEARCH_ENDPOINT},
-    );
+    const q = event.target.value;
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      void fetcher.submit(
+        {q, limit: 5, predictive: true},
+        {method: 'GET', action: SEARCH_ENDPOINT},
+      );
+    }, q ? 180 : 0);
   }
 
   // ensure the passed input has a type of search, because SearchResults
   // will select the element based on the input
   useEffect(() => {
     inputRef?.current?.setAttribute('type', 'search');
+    return () => {
+      if (searchTimer.current) clearTimeout(searchTimer.current);
+    };
   }, []);
 
   if (typeof children !== 'function') {

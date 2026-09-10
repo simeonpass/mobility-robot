@@ -42,7 +42,7 @@ export function ReviewCard({review, compact = false}: ReviewCardProps) {
           >
             {review.body}
           </p>
-          <p className="mt-2 text-xs text-navy/40">
+          <p className="mt-2 text-xs text-navy/70">
             {formatReviewDate(review.createdAt)}
             {review.productName ? ` · ${review.productName}` : ''}
           </p>

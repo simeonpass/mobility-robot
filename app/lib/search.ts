@@ -2,6 +2,21 @@ import type {
   PredictiveSearchQuery,
   RegularSearchQuery,
 } from 'storefrontapi.generated';
+import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
+
+/** Exact model searches should lead with the chair, ahead of its accessories. */
+export function getSearchModelHandle(term: string): string | null {
+  const model = term.trim().toLowerCase().replace(/^xsto[\s-]*/, '').replace(/[\s-]/g, '');
+  const slots = {
+    m4: 'xsto-m4',
+    m4b: 'xsto-m4b',
+    m4pro: 'xsto-m4-pro',
+    x12: 'xsto-x12',
+    x12pro: 'xsto-x12',
+  } as const;
+  const slot = slots[model as keyof typeof slots];
+  return slot ? SHOPIFY_HOME_PRODUCT_HANDLES[slot] : null;
+}
 
 type ResultWithItems<Type extends 'predictive' | 'regular', Items> = {
   type: Type;
@@ -68,7 +83,7 @@ export function urlWithTrackingParams({
 }: UrlWithTrackingParams) {
   let search = new URLSearchParams({
     ...extraParams,
-    q: encodeURIComponent(term),
+    q: term,
   }).toString();
 
   if (trackingParams) {

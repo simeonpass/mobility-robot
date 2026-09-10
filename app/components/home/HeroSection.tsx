@@ -17,8 +17,8 @@ export function HeroSection() {
             to move.
           </h1>
           <p className="mr-film-intro">
-            Discover the XSTO range, with personal advice and UK support from
-            Bentech Medical.
+            Discover XSTO powered wheelchairs, with personal advice,
+            demonstrations and UK support from Bentech Medical.
           </p>
           <div className="mr-actions">
             <Link className="mr-button" to="/#product-range">

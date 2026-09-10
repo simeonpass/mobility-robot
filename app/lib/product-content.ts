@@ -152,7 +152,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
           'One-button electric folding',
           'Tool-free 4-module quick-detach',
           'Heaviest module just 16 kg',
-          'Fits any car boot',
+          'Check your car boot dimensions before purchase',
         ],
       },
       {
@@ -250,7 +250,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     displayName: 'XSTO M4B',
     tagline: 'New Front Wheels · Folding Footrest',
     overview:
-      'The XSTO M4B builds on the award-winning M4 platform with redesigned front wheels and a brand new folding footrest for easier transfers and a tidier folded footprint. Self-balancing, electric height adjustment and omnidirectional movement — all in a chair that folds into any car boot.',
+      'The XSTO M4B builds on the award-winning M4 platform with redesigned front wheels and a folding footrest for easier transfers and a tidier folded footprint. Explore self-balancing, electric height adjustment and omnidirectional movement. Check the folded dimensions and lifting requirements against your vehicle before purchase.',
     highlights: [
       'New front wheel design',
       'New folding footrest',
@@ -299,7 +299,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     highlights: [
       'Climbs stairs up to 40° incline',
       '35 km range on dual batteries',
-      'Three terrain modes for any surface',
+      'Three terrain modes for suitable surfaces',
       'Optional electric elevating leg rest',
     ],
     specs: [
