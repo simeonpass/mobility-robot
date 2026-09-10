@@ -113,3 +113,29 @@ Path legacy maps (`/pages/about` → `/about`, short `/products/xsto-*` handles,
 - [ ] Spot-check: `/`, `/products/buy-robot-wheelchair`, `/pages/about` from both hosts
 - [ ] Canonical tags / sitemap / OG URLs show `https://mobilityrobot.co.uk/...`
 - [ ] `shopify.app.toml` application + auth callback URLs match primary domain (redeploy app config if needed)
+
+### Kill the old Online Store on `*.myshopify.com` (required)
+
+Shopify Inbox / product-question emails still use the permanent shop host:
+
+`https://f7vjea-hq.myshopify.com/products/...`
+
+That host currently serves the **old Liquid Online Store theme** (not Hydrogen). Sales staff clicking those links see outdated stock copy and the old layout.
+
+**Do this in Shopify Admin:**
+
+1. **Online Store → Preferences** → enable **password protection** on the Online Store (so the Liquid theme is not publicly browsable).
+2. Optionally replace the published Liquid theme with a one-page redirect theme that sends every path to `https://mobilityrobot.co.uk{{ request.path }}`.
+3. **Settings → Domains** → confirm **`mobilityrobot.co.uk` is primary** for the Hydrogen / Oxygen storefront.
+4. When reading Inbox emails, prefer rewriting the product URL:
+
+| Email link (old) | Open this instead |
+|---|---|
+| `https://f7vjea-hq.myshopify.com/products/HANDLE` | `https://mobilityrobot.co.uk/products/HANDLE` |
+
+Example from the Aug 2026 X12 enquiry:
+
+- Wrong: `https://f7vjea-hq.myshopify.com/products/x12-all-terrain-mobility-robot`
+- Correct: `https://mobilityrobot.co.uk/products/x12-all-terrain-mobility-robot`
+
+Hydrogen cannot 301 `*.myshopify.com` itself — that host is still routed to the Online Store sales channel, not Oxygen.
