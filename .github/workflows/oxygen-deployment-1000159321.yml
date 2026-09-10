@@ -43,6 +43,11 @@ jobs:
           npm run typecheck
           npm test
 
+      # Validation updates these tracked generated outputs. Hydrogen generates
+      # fresh types again during its build; publish from the committed source.
+      - name: Restore generated validation outputs
+        run: git restore -- storefrontapi.generated.d.ts tsconfig.tsbuildinfo
+
       - name: Build and Publish to Oxygen
         run: |
           if [ "$GITHUB_REF" = "refs/heads/main" ]; then

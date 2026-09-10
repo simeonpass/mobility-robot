@@ -8,7 +8,9 @@ export function FooterBottom() {
         © {new Date().getFullYear()} {COMPANY.name}
       </p>
       <div className="w-full md:w-auto">
-        <p className="sr-only">Accepted at checkout</p>
+        <p className="mb-2 text-center text-xs text-white/70 md:text-right">
+          Payment options vary by order and eligibility.
+        </p>
         <PaymentLogos size="compact" />
       </div>
     </div>
