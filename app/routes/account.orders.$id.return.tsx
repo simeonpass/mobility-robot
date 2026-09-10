@@ -87,7 +87,7 @@ export default function OrderReturnRoute() {
         <Link className="text-gold hover:text-gold-dark" to="/returns">
           returns policy
         </Link>{' '}
-        and email you within one business day. A £250 collection fee may apply
+        and email you within one business day. A £150 collection fee may apply
         to large mobility items unless the return is due to our error or a defect.
       </p>
 

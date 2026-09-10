@@ -75,9 +75,9 @@ export const returnsSections: ContentSection[] = [
   },
   {
     id: 'collection-fee',
-    title: '£250 collection fee',
+    title: '£150 collection fee',
     paragraphs: [
-      'Due to the size and weight of powered wheelchairs, a £250 collection fee applies to returns of large mobility items. This covers specialist courier collection and inspection. The fee is deducted from your refund unless the return is due to our error or a manufacturing defect.',
+      'Due to the size and weight of powered wheelchairs, a £150 collection fee applies to returns of large mobility items. This covers specialist courier collection and inspection. The fee is deducted from your refund unless the return is due to our error or a manufacturing defect.',
     ],
   },
   {
@@ -106,7 +106,7 @@ export const returnsSections: ContentSection[] = [
     id: 'process',
     title: 'What happens next',
     paragraphs: [
-      'Once your return is approved we arrange collection (pallet or courier as appropriate). Refunds are processed within 14 days of receiving and inspecting the returned item. The £250 collection fee applies to large mobility returns unless the return is due to our error or a manufacturing defect.',
+      'Once your return is approved we arrange collection (pallet or courier as appropriate). Refunds are processed within 14 days of receiving and inspecting the returned item. The £150 collection fee applies to large mobility returns unless the return is due to our error or a manufacturing defect.',
     ],
     listItems: [
       'Submit your return request online or by email within 14 days of delivery',

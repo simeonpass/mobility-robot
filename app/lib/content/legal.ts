@@ -115,7 +115,7 @@ export const termsSections: ContentSection[] = [
     id: 'returns',
     title: '5. Returns & cancellation',
     paragraphs: [
-      'Your statutory rights under the Consumer Contracts Regulations 2013 are not affected. Our Returns Policy describes the 14-day cancellation period, condition requirements, £250 collection fee for large mobility items, and how to submit a return request through your account or by email.',
+      'Your statutory rights under the Consumer Contracts Regulations 2013 are not affected. Our Returns Policy describes the 14-day cancellation period, condition requirements, £150 collection fee for large mobility items, and how to submit a return request through your account or by email.',
     ],
   },
   {

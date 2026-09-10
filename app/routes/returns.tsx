@@ -10,7 +10,7 @@ export const meta: Route.MetaFunction = () =>
   pageMeta({
     title: 'Returns Policy',
     description:
-      '14-day UK returns, online return requests, condition requirements and £250 collection fee for large XSTO mobility products.',
+      '14-day UK returns, online return requests, condition requirements and £150 collection fee for large XSTO mobility products.',
     path: '/returns',
   });
 
