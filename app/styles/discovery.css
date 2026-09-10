@@ -1,5 +1,5 @@
 .mr-discovery {
-  color: var(--mr-ink);
+  color: #101b35;
   padding-bottom: clamp(3rem, 7vw, 6rem);
 }
 .mr-discovery > header {
@@ -28,7 +28,7 @@
   margin-bottom: 1.8rem;
 }
 .mr-discovery .mr-discovery-eyebrow {
-  color: var(--mr-accent);
+  color: #2155ed;
   font-size: 0.75rem;
   line-height: 1.6;
   font-weight: 700;
@@ -42,7 +42,7 @@
   letter-spacing: -0.035em;
   line-height: 1.2;
   font-weight: 700;
-  color: var(--mr-ink);
+  color: #101b35;
 }
 .mr-discovery h2 {
   font-size: clamp(1.6rem, 2.7vw, 2.2rem);
@@ -56,7 +56,7 @@
 }
 .mr-discovery a:focus-visible,
 .mr-discovery [tabindex]:focus-visible {
-  outline: 3px solid var(--mr-accent);
+  outline: 3px solid #2155ed;
   outline-offset: 5px;
 }
 .mr-discovery-grid {
@@ -72,7 +72,7 @@
   flex-direction: column;
   align-items: flex-start;
   padding: clamp(1.5rem, 3vw, 2.4rem);
-  background: var(--mr-surface);
+  background: #f2f5fa;
   border: 1px solid #e0e6f0;
   border-radius: 1rem;
 }
@@ -82,14 +82,14 @@
 }
 .mr-discovery .mr-guide-card h2 a:hover,
 .mr-discovery .mr-guide-card h3 a:hover {
-  color: var(--mr-accent);
+  color: #2155ed;
 }
 .mr-discovery .mr-guide-card > p:not(.mr-discovery-eyebrow) {
   margin: 1rem 0 1.5rem;
 }
 .mr-discovery .mr-guide-number {
   font-family: var(--font-display);
-  color: var(--mr-accent);
+  color: #9c6714;
   font-size: 2.8rem;
   line-height: 1;
   font-weight: 600;
@@ -101,7 +101,7 @@
   gap: 0.45rem;
   min-height: 44px;
   font-weight: 700;
-  color: var(--mr-ink);
+  color: #101b35;
   font-size: 0.95rem;
   text-decoration: none;
 }
@@ -109,7 +109,7 @@
   margin-top: auto;
 }
 .mr-discovery .mr-discovery-link:hover {
-  color: var(--mr-accent);
+  color: #2155ed;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -121,15 +121,15 @@
   padding: 0.95rem 1.4rem;
   min-height: 48px;
   border-radius: 0.5rem;
-  background: var(--mr-accent);
-  color: #fff;
+  background: #f2a23a;
+  color: #101b35;
   font-weight: 700;
   line-height: 1.4;
   text-align: center;
   text-decoration: none;
 }
 .mr-discovery-button:hover {
-  background: var(--mr-accent-hover);
+  background: #e9982f;
 }
 .mr-discovery-actions {
   display: flex;
@@ -146,8 +146,8 @@
   margin-top: clamp(3rem, 6vw, 5rem);
   padding: clamp(1.8rem, 4vw, 3.5rem);
   border-radius: 1.2rem;
-  border-top: 5px solid var(--mr-accent);
-  background: var(--mr-ink);
+  border-top: 5px solid #f2a23a;
+  background: #101b35;
 }
 .mr-discovery-cta h2 {
   color: white;
@@ -159,7 +159,7 @@
   margin-top: 0.9rem;
 }
 .mr-discovery-cta .mr-discovery-eyebrow {
-  color: var(--mr-accent-on-dark);
+  color: #f2a23a;
 }
 .mr-discovery-cta .mr-discovery-button {
   flex-shrink: 0;
@@ -207,7 +207,7 @@
   align-items: center;
   gap: 0.4rem;
   min-height: 44px;
-  color: var(--mr-accent);
+  color: #2155ed;
   text-decoration: underline;
   text-underline-offset: 3px;
   font-weight: 600;
@@ -219,7 +219,7 @@
 .mr-discovery-sidebar nav,
 .mr-discovery-aside-cta {
   padding: 1.6rem;
-  background: var(--mr-surface);
+  background: #f2f5fa;
   border-radius: 0.9rem;
 }
 .mr-discovery-sidebar h2 {
@@ -242,7 +242,7 @@
   font-size: 0.95rem;
 }
 .mr-discovery-sidebar nav a:hover {
-  color: var(--mr-accent);
+  color: #2155ed;
   text-decoration: underline;
 }
 .mr-discovery-aside-cta p {
@@ -287,7 +287,7 @@
   line-height: 1.55;
 }
 .mr-discovery-table th {
-  color: var(--mr-ink);
+  color: #101b35;
   font-weight: 600;
 }
 .mr-discovery-table td {
@@ -295,7 +295,7 @@
   width: 20%;
 }
 .mr-discovery-table thead {
-  background: var(--mr-surface);
+  background: #f2f5fa;
 }
 .mr-discovery-table thead th:first-child {
   vertical-align: bottom;
@@ -317,13 +317,13 @@
   align-items: center;
   gap: 0.3rem;
   min-height: 44px;
-  color: var(--mr-accent);
+  color: #2155ed;
   font-size: 0.85rem;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .mr-discovery-table tbody tr:nth-child(even) {
-  background: var(--mr-surface);
+  background: #f8faff;
 }
 .mr-discovery-table tbody tr:last-child th,
 .mr-discovery-table tbody tr:last-child td {
@@ -342,7 +342,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  background: var(--mr-surface);
+  background: #f2f5fa;
   border: 1px solid #dce3ed;
   border-radius: 1rem;
   padding: clamp(1.5rem, 3vw, 2.5rem);
@@ -355,7 +355,7 @@
 }
 .mr-discovery .mr-discovery-notice {
   padding: 1.1rem;
-  border-left: 3px solid var(--mr-accent);
+  border-left: 3px solid #f2a23a;
   background: white;
   margin-top: 1.5rem;
   font-size: 0.95rem;
@@ -380,8 +380,8 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  background: var(--mr-accent-soft);
-  color: var(--mr-accent);
+  background: #e8edfb;
+  color: #2155ed;
   font-weight: 700;
   font-size: 0.85rem;
 }
@@ -392,7 +392,7 @@
   margin-top: 0.65rem;
 }
 .mr-discovery .mr-support-card > svg {
-  color: var(--mr-accent);
+  color: #2155ed;
   margin-bottom: 1.4rem;
 }
 @media (min-width: 1024px) {

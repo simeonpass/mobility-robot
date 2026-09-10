@@ -1,7 +1,6 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import '~/styles/home-redesign.css';
-import {AwardsStrip} from '~/components/home/AwardsStrip';
 import {BrandStorySections} from '~/components/home/BrandStorySections';
 import {ExperienceRangeSection} from '~/components/home/ExperienceRangeSection';
 import {FaqPreview} from '~/components/home/FaqPreview';
@@ -54,7 +53,6 @@ export default function Homepage() {
   return (
     <div className="mr-home">
       <HeroSection />
-      <AwardsStrip />
       <TrustBar />
       <ProductRangeGrid products={products} />
       <BrandStorySections />

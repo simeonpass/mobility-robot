@@ -1,5 +1,5 @@
 .mr-home {
-  color: var(--mr-ink);
+  color: #101b35;
   background: #fff;
 }
 .mr-home h1,
@@ -8,7 +8,7 @@
   font-family: 'Manrope', sans-serif;
   font-weight: 750;
   letter-spacing: -0.045em;
-  color: var(--mr-ink);
+  color: #101b35;
   text-wrap: balance;
 }
 .mr-home h2 {
@@ -26,7 +26,7 @@
   max-width: 1344px;
 }
 .mr-transition {
-  background: #f3f4f6;
+  background: #f0f4fa;
   border-bottom: 1px solid #dfe6f0;
   font-size: 0.83rem;
   color: #42516a;
@@ -40,7 +40,7 @@
   padding-bottom: 12px;
 }
 .mr-transition strong {
-  color: var(--mr-ink);
+  color: #101b35;
   font-weight: 650;
 }
 .mr-transition a {
@@ -49,14 +49,14 @@
   gap: 10px;
   white-space: nowrap;
   font-weight: 700;
-  color: var(--mr-ink);
+  color: #101b35;
 }
 .mr-eyebrow {
   font-size: 0.72rem !important;
   font-weight: 750;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--mr-accent);
+  color: #2155ed;
   margin-bottom: 18px;
 }
 .mr-actions {
@@ -73,7 +73,7 @@
   min-height: 50px;
   padding: 13px 20px;
   border: 1px solid transparent;
-  background: var(--mr-accent);
+  background: #2155ed;
   color: #fff;
   font-size: 0.9rem;
   font-weight: 700;
@@ -85,144 +85,23 @@
   text-align: center;
 }
 .mr-button:hover {
-  background: var(--mr-accent-hover);
-  box-shadow: 0 6px 16px hsl(var(--primary) / 0.125);
+  background: #1944c5;
+  box-shadow: 0 6px 16px #2155ed20;
 }
 .mr-button-outline {
   border-color: #ccd5e4;
   background: transparent;
-  color: var(--mr-ink);
+  color: #101b35;
 }
 .mr-button-outline:hover {
-  background: #eceef2;
+  background: #e8eef8;
 }
 .mr-button-amber {
-  background: var(--mr-accent);
-  color: #fff;
+  background: #f2a23a;
+  color: #101b35;
 }
 .mr-button-amber:hover {
-  background: var(--mr-accent-hover);
-}
-.mr-awards {
-  background: var(--mr-surface);
-}
-.mr-awards-inner {
-  display: grid;
-  grid-template-columns: minmax(230px, 1fr) 2.4fr;
-  align-items: center;
-  gap: 32px;
-  padding-block: 24px;
-}
-.mr-awards-intro {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.mr-awards-intro svg {
-  flex: 0 0 auto;
-  color: var(--mr-accent);
-}
-.mr-awards-intro p {
-  margin: 0 0 3px;
-  color: var(--mr-accent);
-  font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.08em;
-}
-.mr-home .mr-awards-intro h2 {
-  margin: 0;
-  font-size: 1.15rem;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-}
-.mr-awards-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.mr-awards-list li {
-  min-width: 0;
-  border-left: 1px solid #d9dfe7;
-  padding-inline: 22px;
-}
-.mr-awards-list a {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-content: center;
-  align-items: center;
-  gap: 4px 8px;
-  min-height: 48px;
-  color: var(--mr-ink);
-  border-radius: 3px;
-}
-.mr-awards-name {
-  font-size: 0.95rem;
-  font-weight: 750;
-  line-height: 1.4;
-}
-.mr-awards-detail {
-  grid-column: 1;
-  color: #526079;
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-.mr-awards-list a > svg {
-  grid-column: 2;
-  grid-row: 1 / 3;
-  color: var(--mr-accent);
-}
-.mr-awards-list a:hover .mr-awards-name {
-  color: var(--mr-accent);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.mr-awards-list a:focus-visible {
-  outline: 2px solid var(--mr-accent);
-  outline-offset: 5px;
-}
-@media (max-width: 1023px) {
-  .mr-awards-inner {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .mr-awards-intro {
-    justify-content: center;
-  }
-  .mr-awards-list li:first-child {
-    border-left: 0;
-  }
-}
-@media (max-width: 599px) {
-  .mr-awards-inner {
-    padding-block: 20px 12px;
-    gap: 12px;
-  }
-  .mr-awards-intro {
-    justify-content: flex-start;
-  }
-  .mr-awards-list {
-    grid-template-columns: 1fr;
-  }
-  .mr-awards-list li {
-    border-left: 0;
-    border-top: 1px solid #d9dfe7;
-    padding: 0;
-  }
-  .mr-awards-list a {
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: 8px;
-    min-height: 48px;
-  }
-  .mr-awards-detail {
-    grid-column: 2;
-    font-size: 0.7rem;
-  }
-  .mr-awards-list a > svg {
-    grid-column: 3;
-    grid-row: 1;
-  }
+  background: #e59125;
 }
 .mr-trust {
   background: #fff;
@@ -246,7 +125,7 @@
   border: 0;
 }
 .mr-trust svg {
-  color: var(--mr-accent);
+  color: #2155ed;
   flex-shrink: 0;
 }
 .mr-trust a {
@@ -266,7 +145,7 @@
   padding: 84px 0;
 }
 .mr-soft {
-  background: var(--mr-surface);
+  background: #f4f7fc;
 }
 .mr-section-intro {
   display: flex;
@@ -287,7 +166,7 @@
   gap: 10px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--mr-accent);
+  color: #2155ed;
   line-height: 1.5;
 }
 .mr-text-link:hover {
@@ -309,7 +188,7 @@
   transition: box-shadow 0.18s;
 }
 .mr-product-card:hover {
-  box-shadow: 0 12px 24px #20304810;
+  box-shadow: 0 12px 24px #101b3510;
 }
 .mr-product-card-link {
   display: flex;
@@ -318,7 +197,7 @@
   flex-direction: column;
 }
 .mr-product-card:focus-within {
-  outline: 3px solid var(--mr-accent);
+  outline: 3px solid #2155ed;
   outline-offset: 3px;
 }
 .mr-mobile-copy,
@@ -332,7 +211,7 @@
   min-height: 0;
   aspect-ratio: 1;
   overflow: hidden;
-  background: var(--mr-surface);
+  background: #f5f7fb;
 }
 .mr-card-visual img {
   /* Keep portrait photography from determining the card's image-area height. */
@@ -414,7 +293,7 @@
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
   border-radius: 16px;
-  background: var(--mr-ink);
+  background: #101b35;
 }
 .mr-feature-image {
   min-height: 430px;
@@ -438,7 +317,7 @@
   margin-bottom: 22px;
 }
 .mr-feature-copy .mr-eyebrow {
-  color: var(--mr-accent-on-dark);
+  color: #f2a23a;
 }
 .mr-feature-copy > p:not(.mr-eyebrow) {
   font-size: 0.96rem;
@@ -472,7 +351,7 @@
 .mr-guide-card {
   display: flex;
   flex-direction: column;
-  background: var(--mr-surface);
+  background: #f4f7fc;
   border: 1px solid #e2e8f2;
   padding: 32px;
   border-radius: 10px;
@@ -492,8 +371,8 @@
   margin-top: auto;
 }
 .mr-final-cta {
-  background: var(--mr-ink);
-  border-top: 5px solid var(--mr-accent);
+  background: #101b35;
+  border-top: 5px solid #f2a23a;
   color: #cbd5e6;
   border-radius: 14px;
   padding: 54px;
@@ -507,7 +386,7 @@
   margin-bottom: 17px;
 }
 .mr-final-cta .mr-eyebrow {
-  color: var(--mr-accent-on-dark);
+  color: #f2a23a;
 }
 .mr-final-cta > div:first-child {
   max-width: 620px;
@@ -555,12 +434,12 @@
   margin-top: 14px;
 }
 .mr-home :is(a, button, summary):focus-visible {
-  outline: 3px solid var(--mr-accent);
+  outline: 3px solid #2155ed;
   outline-offset: 5px;
 }
 .mr-feature :is(a, button):focus-visible,
 .mr-final-cta :is(a, button):focus-visible {
-  outline-color: var(--mr-accent-on-dark);
+  outline-color: #f2a23a;
 }
 @media (max-width: 1100px) {
   .mr-product-grid {
@@ -836,7 +715,7 @@
 /* The photographic hero is reserved for larger screens; phones shop the range once. */
 .mr-hero {
   overflow: hidden;
-  background: linear-gradient(115deg, #fff 22%, var(--mr-surface) 100%);
+  background: linear-gradient(115deg, #fff 22%, #f1f5fc 100%);
 }
 .mr-hero-grid {
   display: grid;
@@ -860,7 +739,7 @@
 .mr-hero h1 > span:not(.mr-hero-opening) {
   white-space: nowrap;
   text-decoration: underline;
-  text-decoration-color: var(--mr-accent);
+  text-decoration-color: #f2a23a;
   text-decoration-thickness: 4px;
   text-underline-offset: 9px;
   text-decoration-skip-ink: none;
@@ -884,7 +763,7 @@
   color: #526079;
 }
 .mr-hero-note svg {
-  color: var(--mr-accent);
+  color: #2155ed;
   flex-shrink: 0;
 }
 .mr-hero-showcase {
@@ -907,9 +786,9 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse at 50% 62%,
-    #e4e7ec 0,
-    #eef0f3 43%,
-    #f4f5f700 72%
+    #dae6fc 0,
+    #e8effc 43%,
+    #edf3fc00 72%
   );
 }
 .mr-hero-model {
@@ -964,10 +843,10 @@
   font-family: 'Manrope', sans-serif;
   font-size: 1.02rem;
   font-weight: 800;
-  color: var(--mr-ink);
+  color: #101b35;
 }
 .mr-hero-model-name svg {
-  color: var(--mr-accent);
+  color: #2155ed;
   flex-shrink: 0;
 }
 .mr-hero-model-detail {
@@ -1212,7 +1091,7 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--mr-footer);
+  background: #172438;
   color: #fff;
 }
 .mr-film-media {

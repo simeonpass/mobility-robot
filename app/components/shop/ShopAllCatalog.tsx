@@ -117,9 +117,16 @@ export function ShopAllCatalog({chairs, accessories}: ShopAllCatalogProps) {
   );
 }
 
-function ChairCard({product, index}: {product: ShopAllProduct; index: number}) {
+function ChairCard({
+  product,
+  index,
+}: {
+  product: ShopAllProduct;
+  index: number;
+}) {
   const slot = getHomepageProductSlot(product.handle) as
-    HomepageFlagshipHandle | undefined;
+    | HomepageFlagshipHandle
+    | undefined;
   const meta = slot ? HOMEPAGE_PRODUCT_BADGES[slot] : null;
   const preorder = isForcedPreorder(product.handle);
   const lowStock = !preorder && isForcedLowStock(product.handle);
@@ -152,7 +159,7 @@ function ChairCard({product, index}: {product: ShopAllProduct; index: number}) {
             </span>
           ) : null}
           {lowStock ? (
-            <span className="rounded-full bg-primary px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white shadow-soft sm:px-3 sm:text-xs">
+            <span className="rounded-full bg-orange-600 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white shadow-soft sm:px-3 sm:text-xs">
               Very low stock
             </span>
           ) : null}

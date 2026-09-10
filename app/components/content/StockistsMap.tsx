@@ -1,5 +1,8 @@
 import {useEffect, useRef, useState} from 'react';
 import type {Dealer} from '~/lib/dealers';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 type StockistsMapProps = {
   dealers: Dealer[];
@@ -67,6 +70,17 @@ export function StockistsMap({
 
       if (cancelled || !containerRef.current) return;
 
+      // Vite breaks Leaflet's default icon paths — set them explicitly.
+      const DefaultIcon = L.Icon.Default as typeof L.Icon.Default & {
+        prototype: {_getIconUrl?: unknown};
+      };
+      delete DefaultIcon.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconUrl: markerIcon,
+        iconRetinaUrl: markerIcon2x,
+        shadowUrl: markerShadow,
+      });
+
       const map = L.map(containerRef.current, {
         scrollWheelZoom: false,
         minZoom: 5,
@@ -119,19 +133,9 @@ export function StockistsMap({
       if (!mapRef.current || !markersRef.current) return;
 
       layerGroup.clearLayers();
-      const dealerIcon = L.divIcon({
-        className: 'mr-dealer-marker',
-        html: '<span aria-hidden="true"></span>',
-        iconSize: [44, 44],
-        iconAnchor: [22, 40],
-        popupAnchor: [0, -36],
-      });
 
       dealers.forEach((dealer) => {
-        const marker = L.marker([dealer.lat, dealer.lng], {
-          icon: dealerIcon,
-          title: dealer.name,
-        });
+        const marker = L.marker([dealer.lat, dealer.lng]);
         marker.bindPopup(
           `<strong>${dealer.name}</strong><br>${dealer.city}<br>${dealer.postcode}`,
         );
