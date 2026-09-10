@@ -7,7 +7,9 @@
   "scripts": {
     "build": "shopify hydrogen build --codegen",
     "dev": "shopify hydrogen dev --codegen --host",
+    "dev:env": "node scripts/write-hydrogen-env.mjs",
     "preview": "shopify hydrogen preview --build",
+    "preview:localhost": "node scripts/write-hydrogen-env.mjs && shopify hydrogen dev --codegen --host --port 3000 --disable-version-check",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "react-router typegen && tsc --noEmit",
     "test": "vitest run",

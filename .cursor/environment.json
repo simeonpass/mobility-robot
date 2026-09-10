@@ -1,0 +1,10 @@
+{
+  "install": "npm ci",
+  "start": "node scripts/write-hydrogen-env.mjs",
+  "terminals": [
+    {
+      "name": "Hydrogen preview",
+      "command": "npx shopify hydrogen dev --codegen --host --port 3000 --disable-version-check"
+    }
+  ]
+}
