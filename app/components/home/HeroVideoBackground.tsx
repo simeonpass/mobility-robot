@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {Pause, Play} from 'lucide-react';
 import {
   HOMEPAGE_HERO_YOUTUBE_ID,
@@ -8,24 +8,9 @@ import {
 } from '~/lib/homepage-data';
 
 export function HeroVideoBackground() {
-  const [autoPlay, setAutoPlay] = useState(false);
-  const [choice, setChoice] = useState<boolean | null>(null);
+  // Load the third-party player on request so it cannot delay shopping.
+  const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const desktop = window.matchMedia('(min-width: 768px)');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setAutoPlay(desktop.matches && !reducedMotion.matches);
-    sync();
-    desktop.addEventListener('change', sync);
-    reducedMotion.addEventListener('change', sync);
-    return () => {
-      desktop.removeEventListener('change', sync);
-      reducedMotion.removeEventListener('change', sync);
-    };
-  }, []);
-
-  const playing = choice ?? autoPlay;
   return (
     <div className="mr-film-media">
       <img
@@ -62,7 +47,7 @@ export function HeroVideoBackground() {
         }
         onClick={() => {
           setReady(false);
-          setChoice(!playing);
+          setPlaying(!playing);
         }}
       >
         {playing ? (
