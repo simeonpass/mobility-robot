@@ -39,7 +39,7 @@ export function ProductReviews({
         id="reviews"
       >
         <div className="mb-6">
-          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-navy/45">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-navy/70">
             Customer reviews
           </p>
           <h2 className="mt-1 font-display text-2xl font-semibold tracking-[-0.02em] text-navy md:text-[1.75rem]">
@@ -65,7 +65,7 @@ export function ProductReviews({
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-navy/45">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-navy/70">
             Customer reviews
           </p>
           <h2 className="mt-1 font-display text-2xl font-semibold tracking-[-0.02em] text-navy md:text-[1.75rem]">

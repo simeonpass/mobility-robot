@@ -68,12 +68,13 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
                 type="button"
               >
                 {thumbUrl ? (
-                  <img
+                  <Image
                     alt=""
                     className="size-full object-contain"
                     height={76}
                     loading="lazy"
                     src={thumbUrl}
+                    sizes="76px"
                     width={76}
                   />
                 ) : (
@@ -124,6 +125,8 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
                     alt={activeItem.altText || productTitle}
                     className="max-h-full max-w-full object-contain"
                     data={activeItem}
+                    loading="eager"
+                    fetchPriority="high"
                     sizes="(min-width: 1440px) 680px, (min-width: 1024px) 52vw, 100vw"
                   />
                 </div>

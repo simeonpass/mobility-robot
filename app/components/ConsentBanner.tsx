@@ -130,7 +130,7 @@ function ConsentBanner() {
           </p>
           <p className="mt-1 text-[0.8125rem] leading-snug text-muted-foreground sm:text-sm">
             Essential cookies for cart and checkout. Analytics only if you accept.{' '}
-            <Link className="text-gold hover:underline" to="/privacy">
+            <Link className="text-xsto-blue underline underline-offset-2" to="/privacy">
               Privacy policy
             </Link>
           </p>

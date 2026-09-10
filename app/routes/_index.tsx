@@ -16,6 +16,8 @@ import {ReviewsSection} from '~/components/home/ReviewsSection';
 import {TrustBar} from '~/components/TrustBar';
 import {
   HOMEPAGE_FLAGSHIP_HANDLES,
+  HOMEPAGE_HERO_POSTER_URL,
+  HOMEPAGE_HERO_POSTER_SRC_SET,
   SHOPIFY_HOME_PRODUCT_HANDLES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
@@ -27,7 +29,10 @@ export const links: Route.LinksFunction = () => [{
   rel: 'preload',
   as: 'image',
   type: 'image/webp',
-  href: 'https://img.youtube.com/vi_webp/ihXdzLuNz2s/maxresdefault.webp',
+  href: HOMEPAGE_HERO_POSTER_URL,
+  imageSrcSet: HOMEPAGE_HERO_POSTER_SRC_SET,
+  imageSizes: '100vw',
+  fetchPriority: 'high',
 }];
 
 export const meta: Route.MetaFunction = () =>

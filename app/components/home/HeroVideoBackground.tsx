@@ -2,8 +2,9 @@ import {useEffect, useState} from 'react';
 import {Pause, Play} from 'lucide-react';
 import {
   HOMEPAGE_HERO_YOUTUBE_ID,
+  HOMEPAGE_HERO_POSTER_URL,
+  HOMEPAGE_HERO_POSTER_SRC_SET,
   buildHeroYoutubeEmbedUrl,
-  heroYoutubePosterUrl,
 } from '~/lib/homepage-data';
 
 export function HeroVideoBackground() {
@@ -27,21 +28,17 @@ export function HeroVideoBackground() {
   const playing = choice ?? autoPlay;
   return (
     <div className="mr-film-media">
-      <picture>
-        <source
-          srcSet={`https://img.youtube.com/vi_webp/${HOMEPAGE_HERO_YOUTUBE_ID}/maxresdefault.webp`}
-          type="image/webp"
-        />
-        <img
+      <img
         className="mr-film-poster"
-        src={heroYoutubePosterUrl()}
+        src={HOMEPAGE_HERO_POSTER_URL}
+        srcSet={HOMEPAGE_HERO_POSTER_SRC_SET}
+        sizes="100vw"
         alt="XSTO X12 wheelchair demonstration"
         width={1280}
         height={720}
         fetchPriority="high"
         decoding="async"
-        />
-      </picture>
+      />
       {playing ? (
         <div
           className={`mr-film-embed${ready ? ' mr-film-embed-ready' : ''}`}

@@ -44,7 +44,7 @@ function SearchResultsArticles({
       <div>
         {articles?.nodes?.map((article) => {
           const articleUrl = urlWithTrackingParams({
-            baseUrl: `/blogs/${article.handle}`,
+            baseUrl: `/blog/${article.handle}`,
             trackingParams: article.trackingParameters,
             term,
           });

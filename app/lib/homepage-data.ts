@@ -328,6 +328,14 @@ export function getHomepageProductSlot(
 /** Homepage hero YouTube video — X12 stair-climbing / all-terrain film. */
 export const HOMEPAGE_HERO_YOUTUBE_ID = 'ihXdzLuNz2s';
 
+/** Responsive copy of the same video frame, served from Shopify's image CDN. */
+const HERO_POSTER_CDN_URL =
+  'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/xsto-x12-home-hero-poster.webp?v=1789033340';
+export const HOMEPAGE_HERO_POSTER_URL = `${HERO_POSTER_CDN_URL}&width=1280`;
+export const HOMEPAGE_HERO_POSTER_SRC_SET = [480, 750, 1000, 1280]
+  .map((width) => `${HERO_POSTER_CDN_URL}&width=${width} ${width}w`)
+  .join(', ');
+
 export function heroYoutubePosterUrl(videoId = HOMEPAGE_HERO_YOUTUBE_ID): string {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 }
