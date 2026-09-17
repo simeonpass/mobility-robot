@@ -3,6 +3,7 @@
  * Ordered M series → X series.
  */
 import {catalogToExVatAmount} from '~/lib/pricing-mode';
+import x12ListingImage from '~/assets/x12-listing.webp';
 
 export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-m4',
@@ -193,6 +194,17 @@ export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = 
 };
 
 /**
+ * Square X12 studio cut-out for product cards, nav and compare.
+ * Shopify's featured X12 photo is portrait, so it looks taller than the
+ * M-series squares when shown in the same box.
+ */
+export const X12_LISTING_IMAGE = {
+  url: x12ListingImage,
+  width: 1600,
+  height: 1600,
+} as const;
+
+/**
  * Product thumbs for mega menu / nav (Shopify Files CDN).
  * Prefer transparent or clean cutouts when available.
  */
@@ -203,9 +215,32 @@ export const HOMEPAGE_PRODUCT_THUMBS: Record<HomepageFlagshipHandle, string> = {
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/M4B.png',
   'xsto-m4-pro':
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/xsto-m4-pro-mobility-wheelchair-adjustable-seat-backrest-9425362.jpg',
-  'xsto-x12':
-    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-all-terrain-mobility-robot-8874875.jpg',
+  'xsto-x12': X12_LISTING_IMAGE.url,
 };
+
+export type ProductCardImage = {
+  url: string;
+  altText?: string | null;
+  width?: number | null;
+  height?: number | null;
+};
+
+/** Listing photo for chair cards. X12 uses a square studio shot. */
+export function getProductCardImage(
+  handle: string,
+  featuredImage?: ProductCardImage | null,
+): ProductCardImage | null {
+  const slot = getHomepageProductSlot(handle);
+  if (slot === 'xsto-x12' || slot === 'xsto-x12-pro') {
+    return {
+      url: X12_LISTING_IMAGE.url,
+      altText: featuredImage?.altText || 'XSTO X12',
+      width: X12_LISTING_IMAGE.width,
+      height: X12_LISTING_IMAGE.height,
+    };
+  }
+  return featuredImage ?? null;
+}
 
 /** Canonical product slots used for specs, comparison data, and bullets. */
 export const HOMEPAGE_PRODUCT_HANDLES = [

@@ -11,6 +11,7 @@ import {
   formatExVatPrice,
   formatHomepageFromPrice,
   getHomepageProductSlot,
+  getProductCardImage,
   HOMEPAGE_PRODUCT_BADGES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
@@ -131,6 +132,7 @@ function ChairCard({
   const preorder = isForcedPreorder(product.handle);
   const lowStock = !preorder && isForcedLowStock(product.handle);
   const listPrice = getProductListPrice(product);
+  const image = getProductCardImage(product.handle, product.featuredImage);
   const exVatPrice = formatHomepageFromPrice(
     slot,
     listPrice.amount,
@@ -166,11 +168,11 @@ function ChairCard({
         </div>
 
         <div className="flex aspect-[16/11] items-center justify-center bg-gradient-cream p-4 sm:aspect-[4/3] sm:p-6">
-          {product.featuredImage ? (
+          {image ? (
             <Image
-              alt={product.featuredImage.altText || product.title}
+              alt={image.altText || product.title}
               className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-              data={product.featuredImage}
+              data={image}
               sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
             />
           ) : (
