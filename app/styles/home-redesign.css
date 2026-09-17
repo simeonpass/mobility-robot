@@ -97,7 +97,7 @@
   display: block;
   height: 52px;
   width: auto;
-  max-width: min(180px, 28vw);
+  max-width: 180px;
   object-fit: contain;
 }
 .mr-design-awards-list a:hover img { opacity: 0.75; }
@@ -111,8 +111,8 @@
   .mr-story-strip p { font-size: 13px; line-height: 1.5; }
   .mr-story-strip a { font-size: 13px; gap: 4px; }
   .mr-design-awards { padding-block: 22px; }
-  .mr-design-awards-list { gap: 16px 24px; }
-  .mr-design-awards-list img { height: 44px; }
+  .mr-design-awards-list { gap: 12px 20px; }
+  .mr-design-awards-list img { height: 40px; max-width: 140px; }
 }
 .mr-eyebrow {
   font-size: 0.72rem !important;
