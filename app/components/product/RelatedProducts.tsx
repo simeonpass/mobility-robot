@@ -1,6 +1,7 @@
 import {Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import type {HomeProductFragment} from 'storefrontapi.generated';
+import {getProductCardImage} from '~/lib/homepage-data';
 import {getProductDisplayName} from '~/lib/product-content';
 import {getProductListPrice} from '~/lib/product-vat-variants';
 import {getExVatDisplay, getIncVatDisplay} from '~/lib/product-pricing';
@@ -32,7 +33,10 @@ export function RelatedProducts({
 
       <ul className="mr-product-related-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {related.map((product) => {
-          const image = product.featuredImage;
+          const image = getProductCardImage(
+            product.handle,
+            product.featuredImage,
+          );
           const price = getProductListPrice(product);
           const name = getProductDisplayName(product.handle, product.title);
 

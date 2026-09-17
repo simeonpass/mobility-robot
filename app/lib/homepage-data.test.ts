@@ -4,7 +4,11 @@ import {
   ACCESSORY_COMPAT_BY_HANDLE,
   resolveAccessoryCompatibility,
 } from '~/lib/accessories';
-import {getHomepageProductSlot} from '~/lib/homepage-data';
+import {
+  getHomepageProductSlot,
+  getProductCardImage,
+  X12_LISTING_IMAGE,
+} from '~/lib/homepage-data';
 import {getProductContent, getProductDisplayName} from '~/lib/product-content';
 import {resolveLegacyRedirect} from '~/lib/redirects';
 import {SITE_URL} from '~/lib/const';
@@ -162,5 +166,52 @@ describe('accessory catalogue integrity', () => {
         title: 'Calf Support Set for X12/X12Pro',
       }),
     ).toEqual(['xsto-x12']);
+  });
+});
+
+describe('getProductCardImage', () => {
+  const portraitX12 = {
+    url: 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-optional-supports.webp',
+    altText: 'XSTO X12',
+    width: 1201,
+    height: 1553,
+  };
+
+  it('replaces the portrait X12 featured photo with a square listing shot', () => {
+    const image = getProductCardImage(
+      'x12-all-terrain-mobility-robot',
+      portraitX12,
+    );
+
+    expect(image?.url).toBe(X12_LISTING_IMAGE.url);
+    expect(image?.width).toBe(X12_LISTING_IMAGE.height);
+    expect(image?.width).toBe(1600);
+    expect(image?.url).not.toContain('x12-optional-supports');
+  });
+
+  it('does not change M-series featured photos', () => {
+    const featured = {
+      url: 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m4-01.jpg',
+      altText: 'XSTO M4',
+      width: 2000,
+      height: 2000,
+    };
+
+    expect(getProductCardImage('buy-robot-wheelchair', featured)).toEqual(
+      featured,
+    );
+  });
+
+  it('does not treat X12 accessories as the chair listing photo', () => {
+    const featured = {
+      url: 'https://cdn.shopify.com/accessory.jpg',
+      altText: 'Headrest',
+      width: 800,
+      height: 800,
+    };
+
+    expect(
+      getProductCardImage('adjustable-headrest-for-x12-x12-pro', featured),
+    ).toEqual(featured);
   });
 });

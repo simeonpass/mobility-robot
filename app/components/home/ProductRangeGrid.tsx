@@ -3,6 +3,7 @@ import {ArrowUpRight} from 'lucide-react';
 import type {HomeProductFragment} from 'storefrontapi.generated';
 import {
   getHomepageProductSlot,
+  getProductCardImage,
   HOMEPAGE_FLAGSHIP_HANDLES,
   HOMEPAGE_PRODUCT_BADGES,
   SHOPIFY_HOME_PRODUCT_HANDLES,
@@ -30,6 +31,9 @@ const mobileDescriptions: Record<HomepageFlagshipHandle, string> = {
   'xsto-x12': 'Stair climbing, with assessment & training',
 };
 function productImageSrc(url: string, width: number): string {
+  if (!/^https?:\/\//i.test(url) || !url.includes('cdn.shopify.com')) {
+    return url;
+  }
   const parsed = new URL(url);
   parsed.searchParams.set('width', String(width));
   parsed.searchParams.delete('height');
@@ -72,7 +76,10 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
               const meta = HOMEPAGE_PRODUCT_BADGES[slot];
               const name = getProductDisplayName(product.handle, product.title);
               const price = getProductListPrice(product);
-              const image = product.featuredImage;
+              const image = getProductCardImage(
+                product.handle,
+                product.featuredImage,
+              );
               return (
                 <article className="mr-product-card" key={product.id}>
                   <Link

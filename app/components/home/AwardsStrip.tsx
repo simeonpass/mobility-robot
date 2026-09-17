@@ -1,24 +1,30 @@
-import {ArrowUpRight, Award} from 'lucide-react';
+import {ArrowUpRight} from 'lucide-react';
 import {Link} from 'react-router';
+import ifDesignLogo from '~/assets/award-if-design-2025.webp';
+import redDotLogo from '~/assets/award-red-dot-2025.webp';
+import goodDesignLogo from '~/assets/award-good-design-2025.webp';
 
 // These awards recognise the XSTO M4, not every model or the UK distributor.
 const awards = [
   {
-    name: 'Red Dot',
-    category: 'Product Design Award',
-    location: 'Germany',
-    url: 'https://www.red-dot.org/project/xsto-mobility-robot-81361',
-  },
-  {
-    name: 'iF Design',
-    category: 'iF Design Award',
-    location: 'Germany',
+    name: 'iF Design Award 2025',
+    src: ifDesignLogo,
+    width: 344,
+    height: 172,
     url: 'https://ifdesign.com/en/winner-ranking/project/xsto-mobility-robot/680124',
   },
   {
-    name: 'Good Design',
-    category: 'Good Design Award',
-    location: 'Japan',
+    name: 'Red Dot Winner 2025',
+    src: redDotLogo,
+    width: 280,
+    height: 153,
+    url: 'https://www.red-dot.org/project/xsto-mobility-robot-81361',
+  },
+  {
+    name: 'Good Design Award 2025',
+    src: goodDesignLogo,
+    width: 404,
+    height: 112,
     url: 'https://www.g-mark.org/en/gallery/winners/33173?years=2025',
   },
 ];
@@ -39,15 +45,17 @@ export function AwardsStrip() {
           {awards.map((award) => (
             <li key={award.name}>
               <a href={award.url} target="_blank" rel="noopener noreferrer">
-                <span className="mr-design-award-year">
-                  <Award size={19} strokeWidth={1.6} aria-hidden /> Winner 2025
+                <img
+                  alt={award.name}
+                  decoding="async"
+                  height={award.height}
+                  src={award.src}
+                  width={award.width}
+                />
+                <span className="sr-only">
+                  {' '}
+                  — XSTO M4 winner record (opens in a new tab)
                 </span>
-                <span className="mr-design-award-name">{award.name}</span>
-                <span className="mr-design-award-category">{award.category}</span>
-                <span className="mr-design-award-detail">
-                  {award.location} · XSTO M4 <ArrowUpRight size={16} aria-hidden />
-                </span>
-                <span className="sr-only"> — view the award record (opens in a new tab)</span>
               </a>
             </li>
           ))}
