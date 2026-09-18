@@ -24,7 +24,7 @@ export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
           want to move.
         </p>
         <Link className="mr-product-demo" prefetch="intent" to="/demo">
-          Arrange a demonstration <span aria-hidden>↗</span>
+          Book a free UK demo <span aria-hidden>↗</span>
         </Link>
       </div>
 

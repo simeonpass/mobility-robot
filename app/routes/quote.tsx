@@ -11,6 +11,7 @@ import {
 } from '~/components/forms/FormField';
 import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
 import {quoteRequestSchema} from '~/lib/form-schemas';
+import {useTrackLead} from '~/lib/use-lead-tracking';
 import {pageMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
@@ -30,9 +31,11 @@ const MODEL_OPTIONS = [
 ] as const;
 
 export default function QuotePage() {
+  const trackLead = useTrackLead();
   const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
     schema: quoteRequestSchema,
     action: '/api/quote-request',
+    onSuccess: () => trackLead('quote'),
   });
 
   return (

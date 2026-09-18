@@ -13,6 +13,7 @@ import {
 } from '~/components/forms/FormField';
 import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
 import {demoRequestSchema} from '~/lib/form-schemas';
+import {useTrackLead} from '~/lib/use-lead-tracking';
 import {breadcrumbJsonLd, pageMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
@@ -52,9 +53,11 @@ const breadcrumbs = [
 ] as const;
 
 export default function DemoPage() {
+  const trackLead = useTrackLead();
   const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
     schema: demoRequestSchema,
     action: '/api/demo-request',
+    onSuccess: () => trackLead('demo'),
   });
 
   return (

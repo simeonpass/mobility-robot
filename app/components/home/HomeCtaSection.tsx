@@ -1,5 +1,6 @@
 import {ArrowRight, Phone} from 'lucide-react';
 import {Link} from 'react-router';
+import {TrackedTelLink} from '~/components/TrackedTelLink';
 
 export function HomeCtaSection() {
   return (
@@ -18,10 +19,10 @@ export function HomeCtaSection() {
             <Link className="mr-button mr-button-amber" to="/demo">
               Book a demonstration <ArrowRight size={18} aria-hidden />
             </Link>
-            <a className="mr-cta-phone" href="tel:+442080504849">
+            <TrackedTelLink className="mr-cta-phone" href="tel:+442080504849">
               <Phone size={18} aria-hidden />
               020 8050 4849
-            </a>
+            </TrackedTelLink>
           </div>
         </div>
       </div>

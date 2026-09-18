@@ -603,7 +603,7 @@ export function ProductPurchasePanel({
 
         {isChair ? (
           <Link className="mr-product-demo" prefetch="intent" to="/demo">
-            Prefer to try it first? Book a demo <span aria-hidden>↗</span>
+            Book a free UK demo <span aria-hidden>↗</span>
           </Link>
         ) : null}
 

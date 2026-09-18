@@ -3,17 +3,19 @@ import {Link} from 'react-router';
 import {
   DEFAULT_CONSENT,
   isAnalyticsGranted,
+  isMarketingGranted,
   readStoredConsent,
   syncShopifyTrackingConsent,
   writeStoredConsent,
   type ConsentPreferences,
   type StoredConsent,
 } from '~/lib/consent';
-import {loadGa4Script} from '~/lib/analytics';
+import {loadGtagScript} from '~/lib/analytics';
 
 type ConsentContextValue = {
   consent: StoredConsent;
   analyticsAllowed: boolean;
+  marketingAllowed: boolean;
   acceptAll: () => void;
   rejectAll: () => void;
   savePreferences: (preferences: ConsentPreferences) => void;
@@ -31,12 +33,28 @@ export function useConsent() {
   return ctx;
 }
 
+function loadGrantedTags(
+  consent: StoredConsent,
+  ga4Id?: string | null,
+  googleAdsId?: string | null,
+) {
+  const analytics = isAnalyticsGranted(consent);
+  const marketing = isMarketingGranted(consent);
+  if (!analytics && !marketing) return;
+  loadGtagScript({
+    ga4Id: analytics ? ga4Id : null,
+    googleAdsId: marketing ? googleAdsId : null,
+  });
+}
+
 export function ConsentProvider({
   children,
   ga4Id,
+  googleAdsId,
 }: {
   children: React.ReactNode;
   ga4Id?: string | null;
+  googleAdsId?: string | null;
 }) {
   const [consent, setConsent] = useState<StoredConsent>(DEFAULT_CONSENT);
   const [showPreferences, setShowPreferences] = useState(false);
@@ -47,19 +65,15 @@ export function ConsentProvider({
     setConsent(stored);
     setHydrated(true);
     syncShopifyTrackingConsent(stored);
-    if (isAnalyticsGranted(stored) && ga4Id) {
-      loadGa4Script(ga4Id);
-    }
-  }, [ga4Id]);
+    loadGrantedTags(stored, ga4Id, googleAdsId);
+  }, [ga4Id, googleAdsId]);
 
   const persist = (next: StoredConsent) => {
     const stamped = {...next, updatedAt: new Date().toISOString()};
     writeStoredConsent(stamped);
     syncShopifyTrackingConsent(stamped);
     setConsent(stamped);
-    if (isAnalyticsGranted(stamped) && ga4Id) {
-      loadGa4Script(ga4Id);
-    }
+    loadGrantedTags(stamped, ga4Id, googleAdsId);
   };
 
   const acceptAll = () => {
@@ -93,6 +107,7 @@ export function ConsentProvider({
     () => ({
       consent,
       analyticsAllowed: isAnalyticsGranted(consent),
+      marketingAllowed: isMarketingGranted(consent),
       acceptAll,
       rejectAll,
       savePreferences,
@@ -129,7 +144,8 @@ function ConsentBanner() {
             Cookie preferences
           </p>
           <p className="mt-1 text-[0.8125rem] leading-snug text-muted-foreground sm:text-sm">
-            Essential cookies for cart and checkout. Analytics only if you accept.{' '}
+            Essential cookies for cart and checkout. Analytics and advertising
+            measurement only if you accept.{' '}
             <Link className="text-xsto-blue underline underline-offset-2" to="/privacy">
               Privacy policy
             </Link>
@@ -204,7 +220,7 @@ function ConsentPreferencesPanel() {
             <span>
               <span className="block text-sm font-medium text-foreground">Marketing</span>
               <span className="text-sm text-muted-foreground">
-                Shop Chat and promotional measurement.
+                Google Ads conversion measurement and Shop Chat.
               </span>
             </span>
           </label>
