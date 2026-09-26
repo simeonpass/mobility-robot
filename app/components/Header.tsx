@@ -44,6 +44,7 @@ export function MobilityRobotBrand({light = false}: {light?: boolean}) {
 }
 
 export function Header({isLoggedIn, cart}: HeaderProps) {
+  const {pathname} = useLocation();
   return (
     <header className="site-header site-header--solid mr-site-header">
       <div className="xsto-container mr-header-inner">
@@ -54,7 +55,19 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
           prefetch="intent"
           to="/"
         >
-          <MobilityRobotBrand />
+          {pathname === '/' ? (
+            <img
+              src="/images/mobility-robot-stacked-transparent.png"
+              alt="Mobility Robot — XSTO × Bentech"
+              width={1328}
+              height={645}
+              className="mr-homepage-logo"
+              fetchPriority="high"
+              decoding="async"
+            />
+          ) : (
+            <MobilityRobotBrand />
+          )}
         </NavLink>
         <HeaderMenu isLoggedIn={isLoggedIn} viewport="desktop" />
         <HeaderCtas cart={cart} isLoggedIn={isLoggedIn} />
