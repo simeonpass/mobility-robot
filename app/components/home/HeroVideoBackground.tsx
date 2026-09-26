@@ -26,7 +26,7 @@ export function HeroVideoBackground() {
           className="mr-film-poster"
           src={HOMEPAGE_HERO_POSTER_URL}
           sizes="100vw"
-          alt="XSTO M8 Pro travelling along a tree-lined path"
+          alt="XSTO M8 film opening in a woodland setting"
           width={1600}
           height={900}
           fetchPriority="high"
