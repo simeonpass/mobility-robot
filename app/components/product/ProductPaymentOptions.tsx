@@ -7,6 +7,7 @@ type ProductPaymentOptionsProps = {
   remainingAmountLabel?: string | null;
   depositPlanName?: string;
   hideKlarnaNote?: boolean;
+  depositOnly?: boolean;
 };
 
 export function ProductPaymentOptions({
@@ -16,12 +17,13 @@ export function ProductPaymentOptions({
   remainingAmountLabel,
   depositPlanName = 'Pay 10% deposit',
   hideKlarnaNote = true,
+  depositOnly = false,
 }: ProductPaymentOptionsProps) {
   return (
     <fieldset className="space-y-2">
       <legend className="text-sm font-semibold text-navy">Payment options</legend>
 
-      <label
+      {!depositOnly && <label
         className={[
           'flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 transition-colors',
           value === 'full'
@@ -45,7 +47,7 @@ export function ProductPaymentOptions({
             Pay the full amount today at checkout.
           </span>
         </span>
-      </label>
+      </label>}
 
       <label
         className={[

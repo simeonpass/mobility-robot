@@ -146,6 +146,7 @@ export function ProductPurchasePanel({
   ]);
 
   const productHandle = activeEdition.handle;
+  const depositOnly = productHandle === 'xsto-m8' || productHandle === 'xsto-m8-pro';
   const selectedVariant = activeEdition.selectedVariant;
   const productOptions = activeEdition.productOptions;
   const productVariants = activeEdition.productVariants ?? EMPTY_CHAIR_VARIANTS;
@@ -208,7 +209,7 @@ export function ProductPurchasePanel({
 
   useEffect(() => {
     if (!hasDepositOption) {
-      if (paymentChoice === 'deposit') setPaymentChoice('full');
+      if (!depositOnly && paymentChoice === 'deposit') setPaymentChoice('full');
       return;
     }
     // Prefer deposit for forced pre-order chairs until the shopper picks otherwise.
@@ -219,7 +220,7 @@ export function ProductPurchasePanel({
     ) {
       setPaymentChoice('deposit');
     }
-  }, [hasDepositOption, paymentChoice, productHandle]);
+  }, [depositOnly, hasDepositOption, paymentChoice, productHandle]);
 
   const handlePaymentChoiceChange = (value: 'full' | 'deposit') => {
     paymentChoiceTouched.current = true;
@@ -245,6 +246,7 @@ export function ProductPurchasePanel({
   );
 
   const canAddToCart =
+    (!depositOnly || Boolean(selectedSellingPlanId)) &&
     Boolean(purchaseVariant?.availableForSale) &&
     (!productVatReliefEnabled || vatFormComplete) &&
     !unavailableAddon;
@@ -436,7 +438,7 @@ export function ProductPurchasePanel({
     : purchaseVariant?.availableForSale
       ? productVatReliefEnabled && !vatFormComplete
         ? 'Complete VAT declaration'
-        : 'Sold out'
+        : depositOnly && !hasDepositOption ? 'Pre-order temporarily unavailable' : 'Sold out'
       : 'Sold out';
 
   const cartLines: OptimisticCartLineInput[] = purchaseVariant
@@ -554,6 +556,7 @@ export function ProductPurchasePanel({
           />
           {depositOption ? (
             <ProductPaymentOptions
+              depositOnly={depositOnly}
               depositAmountLabel={depositOption.depositDisplay}
               depositPlanName={
                 /deposit/i.test(depositOption.name)

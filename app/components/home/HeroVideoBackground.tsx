@@ -1,44 +1,38 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Pause, Play} from 'lucide-react';
 import {
-  HOMEPAGE_HERO_YOUTUBE_ID,
   HOMEPAGE_HERO_POSTER_URL,
-  HOMEPAGE_HERO_POSTER_SRC_SET,
-  buildHeroYoutubeEmbedUrl,
 } from '~/lib/homepage-data';
+import heroVideo from '~/assets/m8-hero.mp4';
 
 export function HeroVideoBackground() {
-  // Load the third-party player on request so it cannot delay shopping.
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const connection = (navigator as Navigator & {connection?: {saveData?: boolean}}).connection;
+    if (!motion.matches && !connection?.saveData) setLoaded(true);
+    const stop = () => {if (motion.matches) videoRef.current?.pause();};
+    motion.addEventListener('change', stop);
+    return () => motion.removeEventListener('change', stop);
+  }, []);
   return (
     <div className="mr-film-media">
       <img
         className="mr-film-poster"
         src={HOMEPAGE_HERO_POSTER_URL}
-        srcSet={HOMEPAGE_HERO_POSTER_SRC_SET}
         sizes="100vw"
-        alt="XSTO X12 wheelchair demonstration"
-        width={1280}
-        height={720}
+        alt="XSTO M8 Pro travelling along a tree-lined path"
+        width={1600}
+        height={900}
         fetchPriority="high"
         decoding="async"
       />
-      {playing ? (
-        <div
-          className={`mr-film-embed${ready ? ' mr-film-embed-ready' : ''}`}
-          aria-hidden
-        >
-          <iframe
-            className="mr-film-iframe"
-            src={buildHeroYoutubeEmbedUrl(HOMEPAGE_HERO_YOUTUBE_ID)}
-            title="XSTO X12 demonstration background video"
-            allow="autoplay; encrypted-media"
-            tabIndex={-1}
-            onLoad={() => setReady(true)}
-          />
-        </div>
-      ) : null}
+      {loaded && <video ref={videoRef} className="mr-film-native" src={heroVideo}
+        poster={HOMEPAGE_HERO_POSTER_URL} muted loop playsInline autoPlay preload="none"
+        aria-hidden="true" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
+        onError={() => {setLoaded(false); setPlaying(false);}} />}
       <button
         type="button"
         className="mr-film-toggle"
@@ -46,8 +40,9 @@ export function HeroVideoBackground() {
           playing ? 'Pause background video' : 'Play background video'
         }
         onClick={() => {
-          setReady(false);
-          setPlaying(!playing);
+          if (!loaded) {setLoaded(true); return;}
+          if (playing) videoRef.current?.pause();
+          else void videoRef.current?.play().catch(() => setPlaying(false));
         }}
       >
         {playing ? (

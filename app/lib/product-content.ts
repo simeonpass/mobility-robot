@@ -1,4 +1,5 @@
 import type {ProductFAQ} from '~/lib/product-faqs';
+import {m8Content} from '~/lib/m8-content';
 import {
   m4FAQs,
   m4bFAQs,
@@ -12,7 +13,7 @@ import {
 
 export type ProductSpec = {label: string; value: string; unit?: string};
 export type ProductDimension = {label: string; value: string};
-export type ProductVideo = {title: string; embedUrl: string};
+export type ProductVideo = {title: string; embedUrl: string; poster?: string};
 export type ProductDownload = {
   title: string;
   href: string;
@@ -99,6 +100,8 @@ const YOUTUBE = {
 } as const;
 
 const CONTENT: Record<HomepageProductHandle, ProductContent> = {
+  'xsto-m8': m8Content(false),
+  'xsto-m8-pro': m8Content(true),
   'xsto-m4': {
     displayName: 'XSTO M4',
     tagline: 'Smart Wheelchair — Technology Redefining the Beauty of Travel',
@@ -402,6 +405,8 @@ export function getProductDisplayName(
   const slot = getHomepageProductSlot(shopifyHandle);
   if (slot) {
     const fromBadges = {
+      'xsto-m8': 'XSTO M8',
+      'xsto-m8-pro': 'XSTO M8 Pro',
       'xsto-m4': 'XSTO M4',
       'xsto-m4-pro': 'XSTO M4 Pro',
       'xsto-m4b': 'XSTO M4B',

@@ -39,18 +39,25 @@ function chairItem(
 
 /**
  * Flagship chairs in the Models menu.
- * One flat range — M4, M4B, M4 Pro and X12 — not series columns.
+ * Models grouped into the three product families.
  */
 export const PRODUCT_NAV_GROUPS: NavGroup[] = [
   {
-    title: 'The range',
+    title: 'M4 Series',
     items: [
       chairItem('xsto-m4', 'M4', 'Self-levelling everyday chair'),
       chairItem('xsto-m4b', 'M4B', 'Updated wheels & footrest'),
       chairItem('xsto-m4-pro', 'M4 Pro', 'Premium comfort & capacity'),
-      chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
     ],
   },
+  {title: 'M8 Series', items: [
+    chairItem('xsto-m8', 'M8', 'New · four-wheel-drive mobility'),
+    chairItem('xsto-m8-pro', 'M8 Pro', 'New · powered recline & leg rest'),
+  ]},
+  {title: 'X12 Series', items: [
+    chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
+    {...chairItem('xsto-x12', 'X12 Pro', 'Electric elevating leg rest'), url: `${productUrl('xsto-x12')}?Edition=X12+Pro`},
+  ]},
 ];
 
 /** Flat product links (all chairs). */
@@ -91,6 +98,8 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'M4', url: productUrl('xsto-m4')},
   {title: 'M4B', url: productUrl('xsto-m4b')},
   {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
+  {title: 'M8', url: productUrl('xsto-m8')},
+  {title: 'M8 Pro', url: productUrl('xsto-m8-pro')},
   {title: 'X12', url: productUrl('xsto-x12')},
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Videos', url: '/videos'},

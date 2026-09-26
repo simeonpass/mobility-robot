@@ -15,9 +15,9 @@ export const links: Route.LinksFunction = () => [
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
-    title: 'Compare XSTO M4, M4B, M4 Pro & X12',
+    title: 'Compare XSTO M4, M8 & X12 Series',
     description:
-      'Compare XSTO wheelchair range, weight, seating and stair-climbing capability. Find the differences between M4, M4B, M4 Pro and X12.',
+      'Compare XSTO M4, M8 and X12 series: range, weight, seating and stair-climbing capability. Discover the new M8 and M8 Pro.',
     path: '/compare',
   });
 
@@ -25,18 +25,22 @@ const MODEL_FOCUS = [
   'Everyday self-levelling',
   'Revised wheels and footrest',
   'More seating adjustment',
+  'Four-wheel-drive exploration',
+  'Four-wheel drive with powered comfort',
   'Stair-climbing technology',
 ];
 
 const FEATURES = [
-  {label: 'Self-levelling', values: ['Yes', 'Yes', 'Yes', 'Yes']},
-  {label: 'Stair climbing', values: ['No', 'No', 'No', 'Suitable stairs only']},
+  {label: 'Self-levelling', values: ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes']},
+  {label: 'Stair climbing', values: ['No', 'No', 'No', 'No', 'No', 'Suitable stairs only']},
   {
     label: 'Distinctive feature',
     values: [
       'Modular design',
       'Folding footrest',
       'Backrest recline and seat tilt',
+      'Four-wheel drive · manual recline',
+      'Powered recline and leg rest',
       'X12 / X12 Pro leg-rest options',
     ],
   },
@@ -56,7 +60,7 @@ export default function ComparePage() {
         description="Choose around your daily life: seating, transport, terrain and the places you want to reach."
       />
       <p className="mr-discovery-scroll-hint">
-        On a smaller screen, scroll the table to compare all four models.
+        On a smaller screen, scroll the table to compare all models.
       </p>
       {/* Keyboard users need to focus this region to scroll all comparison columns. */}
       {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
@@ -68,7 +72,7 @@ export default function ComparePage() {
       >
         <table className="mr-discovery-table">
           <caption className="sr-only">
-            Published specifications for XSTO M4, M4B, M4 Pro and X12 powered
+            Published specifications for XSTO M4, M8 and X12 series powered
             wheelchairs
           </caption>
           <thead>

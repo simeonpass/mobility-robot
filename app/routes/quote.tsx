@@ -25,6 +25,8 @@ const MODEL_OPTIONS = [
   'M4',
   'M4 Pro',
   'M4B',
+  'M8',
+  'M8 Pro',
   'X12',
   'Multiple / Unsure',
 ] as const;

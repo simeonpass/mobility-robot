@@ -1,4 +1,7 @@
 /* Product-page presentation only. Purchase state and Shopify forms remain shared. */
+.mr-m8-model-switch { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.mr-m8-model-switch a { padding:10px 12px; border:1px solid #dce3ee; border-radius:8px; font-size:.82rem; color:#163fc7; }
+.mr-m8-model-switch a[aria-current="page"] { background:#eef3ff; border-color:#2155ed; font-weight:700; }
 .mr-product-page {
   color: #101b35;
   background: #fff;

@@ -35,9 +35,13 @@ type ProductTrustBadgesProps = {
 };
 
 export function ProductTrustBadges({productHandle}: ProductTrustBadgesProps) {
-  const badges = isAirlineBadgeEligible(productHandle)
-    ? [...BASE_BADGES, AIRLINE_BADGE]
+  const isM8 = productHandle === 'xsto-m8' || productHandle === 'xsto-m8-pro';
+  const baseBadges = isM8
+    ? [BASE_BADGES[0], {icon: ShieldCheck, label: 'UK advice & aftercare'}]
     : BASE_BADGES;
+  const badges = isAirlineBadgeEligible(productHandle)
+    ? [...baseBadges, AIRLINE_BADGE]
+    : baseBadges;
 
   return (
     <ul

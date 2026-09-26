@@ -1,4 +1,4 @@
-import {redirect, useLoaderData, useSearchParams} from 'react-router';
+import {Link, redirect, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -370,7 +370,15 @@ export default function Product() {
           </div>
 
           <div className="product-main min-w-0">
+            {(product.handle === 'xsto-m8' || product.handle === 'xsto-m8-pro') && (
+              <nav className="mr-m8-model-switch" aria-label="M8 model">
+                <Link to="/products/xsto-m8" aria-current={product.handle === 'xsto-m8' ? 'page' : undefined}>M8 · Manual recline</Link>
+                <Link to="/products/xsto-m8-pro" aria-current={product.handle === 'xsto-m8-pro' ? 'page' : undefined}>M8 Pro · Powered comfort</Link>
+                <Link to="/series/m8">Compare the M8 Series ↗</Link>
+              </nav>
+            )}
             <ProductPurchasePanel
+              key={product.handle}
               accessoryAddons={accessoryAddons}
               displayName={displayName}
               productHandle={product.handle}

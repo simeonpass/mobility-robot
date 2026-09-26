@@ -28,7 +28,7 @@ import {summarizeReviews} from '~/lib/reviews';
 export const links: Route.LinksFunction = () => [{
   rel: 'preload',
   as: 'image',
-  type: 'image/webp',
+  type: 'image/jpeg',
   href: HOMEPAGE_HERO_POSTER_URL,
   imageSrcSet: HOMEPAGE_HERO_POSTER_SRC_SET,
   imageSizes: '100vw',
@@ -39,7 +39,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'XSTO Powered Wheelchairs | Mobility Robot',
     description:
-      'Explore XSTO M4, M4B, M4 Pro and X12 at Mobility Robot by Bentech Medical, the official UK distributor. Compare powered wheelchairs and book a demo.',
+      'Explore the XSTO M4, M8 and X12 series at Mobility Robot by Bentech Medical. Pre-order the new M8 and M8 Pro with a 10% deposit and UK support.',
     path: '/',
     image: undefined,
   });
@@ -94,6 +94,8 @@ export default function Homepage() {
 
 const HANDLE_QUERY_KEYS: Record<HomepageFlagshipHandle, string> = {
   'xsto-m4': 'm4',
+  'xsto-m8': 'm8',
+  'xsto-m8-pro': 'm8Pro',
   'xsto-m4-pro': 'm4Pro',
   'xsto-m4b': 'm4b',
   'xsto-x12': 'x12',
@@ -109,7 +111,7 @@ function dedupeProducts(products: HomeProduct[]): HomeProduct[] {
 }
 
 type AliasProductData = Partial<
-  Record<'m4' | 'm4Pro' | 'm4b' | 'x12', HomeProduct | null>
+  Record<'m4' | 'm4Pro' | 'm4b' | 'm8' | 'm8Pro' | 'x12', HomeProduct | null>
 >;
 
 function resolveHomeProducts(
@@ -188,6 +190,8 @@ const HOME_PRODUCTS_ALIAS_QUERY = `#graphql
   ${HOME_PRODUCT_FRAGMENT}
   query HomeProductsByAlias($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
+    m8: product(handle: "xsto-m8") { ...HomeProduct }
+    m8Pro: product(handle: "xsto-m8-pro") { ...HomeProduct }
     m4: product(handle: "buy-robot-wheelchair") {
       ...HomeProduct
     }

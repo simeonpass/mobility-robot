@@ -223,7 +223,7 @@
 }
 .mr-product-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
 .mr-product-card {
@@ -1154,6 +1154,26 @@
   object-fit: cover;
   object-position: center;
 }
+.mr-film-native { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
+.mr-film-preorder { margin-top:24px; color:#eef3ff; font-size:.8125rem; line-height:1.6; }
+.mr-launch-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#ffa629; margin-right:8px; }
+.mr-series-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0 0 28px; }
+.mr-series-links a { padding:18px 20px; border:1px solid #dce3ee; border-radius:10px; font-weight:700; color:#0c1b35; background:#f5f7fb; }
+.mr-series-links a:hover, .mr-series-links a[aria-current="page"] { border-color:#2155ed; background:#eef3ff; }
+.mr-series-links span { display:block; font-size:.8rem; font-weight:400; margin-top:4px; }
+.mr-series-models { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
+.mr-series-models .mr-card-visual { aspect-ratio:4/3; background:#f3f5f8; }
+.mr-series-models .mr-card-visual img { width:100%; height:100%; object-fit:contain; padding:24px; }
+.mr-series-models .mr-card-body { padding:28px; }
+.mr-series-models h2 { font-size:2rem; margin-bottom:10px; }
+.mr-series-features { padding-left:20px; margin:20px 0; line-height:1.9; }
+.mr-series-price strong { font-size:1.6rem; color:#0c1b35; }
+.mr-series-deposit { margin:20px 0!important; padding:16px; background:#eef3ff; border-radius:8px; color:#163fc7!important; font-weight:600; }
+.mr-series-models .mr-button { margin-top:24px; }
+.mr-series-help { margin:50px 0 0; padding:32px; border-radius:14px; background:#f3f5f8; }
+.mr-series-help h2 { font-size:1.7rem; margin-bottom:12px; }
+.mr-series-help p { margin-bottom:16px; }
+@media(max-width:600px) { .mr-series-links { gap:6px; } .mr-series-links a { padding:12px 8px; font-size:.85rem; } .mr-series-links span {font-size:.7rem;} }
 .mr-film-embed {
   position: absolute;
   inset: 0;
@@ -1198,7 +1218,7 @@
   padding-block: 64px 80px;
 }
 .mr-film-copy {
-  max-width: 560px;
+  max-width: 660px;
 }
 .mr-film-eyebrow {
   font-size: 0.75rem;

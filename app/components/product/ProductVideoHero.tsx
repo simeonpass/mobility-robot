@@ -44,14 +44,14 @@ export function ProductVideoHero({video, productName}: ProductVideoHeroProps) {
             onClick={() => setPlaying(true)}
             type="button"
           >
-            {youtubeId ? (
+            {youtubeId || video.poster ? (
               <img
                 alt={`${productName} — ${video.title}`}
                 className="size-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.02]"
                 decoding="async"
                 height={720}
                 loading="lazy"
-                src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+                src={video.poster ?? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
                 width={1280}
               />
             ) : (

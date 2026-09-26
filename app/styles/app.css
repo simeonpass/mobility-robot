@@ -735,6 +735,12 @@
   .site-header-dropdown-grid {
     @apply m-0 grid list-none grid-cols-1 gap-2 p-4 sm:grid-cols-2 sm:p-5;
   }
+  .mr-nav-series { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 20px; }
+  .mr-nav-series-title { display:flex; justify-content:space-between; font-weight:700; font-size:14px; padding:0 6px 12px; color:#0c1b35; }
+  .mr-nav-series ul { display:grid; gap:8px; list-style:none; padding:0; margin:0; }
+  .mr-nav-series .site-header-dropdown-item { padding:10px 8px; gap:8px; }
+  .mr-nav-series .site-header-dropdown-item-thumb { width:42px; height:42px; flex-shrink:0; }
+  .mr-nav-series .site-header-dropdown-item-arrow { display:none; }
 
   .site-header-dropdown-item {
     @apply flex h-full items-center gap-3 rounded-xl border px-3 py-2.5 no-underline transition-all duration-200 hover:no-underline;

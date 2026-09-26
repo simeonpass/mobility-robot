@@ -15,6 +15,7 @@ import {
   HEADER_MOBILE_EXTRA_NAV,
   HEADER_SECONDARY_NAV,
   PRODUCT_NAV_ITEMS,
+  PRODUCT_NAV_GROUPS,
   type NavItem,
 } from '~/lib/site-navigation';
 import {
@@ -197,13 +198,16 @@ function ModelsDropdown() {
           <div className="site-header-dropdown-intro">
             <p className="site-header-dropdown-eyebrow">Shop XSTO</p>
             <p className="site-header-dropdown-tagline">
-              Four models to explore, from everyday self-levelling chairs to the
-              X12 stair-climbing wheelchair.
+              Explore the M4, M8 and X12 series, from everyday self-levelling
+              chairs to four-wheel drive and stair-climbing capability.
             </p>
           </div>
 
-          <ul className="site-header-dropdown-grid">
-            {PRODUCT_NAV_ITEMS.map((item) => {
+          <div className="mr-nav-series">
+          {PRODUCT_NAV_GROUPS.map((group) => <section key={group.title}>
+          <Link className="mr-nav-series-title" to={`/series/${group.title.split(' ')[0].toLowerCase()}`} onClick={() => setOpen(false)}>{group.title} <span aria-hidden>↗</span></Link>
+          <ul>
+            {group.items.map((item) => {
               const meta = getProductNavMeta(item.url);
               return (
                 <li key={item.url}>
@@ -246,7 +250,7 @@ function ModelsDropdown() {
                     <span className="site-header-dropdown-item-body">
                       <span className="site-header-dropdown-item-row">
                         <span className="site-header-dropdown-item-title">
-                          {meta?.shortName ?? item.title}
+                          {item.title}
                         </span>
                         {meta?.badge ? (
                           <span className="site-header-dropdown-item-badge">
@@ -270,6 +274,8 @@ function ModelsDropdown() {
               );
             })}
           </ul>
+          </section>)}
+          </div>
 
           <div className="site-header-dropdown-footer">
             <div className="site-header-dropdown-footer-links">
@@ -336,12 +342,12 @@ function MobileNav({
         </NavLink>
       ) : null}
 
-      <div className="site-header-mobile-section">
-        <p className="site-header-mobile-label">Our range</p>
-        {PRODUCT_NAV_ITEMS.map((item) => (
+      {PRODUCT_NAV_GROUPS.map((group) => <div className="site-header-mobile-section" key={group.title}>
+        <Link className="site-header-mobile-label" to={`/series/${group.title.split(' ')[0].toLowerCase()}`} onClick={close}>{group.title} ↗</Link>
+        {group.items.map((item) => (
           <MobileNavLink close={close} item={item} key={item.url} />
         ))}
-      </div>
+      </div>)}
 
       <div className="site-header-mobile-section">
         <p className="site-header-mobile-label">Explore</p>

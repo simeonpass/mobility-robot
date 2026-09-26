@@ -36,9 +36,9 @@ export const PREORDER_WEEKS_LABEL_BY_HANDLE: Record<string, string> = {};
 
 /**
  * Slot handles that always show as pre-order, even with Shopify stock.
- * Currently none — X12 / X12 Pro ship in stock with a 10-day lead time.
+ * M8 launch models are pre-order; X12 keeps its existing in-stock lead time.
  */
-const FORCE_PREORDER_SLOTS = new Set<string>();
+const FORCE_PREORDER_SLOTS = new Set(['xsto-m8', 'xsto-m8-pro']);
 
 /**
  * Slot handles that always show as in stock when available for sale,

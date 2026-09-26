@@ -43,6 +43,8 @@ const PRODUCT_SEO: Record<
   HomepageProductHandle,
   {title: string; description: string}
 > = {
+  'xsto-m8': {title: 'XSTO M8 Four-Wheel-Drive Mobility Robot', description: 'Explore the new XSTO M8 with self-balancing and powered seat elevation. Pre-order with a 10% deposit. Estimated delivery: 12 weeks.'},
+  'xsto-m8-pro': {title: 'XSTO M8 Pro Mobility Robot', description: 'Discover the XSTO M8 Pro with powered reclining and leg rest. Pre-order with a 10% deposit and estimated 12-week delivery. UK support from Bentech Medical.'},
   'xsto-m4': {
     title: 'XSTO M4 Self-Levelling Wheelchair',
     description:

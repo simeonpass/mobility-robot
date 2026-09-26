@@ -1,7 +1,6 @@
 import {ArrowRight} from 'lucide-react';
 import {Link} from 'react-router';
 import {HeroVideoBackground} from '~/components/home/HeroVideoBackground';
-import {SHOPIFY_HOME_PRODUCT_HANDLES} from '~/lib/homepage-data';
 
 export function HeroSection() {
   return (
@@ -10,27 +9,28 @@ export function HeroSection() {
       <div className="mr-film-shade" aria-hidden />
       <div className="xsto-container mr-film-content">
         <div className="mr-film-copy">
-          <p className="mr-film-eyebrow">XSTO X12 · See what’s possible</p>
+          <p className="mr-film-eyebrow"><span className="mr-launch-dot" /> Introducing the M8 Series</p>
           <h1 id="homepage-heading">
-            A smarter way
+            More freedom.
             <br />
-            to move.
+            New possibilities.
           </h1>
           <p className="mr-film-intro">
-            Discover XSTO powered wheelchairs, with personal advice,
-            demonstrations and UK support from Bentech Medical.
+            Meet the new M8 and M8 Pro. Four-wheel drive, intelligent
+            self-balancing and a world beyond the everyday.
           </p>
           <div className="mr-actions">
-            <Link className="mr-button" to="/#product-range">
-              Explore the range <ArrowRight size={18} aria-hidden />
+            <Link className="mr-button" to="/series/m8">
+              Discover the M8 Series <ArrowRight size={18} aria-hidden />
             </Link>
             <Link
               className="mr-film-product-link"
-              to={`/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`}
+              to="/#product-range"
             >
-              Meet the X12 <ArrowRight size={18} aria-hidden />
+              Explore all models <ArrowRight size={18} aria-hidden />
             </Link>
           </div>
+          <p className="mr-film-preorder">Pre-order with a 10% deposit · Estimated delivery: 12 weeks</p>
         </div>
       </div>
     </section>

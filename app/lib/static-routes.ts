@@ -1,6 +1,9 @@
 export const STATIC_SITEMAP_ROUTES = [
   {path: '/', changefreq: 'weekly', priority: 1.0},
   {path: '/compare', changefreq: 'monthly', priority: 0.8},
+  {path: '/series/m4', changefreq: 'weekly', priority: 0.8},
+  {path: '/series/m8', changefreq: 'weekly', priority: 0.9},
+  {path: '/series/x12', changefreq: 'weekly', priority: 0.8},
   {path: '/guides', changefreq: 'monthly', priority: 0.8},
   {
     path: '/guides/self-levelling-wheelchairs',
