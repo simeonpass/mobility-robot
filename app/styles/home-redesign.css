@@ -1316,6 +1316,28 @@
 }
 
 /* Let the chair, not a text overlay, be the focus of the launch film. */
+.mr-film-fullscreen .mr-film-showcase { position: absolute; inset: 0; }
+.mr-film-fullscreen .mr-film-media { position: absolute; inset: 0; aspect-ratio: auto; }
+.mr-film-fullscreen .mr-film-shade {
+  display: block;
+  background: linear-gradient(90deg, rgba(8,20,34,.64) 0%, rgba(8,20,34,.32) 38%, transparent 72%);
+}
+.mr-film-fullscreen .mr-film-content { min-height: clamp(580px, 72vh, 800px); padding-block: 64px 110px; pointer-events: none; }
+.mr-film-fullscreen .mr-film-content a { pointer-events: auto; }
+.mr-film-fullscreen .mr-film-copy { max-width: 580px; text-shadow: 0 2px 14px #08142270; }
+.mr-film-fullscreen .mr-film-intro { max-width: 410px; }
+.mr-film-fullscreen .mr-film-caption { position: absolute; inset: auto 24px 20px; z-index: 3; justify-content: flex-end; gap: 12px; padding: 0; }
+.mr-film-fullscreen .mr-film-toggle { position: static; }
+.mr-film-fullscreen .mr-film-watch { color: white; background: #08142299; border: 1px solid #ffffff80; border-radius: 7px; padding: 10px 14px; }
+@media (max-width: 767px) {
+  .mr-film-fullscreen .mr-film-content { min-height: 700px; min-height: min(780px, 90svh); padding: 250px 20px 88px; align-items: flex-end; }
+  .mr-film-fullscreen .mr-film-shade { background: linear-gradient(0deg, rgba(8,20,34,.78), rgba(8,20,34,.4) 40%, transparent 75%); }
+  .mr-film-fullscreen h1 { font-size: clamp(2rem, 8vw, 3rem); }
+  .mr-film-fullscreen .mr-film-intro { font-size: .9rem; margin-bottom: 18px; }
+  .mr-film-fullscreen .mr-film-preorder { margin-top: 16px; }
+  .mr-film-fullscreen .mr-film-caption { left: 20px; right: 20px; bottom: 16px; justify-content: space-between; }
+  .mr-film-fullscreen .mr-film-watch, .mr-film-fullscreen .mr-film-toggle { font-size: .75rem; padding-inline: 10px; }
+}
 .mr-film-editorial {
   display: grid;
   grid-template-columns: minmax(300px, .8fr) minmax(0, 1.45fr);

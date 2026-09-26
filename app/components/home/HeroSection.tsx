@@ -5,18 +5,20 @@ import {HeroVideoBackground} from '~/components/home/HeroVideoBackground';
 export function HeroSection() {
   return (
     <section
-      className="mr-film-hero mr-film-editorial"
+      className="mr-film-hero mr-film-fullscreen"
       aria-labelledby="homepage-heading"
     >
-      <div className="mr-film-content">
+      <HeroVideoBackground />
+      <div className="mr-film-shade" aria-hidden />
+      <div className="xsto-container mr-film-content">
         <div className="mr-film-copy">
           <p className="mr-film-eyebrow">
             <span className="mr-launch-dot" /> Introducing the M8 Series
           </p>
           <h1 id="homepage-heading">
-            Go further.
+            More freedom.
             <br />
-            Feel free.
+            New possibilities.
           </h1>
           <p className="mr-film-intro">
             Meet M8 and M8 Pro. Four-wheel drive and intelligent self-balancing,
@@ -37,7 +39,6 @@ export function HeroSection() {
           </p>
         </div>
       </div>
-      <HeroVideoBackground />
     </section>
   );
 }
