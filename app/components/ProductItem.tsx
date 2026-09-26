@@ -5,6 +5,7 @@ import type {
   ProductItemFragment,
 } from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
+import {getProductCardImage} from '~/lib/homepage-data';
 import {getProductDisplayName} from '~/lib/product-content';
 import {getProductListPrice} from '~/lib/product-vat-variants';
 
@@ -16,7 +17,7 @@ export function ProductItem({
   loading?: 'eager' | 'lazy';
 }) {
   const variantUrl = useVariantUrl(product.handle);
-  const image = product.featuredImage;
+  const image = getProductCardImage(product.handle, product.featuredImage);
   const name = getProductDisplayName(product.handle, product.title);
   const listPrice = getProductListPrice(product);
   return (
