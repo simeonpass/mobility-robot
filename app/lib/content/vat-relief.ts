@@ -68,7 +68,7 @@ export const vatReliefSections: ContentSection[] = [
     title: 'Which products qualify',
     paragraphs: [
       'VAT relief on this storefront is available on XSTO powered wheelchairs. Accessories sold separately are not claimed through the same relief toggle.',
-      'Prices on product pages default to including VAT. When you complete a declaration, we show the ex-VAT price and the VAT you save.',
+      'Product pages show the VAT-relief price first, with the including-VAT price underneath. When you complete a declaration, checkout removes the VAT automatically.',
     ],
   },
   {

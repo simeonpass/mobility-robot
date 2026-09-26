@@ -9,8 +9,8 @@ import {
 } from '~/lib/accessories';
 import {
   formatExVatPrice,
-  formatHomepageFromPrice,
   getHomepageProductSlot,
+  getProductCardImage,
   HOMEPAGE_PRODUCT_BADGES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
@@ -19,6 +19,7 @@ import {
   isForcedPreorder,
   X12_ACCESSORY_PREORDER_LABEL,
 } from '~/lib/product-delivery';
+import {getExVatDisplay, getIncVatDisplay} from '~/lib/product-pricing';
 import {getProductListPrice} from '~/lib/product-vat-variants';
 import {type ShopAllProduct} from '~/lib/shop-all';
 
@@ -131,11 +132,7 @@ function ChairCard({
   const preorder = isForcedPreorder(product.handle);
   const lowStock = !preorder && isForcedLowStock(product.handle);
   const listPrice = getProductListPrice(product);
-  const exVatPrice = formatHomepageFromPrice(
-    slot,
-    listPrice.amount,
-    listPrice.currencyCode,
-  );
+  const image = getProductCardImage(product.handle, product.featuredImage);
 
   return (
     <article
@@ -166,12 +163,15 @@ function ChairCard({
         </div>
 
         <div className="flex aspect-[16/11] items-center justify-center bg-gradient-cream p-4 sm:aspect-[4/3] sm:p-6">
-          {product.featuredImage ? (
-            <Image
-              alt={product.featuredImage.altText || product.title}
-              className="max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-              data={product.featuredImage}
-              sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+          {image?.url ? (
+            <img
+              alt={image.altText || product.title}
+              className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+              decoding="async"
+              height={image.height ?? 800}
+              loading={index < 2 ? 'eager' : 'lazy'}
+              src={image.url}
+              width={image.width ?? 800}
             />
           ) : (
             <span className="text-sm text-muted-foreground">No image</span>
@@ -182,9 +182,13 @@ function ChairCard({
           <h3 className="text-base font-semibold text-foreground sm:text-lg">
             {meta?.shortName ?? product.title}
           </h3>
-          <p className="mt-1.5 text-lg font-semibold text-gold sm:mt-2 sm:text-xl">
-            From {exVatPrice}
-          </p>
+          <div className="mt-1.5 text-sm leading-relaxed text-muted-foreground sm:mt-2">
+            <p className="text-lg font-semibold text-gold sm:text-xl">
+              From {getExVatDisplay(listPrice)}
+            </p>
+            <p>With VAT relief, if eligible</p>
+            <p>{getIncVatDisplay(listPrice)} including VAT</p>
+          </div>
           <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-foreground transition-colors group-hover:text-gold sm:mt-5 sm:min-h-0">
             {meta?.exploreLabel ?? 'View details'}
             <ArrowUpRight

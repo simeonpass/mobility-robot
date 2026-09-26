@@ -1,6 +1,6 @@
 import {Link} from 'react-router';
-import {Image} from '@shopify/hydrogen';
 import type {HomeProductFragment} from 'storefrontapi.generated';
+import {getProductCardImage} from '~/lib/homepage-data';
 import {getProductDisplayName} from '~/lib/product-content';
 import {getProductListPrice} from '~/lib/product-vat-variants';
 import {getExVatDisplay, getIncVatDisplay} from '~/lib/product-pricing';
@@ -32,7 +32,10 @@ export function RelatedProducts({
 
       <ul className="mr-product-related-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {related.map((product) => {
-          const image = product.featuredImage;
+          const image = getProductCardImage(
+            product.handle,
+            product.featuredImage,
+          );
           const price = getProductListPrice(product);
           const name = getProductDisplayName(product.handle, product.title);
 
@@ -43,14 +46,16 @@ export function RelatedProducts({
                 prefetch="intent"
                 to={`/products/${product.handle}`}
               >
-                <div className="mr-product-related-image flex aspect-square items-center justify-center overflow-hidden p-6">
-                  {image ? (
-                    <Image
+                <div className="mr-product-related-image relative aspect-square overflow-hidden bg-[#f5f7fb]">
+                  {image?.url ? (
+                    <img
                       alt={image.altText || name}
-                      aspectRatio="1/1"
-                      className="max-h-full w-full object-contain transition-transform group-hover:scale-[1.03]"
-                      data={image}
-                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                      className="absolute inset-0 size-full object-contain p-7 transition-transform group-hover:scale-[1.03] sm:p-8"
+                      decoding="async"
+                      height={image.height ?? 800}
+                      loading="lazy"
+                      src={image.url}
+                      width={image.width ?? 800}
                     />
                   ) : null}
                 </div>

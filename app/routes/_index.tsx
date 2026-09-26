@@ -1,6 +1,6 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
-import '~/styles/home-redesign.css';
+import homeRedesignStyles from '~/styles/home-redesign.css?url';
 import {AwardsStrip} from '~/components/home/AwardsStrip';
 import {BrandStoryStrip} from '~/components/home/BrandStoryStrip';
 import {BrandStorySections} from '~/components/home/BrandStorySections';
@@ -25,15 +25,18 @@ import {buildMeta} from '~/lib/seo';
 import {getAllReviews, getHomepageFeaturedReviews} from '~/lib/reviews.server';
 import {summarizeReviews} from '~/lib/reviews';
 
-export const links: Route.LinksFunction = () => [{
-  rel: 'preload',
-  as: 'image',
-  type: 'image/webp',
-  href: HOMEPAGE_HERO_POSTER_URL,
-  imageSrcSet: HOMEPAGE_HERO_POSTER_SRC_SET,
-  imageSizes: '100vw',
-  fetchPriority: 'high',
-}];
+export const links: Route.LinksFunction = () => [
+  {rel: 'stylesheet', href: homeRedesignStyles},
+  {
+    rel: 'preload',
+    as: 'image',
+    type: 'image/webp',
+    href: HOMEPAGE_HERO_POSTER_URL,
+    imageSrcSet: HOMEPAGE_HERO_POSTER_SRC_SET,
+    imageSizes: '100vw',
+    fetchPriority: 'high',
+  },
+];
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
