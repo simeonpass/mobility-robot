@@ -420,8 +420,8 @@
     @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-sm font-semibold text-white no-underline shadow-gold transition-all hover:brightness-105 hover:text-white disabled:cursor-not-allowed disabled:opacity-60;
     background-image: linear-gradient(
       135deg,
-      hsl(354 76% 42%) 0%,
-      hsl(354 70% 54%) 100%
+      hsl(225 80% 42%) 0%,
+      #2155ed 100%
     );
     color: #ffffff;
   }
@@ -662,6 +662,8 @@
 
   .site-header-cart-count {
     @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1.5 text-[0.75rem] font-semibold leading-none text-white sm:h-6 sm:min-w-6;
+    background-color: #2155ed;
+    color: #fff;
   }
 
   .site-header-cart-btn {
@@ -1906,8 +1908,8 @@ a.btn-checkout,
 button.btn-checkout {
   background-image: linear-gradient(
     135deg,
-    hsl(354 76% 42%) 0%,
-    hsl(354 70% 54%) 100%
+    hsl(225 80% 42%) 0%,
+    #2155ed 100%
   ) !important;
   box-shadow: 0 4px 16px -2px hsl(225 85% 53% / 0.4);
 }

@@ -34,9 +34,9 @@
 .mr-site-header { background: rgba(255,255,255,.98); border-bottom: 1px solid #dfe6f0; box-shadow: none; }
 .mr-header-inner { display: flex; height: var(--header-height); align-items: center; gap: 20px; }
 .mr-header-inner .site-header-logo { overflow: visible; }
-.mr-homepage-logo { display: block; width: auto; height: 76px; max-width: 100%; object-fit: contain; }
+.mr-homepage-logo { display: block; width: 300px; height: auto; max-width: 100%; object-fit: contain; }
 @media (max-width: 767px) {
-  .mr-homepage-logo { height: 62px; }
+  .mr-homepage-logo { width: clamp(170px, 49vw, 245px); }
 }
 .mr-header-inner .site-header-logo:hover,
 .mr-footer .mr-footer-brand-link:hover { text-decoration: none; }

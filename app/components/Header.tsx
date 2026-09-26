@@ -8,7 +8,7 @@ import {
 } from '@shopify/hydrogen';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
-import homepageLogo from '~/assets/mobility-robot-stacked-transparent.png';
+import homepageLogo from '~/assets/mobility-robot-horizontal-trimmed.png';
 import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
@@ -59,9 +59,9 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
           {pathname === '/' ? (
             <img
               src={homepageLogo}
-              alt="Mobility Robot — XSTO × Bentech"
-              width={1328}
-              height={645}
+              alt="Mobility Robot by Bentech Medical"
+              width={2075}
+              height={325}
               className="mr-homepage-logo"
               fetchPriority="high"
               decoding="async"
