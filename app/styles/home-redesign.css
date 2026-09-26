@@ -1314,3 +1314,49 @@
     padding-inline: 14px;
   }
 }
+
+/* Let the chair, not a text overlay, be the focus of the launch film. */
+.mr-film-editorial {
+  display: grid;
+  grid-template-columns: minmax(300px, .8fr) minmax(0, 1.45fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 72px);
+  padding: clamp(36px, 5vw, 76px) max(24px, calc((100vw - 1440px) / 2));
+  background: #fff;
+  color: #0c1b35;
+}
+.mr-film-editorial .mr-film-content { min-height: 0; padding: 0; }
+.mr-film-editorial .mr-film-copy { max-width: 440px; }
+.mr-film-editorial .mr-film-eyebrow { color: #2155ed; font-size: .7rem; letter-spacing: .1em; margin-bottom: 22px; }
+.mr-film-editorial h1 { color: #0c1b35; font-size: clamp(2.8rem, 4.8vw, 4.8rem); letter-spacing: -.055em; line-height: 1.03; margin-bottom: 24px; }
+.mr-film-editorial .mr-film-intro { color: #526077; font-size: 1rem; line-height: 1.75; margin-bottom: 26px; max-width: 360px; }
+.mr-film-editorial .mr-actions { align-items: flex-start; flex-direction: column; gap: 16px; }
+.mr-film-editorial .mr-button { background: #2155ed; border-color: #2155ed; }
+.mr-film-editorial .mr-film-product-link { min-height: 24px; padding: 0; border: 0; color: #34435b; background: transparent; font-size: .85rem; }
+.mr-film-editorial .mr-film-product-link:hover { color: #2155ed; }
+.mr-film-editorial .mr-film-preorder { color: #647086; font-size: .75rem; line-height: 1.8; margin-top: 28px; }
+.mr-film-showcase { min-width: 0; }
+.mr-film-editorial .mr-film-media { position: relative; inset: auto; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; background: #e9eef2; }
+.mr-film-editorial .mr-film-native, .mr-film-editorial .mr-film-poster { object-fit: contain; }
+.mr-film-caption { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; }
+.mr-film-watch { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #0c1b35; font-size: .8125rem; font-weight: 600; }
+.mr-film-watch:hover { color: #2155ed; }
+.mr-film-editorial .mr-film-toggle { position: static; padding: 8px 10px; min-height: 44px; border: 0; background: transparent; color: #526077; }
+.mr-home .mr-film-editorial :is(a, button):focus-visible { outline: 2px solid #2155ed; outline-offset: 4px; }
+@media (max-width: 899px) {
+  .mr-film-editorial { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; }
+  .mr-film-editorial .mr-film-content { order: 2; }
+  .mr-film-editorial .mr-film-copy { max-width: 100%; }
+  .mr-film-editorial h1 { font-size: clamp(2.7rem, 8vw, 4rem); }
+  .mr-film-editorial .mr-film-intro { max-width: 520px; }
+  .mr-film-editorial .mr-actions { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 20px; }
+  .mr-film-editorial .mr-film-preorder { margin-top: 20px; }
+}
+@media (max-width: 479px) {
+  .mr-film-editorial { padding: 20px 20px 32px; gap: 20px; }
+  .mr-film-editorial .mr-film-eyebrow { margin-bottom: 14px; }
+  .mr-film-editorial h1 { margin-bottom: 18px; }
+  .mr-film-editorial .mr-film-intro { margin-bottom: 22px; }
+  .mr-film-editorial .mr-film-toggle { font-size: .75rem; padding-inline: 0; }
+  .mr-film-watch { font-size: .75rem; }
+}
