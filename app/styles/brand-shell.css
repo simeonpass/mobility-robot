@@ -35,6 +35,8 @@
 .mr-header-inner { display: flex; height: var(--header-height); align-items: center; gap: 20px; }
 .mr-header-inner .site-header-logo { overflow: visible; }
 .mr-homepage-logo { display: block; width: 300px; height: auto; max-width: 100%; object-fit: contain; }
+.mr-logo-surface { display: inline-block; max-width: 100%; padding: 14px 16px; border-radius: 10px; background: #fff; }
+.mr-footer .mr-homepage-logo { width: 300px; }
 @media (max-width: 767px) {
   .mr-homepage-logo { width: clamp(170px, 49vw, 245px); }
 }

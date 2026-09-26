@@ -30,22 +30,21 @@ interface HeaderProps {
 /** Customer-facing brand, with the legal business as its supporting byline. */
 export function MobilityRobotBrand({light = false}: {light?: boolean}) {
   return (
-    <span className={`mr-brand${light ? ' mr-brand--light' : ''}`}>
-      <span className="mr-brand-type">
-        <span className="mr-brand-name">
-          mobility <span className="mr-brand-robot">robot</span>
-          <span className="mr-brand-dot" aria-hidden="true">
-            .
-          </span>
-        </span>
-        <span className="mr-brand-byline">by Bentech Medical</span>
-      </span>
+    <span className={light ? 'mr-logo-surface' : undefined}>
+      <img
+        src={homepageLogo}
+        alt="Mobility Robot by Bentech Medical"
+        width={2075}
+        height={325}
+        className="mr-homepage-logo"
+        fetchPriority={light ? 'auto' : 'high'}
+        decoding="async"
+      />
     </span>
   );
 }
 
 export function Header({isLoggedIn, cart}: HeaderProps) {
-  const {pathname} = useLocation();
   return (
     <header className="site-header site-header--solid mr-site-header">
       <div className="xsto-container mr-header-inner">
@@ -56,19 +55,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
           prefetch="intent"
           to="/"
         >
-          {pathname === '/' ? (
-            <img
-              src={homepageLogo}
-              alt="Mobility Robot by Bentech Medical"
-              width={2075}
-              height={325}
-              className="mr-homepage-logo"
-              fetchPriority="high"
-              decoding="async"
-            />
-          ) : (
-            <MobilityRobotBrand />
-          )}
+          <MobilityRobotBrand />
         </NavLink>
         <HeaderMenu isLoggedIn={isLoggedIn} viewport="desktop" />
         <HeaderCtas cart={cart} isLoggedIn={isLoggedIn} />
