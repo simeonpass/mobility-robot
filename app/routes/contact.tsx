@@ -20,6 +20,7 @@ import {
   TextInput,
 } from '~/components/forms/FormField';
 import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
+import {useEnquiryTracking} from '~/components/forms/useEnquiryTracking';
 import {
   CONTACT_FAQS,
   CONTACT_HELP_LINKS,
@@ -46,6 +47,7 @@ export default function ContactPage() {
       schema: contactFormSchema,
       action: '/api/contact',
     });
+  useEnquiryTracking(success, 'contact_enquiry');
 
   return (
     <PageShell>

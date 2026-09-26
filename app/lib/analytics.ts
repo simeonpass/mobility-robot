@@ -20,8 +20,9 @@ export function initGa4(measurementId: string): void {
   if (typeof window === 'undefined' || ga4Initialized) return;
 
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer?.push(args);
+  window.gtag = function gtag() {
+    // Google consumes command entries as Arguments objects, not plain arrays.
+    window.dataLayer?.push(arguments);
   };
   window.gtag('js', new Date());
   window.gtag('config', measurementId, {send_page_view: false});

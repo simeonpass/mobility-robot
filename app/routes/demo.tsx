@@ -12,6 +12,7 @@ import {
   TextInput,
 } from '~/components/forms/FormField';
 import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
+import {useEnquiryTracking} from '~/components/forms/useEnquiryTracking';
 import {demoRequestSchema} from '~/lib/form-schemas';
 import {breadcrumbJsonLd, pageMeta} from '~/lib/seo';
 
@@ -56,6 +57,7 @@ export default function DemoPage() {
     schema: demoRequestSchema,
     action: '/api/demo-request',
   });
+  useEnquiryTracking(success, 'demo_request');
 
   return (
     <PageShell>
