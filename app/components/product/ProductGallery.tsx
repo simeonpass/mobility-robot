@@ -163,6 +163,12 @@ export function ProductGallery({items, productTitle}: ProductGalleryProps) {
         </div>
       </div>
       {thumbList}
+      {productTitle.includes('M8') && activeItem.type === 'image' && (
+        <p className="text-sm text-muted-foreground" aria-live="polite">
+          {activeItem.altText || productTitle}. Manufacturer imagery may show
+          optional accessories; confirm your UK specification with our team.
+        </p>
+      )}
     </div>
   );
 }

@@ -225,8 +225,8 @@ export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = 
  * Prefer transparent or clean cutouts when available.
  */
 export const HOMEPAGE_PRODUCT_THUMBS: Record<HomepageFlagshipHandle, string> = {
-  'xsto-m8': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/039452bd-5ca1-4e1d-a59b-83fd77605159.webp',
-  'xsto-m8-pro': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/899eea05-04c2-4f20-aa5e-a09f9e74ac97.webp',
+  'xsto-m8': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m8-standard-original.webp',
+  'xsto-m8-pro': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m8-pro-front.webp',
   'xsto-m4':
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m4-01.jpg',
   'xsto-m4b':

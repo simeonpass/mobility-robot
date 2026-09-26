@@ -296,11 +296,11 @@
 }
 /* These two source photos include wider margins than the rest of the range.
    Crop only that blank canvas inside the existing, clipped card image area. */
-.mr-card-visual img[src*="039452bd-5ca1-4e1d-a59b-83fd77605159"] {
+.mr-card-visual img[src*="m8-standard-original"] {
   transform: translateY(-6%) scale(1.43);
 }
-.mr-card-visual img[src*="899eea05-04c2-4f20-aa5e-a09f9e74ac97"] {
-  transform: scale(1.25);
+.mr-card-visual img[src*="m8-pro-front"] {
+  transform: scale(1.12);
 }
 .mr-card-badge {
   position: absolute;
