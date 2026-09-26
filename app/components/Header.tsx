@@ -9,6 +9,7 @@ import {
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import homepageLogo from '~/assets/mobility-robot-horizontal-trimmed.png';
+import darkBackgroundLogo from '~/assets/mobility-robot-logo-dark-background.png';
 import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
@@ -30,9 +31,9 @@ interface HeaderProps {
 /** Customer-facing brand, with the legal business as its supporting byline. */
 export function MobilityRobotBrand({light = false}: {light?: boolean}) {
   return (
-    <span className={light ? 'mr-logo-surface' : undefined}>
+    <span>
       <img
-        src={homepageLogo}
+        src={light ? darkBackgroundLogo : homepageLogo}
         alt="Mobility Robot by Bentech Medical"
         width={2075}
         height={325}
