@@ -188,6 +188,10 @@ export function organizationJsonLd() {
     alternateName: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/images/mobility-robot-logo.svg`,
+    hasMerchantReturnPolicy: {
+      '@type': 'MerchantReturnPolicy',
+      merchantReturnLink: `${SITE_URL}/returns`,
+    },
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Unit 2 Old Forge Road',
@@ -282,7 +286,9 @@ export function productJsonLd({
     '@type': 'Product',
     name,
     description: truncateDescription(description),
-    image: image || DEFAULT_OG_IMAGE,
+    // A site logo is not a photograph of a product. Omit missing product
+    // images until the merchant supplies a verified photo for that SKU.
+    ...(image ? {image} : {}),
     sku: sku || undefined,
     brand: {'@type': 'Brand', name: 'XSTO'},
     ...(ratingValue && reviewCount

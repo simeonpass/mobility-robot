@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'Videos | XSTO Self-Balancing Wheelchair Demos & Tutorials',
     description:
-      'Watch demonstrations, tutorials, and reviews of XSTO M4 and M4 Pro self-balancing power wheelchairs. See award-winning mobility technology in action.',
+      'Watch XSTO powered wheelchair demonstrations and operating tutorials, including M4 setup and X12 training. Explore the range with our UK team.',
     path: '/videos',
   });
 

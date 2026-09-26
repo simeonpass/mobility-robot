@@ -37,7 +37,7 @@ export const links: Route.LinksFunction = () => [{
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
-    title: 'XSTO Powered Wheelchairs | Mobility Robot',
+    title: 'XSTO Powered Wheelchairs UK | Mobility Robot',
     description:
       'Explore the XSTO M4, M8 and X12 series at Mobility Robot by Bentech Medical. Pre-order the new M8 and M8 Pro with a 10% deposit and UK support.',
     path: '/',

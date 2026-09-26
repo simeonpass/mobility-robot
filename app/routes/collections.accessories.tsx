@@ -12,13 +12,11 @@ import {
 } from '~/lib/accessories';
 import {buildMeta, breadcrumbJsonLd, itemListJsonLd} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  const title = data?.collection?.title || 'Wheelchair Accessories';
+export const meta: Route.MetaFunction = () => {
   return buildMeta({
-    title,
+    title: 'XSTO Wheelchair Accessories | Batteries, Cushions & Controls',
     description:
-      data?.collection?.description ||
-      'Shop XSTO wheelchair accessories by chair compatibility — M4, M4B, M4 Pro and X12. Free UK delivery from the official UK distributor.',
+      'Shop XSTO wheelchair batteries, cushions, controls and accessories by model compatibility. Get fitting advice from Bentech Medical, the UK distributor.',
     path: '/collections/accessories',
   });
 };

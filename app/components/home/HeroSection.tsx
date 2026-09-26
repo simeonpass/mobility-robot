@@ -21,8 +21,8 @@ export function HeroSection() {
             New possibilities.
           </h1>
           <p className="mr-film-intro">
-            Meet M8 and M8 Pro. Four-wheel drive and intelligent self-balancing,
-            ready for your next chapter.
+            Meet the XSTO M8 and M8 Pro powered wheelchairs. Four-wheel drive,
+            intelligent self-balancing and UK support from Bentech Medical.
           </p>
           <div className="mr-actions">
             <Link className="mr-button" to="/series/m8">

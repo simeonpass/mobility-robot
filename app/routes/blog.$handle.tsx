@@ -4,6 +4,7 @@ import {Image} from '@shopify/hydrogen';
 import {JsonLd, PageShell} from '~/components/content/PageShell';
 import {BLOG_ARTICLE_QUERY, BLOG_HANDLE} from '~/lib/blog-queries';
 import {buildMeta, articleJsonLd, breadcrumbJsonLd} from '~/lib/seo';
+import {migrateBlogHtml, migrateBlogText} from '~/lib/blog-migration';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const article = data?.article;
@@ -42,7 +43,20 @@ export async function loader({context, params}: Route.LoaderArgs) {
     ) ?? []
   ).slice(0, 3);
 
-  return {article, relatedArticles};
+  return {
+    article: {
+      ...article,
+      contentHtml: migrateBlogHtml(handle, article.contentHtml),
+      excerpt: article.excerpt ? migrateBlogText(handle, article.excerpt) : article.excerpt,
+      seo: {
+        ...article.seo,
+        description: article.seo?.description
+          ? migrateBlogText(handle, article.seo.description)
+          : article.seo?.description,
+      },
+    },
+    relatedArticles,
+  };
 }
 
 export default function BlogArticlePage() {

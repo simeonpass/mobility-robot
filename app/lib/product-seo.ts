@@ -43,8 +43,8 @@ const PRODUCT_SEO: Record<
   HomepageProductHandle,
   {title: string; description: string}
 > = {
-  'xsto-m8': {title: 'XSTO M8 Four-Wheel-Drive Mobility Robot', description: 'Explore the new XSTO M8 with self-balancing and powered seat elevation. Pre-order with a 10% deposit. Estimated delivery: 12 weeks.'},
-  'xsto-m8-pro': {title: 'XSTO M8 Pro Mobility Robot', description: 'Discover the XSTO M8 Pro with powered reclining and leg rest. Pre-order with a 10% deposit and estimated 12-week delivery. UK support from Bentech Medical.'},
+  'xsto-m8': {title: 'XSTO M8 All-Terrain Powered Wheelchair', description: 'Explore the XSTO M8 four-wheel-drive powered wheelchair with self-balancing and seat elevation. UK pre-orders: 10% deposit, estimated 12-week delivery.'},
+  'xsto-m8-pro': {title: 'XSTO M8 Pro All-Terrain Powered Wheelchair', description: 'Discover the XSTO M8 Pro powered wheelchair with electric reclining and leg rest. UK pre-orders: 10% deposit, estimated 12-week delivery.'},
   'xsto-m4': {
     title: 'XSTO M4 Self-Levelling Wheelchair',
     description:
@@ -72,6 +72,33 @@ const PRODUCT_SEO: Record<
   },
 };
 
+const ACCESSORY_SEO: Record<string, {title: string; description: string}> = {
+  'm4-m4-pro-battery-25-2v-23-8ah': {
+    title: 'XSTO M4, M4B & M4 Pro Battery | 25.2V 23.8Ah',
+    description: 'Replacement 25.2V 23.8Ah battery for XSTO M4, M4B and M4 Pro powered wheelchairs. Sold individually. Confirm compatibility with our UK team.',
+  },
+  'x12-x12-pro-battery-25-2v-25-6ah': {
+    title: 'XSTO X12 & X12 Pro Battery | 25.2V 25.6Ah',
+    description: 'Replacement 25.2V 25.6Ah battery for XSTO X12 and X12 Pro wheelchairs. Sold individually; select quantity 2 for a pair. UK compatibility advice.',
+  },
+  'black-backpack-for-m4-pro': {
+    title: 'XSTO M4 Pro Wheelchair Backpack | Black',
+    description: 'Black backpack accessory for the XSTO M4 Pro powered wheelchair. Contact Bentech Medical for fitting advice and help choosing the right accessory.',
+  },
+  'bluetooth-controller-for-m4-m4h-m4-pro-x12-x12-pro': {
+    title: 'XSTO Wheelchair Bluetooth Controller | M4 & X12 Series',
+    description: 'Bluetooth controller for XSTO M4, M4B, M4 Pro, X12 and X12 Pro wheelchairs. Ask our UK team about compatibility and setup before ordering.',
+  },
+  'calf-support-set-for-x12-x12pro': {
+    title: 'XSTO X12 & X12 Pro Calf Support Set',
+    description: 'Calf support set for XSTO X12 and X12 Pro stair-climbing wheelchairs. Get UK advice on compatibility with your chair and leg-rest configuration.',
+  },
+  'cup-holder-for-all-models': {
+    title: 'XSTO Wheelchair Cup Holder | M4 Pro, X12 & X12 Pro',
+    description: 'Cup holder for XSTO M4 Pro, X12 and X12 Pro powered wheelchairs. Contact our UK team to check fitting and cup size before ordering.',
+  },
+};
+
 export type ResolveProductSeoInput = {
   handle: string;
   productTitle: string;
@@ -88,7 +115,7 @@ export function resolveProductSeo({
   seoDescription,
 }: ResolveProductSeoInput): {title: string; description: string} {
   const slot = getHomepageProductSlot(handle);
-  const curated = slot ? PRODUCT_SEO[slot] : undefined;
+  const curated = slot ? PRODUCT_SEO[slot] : ACCESSORY_SEO[handle];
   const content = getProductContent(handle);
 
   const title =

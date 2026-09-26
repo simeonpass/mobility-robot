@@ -11,7 +11,7 @@ export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'Shop All XSTO Wheelchairs & Accessories',
     description:
-      'Browse the full XSTO range — M4, M4B, M4 Pro and X12 — plus accessories. Official UK distributor with free delivery.',
+      'Compare XSTO M4, M8 and X12 series powered wheelchairs and compatible accessories. UK advice, demonstrations and support from Bentech Medical.',
     path: '/collections/all',
   });
 

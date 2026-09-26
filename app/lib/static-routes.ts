@@ -38,5 +38,5 @@ export const STATIC_SITEMAP_ROUTES = [
   {path: '/videos', changefreq: 'monthly', priority: 0.7},
   {path: '/collections', changefreq: 'weekly', priority: 0.6},
   {path: '/collections/all', changefreq: 'weekly', priority: 0.8},
-  {path: '/collections/accessories', changefreq: 'weekly', priority: 0.7},
+  // /collections/accessories is supplied by Shopify's collections sitemap.
 ] as const;

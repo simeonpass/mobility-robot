@@ -5,6 +5,7 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {PageHeader, PageShell} from '~/components/content/PageShell';
 import {BLOG_ARTICLES_QUERY, BLOG_HANDLE} from '~/lib/blog-queries';
 import {pageMeta} from '~/lib/seo';
+import {migrateBlogText} from '~/lib/blog-migration';
 
 export const meta: Route.MetaFunction = ({data}) =>
   pageMeta({
@@ -95,7 +96,7 @@ function BlogCard({article}: {article: BlogArticleCard}) {
           <h2 className="mt-1 text-lg font-semibold text-foreground">{article.title}</h2>
           {article.excerpt ? (
             <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
-              {article.excerpt}
+              {migrateBlogText(article.handle, article.excerpt)}
             </p>
           ) : null}
           <span className="mt-3 inline-block text-sm font-semibold text-gold">
@@ -106,4 +107,3 @@ function BlogCard({article}: {article: BlogArticleCard}) {
     </article>
   );
 }
-

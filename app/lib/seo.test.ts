@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, it} from 'vitest';
-import {buildMeta, jsonLdScript, productJsonLd, truncateTitle} from './seo';
+import {buildMeta, jsonLdScript, organizationJsonLd, productJsonLd, truncateTitle} from './seo';
 import {resolveProductOffer, resolveProductSeo} from './product-seo';
 import {setShopifyPricesExVat} from './pricing-mode';
 
@@ -12,6 +12,28 @@ const variant = (id: string, amount: string, vat = 'Standard') => ({
 });
 
 describe('product and page search data', () => {
+  it('links Google to the actual returns policy without inventing universal fees', () => {
+    expect(organizationJsonLd().hasMerchantReturnPolicy).toEqual({
+      '@type': 'MerchantReturnPolicy',
+      merchantReturnLink: 'https://mobilityrobot.co.uk/returns',
+    });
+  });
+  it('omits missing product photos instead of publishing a generic logo', () => {
+    const product = {name: 'Cane holder', description: 'M4 cane holder', handle: 'cane-holder-m4', price: '50', currencyCode: 'GBP', availableForSale: true};
+    expect(productJsonLd(product)).not.toHaveProperty('image');
+    expect(productJsonLd({...product, image: 'https://cdn.shopify.com/photo.jpg'}).image).toBe('https://cdn.shopify.com/photo.jpg');
+  });
+  it('uses clear battery quantity metadata without hardcoded prices', () => {
+    const seo = resolveProductSeo({handle: 'x12-x12-pro-battery-25-2v-25-6ah', productTitle: 'X12 battery', seoDescription: '£1000 inc VAT'});
+    expect(seo.description).toContain('quantity 2 for a pair');
+    expect(seo.description).not.toContain('£');
+  });
+  it.each(['xsto-m8', 'xsto-m8-pro'])('describes %s as a powered wheelchair without changing its delivery terms', (handle) => {
+    const seo = resolveProductSeo({handle, productTitle: handle});
+    expect(seo.title).toContain('Powered Wheelchair');
+    expect(seo.description).toContain('10% deposit');
+    expect(seo.description).toContain('12-week delivery');
+  });
   it('uses reviewed flagship metadata instead of obsolete catalogue SEO', () => {
     const meta = resolveProductSeo({
       handle: 'buy-robot-wheelchair', productTitle: 'M4', productDescription: '',

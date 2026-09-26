@@ -74,6 +74,7 @@ describe('canonical storefront sitemaps', () => {
     const xml = await response.text();
     expect(xml).toContain('https://mobilityrobot.co.uk/blog/first-guide');
     expect(xml).toContain('https://mobilityrobot.co.uk/blog/second-guide');
+    expect(xml).not.toContain('/collections/accessories');
     expect(query).toHaveBeenCalledTimes(2);
     expect(query.mock.calls[1][1].variables.after).toBe('next');
   });

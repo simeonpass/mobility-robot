@@ -12,9 +12,9 @@ export const links: Route.LinksFunction = () => [
   {rel: 'stylesheet', href: productStyles},
 ];
 const summaries: Record<string, string> = {
-  m4: 'Everyday self-levelling, with a choice of seating, wheels and folding features. Meet M4, M4B and M4 Pro.',
-  m8: 'Meet the new four-wheel-drive mobility robots. The same self-balancing platform, with two ways to find your comfort.',
-  x12: 'Explore stair-climbing capability for suitable stairs, with assessment and training. Choose X12 or X12 Pro with an electric elevating leg rest.',
+  m4: 'Compare XSTO M4, M4B and M4 Pro self-levelling powered wheelchairs. Explore seating and folding options with UK advice and demonstrations.',
+  m8: 'Compare XSTO M8 and M8 Pro four-wheel-drive powered wheelchairs. UK pre-orders with a 10% deposit and estimated 12-week delivery.',
+  x12: 'Compare XSTO X12 and X12 Pro stair-climbing wheelchairs. Discuss suitable stairs, assessment and training with the official UK distributor.',
 };
 export function loader({params}: Route.LoaderArgs) {
   const key = params.series ?? '';
@@ -27,7 +27,7 @@ export function loader({params}: Route.LoaderArgs) {
 export const meta: Route.MetaFunction = ({data}) =>
   data
     ? buildMeta({
-        title: `XSTO ${data.group.title}`,
+        title: `XSTO ${data.group.title} ${data.key === 'x12' ? 'Stair-Climbing' : 'Powered'} Wheelchairs`,
         description: data.summary,
         path: `/series/${data.key}`,
       })
