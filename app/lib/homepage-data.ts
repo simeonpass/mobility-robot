@@ -4,6 +4,7 @@
  */
 import {catalogToExVatAmount} from '~/lib/pricing-mode';
 import m8Poster from '~/assets/m8-hero-poster.jpg';
+import m8FullFilm from '~/assets/m8-full-film.mp4';
 
 export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-m4',
@@ -364,7 +365,7 @@ export const HOMEPAGE_HERO_YOUTUBE_ID = 'ihXdzLuNz2s';
 /** Bundled M8 poster is also the no-motion / autoplay-blocked fallback. */
 export const HOMEPAGE_HERO_POSTER_URL = m8Poster;
 export const HOMEPAGE_HERO_POSTER_SRC_SET = `${m8Poster} 1600w`;
-export const M8_FULL_VIDEO_URL = 'https://omo-oss-video.thefastvideo.com/portal-saas/pg2026031920051272382/cms/vedio/671afe2a-20b1-429e-b2ef-9f48cb36812a.mp4';
+export const M8_FULL_VIDEO_URL = m8FullFilm;
 
 export function heroYoutubePosterUrl(videoId = HOMEPAGE_HERO_YOUTUBE_ID): string {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;

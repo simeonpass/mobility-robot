@@ -117,7 +117,6 @@ export default async function handleRequest(
       'https://xsto.co.uk',
     ],
     mediaSrc: [
-      'https://omo-oss-video.thefastvideo.com',
       "'self'",
       'https://cdn.shopify.com',
       'blob:',
