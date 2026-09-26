@@ -1,57 +1,57 @@
-import {ArrowUpRight, Award} from 'lucide-react';
-import {Link} from 'react-router';
+import ifRedDotAwards from '~/assets/if-reddot-awards.webp';
+import goodDesignAward from '~/assets/good-design-award.svg';
 
-// These awards recognise the XSTO M4, not every model or the UK distributor.
-const awards = [
-  {
-    name: 'Red Dot',
-    category: 'Product Design Award',
-    location: 'Germany',
-    url: 'https://www.red-dot.org/project/xsto-mobility-robot-81361',
-  },
-  {
-    name: 'iF Design',
-    category: 'iF Design Award',
-    location: 'Germany',
-    url: 'https://ifdesign.com/en/winner-ranking/project/xsto-mobility-robot/680124',
-  },
-  {
-    name: 'Good Design',
-    category: 'Good Design Award',
-    location: 'Japan',
-    url: 'https://www.g-mark.org/en/gallery/winners/33173?years=2025',
-  },
-];
-
+// Award records and artwork recognise the M4, not the whole range or distributor.
 export function AwardsStrip() {
   return (
-    <section className="mr-design-awards" aria-labelledby="design-awards-heading">
-      <div className="xsto-container mr-design-awards-grid">
-        <div className="mr-design-awards-intro">
-          <p className="mr-eyebrow">International recognition</p>
-          <h2 id="design-awards-heading">Award-winning design.</h2>
-          <p>The XSTO M4. Three international design awards in 2025.</p>
-          <Link to="/products/buy-robot-wheelchair" className="mr-text-link">
-            Discover the M4 <ArrowUpRight size={17} aria-hidden />
-          </Link>
+    <section className="mr-awards-bar" aria-labelledby="design-awards-heading">
+      <div className="xsto-container mr-awards-bar-inner">
+        <div className="mr-awards-bar-copy">
+          <h2 id="design-awards-heading">Award-winning design</h2>
+          <p>XSTO M4 · International recognition · 2025</p>
         </div>
-        <ul className="mr-design-awards-list">
-          {awards.map((award) => (
-            <li key={award.name}>
-              <a href={award.url} target="_blank" rel="noopener noreferrer">
-                <span className="mr-design-award-year">
-                  <Award size={19} strokeWidth={1.6} aria-hidden /> Winner 2025
-                </span>
-                <span className="mr-design-award-name">{award.name}</span>
-                <span className="mr-design-award-category">{award.category}</span>
-                <span className="mr-design-award-detail">
-                  {award.location} · XSTO M4 <ArrowUpRight size={16} aria-hidden />
-                </span>
-                <span className="sr-only"> — view the award record (opens in a new tab)</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div className="mr-awards-logos">
+          <div className="mr-awards-pair">
+            <img
+              src={ifRedDotAwards}
+              width={638}
+              height={173}
+              alt="iF Design Award 2025 and Red Dot winner 2025"
+              loading="lazy"
+              decoding="async"
+            />
+            <a
+              className="mr-awards-if-link"
+              href="https://ifdesign.com/en/winner-ranking/project/xsto-mobility-robot/680124"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="XSTO M4 — iF Design Award 2025 winner record (opens in a new tab)"
+            />
+            <a
+              className="mr-awards-red-dot-link"
+              href="https://www.red-dot.org/project/xsto-mobility-robot-81361"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="XSTO M4 — Red Dot 2025 winner record (opens in a new tab)"
+            />
+          </div>
+          <a
+            className="mr-awards-good-design"
+            href="https://www.g-mark.org/en/gallery/winners/33173?years=2025"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="XSTO M4 — Good Design Award 2025 winner record (opens in a new tab)"
+          >
+            <img
+              src={goodDesignAward}
+              width={258}
+              height={40}
+              alt="Good Design Award"
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+        </div>
       </div>
     </section>
   );

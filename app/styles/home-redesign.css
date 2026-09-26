@@ -57,6 +57,28 @@
 .mr-story-strip a { min-height: 44px; color: #2155ed; }
 .mr-story-strip .mr-transition-inner { padding-block: 5px; }
 
+.mr-awards-bar { background: #fff; border-bottom: 1px solid #e4e8ef; padding-block: 18px; }
+.mr-awards-bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+.mr-home .mr-awards-bar-copy h2 { margin: 0 0 5px; font-size: 1rem; line-height: 1.35; letter-spacing: -.02em; }
+.mr-awards-bar-copy p { margin: 0; color: #647086; font-size: .75rem; line-height: 1.5; }
+.mr-awards-logos { display: flex; align-items: center; justify-content: center; gap: clamp(24px, 5vw, 72px); flex: 0 1 650px; }
+.mr-awards-pair { position: relative; width: 320px; max-width: 58%; flex-shrink: 0; }
+.mr-awards-pair img { display: block; width: 100%; height: auto; }
+.mr-awards-pair a { position: absolute; top: 0; bottom: 0; min-height: 44px; }
+.mr-awards-if-link { left: 0; width: 52%; }
+.mr-awards-red-dot-link { right: 0; width: 48%; }
+.mr-awards-good-design { display: flex; align-items: center; width: 210px; max-width: 36%; min-height: 60px; }
+.mr-awards-good-design img { width: 100%; height: auto; }
+.mr-awards-logos a:focus-visible { outline: 2px solid #2155ed; outline-offset: 5px; border-radius: 2px; }
+@media (max-width: 767px) {
+  .mr-awards-bar { padding-block: 16px; }
+  .mr-awards-bar-inner { flex-direction: column; gap: 14px; }
+  .mr-awards-bar-copy { text-align: center; }
+  .mr-home .mr-awards-bar-copy h2 { font-size: .9rem; }
+  .mr-awards-logos { flex: none; width: 100%; gap: 20px; }
+  .mr-awards-pair { max-width: 60%; }
+  .mr-awards-good-design { max-width: 32%; min-height: 44px; }
+}
 .mr-design-awards {
   background: #f3f6fc;
   border-bottom: 1px solid #dfe6f0;
