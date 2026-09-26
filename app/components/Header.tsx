@@ -8,6 +8,7 @@ import {
 } from '@shopify/hydrogen';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+import homepageLogo from '~/assets/mobility-robot-stacked-transparent.png';
 import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
@@ -57,7 +58,7 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
         >
           {pathname === '/' ? (
             <img
-              src="/images/mobility-robot-stacked-transparent.png"
+              src={homepageLogo}
               alt="Mobility Robot — XSTO × Bentech"
               width={1328}
               height={645}
