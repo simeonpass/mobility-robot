@@ -12,6 +12,8 @@
 | `SESSION_SECRET` | Cookie signing |
 | `SHOPIFY_ADMIN_API_ACCESS_TOKEN` | VAT relief customer sync (optional) |
 | `PUBLIC_GA4_ID` | Google Analytics 4 (`G-QMXNFNFTS0`) |
+| `PUBLIC_GOOGLE_ADS_ID` | Google Ads tag (`AW-…`). Optional until campaigns launch. |
+| `PUBLIC_GOOGLE_ADS_LEAD_LABEL` | Google Ads conversion label for demo/quote/contact leads |
 | `PUBLIC_SHOP_ID` | Shop Chat widget (numeric shop ID) |
 
 Copy from `.env.example` and fill in Oxygen project settings before deploy.

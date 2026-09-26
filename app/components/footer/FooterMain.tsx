@@ -8,6 +8,7 @@ import {MobilityRobotBrand} from '~/components/Header';
 import {DistributorDisclaimer} from '~/components/footer/DistributorDisclaimer';
 import {FooterBottom} from '~/components/footer/FooterBottom';
 import {SafetyDisclaimer} from '~/components/footer/SafetyDisclaimer';
+import {TrackedTelLink} from '~/components/TrackedTelLink';
 
 const LEGAL_URLS = new Set(['/privacy', '/terms', '/vat-relief']);
 const SUPPORT_PRIMARY = FOOTER_SUPPORT_LINKS.filter(
@@ -38,12 +39,12 @@ export function FooterMain() {
             </p>
             <address className="mt-3 space-y-1 not-italic text-sm leading-relaxed text-white/65">
               <p>
-                <a
+                <TrackedTelLink
                   className="text-white/85 transition-colors hover:text-white"
                   href={COMPANY.phoneHref}
                 >
                   {COMPANY.phone}
-                </a>
+                </TrackedTelLink>
               </p>
               <p>
                 <a

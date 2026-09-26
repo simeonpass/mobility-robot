@@ -20,6 +20,10 @@ declare global {
     PUBLIC_SHOPIFY_PRICES_EX_VAT?: string;
     /** Google Analytics 4 measurement ID (e.g. G-QMXNFNFTS0) */
     PUBLIC_GA4_ID?: string;
+    /** Google Ads account ID (e.g. AW-123456789) */
+    PUBLIC_GOOGLE_ADS_ID?: string;
+    /** Google Ads conversion label for demo/quote/contact leads */
+    PUBLIC_GOOGLE_ADS_LEAD_LABEL?: string;
     /** Numeric Shopify shop ID (meta.json) */
     PUBLIC_SHOP_ID?: string;
     /** Inbox data-external-identifier from Liquid theme embed */

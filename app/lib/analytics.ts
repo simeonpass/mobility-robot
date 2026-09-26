@@ -14,30 +14,77 @@ export type Ga4Item = {
   item_category?: string;
 };
 
-let ga4Initialized = false;
+export type LeadType = 'demo' | 'quote' | 'contact' | 'phone';
 
-export function initGa4(measurementId: string): void {
-  if (typeof window === 'undefined' || ga4Initialized) return;
+export type GtagIds = {
+  ga4Id?: string | null;
+  googleAdsId?: string | null;
+};
 
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer?.push(args);
-  };
-  window.gtag('js', new Date());
-  window.gtag('config', measurementId, {send_page_view: false});
-  ga4Initialized = true;
+let gtagBootstrapped = false;
+const configuredIds = new Set<string>();
+
+export function googleAdsConversionSendTo(
+  adsId?: string | null,
+  label?: string | null,
+): string | null {
+  const id = adsId?.trim();
+  const conversionLabel = label?.trim();
+  if (!id || !conversionLabel) return null;
+  const prefixed = id.toUpperCase().startsWith('AW-') ? id : `AW-${id}`;
+  return `${prefixed}/${conversionLabel}`;
 }
 
-export function loadGa4Script(measurementId: string): void {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById('ga4-script')) return;
+export function initGtag({ga4Id, googleAdsId}: GtagIds): void {
+  if (typeof window === 'undefined') return;
 
-  const script = document.createElement('script');
-  script.id = 'ga4-script';
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(script);
-  initGa4(measurementId);
+  if (!gtagBootstrapped) {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag(...args: unknown[]) {
+      window.dataLayer?.push(args);
+    };
+    window.gtag('js', new Date());
+    gtagBootstrapped = true;
+  }
+
+  const gtag = window.gtag;
+  if (!gtag) return;
+
+  if (ga4Id && !configuredIds.has(ga4Id)) {
+    gtag('config', ga4Id, {send_page_view: false});
+    configuredIds.add(ga4Id);
+  }
+
+  if (googleAdsId && !configuredIds.has(googleAdsId)) {
+    gtag('config', googleAdsId);
+    configuredIds.add(googleAdsId);
+  }
+}
+
+/** @deprecated Prefer initGtag — kept for existing GA4-only call sites. */
+export function initGa4(measurementId: string): void {
+  initGtag({ga4Id: measurementId});
+}
+
+export function loadGtagScript({ga4Id, googleAdsId}: GtagIds): void {
+  if (typeof document === 'undefined') return;
+  const scriptId = ga4Id || googleAdsId;
+  if (!scriptId) return;
+
+  if (!document.getElementById('gtag-script')) {
+    const script = document.createElement('script');
+    script.id = 'gtag-script';
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${scriptId}`;
+    document.head.appendChild(script);
+  }
+
+  initGtag({ga4Id, googleAdsId});
+}
+
+/** @deprecated Prefer loadGtagScript. */
+export function loadGa4Script(measurementId: string): void {
+  loadGtagScript({ga4Id: measurementId});
 }
 
 export function trackPageView(path: string, title?: string): void {
@@ -105,6 +152,30 @@ export function trackSelectPromotion(
   });
 }
 
+export function trackGenerateLead(leadType: LeadType): void {
+  window.gtag?.('event', 'generate_lead', {
+    currency: 'GBP',
+    lead_type: leadType,
+  });
+}
+
+export function trackAdsConversion(
+  sendTo: string,
+  extra?: Record<string, string>,
+): void {
+  window.gtag?.('event', 'conversion', {
+    send_to: sendTo,
+    ...extra,
+  });
+}
+
+export function trackPhoneClick(): void {
+  window.gtag?.('event', 'phone_click', {
+    event_category: 'engagement',
+    event_label: 'tel',
+  });
+}
+
 export function toGa4Item(input: {
   id: string;
   title: string;
@@ -123,4 +194,9 @@ export function toGa4Item(input: {
     item_brand: input.vendor ?? 'XSTO',
     item_category: 'Wheelchairs',
   };
+}
+
+export function resetGtagForTests(): void {
+  gtagBootstrapped = false;
+  configuredIds.clear();
 }

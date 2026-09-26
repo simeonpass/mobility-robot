@@ -71,7 +71,7 @@ describe('form spam protection', () => {
   });
   it('silently drops a filled honeypot without emailing', async () => {
     const response = await submit({...valid, website: 'https://spam.example'});
-    expect(await response.json()).toEqual({ok: true});
+    expect(await response.json()).toEqual({ok: true, ignored: true});
     expect(sendFormNotification).not.toHaveBeenCalled();
   });
   it('keeps the honeypot through client-side schema parsing', () => {

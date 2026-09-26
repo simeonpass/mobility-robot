@@ -73,7 +73,7 @@ export async function handleValidatedFormAction<T extends z.ZodType>({
     typeof body.website === 'string' &&
     body.website.trim()
   ) {
-    return json({ok: true as const});
+    return json({ok: true as const, ignored: true as const});
   }
   const parsed = schema.safeParse(body);
 

@@ -20,6 +20,7 @@ import {
   TextInput,
 } from '~/components/forms/FormField';
 import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
+import {TrackedTelLink} from '~/components/TrackedTelLink';
 import {
   CONTACT_FAQS,
   CONTACT_HELP_LINKS,
@@ -27,6 +28,7 @@ import {
   CONTACT_TOPICS,
 } from '~/lib/content/contact';
 import {contactFormSchema} from '~/lib/form-schemas';
+import {useTrackLead} from '~/lib/use-lead-tracking';
 import {COMPANY} from '~/lib/site-navigation';
 import {breadcrumbJsonLd, faqJsonLd, pageMeta, SITE_URL} from '~/lib/seo';
 
@@ -41,10 +43,12 @@ export const meta: Route.MetaFunction = () =>
 const breadcrumbs = [{name: 'Home', path: '/'}, {name: 'Contact'}] as const;
 
 export default function ContactPage() {
+  const trackLead = useTrackLead();
   const {errors, formError, loading, success, handleSubmit} =
     useValidatedApiForm({
       schema: contactFormSchema,
       action: '/api/contact',
+      onSuccess: () => trackLead('contact'),
     });
 
   return (
@@ -112,12 +116,12 @@ export default function ContactPage() {
             >
               Send a message
             </a>
-            <a
+            <TrackedTelLink
               className="underline-offset-2 hover:text-white hover:underline"
               href={CONTACT_INFO.phoneHref}
             >
               Call {CONTACT_INFO.phone}
-            </a>
+            </TrackedTelLink>
             <a
               className="underline-offset-2 hover:text-white hover:underline"
               href={`mailto:${CONTACT_INFO.email}`}
@@ -152,7 +156,7 @@ export default function ContactPage() {
         <h2 className="sr-only" id="contact-channels-heading">
           Contact channels
         </h2>
-        <a
+        <TrackedTelLink
           className="group flex gap-3 text-left transition-colors"
           href={CONTACT_INFO.phoneHref}
         >
@@ -172,7 +176,7 @@ export default function ContactPage() {
               Speak to the UK team
             </span>
           </span>
-        </a>
+        </TrackedTelLink>
         <a
           className="group flex gap-3 text-left transition-colors"
           href={`mailto:${CONTACT_INFO.email}`}
@@ -366,12 +370,12 @@ export default function ContactPage() {
                 <SubmitButton loading={loading}>Send message</SubmitButton>
                 <p className="text-xs text-muted-foreground">
                   Prefer a quick call?{' '}
-                  <a
+                  <TrackedTelLink
                     className="font-medium text-gold hover:text-gold-dark"
                     href={CONTACT_INFO.phoneHref}
                   >
                     {CONTACT_INFO.phone}
-                  </a>
+                  </TrackedTelLink>
                 </p>
               </div>
             </form>

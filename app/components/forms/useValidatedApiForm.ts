@@ -1,10 +1,11 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useFetcher} from 'react-router';
 import type {z} from 'zod';
 import {formatZodErrors} from '~/lib/form-schemas';
 
 type FormActionData = {
   ok?: boolean;
+  ignored?: boolean;
   error?: string;
   fieldErrors?: Record<string, string>;
 };
@@ -12,14 +13,17 @@ type FormActionData = {
 export function useValidatedApiForm<T extends z.ZodType>({
   schema,
   action,
+  onSuccess,
 }: {
   schema: T;
   action: string;
+  onSuccess?: () => void;
 }) {
   const fetcher = useFetcher<FormActionData>();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const trackedSuccess = useRef(false);
 
   const loading = fetcher.state !== 'idle';
   const success = submitted && fetcher.data?.ok === true;
@@ -31,6 +35,10 @@ export function useValidatedApiForm<T extends z.ZodType>({
       setSubmitted(true);
       setFormError(null);
       setErrors({});
+      if (!fetcher.data.ignored && !trackedSuccess.current) {
+        trackedSuccess.current = true;
+        onSuccess?.();
+      }
       return;
     }
 
@@ -45,13 +53,14 @@ export function useValidatedApiForm<T extends z.ZodType>({
         'Something went wrong. Please try again or email sales@bentechmeduk.com.',
       );
     }
-  }, [fetcher.data]);
+  }, [fetcher.data, onSuccess]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrors({});
     setFormError(null);
     setSubmitted(false);
+    trackedSuccess.current = false;
 
     const formData = new FormData(event.currentTarget);
     const values = Object.fromEntries(formData.entries());

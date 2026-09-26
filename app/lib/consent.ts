@@ -42,6 +42,10 @@ export function isAnalyticsGranted(consent: StoredConsent): boolean {
   return consent.choice === 'granted' && consent.preferences.analytics;
 }
 
+export function isMarketingGranted(consent: StoredConsent): boolean {
+  return consent.choice === 'granted' && consent.preferences.marketing;
+}
+
 export function syncShopifyTrackingConsent(consent: StoredConsent): void {
   if (typeof window === 'undefined') return;
 

@@ -99,6 +99,8 @@ export async function loader(args: Route.LoaderArgs) {
   return {
     ...deferredData,
     ga4Id: env.PUBLIC_GA4_ID ?? null,
+    googleAdsId: env.PUBLIC_GOOGLE_ADS_ID ?? null,
+    googleAdsLeadLabel: env.PUBLIC_GOOGLE_ADS_LEAD_LABEL ?? null,
     shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,
     inboxExternalId: env.PUBLIC_SHOPIFY_INBOX_EXTERNAL_ID || undefined,
@@ -175,7 +177,7 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      <ConsentProvider ga4Id={data.ga4Id}>
+      <ConsentProvider ga4Id={data.ga4Id} googleAdsId={data.googleAdsId}>
         <VatReliefProvider>
           <Ga4Tracker ga4Id={data.ga4Id} />
           <ShopChat
