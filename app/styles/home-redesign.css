@@ -284,7 +284,8 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 27px 15px 10px;
+  /* Even inset so square listing shots (especially X12) keep headrest and tracks. */
+  padding: 18px;
   mix-blend-mode: multiply;
 }
 .mr-card-badge {
@@ -693,7 +694,7 @@
     aspect-ratio: 1;
   }
   .mr-card-visual img {
-    padding: 12px 8px 6px;
+    padding: 12px;
   }
   .mr-card-badge {
     display: none;

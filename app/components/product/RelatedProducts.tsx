@@ -46,11 +46,11 @@ export function RelatedProducts({
                 prefetch="intent"
                 to={`/products/${product.handle}`}
               >
-                <div className="mr-product-related-image flex aspect-square items-center justify-center overflow-hidden bg-[#f5f7fb] p-6">
+                <div className="mr-product-related-image relative aspect-square overflow-hidden bg-[#f5f7fb]">
                   {image?.url ? (
                     <img
                       alt={image.altText || name}
-                      className="max-h-full max-w-full object-contain transition-transform group-hover:scale-[1.03]"
+                      className="absolute inset-0 size-full object-contain p-7 transition-transform group-hover:scale-[1.03] sm:p-8"
                       decoding="async"
                       height={image.height ?? 800}
                       loading="lazy"
