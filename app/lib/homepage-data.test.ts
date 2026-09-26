@@ -7,6 +7,7 @@ import {
 import {
   getHomepageProductSlot,
   getProductCardImage,
+  productThumbSrc,
   X12_LISTING_IMAGE,
 } from '~/lib/homepage-data';
 import {getProductContent, getProductDisplayName} from '~/lib/product-content';
@@ -213,5 +214,23 @@ describe('getProductCardImage', () => {
     expect(
       getProductCardImage('adjustable-headrest-for-x12-x12-pro', featured),
     ).toEqual(featured);
+  });
+});
+
+describe('productThumbSrc', () => {
+  it('adds width to Shopify CDN URLs and drops crop', () => {
+    const src = productThumbSrc(
+      'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m4-01.jpg?crop=center',
+      300,
+    );
+
+    expect(src).toContain('width=300');
+    expect(src).not.toContain('crop=');
+  });
+
+  it('leaves bundled asset URLs unchanged', () => {
+    expect(productThumbSrc(X12_LISTING_IMAGE.url, 112, 112)).toBe(
+      X12_LISTING_IMAGE.url,
+    );
   });
 });

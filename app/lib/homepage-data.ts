@@ -242,6 +242,20 @@ export function getProductCardImage(
   return featuredImage ?? null;
 }
 
+/** Resize Shopify CDN thumbs only; leave bundled assets unchanged. */
+export function productThumbSrc(url: string, width: number, height?: number) {
+  if (!/^https?:\/\/cdn\.shopify\.com\//i.test(url)) return url;
+  const parsed = new URL(url);
+  parsed.searchParams.set('width', String(width));
+  if (height != null) {
+    parsed.searchParams.set('height', String(height));
+  } else {
+    parsed.searchParams.delete('height');
+  }
+  parsed.searchParams.delete('crop');
+  return parsed.toString();
+}
+
 /** Canonical product slots used for specs, comparison data, and bullets. */
 export const HOMEPAGE_PRODUCT_HANDLES = [
   'xsto-m4',

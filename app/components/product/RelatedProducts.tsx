@@ -1,5 +1,4 @@
 import {Link} from 'react-router';
-import {Image} from '@shopify/hydrogen';
 import type {HomeProductFragment} from 'storefrontapi.generated';
 import {getProductCardImage} from '~/lib/homepage-data';
 import {getProductDisplayName} from '~/lib/product-content';
@@ -47,14 +46,16 @@ export function RelatedProducts({
                 prefetch="intent"
                 to={`/products/${product.handle}`}
               >
-                <div className="mr-product-related-image flex aspect-square items-center justify-center overflow-hidden p-6">
-                  {image ? (
-                    <Image
+                <div className="mr-product-related-image flex aspect-square items-center justify-center overflow-hidden bg-[#f5f7fb] p-6">
+                  {image?.url ? (
+                    <img
                       alt={image.altText || name}
-                      aspectRatio="1/1"
-                      className="max-h-full w-full object-contain transition-transform group-hover:scale-[1.03]"
-                      data={image}
-                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                      className="max-h-full max-w-full object-contain transition-transform group-hover:scale-[1.03]"
+                      decoding="async"
+                      height={image.height ?? 800}
+                      loading="lazy"
+                      src={image.url}
+                      width={image.width ?? 800}
                     />
                   ) : null}
                 </div>

@@ -1,6 +1,7 @@
 import {Link, useFetcher, type Fetcher} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
 import React, {useRef, useEffect} from 'react';
+import {getProductCardImage} from '~/lib/homepage-data';
 import {
   getEmptyPredictiveSearchResult,
   urlWithTrackingParams,
@@ -214,18 +215,21 @@ function SearchResultsPredictiveProducts({
           });
 
           const price = product?.selectedOrFirstAvailableVariant?.price;
-          const image = product?.selectedOrFirstAvailableVariant?.image;
+          const image = getProductCardImage(
+            product.handle,
+            product?.selectedOrFirstAvailableVariant?.image,
+          );
           return (
             <li className="predictive-search-result-item" key={product.id}>
               <Link to={productUrl} onClick={closeSearch}>
-                {image && (
+                {image?.url ? (
                   <Image
                     alt={image.altText || product.title}
+                    height={50}
                     src={image.url}
                     width={50}
-                    height={50}
                   />
-                )}
+                ) : null}
                 <div>
                   <p>{product.title}</p>
                   <small>{price && <Money data={price} />}</small>

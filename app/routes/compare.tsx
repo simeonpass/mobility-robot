@@ -5,6 +5,7 @@ import {PageHeader, PageShell} from '~/components/content/PageShell';
 import {
   HOMEPAGE_COMPARISON_ROWS,
   HOMEPAGE_PRODUCT_THUMBS,
+  productThumbSrc,
 } from '~/lib/homepage-data';
 import {buildMeta} from '~/lib/seo';
 import discoveryStyles from '~/styles/discovery.css?url';
@@ -77,7 +78,14 @@ export default function ComparePage() {
               {rows.map((model) => (
                 <th scope="col" key={model.handle}>
                   <img
-                    src={`${HOMEPAGE_PRODUCT_THUMBS[model.handle === 'xsto-x12-pro' ? 'xsto-x12' : model.handle]}?width=300`}
+                    src={productThumbSrc(
+                      HOMEPAGE_PRODUCT_THUMBS[
+                        model.handle === 'xsto-x12-pro'
+                          ? 'xsto-x12'
+                          : model.handle
+                      ],
+                      300,
+                    )}
                     width={150}
                     height={150}
                     alt=""

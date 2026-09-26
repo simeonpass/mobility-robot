@@ -18,6 +18,7 @@ import {
 import {
   getHomepageProductSlot,
   HOMEPAGE_PRODUCT_BADGES,
+  productThumbSrc,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 
@@ -229,7 +230,7 @@ function ModelsDropdown() {
                           decoding="async"
                           height={56}
                           loading="lazy"
-                          src={`${item.imageUrl}?width=112&height=112`}
+                          src={productThumbSrc(item.imageUrl, 112, 112)}
                           width={56}
                         />
                       </span>
@@ -385,7 +386,7 @@ function MobileNavLink({item, close}: {item: NavItem; close: () => void}) {
             decoding="async"
             height={48}
             loading="lazy"
-            src={`${item.imageUrl}?width=96&height=96`}
+            src={productThumbSrc(item.imageUrl, 96, 96)}
             width={48}
           />
         </span>

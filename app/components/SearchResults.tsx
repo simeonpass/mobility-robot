@@ -1,5 +1,6 @@
 import {Link} from 'react-router';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
+import {getProductCardImage} from '~/lib/homepage-data';
 import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
 
 type SearchItems = RegularSearchReturn['result']['items'];
@@ -114,14 +115,22 @@ function SearchResultsProducts({
             });
 
             const price = product?.selectedOrFirstAvailableVariant?.price;
-            const image = product?.selectedOrFirstAvailableVariant?.image;
+            const image = getProductCardImage(
+              product.handle,
+              product?.selectedOrFirstAvailableVariant?.image,
+            );
 
             return (
               <div className="search-results-item" key={product.id}>
                 <Link prefetch="intent" to={productUrl}>
-                  {image && (
-                    <Image data={image} alt={product.title} width={50} />
-                  )}
+                  {image?.url ? (
+                    <Image
+                      alt={image.altText || product.title}
+                      height={50}
+                      src={image.url}
+                      width={50}
+                    />
+                  ) : null}
                   <div>
                     <p>{product.title}</p>
                     <small>{price && <Money data={price} />}</small>
