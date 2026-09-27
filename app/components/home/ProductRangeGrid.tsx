@@ -24,6 +24,7 @@ const descriptions: Record<HomepageFlagshipHandle, string> = {
     'A fresh take on the M4 platform, with redesigned front wheels and a folding footrest.',
   'xsto-m4-pro':
     'More seating adjustment, an integrated headrest and electric folding.',
+  'xsto-x12-pro': 'Stair-climbing capability with an electric elevating leg rest, assessment and training.',
   'xsto-x12':
     'Stair-climbing capability for suitable stairs, with assessment and training.',
 };
@@ -33,6 +34,7 @@ const mobileDescriptions: Record<HomepageFlagshipHandle, string> = {
   'xsto-m4': 'Everyday self-levelling',
   'xsto-m4b': 'Updated wheels & footrest',
   'xsto-m4-pro': 'Extra seating adjustment',
+  'xsto-x12-pro': 'Stair climbing · electric elevating leg rest',
   'xsto-x12': 'Stair climbing, with assessment & training',
 };
 function productImageSrc(url: string, width: number): string {

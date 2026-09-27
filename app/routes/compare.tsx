@@ -28,11 +28,12 @@ const MODEL_FOCUS = [
   'Four-wheel-drive exploration',
   'Four-wheel drive with powered comfort',
   'Stair-climbing technology',
+  'Stair climbing with powered leg rest',
 ];
 
 const FEATURES = [
-  {label: 'Self-levelling', values: ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes']},
-  {label: 'Stair climbing', values: ['No', 'No', 'No', 'No', 'No', 'Suitable stairs only']},
+  {label: 'Self-levelling', values: ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes']},
+  {label: 'Stair climbing', values: ['No', 'No', 'No', 'No', 'No', 'Suitable stairs only', 'Suitable stairs only']},
   {
     label: 'Distinctive feature',
     values: [
@@ -41,7 +42,8 @@ const FEATURES = [
       'Backrest recline and seat tilt',
       'Four-wheel drive · manual recline',
       'Powered recline and leg rest',
-      'X12 / X12 Pro leg-rest options',
+      'Standard leg rest',
+      'Electric elevating leg rest',
     ],
   },
 ];
@@ -81,7 +83,7 @@ export default function ComparePage() {
               {rows.map((model) => (
                 <th scope="col" key={model.handle}>
                   <img
-                    src={`${HOMEPAGE_PRODUCT_THUMBS[model.handle === 'xsto-x12-pro' ? 'xsto-x12' : model.handle]}?width=300`}
+                    src={`${HOMEPAGE_PRODUCT_THUMBS[model.handle]}?width=300`}
                     width={150}
                     height={150}
                     alt=""
@@ -108,7 +110,7 @@ export default function ComparePage() {
               {rows.map((model) => (
                 <td key={model.handle}>
                   Up to {model.range}
-                  {model.handle === 'xsto-x12' ? ' (dual batteries)' : ''}
+                  {model.handle.startsWith('xsto-x12') ? ' (dual batteries)' : ''}
                 </td>
               ))}
             </tr>

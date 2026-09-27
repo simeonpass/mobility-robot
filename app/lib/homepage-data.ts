@@ -13,6 +13,7 @@ export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-m8',
   'xsto-m8-pro',
   'xsto-x12',
+  'xsto-x12-pro',
 ] as const satisfies readonly HomepageProductHandle[];
 
 export type HomepageFlagshipHandle =
@@ -39,6 +40,7 @@ export const HOMEPAGE_PRODUCT_BADGES: Record<
     shortName: 'XSTO M4B',
     exploreLabel: 'Explore XSTO M4B',
   },
+  'xsto-x12-pro': {badge: 'Stair Climber', shortName: 'XSTO X12 Pro', exploreLabel: 'Explore XSTO X12 Pro'},
   'xsto-x12': {
     badge: 'Stair Climber',
     shortName: 'XSTO X12',
@@ -88,7 +90,7 @@ export const HOMEPAGE_VIDEO_ITEMS: readonly HomepageVideoItem[] = [
     youtubeId: 'ihXdzLuNz2s',
     title: 'XSTO X12 — Stair Climber',
     description:
-      'See the X12 in action on suitable stairs and outdoor routes. Compare X12 and X12 Pro with its electric elevating leg rest on the product page',
+      'See the X12 in action on suitable stairs and outdoor routes. Compare X12 and X12 Pro with its electric elevating leg rest on their individual product pages',
   },
 ];
 
@@ -108,6 +110,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': true,
       'xsto-m4b': true,
       'xsto-x12': true,
+      'xsto-x12-pro': true,
     },
   },
   {
@@ -119,6 +122,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': true,
       'xsto-m4b': true,
       'xsto-x12': true,
+      'xsto-x12-pro': true,
     },
   },
   {
@@ -130,6 +134,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': false,
       'xsto-m4b': false,
       'xsto-x12': true,
+      'xsto-x12-pro': true,
     },
   },
   {
@@ -141,6 +146,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': true,
       'xsto-m4b': false,
       'xsto-x12': false,
+      'xsto-x12-pro': false,
     },
   },
   {
@@ -151,7 +157,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4': false,
       'xsto-m4-pro': false,
       'xsto-m4b': false,
-      'xsto-x12': 'Optional',
+      'xsto-x12': false,
+      'xsto-x12-pro': true,
     },
   },
   {
@@ -163,6 +170,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': false,
       'xsto-m4b': true,
       'xsto-x12': false,
+      'xsto-x12-pro': false,
     },
   },
   {
@@ -174,6 +182,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '15°',
       'xsto-m4b': '10°',
       'xsto-x12': '40°',
+      'xsto-x12-pro': '40°',
     },
   },
   {
@@ -185,6 +194,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '26 km',
       'xsto-m4b': '15 km',
       'xsto-x12': '35 km',
+      'xsto-x12-pro': '35 km',
     },
   },
   {
@@ -196,6 +206,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '6 km/h',
       'xsto-m4b': '6 km/h',
       'xsto-x12': '12 km/h',
+      'xsto-x12-pro': '12 km/h',
     },
   },
   {
@@ -207,6 +218,7 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
       'xsto-m4-pro': '60.1 kg',
       'xsto-m4b': '55.5 kg',
       'xsto-x12': '112.8 kg',
+      'xsto-x12-pro': '115.8 kg',
     },
   },
 ];
@@ -218,6 +230,7 @@ export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = 
   'xsto-m4-pro': 'M4 Pro',
   'xsto-m4b': 'M4B',
   'xsto-x12': 'X12',
+  'xsto-x12-pro': 'X12 Pro',
 };
 
 /**
@@ -233,6 +246,8 @@ export const HOMEPAGE_PRODUCT_THUMBS: Record<HomepageFlagshipHandle, string> = {
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/M4B.png',
   'xsto-m4-pro':
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/xsto-m4-pro-mobility-wheelchair-adjustable-seat-backrest-9425362.jpg',
+  'xsto-x12-pro':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-all-terrain-mobility-robot-8874875.jpg',
   'xsto-x12':
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/x12-all-terrain-mobility-robot-8874875.jpg',
 };
@@ -289,11 +304,9 @@ export function isUkUnavailableProductHandle(handle: string): boolean {
 
 /**
  * Shopify products that remain as cart SKUs but must not appear as their
- * own storefront listing. X12 Pro is an edition on the X12 product page.
+ * own storefront listing. Both X12 models now have standalone products.
  */
-export const MERGED_AWAY_PRODUCT_HANDLES = [
-  'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
-] as const;
+export const MERGED_AWAY_PRODUCT_HANDLES: readonly string[] = [];
 
 export function isMergedAwayProductHandle(handle: string): boolean {
   const h = handle.trim().toLowerCase();
@@ -474,6 +487,15 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
     handle: 'xsto-x12',
     shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12'],
     weight: '112.8 kg',
+    capacity: '136 kg',
+    range: '35 km',
+    foldedSize: '1185 × 685 × 617 mm',
+  },
+  {
+    model: 'X12 Pro',
+    handle: 'xsto-x12-pro',
+    shopifyHandle: SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro'],
+    weight: '115.8 kg',
     capacity: '136 kg',
     range: '35 km',
     foldedSize: '1185 × 685 × 617 mm',

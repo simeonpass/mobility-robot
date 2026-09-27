@@ -81,13 +81,13 @@ describe('google merchant supplemental feed', () => {
       },
       {
         id: 'shopify_ZZ_1_2',
-        link: `${SITE_URL}/products/x12-all-terrain-mobility-robot?legrest=electric&variant=2`,
+        link: `${SITE_URL}/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition?variant=2`,
         price: '4995.00 GBP',
         excludedDestination: undefined,
       },
       {
         id: 'shopify_GB_1_2',
-        link: `${SITE_URL}/products/x12-all-terrain-mobility-robot?legrest=electric&variant=2`,
+        link: `${SITE_URL}/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition?variant=2`,
         price: '4995.00 GBP',
         excludedDestination: undefined,
       },
@@ -102,7 +102,7 @@ describe('google merchant supplemental feed', () => {
       `shopify_GB_15648931250554_57163988533626\t${SITE_URL}/products/xsto-m4-pro?variant=57163988533626\t3500.00 GBP\t${VAT_RELIEF_EXCLUDED_DESTINATIONS}`,
     );
     expect(tsv).toContain(
-      `shopify_GB_1_2\t${SITE_URL}/products/x12-all-terrain-mobility-robot?legrest=electric&variant=2\t4995.00 GBP\t`,
+      `shopify_GB_1_2\t${SITE_URL}/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition?variant=2\t4995.00 GBP\t`,
     );
     expect(tsv).not.toContain('xsto-ezgo2');
   });

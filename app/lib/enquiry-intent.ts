@@ -7,6 +7,7 @@ export const DEMO_MODELS = [
   'M8',
   'M8 Pro',
   'X12',
+  'X12 Pro',
 ] as const;
 export type DemoModel = (typeof DEMO_MODELS)[number];
 

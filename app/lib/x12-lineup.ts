@@ -17,6 +17,28 @@ export const X12_PRO_SHOPIFY_HANDLE =
 
 export const X12_MERGED_PATH = `/products/${X12_CANONICAL_HANDLE}`;
 
+/** Preserve saved links without reusing the former combined product's stock. */
+export const X12_PRO_VARIANT_MIGRATION: Record<string, string> = {
+  '57222228967802': '56935137509754',
+  '57222229000570': '57163989025146',
+};
+
+export function separateX12ProductRedirect(handle: string, requestUrl: string): string | null {
+  const url = new URL(requestUrl);
+  const variant = (url.searchParams.get('variant') ?? '').split('/').pop() ?? '';
+  const mappedVariant = X12_PRO_VARIANT_MIGRATION[variant];
+  const isStandard = isX12CanonicalHandle(handle);
+  const isPro = isX12ProShopifyHandle(handle);
+  if (!((isPro && (handle !== X12_PRO_SHOPIFY_HANDLE || mappedVariant)) ||
+      (isStandard && (parseX12ChoiceFromSearch(url.searchParams) === 'electric' || mappedVariant)))) return null;
+  url.pathname = x12MergedPath('electric');
+  url.searchParams.delete('Edition');
+  url.searchParams.delete('edition');
+  url.searchParams.delete('legrest');
+  if (mappedVariant) url.searchParams.set('variant', mappedVariant);
+  return url.pathname + url.search;
+}
+
 export const X12_LEG_REST_OPTIONS = [
   {
     id: 'standard' as const,
@@ -34,7 +56,7 @@ export function x12MergedPath(
   choice: X12LegRestChoice = 'standard',
 ): string {
   if (choice === 'electric') {
-    return `${X12_MERGED_PATH}?${X12_LEG_REST_PARAM}=electric`;
+    return `/products/${X12_PRO_SHOPIFY_HANDLE}`;
   }
   return X12_MERGED_PATH;
 }
@@ -44,7 +66,7 @@ export function isX12CanonicalHandle(handle: string): boolean {
   return h === X12_CANONICAL_HANDLE || h === 'xsto-x12';
 }
 
-/** Legacy standalone X12 Pro handle — redirected, hidden from listings. */
+/** Standalone X12 Pro and its legacy aliases. */
 export function isX12ProShopifyHandle(handle: string): boolean {
   const h = handle.trim().toLowerCase();
   if (!h) return false;

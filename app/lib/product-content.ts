@@ -296,9 +296,9 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
   },
   'xsto-x12': {
     displayName: 'XSTO X12',
-    tagline: 'AI-Powered All-Terrain Mobility Robot — choose X12 or X12 Pro',
+    tagline: 'AI-Powered All-Terrain Mobility Robot — standard leg rest',
     overview:
-      'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries with gyroscopic self-balancing. Choose X12 with a standard leg rest, or X12 Pro with an electric elevating leg rest — the chairs look the same; that is the only hardware difference.',
+      'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries with gyroscopic self-balancing. This X12 model has a standard leg rest. For an electric elevating leg rest, explore the separate X12 Pro model.',
     highlights: [
       'Climbs stairs up to 40° incline',
       '35 km range on dual batteries',
@@ -314,7 +314,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Battery', value: '25.2V', unit: '25.6Ah × 2'},
       {label: 'Charge Time', value: '6.5 hours × 2'},
       {label: 'Max Pit Width', value: '300 mm', unit: '(tracked)'},
-      {label: 'Leg rest', value: 'Standard or X12 Pro electric'},
+      {label: 'Leg rest', value: 'Standard'},
       {label: 'Protection', value: 'IPX5', unit: 'Water Resistant'},
     ],
     dimensions: [
@@ -341,7 +341,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
     downloads: X12_SERIES_DOWNLOADS,
   },
   'xsto-x12-pro': {
-    displayName: 'XSTO X12',
+    displayName: 'XSTO X12 Pro',
     tagline: 'AI-Powered All-Terrain Mobility Robot — X12 Pro with electric elevating leg rest',
     overview:
       'The XSTO X12 is a true all-terrain machine with AI-powered automatic mode switching. Climbs stairs up to 40°, crosses ditches up to 300 mm, and delivers 35 km range on dual batteries. X12 Pro adds an electric elevating leg rest — the chairs look the same as the standard X12.',
@@ -369,7 +369,7 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
       {label: 'Recline Angle', value: '90°–121°'},
     ],
     inBox: [
-      'XSTO X12 All-Terrain Mobility Robot',
+      'XSTO X12 Pro All-Terrain Mobility Robot',
       '2× 25.2V 25.6Ah Lithium Battery Packs',
       'Battery Charger',
       'Joystick Controller',
@@ -411,7 +411,7 @@ export function getProductDisplayName(
       'xsto-m4-pro': 'XSTO M4 Pro',
       'xsto-m4b': 'XSTO M4B',
         'xsto-x12': 'XSTO X12',
-      'xsto-x12-pro': 'XSTO X12',
+      'xsto-x12-pro': 'XSTO X12 Pro',
     } as const;
     return fromBadges[slot];
   }

@@ -1,4 +1,4 @@
-import {Link, redirect, useLoaderData, useSearchParams} from 'react-router';
+import {Link, redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -44,11 +44,9 @@ import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
 import {
   isX12CanonicalHandle,
   isX12ProShopifyHandle,
-  parseX12ChoiceFromSearch,
-  productHasX12EditionOption,
+  separateX12ProductRedirect,
   variantsForX12Edition,
   withX12EditionSelectedOptions,
-  X12_PRO_SHOPIFY_HANDLE,
   x12MergedPath,
 } from '~/lib/x12-lineup';
 
@@ -105,9 +103,8 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     throw new Error('Expected product handle to be defined');
   }
 
-  if (isX12ProShopifyHandle(handle)) {
-    throw redirect(x12MergedPath('electric'), 301);
-  }
+  const separateProductPath = separateX12ProductRedirect(handle, request.url);
+  if (separateProductPath) throw redirect(separateProductPath, 301);
 
   const selectedOptions = withX12EditionSelectedOptions(
     handle,
@@ -118,21 +115,9 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     request.url,
   );
 
-  const needsSiblingFallback = isX12CanonicalHandle(handle);
-
-  const [{product}, siblingData] = await Promise.all([
-    storefront.query(PRODUCT_QUERY, {
-      variables: {handle, selectedOptions},
-    }),
-    needsSiblingFallback
-      ? storefront.query(PRODUCT_QUERY, {
-          variables: {
-            handle: X12_PRO_SHOPIFY_HANDLE,
-            selectedOptions,
-          },
-        })
-      : Promise.resolve({product: null}),
-  ]);
+  const {product} = await storefront.query(PRODUCT_QUERY, {
+    variables: {handle, selectedOptions},
+  });
 
   if (!product?.id) {
     throw new Response(null, {status: 404});
@@ -142,9 +127,6 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   return {
     product: withRequestedShopifyVariant(product, request.url),
-    x12ProProduct: siblingData?.product
-      ? withRequestedShopifyVariant(siblingData.product, request.url)
-      : null,
   };
 }
 
@@ -152,7 +134,7 @@ async function loadRelatedProducts({context}: Route.LoaderArgs) {
   const {storefront} = context;
 
   const data = await storefront.query(RELATED_PRODUCTS_QUERY);
-  const nodes = [data?.m4, data?.m4Pro, data?.m4b, data?.x12].filter(
+  const nodes = [data?.m4, data?.m4Pro, data?.m4b, data?.m8, data?.m8Pro, data?.x12, data?.x12Pro].filter(
     (product): product is NonNullable<typeof product> =>
       product != null && !isHiddenStorefrontProductHandle(product.handle),
   );
@@ -201,19 +183,12 @@ async function loadAccessoryAddons(
 }
 
 export default function Product() {
-  const {product, relatedProducts, accessoryAddons, x12ProProduct, initialReviews, reviewSummary} =
+  const {product, relatedProducts, accessoryAddons, initialReviews, reviewSummary} =
     useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
-  );
-
-  const proSelectedVariant = useOptimisticVariant(
-    x12ProProduct?.selectedOrFirstAvailableVariant ??
-      product.selectedOrFirstAvailableVariant,
-    getAdjacentAndFirstAvailableVariants(x12ProProduct ?? product),
   );
 
   useSelectedOptionInUrlParam(
@@ -224,15 +199,6 @@ export default function Product() {
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
   });
-
-  const proProductOptions = x12ProProduct
-    ? getProductOptions({
-        ...x12ProProduct,
-        selectedOrFirstAvailableVariant: proSelectedVariant,
-      })
-    : [];
-
-  const x12Choice = parseX12ChoiceFromSearch(searchParams);
 
   const metafieldEmbedUrl = normalizeYoutubeEmbed(
     product.youtubeEmbed?.value ?? product.videoUrl?.value,
@@ -271,57 +237,16 @@ export default function Product() {
   });
 
 
-  const pageVariants =
-    (
-      product as typeof product & {
-        variants?: {
-          nodes?: Array<NonNullable<typeof selectedVariant>>;
-        };
-      }
-    ).variants?.nodes ?? [];
-  const siblingVariants =
-    (
-      x12ProProduct as typeof x12ProProduct & {
-        variants?: {
-          nodes?: Array<NonNullable<typeof proSelectedVariant>>;
-        };
-      }
-    )?.variants?.nodes ?? [];
-  const editionOnProduct = productHasX12EditionOption(pageVariants);
-  const standardEditionVariants = editionOnProduct
-    ? variantsForX12Edition(pageVariants, 'standard')
-    : pageVariants;
-  const proEditionVariants = editionOnProduct
-    ? variantsForX12Edition(pageVariants, 'electric')
-    : siblingVariants;
-  const standardEditionVariant =
-    standardEditionVariants.find(
-      (variant) => variant?.id === selectedVariant?.id,
-    ) ??
-    standardEditionVariants[0] ??
-    selectedVariant;
-  const proEditionVariant =
-    proEditionVariants.find((variant) => variant?.id === selectedVariant?.id) ??
-    proEditionVariants.find(
-      (variant) => variant?.id === proSelectedVariant?.id,
-    ) ??
-    proEditionVariants[0] ??
-    null;
-
-  const isProEdition =
-    isX12CanonicalHandle(product.handle) &&
-    x12Choice === 'electric' &&
-    Boolean(proEditionVariant);
+  const pageVariants = isX12CanonicalHandle(product.handle)
+    ? variantsForX12Edition(product.variants.nodes, 'standard')
+    : product.variants.nodes;
   const offer = resolveProductOffer({
     selectedVariant: selectedVariant ?? null,
     variants: pageVariants,
-    proVariant: proEditionVariant,
-    proVariants: proEditionVariants,
-    isPro: isProEdition,
   });
   const productSchema = offer
     ? productJsonLd({
-        name: isProEdition ? 'XSTO X12 Pro' : displayName,
+        name: displayName,
         description: seo.description,
         handle: product.handle,
         sku: offer.variant.sku,
@@ -331,7 +256,6 @@ export default function Product() {
         availableForSale: offer.variant.availableForSale ?? false,
         quantityAvailable: offer.variant.quantityAvailable,
         variantId: offer.variant.id,
-        isProEdition,
         ratingValue:
           reviewSummary.count > 0 ? reviewSummary.average : undefined,
         reviewCount: reviewSummary.count > 0 ? reviewSummary.count : undefined,
@@ -377,6 +301,12 @@ export default function Product() {
                 <Link to="/series/m8">Compare the M8 Series ↗</Link>
               </nav>
             )}
+            {(isX12CanonicalHandle(product.handle) || isX12ProShopifyHandle(product.handle)) && (
+              <nav className="mr-m8-model-switch" aria-label="X12 model">
+                <Link to={x12MergedPath('standard')} aria-current={isX12CanonicalHandle(product.handle) ? 'page' : undefined}>X12 · Standard leg rest</Link>
+                <Link to={x12MergedPath('electric')} aria-current={isX12ProShopifyHandle(product.handle) ? 'page' : undefined}>X12 Pro · Electric leg rest</Link>
+              </nav>
+            )}
             <ProductPurchasePanel
               key={product.handle}
               accessoryAddons={accessoryAddons}
@@ -384,44 +314,10 @@ export default function Product() {
               productHandle={product.handle}
               productId={product.id}
               productOptions={productOptions}
-              productVariants={
-                (
-                  product as typeof product & {
-                    variants?: {
-                      nodes?: Array<NonNullable<typeof selectedVariant>>;
-                    };
-                  }
-                ).variants?.nodes ?? []
-              }
+              productVariants={pageVariants}
               selectedVariant={selectedVariant}
               tagline={staticContent?.tagline ?? tabContent.tagline}
               title={displayName}
-              x12Edition={
-                isX12CanonicalHandle(product.handle)
-                  ? {
-                      initialChoice: x12Choice,
-                      standard: {
-                        handle: product.handle,
-                        selectedVariant: standardEditionVariant,
-                        productOptions,
-                        productVariants: standardEditionVariants,
-                      },
-                      pro:
-                        proEditionVariant && proEditionVariants.length
-                          ? {
-                              handle: editionOnProduct
-                                ? product.handle
-                                : (x12ProProduct?.handle ?? product.handle),
-                              selectedVariant: proEditionVariant,
-                              productOptions: editionOnProduct
-                                ? productOptions
-                                : proProductOptions,
-                              productVariants: proEditionVariants,
-                            }
-                          : null,
-                    }
-                  : undefined
-              }
             />
           </div>
         </div>
@@ -710,6 +606,9 @@ const RELATED_PRODUCTS_QUERY = `#graphql
     m4b: product(handle: "xsto-m4b-1") {
       ...HomeProduct
     }
+    m8: product(handle: "xsto-m8") { ...HomeProduct }
+    m8Pro: product(handle: "xsto-m8-pro") { ...HomeProduct }
+    x12Pro: product(handle: "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition") { ...HomeProduct }
     x12: product(handle: "x12-all-terrain-mobility-robot") {
       ...HomeProduct
     }
