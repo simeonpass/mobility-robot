@@ -143,10 +143,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="theme-color" content="#101b35" />
-        <style nonce={nonce}>{`
-          @font-face{font-family:'DM Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/dm-sans-latin.woff') format('woff')}
-          @font-face{font-family:'Manrope';font-style:normal;font-weight:500 800;font-display:swap;src:url('/fonts/manrope-latin.woff') format('woff')}
-        `}</style>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <JsonLd data={sitewideJsonLdGraph(true)} />

@@ -356,3 +356,22 @@
  .mr-product-page .product-mobile-atc>div{grid-template-columns:minmax(0,1fr) 145px;gap:8px}
 }
 @media (prefers-reduced-motion:reduce) {.mr-addons-trigger svg {transition:none}}
+
+.mr-m8-guide {margin:0 0 24px;padding:20px;border:1px solid #dbe3ef;border-radius:10px;background:#f6f8fc;color:#101b35}
+.mr-m8-guide h2,.mr-m8-order-summary h2 {font-size:1rem;font-weight:700;line-height:1.45;margin:0 0 10px}
+.mr-m8-guide p {font-size:.85rem;line-height:1.65;color:#526079}
+.mr-m8-guide dl {margin:14px 0;display:grid;gap:12px;font-size:.85rem;line-height:1.6}
+.mr-m8-guide dt {font-weight:700}
+.mr-m8-guide dd {margin:0;color:#526079}
+.mr-m8-guide .mr-m8-guide-note {font-size:.78rem}
+.mr-m8-demo-link {display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;margin-top:14px;color:#2155ed;font-size:.9rem;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.mr-m8-order-summary {margin:20px 0;padding:18px 0;border-top:1px solid #e1e6ef}
+.mr-m8-order-summary dl {display:grid;gap:10px;font-size:.85rem}
+.mr-m8-order-summary dl>div {display:flex;justify-content:space-between;gap:16px;line-height:1.5}
+.mr-m8-order-summary dd {margin:0;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.mr-m8-order-summary p {font-size:.78rem;color:#526079;line-height:1.6;margin-top:12px}
+.mr-m8-mobile-demo {grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:12px;min-height:44px;color:#2155ed;font-weight:650;font-size:.85rem;text-decoration:underline;text-underline-offset:4px}
+@media (max-width:767px) {
+  .mr-shell:has(.mr-m8-mobile-demo) {padding-bottom:138px}
+  .mr-product-page .product-mobile-atc:has(.mr-m8-mobile-demo)>div {row-gap:4px}
+}

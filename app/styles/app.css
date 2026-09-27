@@ -1,6 +1,22 @@
 @import 'tailwindcss';
 @import 'leaflet/dist/leaflet.css';
 
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/dm-sans-latin.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin.woff') format('woff');
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;
