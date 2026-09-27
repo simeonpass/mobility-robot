@@ -14,8 +14,10 @@ import {getExVatDisplay, getIncVatDisplay} from '~/lib/product-pricing';
 
 export type HomeProduct = HomeProductFragment;
 const descriptions: Record<HomepageFlagshipHandle, string> = {
-  'xsto-m8': 'Four-wheel drive and self-balancing, with manual reclining and powered seat elevation.',
-  'xsto-m8-pro': 'All the capability of M8, with powered reclining and a powered leg rest.',
+  'xsto-m8':
+    'Four-wheel drive and self-balancing, with manual reclining and powered seat elevation.',
+  'xsto-m8-pro':
+    'All the capability of M8, with powered reclining and a powered leg rest.',
   'xsto-m4':
     'Self-levelling control and electric seat lifting for your everyday.',
   'xsto-m4b':
@@ -68,9 +70,15 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
           </Link>
         </div>
         <nav className="mr-series-links" aria-label="Explore by series">
-          <Link to="/series/m4">M4 Series <span>Everyday freedom</span></Link>
-          <Link to="/series/m8">M8 Series <span>New · four-wheel drive</span></Link>
-          <Link to="/series/x12">X12 Series <span>Stair-climbing capability</span></Link>
+          <Link to="/series/m4">
+            M4 Series <span>Everyday freedom</span>
+          </Link>
+          <Link to="/series/m8">
+            M8 Series <span>New · four-wheel drive</span>
+          </Link>
+          <Link to="/series/x12">
+            X12 Series <span>Stair-climbing capability</span>
+          </Link>
         </nav>
         {flagshipProducts.length ? (
           <div className="mr-product-grid">
@@ -120,7 +128,15 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
                         <strong>{getExVatDisplay(price)}</strong>
                         <p>With VAT relief, if eligible</p>
                         <p>{getIncVatDisplay(price)} including VAT</p>
-                        {slot.startsWith('xsto-m8') && <p>10% deposit · estimated 12 weeks</p>}
+                        {slot.startsWith('xsto-m8') && (
+                          <div className="mr-card-deposit">
+                            <p>
+                              Deposit from{' '}
+                              {slot === 'xsto-m8' ? '£700' : '£800'} + VAT
+                            </p>
+                            <p>Balance before dispatch · est. 12 weeks</p>
+                          </div>
+                        )}
                       </div>
                       <span className="mr-text-link">
                         <span className="mr-desktop-copy">

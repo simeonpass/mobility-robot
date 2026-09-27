@@ -8,6 +8,7 @@ import {ExperienceRangeSection} from '~/components/home/ExperienceRangeSection';
 import {FaqPreview} from '~/components/home/FaqPreview';
 import {HeroSection} from '~/components/home/HeroSection';
 import {HomeCtaSection} from '~/components/home/HomeCtaSection';
+import {HomeMobileActions} from '~/components/home/HomeMobileActions';
 import {
   ProductRangeGrid,
   type HomeProduct,
@@ -25,15 +26,17 @@ import {buildMeta} from '~/lib/seo';
 import {getAllReviews, getHomepageFeaturedReviews} from '~/lib/reviews.server';
 import {summarizeReviews} from '~/lib/reviews';
 
-export const links: Route.LinksFunction = () => [{
-  rel: 'preload',
-  as: 'image',
-  type: 'image/jpeg',
-  href: HOMEPAGE_HERO_POSTER_URL,
-  imageSrcSet: HOMEPAGE_HERO_POSTER_SRC_SET,
-  imageSizes: '100vw',
-  fetchPriority: 'high',
-}];
+export const links: Route.LinksFunction = () => [
+  {
+    rel: 'preload',
+    as: 'image',
+    type: 'image/jpeg',
+    href: HOMEPAGE_HERO_POSTER_URL,
+    imageSrcSet: HOMEPAGE_HERO_POSTER_SRC_SET,
+    imageSizes: '100vw',
+    fetchPriority: 'high',
+  },
+];
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
@@ -88,6 +91,7 @@ export default function Homepage() {
       <ReviewsSection {...reviews} />
       <FaqPreview />
       <HomeCtaSection />
+      <HomeMobileActions />
     </div>
   );
 }
