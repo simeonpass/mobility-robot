@@ -551,7 +551,7 @@
   }
 }
 @media (max-width: 767px) {
-  .mr-home {
+  .mr-shell:has(.mr-mobile-actions) {
     padding-bottom: calc(74px + env(safe-area-inset-bottom));
   }
   .mr-story-strip .mr-transition-inner {
