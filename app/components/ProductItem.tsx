@@ -27,13 +27,15 @@ export function ProductItem({
       to={variantUrl}
     >
       {image && (
-        <Image
-          alt={image.altText || name}
-          aspectRatio="1/1"
-          data={image}
-          loading={loading}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
+        <div className="flex aspect-square items-center justify-center overflow-hidden">
+          <Image
+            alt={image.altText || name}
+            className="max-h-full object-contain"
+            data={image}
+            loading={loading}
+            sizes="(min-width: 45em) 400px, 100vw"
+          />
+        </div>
       )}
       <h4>{name}</h4>
       <small>
