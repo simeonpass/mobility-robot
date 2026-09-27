@@ -43,6 +43,7 @@ describe('partitionShopAllProducts', () => {
       'xsto-m4b-1',
       'xsto-m4-pro',
       'x12-all-terrain-mobility-robot',
+      'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition',
     ]);
     expect(accessories.map((p) => p.handle)).toEqual([
       'armrest-bag',

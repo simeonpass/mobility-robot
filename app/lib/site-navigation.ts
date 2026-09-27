@@ -56,7 +56,7 @@ export const PRODUCT_NAV_GROUPS: NavGroup[] = [
   ]},
   {title: 'X12 Series', items: [
     chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
-    {...chairItem('xsto-x12', 'X12 Pro', 'Electric elevating leg rest'), url: `${productUrl('xsto-x12')}?Edition=X12+Pro`},
+    chairItem('xsto-x12-pro', 'X12 Pro', 'Electric elevating leg rest'),
   ]},
 ];
 
@@ -101,6 +101,7 @@ export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'M8', url: productUrl('xsto-m8')},
   {title: 'M8 Pro', url: productUrl('xsto-m8-pro')},
   {title: 'X12', url: productUrl('xsto-x12')},
+  {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Videos', url: '/videos'},
   {title: 'Find a Dealer', url: '/stockists'},

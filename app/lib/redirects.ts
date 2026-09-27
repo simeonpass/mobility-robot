@@ -107,8 +107,6 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   '/products/ezgo2-mobility-robot': '/collections/all',
   '/products/xsto-x12': `/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12']}`,
   '/products/xsto-x12-pro': x12MergedPath('electric'),
-  [`/products/${SHOPIFY_HOME_PRODUCT_HANDLES['xsto-x12-pro']}`]:
-    x12MergedPath('electric'),
 
   // Lovable accessory handles → current Shopify accessory handles / catalogue
   '/products/phone-holder': '/products/phone-holder-for-m4',

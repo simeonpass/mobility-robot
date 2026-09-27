@@ -14,6 +14,7 @@ import {
   isX12CanonicalHandle,
   X12_EDITION_PRO_VALUE,
   x12MergedPath,
+  X12_PRO_VARIANT_MIGRATION,
 } from '~/lib/x12-lineup';
 import {SITE_URL} from '~/lib/const';
 
@@ -71,7 +72,7 @@ function googleMerchantLandingPath(
   if (mergedX12Pro || x12ProEdition) {
     const variantId = numericShopifyId(variant.id);
     const path = x12MergedPath('electric');
-    return variantId ? `${path}&variant=${variantId}` : path;
+    return variantId ? `${path}?variant=${X12_PRO_VARIANT_MIGRATION[variantId] ?? variantId}` : path;
   }
 
   return storefrontProductUrl(productHandle, variant.id);
@@ -112,7 +113,8 @@ export function googleMerchantFeedRows(
 
       const link = `${origin}${googleMerchantLandingPath(product.handle, variant)}`;
       const price = googleMerchantExVatPrice(variant, shopifyPricesExVat);
-      const excludedDestination = isVatReliefVariant(variant.selectedOptions)
+      const excludedDestination = (isVatReliefVariant(variant.selectedOptions) ||
+        (isX12CanonicalHandle(product.handle) && getX12EditionValue(variant.selectedOptions) === X12_EDITION_PRO_VALUE))
         ? VAT_RELIEF_EXCLUDED_DESTINATIONS
         : undefined;
 

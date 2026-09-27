@@ -150,7 +150,7 @@ export function ProductPurchasePanel({
   const depositOnly =
     productHandle === 'xsto-m8' || productHandle === 'xsto-m8-pro';
   const enquiryModel =
-    productHandle === 'xsto-m8-pro' ? 'M8 Pro' : depositOnly ? 'M8' : undefined;
+    productHandle === 'xsto-m8-pro' ? 'M8 Pro' : depositOnly ? 'M8' : (displayName ?? title) === 'XSTO X12 Pro' ? 'X12 Pro' : (displayName ?? title) === 'XSTO X12' ? 'X12' : undefined;
   const demoHref = enquiryModel
     ? `/demo?model=${encodeURIComponent(enquiryModel)}`
     : '/demo';
