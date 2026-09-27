@@ -9,10 +9,13 @@ export function HeroVideoBackground() {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const desktop = window.matchMedia('(min-width: 768px)');
     const connection = (
       navigator as Navigator & {connection?: {saveData?: boolean}}
     ).connection;
-    if (!motion.matches && !connection?.saveData) setLoaded(true);
+    if (!motion.matches && !connection?.saveData && desktop.matches) {
+      setLoaded(true);
+    }
     const stop = () => {
       if (motion.matches) videoRef.current?.pause();
     };

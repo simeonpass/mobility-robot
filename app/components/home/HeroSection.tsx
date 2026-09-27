@@ -13,7 +13,8 @@ export function HeroSection() {
       <div className="xsto-container mr-film-content">
         <div className="mr-film-copy">
           <p className="mr-film-eyebrow">
-            <span className="mr-launch-dot" /> Introducing the M8 Series
+            <span className="mr-launch-dot" /> XSTO powered wheelchairs · new M8
+            Series
           </p>
           <h1 id="homepage-heading">
             More freedom.
@@ -33,9 +34,9 @@ export function HeroSection() {
             </Link>
           </div>
           <p className="mr-film-preorder">
-            Reserve with a 10% deposit
+            Full price from £7,000 + VAT · deposit from £700 + VAT
             <br />
-            Estimated delivery: 12 weeks
+            Remaining balance due before dispatch · estimated delivery: 12 weeks
           </p>
         </div>
       </div>
