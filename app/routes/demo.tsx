@@ -1,4 +1,4 @@
-import {Link} from 'react-router';
+import {Link, useSearchParams} from 'react-router';
 import type {Route} from './+types/demo';
 import {CalendarCheck, MapPin, MessageSquare} from 'lucide-react';
 import {JsonLd, PageShell} from '~/components/content/PageShell';
@@ -15,6 +15,7 @@ import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
 import {useEnquiryTracking} from '~/components/forms/useEnquiryTracking';
 import {demoRequestSchema} from '~/lib/form-schemas';
 import {breadcrumbJsonLd, pageMeta} from '~/lib/seo';
+import {DEMO_MODELS, demoModel} from '~/lib/enquiry-intent';
 
 export const meta: Route.MetaFunction = () =>
   pageMeta({
@@ -24,7 +25,7 @@ export const meta: Route.MetaFunction = () =>
     path: '/demo',
   });
 
-const MODEL_OPTIONS = ['M4', 'M4 Pro', 'M4B', 'M8', 'M8 Pro', 'X12'] as const;
+const MODEL_OPTIONS = DEMO_MODELS;
 
 const EXPECT_STEPS = [
   {
@@ -47,16 +48,16 @@ const EXPECT_STEPS = [
   },
 ] as const;
 
-const breadcrumbs = [
-  {name: 'Home', path: '/'},
-  {name: 'Book a Demo'},
-] as const;
+const breadcrumbs = [{name: 'Home', path: '/'}, {name: 'Book a Demo'}] as const;
 
 export default function DemoPage() {
-  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
-    schema: demoRequestSchema,
-    action: '/api/demo-request',
-  });
+  const [searchParams] = useSearchParams();
+  const preferredModel = demoModel(searchParams.get('model'));
+  const {errors, formError, loading, success, handleSubmit} =
+    useValidatedApiForm({
+      schema: demoRequestSchema,
+      action: '/api/demo-request',
+    });
   useEnquiryTracking(success, 'demo_request');
 
   return (
@@ -76,7 +77,10 @@ export default function DemoPage() {
             Dorset or London. No obligation.
           </p>
           <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/75">
-            <a className="underline-offset-2 hover:text-white hover:underline" href="#demo-form">
+            <a
+              className="underline-offset-2 hover:text-white hover:underline"
+              href="#demo-form"
+            >
               Request a booking
             </a>
             <Link
@@ -97,7 +101,10 @@ export default function DemoPage() {
         </div>
       </section>
 
-      <nav aria-label="Breadcrumb" className="mt-5 text-xs text-muted-foreground">
+      <nav
+        aria-label="Breadcrumb"
+        className="mt-5 text-xs text-muted-foreground"
+      >
         <ol className="flex flex-wrap items-center gap-2">
           <li>
             <Link className="hover:text-gold" prefetch="intent" to="/">
@@ -124,8 +131,8 @@ export default function DemoPage() {
             Request your demo
           </h2>
           <p className="mt-2 max-w-xl text-muted-foreground">
-            Tell us how to reach you and which model you&apos;d like to try. Your
-            postcode helps us match you with the best location.
+            Tell us how to reach you and which model you&apos;d like to try.
+            Your postcode helps us match you with the best location.
           </p>
 
           {success ? (
@@ -136,11 +143,7 @@ export default function DemoPage() {
               </FormSuccess>
             </div>
           ) : (
-            <form
-              className="mt-8 space-y-6"
-              noValidate
-              onSubmit={handleSubmit}
-            >
+            <form className="mt-8 space-y-6" noValidate onSubmit={handleSubmit}>
               <fieldset className="space-y-4">
                 <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-navy/55">
                   Your details
@@ -173,7 +176,11 @@ export default function DemoPage() {
                       type="email"
                     />
                   </FormField>
-                  <FormField error={errors.postcode} id="postcode" label="Postcode">
+                  <FormField
+                    error={errors.postcode}
+                    id="postcode"
+                    label="Postcode"
+                  >
                     <TextInput
                       autoComplete="postal-code"
                       id="postcode"
@@ -194,7 +201,13 @@ export default function DemoPage() {
                   id="model"
                   label="Preferred model"
                 >
-                  <SelectInput defaultValue="" id="model" name="model" required>
+                  <SelectInput
+                    key={preferredModel}
+                    defaultValue={preferredModel}
+                    id="model"
+                    name="model"
+                    required
+                  >
                     <option disabled value="">
                       Select a model
                     </option>
@@ -243,7 +256,9 @@ export default function DemoPage() {
                 </FormField>
               </fieldset>
 
-              {formError ? <FormErrorBanner>{formError}</FormErrorBanner> : null}
+              {formError ? (
+                <FormErrorBanner>{formError}</FormErrorBanner>
+              ) : null}
 
               <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">
@@ -295,10 +310,7 @@ export default function DemoPage() {
             aria-labelledby="demo-vat-heading"
             className="border-y border-border py-6"
           >
-            <h2
-              className="font-semibold text-foreground"
-              id="demo-vat-heading"
-            >
+            <h2 className="font-semibold text-foreground" id="demo-vat-heading">
               VAT relief
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

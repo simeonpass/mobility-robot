@@ -20,6 +20,7 @@ import {
 import {ProductCheckoutTrust} from '~/components/product/ProductCheckoutTrust';
 import {ProductDeliveryEta} from '~/components/product/ProductDeliveryEta';
 import {ProductPaymentOptions} from '~/components/product/ProductPaymentOptions';
+import {M8BuyingGuide} from '~/components/product/M8BuyingGuide';
 import {ProductTrustBadges} from '~/components/product/ProductTrustBadges';
 import {ProductX12EditionOptions} from '~/components/product/ProductX12EditionOptions';
 import {useVatRelief} from '~/components/vat-relief/VatReliefProvider';
@@ -146,7 +147,13 @@ export function ProductPurchasePanel({
   ]);
 
   const productHandle = activeEdition.handle;
-  const depositOnly = productHandle === 'xsto-m8' || productHandle === 'xsto-m8-pro';
+  const depositOnly =
+    productHandle === 'xsto-m8' || productHandle === 'xsto-m8-pro';
+  const enquiryModel =
+    productHandle === 'xsto-m8-pro' ? 'M8 Pro' : depositOnly ? 'M8' : undefined;
+  const demoHref = enquiryModel
+    ? `/demo?model=${encodeURIComponent(enquiryModel)}`
+    : '/demo';
   const selectedVariant = activeEdition.selectedVariant;
   const productOptions = activeEdition.productOptions;
   const productVariants = activeEdition.productVariants ?? EMPTY_CHAIR_VARIANTS;
@@ -438,7 +445,9 @@ export function ProductPurchasePanel({
     : purchaseVariant?.availableForSale
       ? productVatReliefEnabled && !vatFormComplete
         ? 'Complete VAT declaration'
-        : depositOnly && !hasDepositOption ? 'Pre-order temporarily unavailable' : 'Sold out'
+        : depositOnly && !hasDepositOption
+          ? 'Pre-order temporarily unavailable'
+          : 'Sold out'
       : 'Sold out';
 
   const cartLines: OptimisticCartLineInput[] = purchaseVariant
@@ -517,7 +526,58 @@ export function ProductPurchasePanel({
               : null
           }
         />
+        {depositOnly && depositOption && packagePrice && dueTodayPrice ? (
+          <div
+            className="mr-m8-order-summary"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <h2>Your pre-order at a glance</h2>
+            <dl>
+              <div>
+                <dt>
+                  {addonCount
+                    ? 'Chair + selected accessories'
+                    : 'Full chair price'}
+                </dt>
+                <dd>{activePriceDisplay}</dd>
+              </div>
+              <div>
+                <dt>Due today</dt>
+                <dd>{dueTodayDisplay}</dd>
+              </div>
+              <div>
+                <dt>Balance before dispatch</dt>
+                <dd>
+                  {formatProductPrice(
+                    Number(packagePrice.amount) - Number(dueTodayPrice.amount),
+                    packagePrice.currencyCode,
+                    {fractionDigits: 2},
+                  )}
+                </dd>
+              </div>
+            </dl>
+            <p>
+              {vatReliefActive
+                ? 'VAT relief applied to these amounts.'
+                : 'These amounts include VAT. Eligible customers can complete the declaration below for VAT relief.'}
+            </p>
+            {addonCount > 0 ? (
+              <p>
+                Accessories are paid in full today; the chair uses the deposit
+                plan.
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+        {depositOnly && delivery ? (
+          <ProductDeliveryEta delivery={delivery} />
+        ) : null}
       </section>
+
+      {depositOnly ? (
+        <M8BuyingGuide pro={productHandle === 'xsto-m8-pro'} />
+      ) : null}
 
       <div className="mr-product-choices space-y-5" id="choose-options">
         {x12Edition ? (
@@ -605,12 +665,21 @@ export function ProductPurchasePanel({
         </ProductForm>
 
         {isChair ? (
-          <Link className="mr-product-demo" prefetch="intent" to="/demo">
+          <Link
+            className="mr-product-demo"
+            prefetch="intent"
+            to={demoHref}
+            data-enquiry-action="demo"
+            data-enquiry-placement="product_purchase"
+            data-enquiry-model={enquiryModel}
+          >
             Prefer to try it first? Book a demo <span aria-hidden>↗</span>
           </Link>
         ) : null}
 
-        {delivery ? <ProductDeliveryEta delivery={delivery} /> : null}
+        {!depositOnly && delivery ? (
+          <ProductDeliveryEta delivery={delivery} />
+        ) : null}
 
         {isChair ? <ProductTrustBadges productHandle={productHandle} /> : null}
 
@@ -642,6 +711,17 @@ export function ProductPurchasePanel({
           >
             {canAddToCart ? addToCartLabel : soldOutLabel}
           </AddToCartButton>
+          {depositOnly ? (
+            <Link
+              className="mr-m8-mobile-demo"
+              to={demoHref}
+              data-enquiry-action="demo"
+              data-enquiry-placement="product_mobile"
+              data-enquiry-model={enquiryModel}
+            >
+              Try it first · Book a demo <span aria-hidden>↗</span>
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>
