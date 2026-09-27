@@ -21,7 +21,10 @@ export function RelatedProducts({
   if (related.length === 0) return null;
 
   return (
-    <section aria-labelledby="related-products-heading" className="mr-product-related">
+    <section
+      aria-labelledby="related-products-heading"
+      className="mr-product-related"
+    >
       <p className="mr-product-section-eyebrow">Find your fit</p>
       <h2
         className="mr-product-section-heading font-display"
@@ -47,7 +50,6 @@ export function RelatedProducts({
                   {image ? (
                     <Image
                       alt={image.altText || name}
-                      aspectRatio="1/1"
                       className="max-h-full w-full object-contain transition-transform group-hover:scale-[1.03]"
                       data={image}
                       sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"

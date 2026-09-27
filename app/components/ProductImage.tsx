@@ -13,7 +13,7 @@ export function ProductImage({
     <div className="product-image">
       <Image
         alt={image.altText || 'XSTO product image'}
-        aspectRatio="1/1"
+        className="max-h-full object-contain"
         data={image}
         key={image.id}
         sizes="(min-width: 45em) 50vw, 100vw"
