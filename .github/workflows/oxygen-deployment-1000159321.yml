@@ -57,3 +57,16 @@ jobs:
           fi
         env:
           SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000159321 }}
+
+      - name: Show deployment link
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync, appendFileSync} from 'node:fs';
+          const deployment = JSON.parse(readFileSync('h2_deploy_log.json', 'utf8'));
+          const url = new URL(deployment.url);
+          if (url.protocol !== 'https:') throw new Error('Expected an HTTPS deployment URL');
+          url.search = '';
+          url.hash = '';
+          console.log(`Deployment preview: ${url.href}`);
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, `[Open deployment preview](${url.href})\n`);
+          NODE
