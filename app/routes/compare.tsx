@@ -3,8 +3,11 @@ import {ArrowUpRight} from 'lucide-react';
 import type {Route} from './+types/compare';
 import {PageHeader, PageShell} from '~/components/content/PageShell';
 import {
+  formatActiveSeriesList,
   HOMEPAGE_COMPARISON_ROWS,
   HOMEPAGE_PRODUCT_THUMBS,
+  isPausedFlagshipSlot,
+  isPausedSeries,
 } from '~/lib/homepage-data';
 import {buildMeta} from '~/lib/seo';
 import discoveryStyles from '~/styles/discovery.css?url';
@@ -15,11 +18,19 @@ export const links: Route.LinksFunction = () => [
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
-    title: 'Compare XSTO M4, M8 & X12 Series',
-    description:
-      'Compare XSTO M4, M8 and X12 series: range, weight, seating and stair-climbing capability. Discover the new M8 and M8 Pro.',
+    title: `Compare XSTO ${formatActiveSeriesList('&')} Series`,
+    description: `Compare XSTO ${formatActiveSeriesList()} series: range, weight, seating and stair-climbing capability.${
+      isPausedSeries('m8') ? '' : ' Discover the new M8 and M8 Pro.'
+    }`,
     path: '/compare',
   });
+
+/** Columns for models currently on sale; the copy arrays below share this order. */
+const VISIBLE_COLUMNS = HOMEPAGE_COMPARISON_ROWS.flatMap((row, index) =>
+  isPausedFlagshipSlot(row.handle) ? [] : [index],
+);
+const pick = <T,>(values: readonly T[]) =>
+  VISIBLE_COLUMNS.map((index) => values[index]);
 
 const MODEL_FOCUS = [
   'Everyday self-levelling',
@@ -32,8 +43,22 @@ const MODEL_FOCUS = [
 ];
 
 const FEATURES = [
-  {label: 'Self-levelling', values: ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes']},
-  {label: 'Stair climbing', values: ['No', 'No', 'No', 'No', 'No', 'Suitable stairs only', 'Suitable stairs only']},
+  {
+    label: 'Self-levelling',
+    values: ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes'],
+  },
+  {
+    label: 'Stair climbing',
+    values: [
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'Suitable stairs only',
+      'Suitable stairs only',
+    ],
+  },
   {
     label: 'Distinctive feature',
     values: [
@@ -49,7 +74,7 @@ const FEATURES = [
 ];
 
 export default function ComparePage() {
-  const rows = HOMEPAGE_COMPARISON_ROWS;
+  const rows = pick(HOMEPAGE_COMPARISON_ROWS);
   return (
     <PageShell className="mr-discovery">
       <p className="mr-discovery-eyebrow">Find your fit</p>
@@ -74,8 +99,8 @@ export default function ComparePage() {
       >
         <table className="mr-discovery-table">
           <caption className="sr-only">
-            Published specifications for XSTO M4, M8 and X12 series powered
-            wheelchairs
+            Published specifications for XSTO {formatActiveSeriesList()} series
+            powered wheelchairs
           </caption>
           <thead>
             <tr>
@@ -101,7 +126,7 @@ export default function ComparePage() {
           <tbody>
             <tr>
               <th scope="row">Focus</th>
-              {MODEL_FOCUS.map((value) => (
+              {pick(MODEL_FOCUS).map((value) => (
                 <td key={value}>{value}</td>
               ))}
             </tr>
@@ -110,7 +135,9 @@ export default function ComparePage() {
               {rows.map((model) => (
                 <td key={model.handle}>
                   Up to {model.range}
-                  {model.handle.startsWith('xsto-x12') ? ' (dual batteries)' : ''}
+                  {model.handle.startsWith('xsto-x12')
+                    ? ' (dual batteries)'
+                    : ''}
                 </td>
               ))}
             </tr>
@@ -135,7 +162,7 @@ export default function ComparePage() {
             {FEATURES.map((feature) => (
               <tr key={feature.label}>
                 <th scope="row">{feature.label}</th>
-                {feature.values.map((value, index) => (
+                {pick(feature.values).map((value, index) => (
                   <td key={rows[index].handle}>{value}</td>
                 ))}
               </tr>

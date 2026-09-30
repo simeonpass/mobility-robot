@@ -17,6 +17,7 @@ import {
   HOMEPAGE_FLAGSHIP_LABELS,
   HOMEPAGE_PRODUCT_BADGES,
   HOMEPAGE_PRODUCT_THUMBS,
+  isPausedFlagshipSlot,
   SHOPIFY_HOME_PRODUCT_HANDLES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
@@ -34,16 +35,28 @@ import x12Cutout from '~/assets/hero/x12-720.webp';
  * the ring advances on a timer, on the arrows, on the model strip, or by dragging.
  */
 
-/** Order around the turntable — the launch model first, neighbours flow from it. */
+/** Order around the turntable; paused models (see PAUSED_FLAGSHIP_HANDLES) drop out. */
 const HERO_ORDER = [
-  'xsto-m8',
-  'xsto-m8-pro',
   'xsto-m4',
   'xsto-m4b',
   'xsto-m4-pro',
+  'xsto-m8',
+  'xsto-m8-pro',
   'xsto-x12',
   'xsto-x12-pro',
 ] as const satisfies readonly HomepageFlagshipHandle[];
+
+const HERO_MODELS: readonly HomepageFlagshipHandle[] = HERO_ORDER.filter(
+  (slot) => !isPausedFlagshipSlot(slot),
+);
+
+const COUNT_WORDS: Record<number, string> = {
+  3: 'Three',
+  4: 'Four',
+  5: 'Five',
+  6: 'Six',
+  7: 'Seven',
+};
 
 const HERO_PITCH: Record<HomepageFlagshipHandle, string> = {
   'xsto-m8':
@@ -91,8 +104,13 @@ const PRE_ORDER_SLOTS = new Set<HomepageFlagshipHandle>([
   'xsto-m8-pro',
 ]);
 
-const COUNT = HERO_ORDER.length;
+const COUNT = HERO_MODELS.length;
 const STEP_DEG = 360 / COUNT;
+/** Chairs within this angle of the front are fully visible; beyond `gone` they are hidden. */
+const FADE_FULL_DEG = STEP_DEG * 1.1;
+const FADE_GONE_DEG = Math.min(STEP_DEG * 1.9, 150);
+/** Where the neighbouring chair sits, as a multiple of the stage height. */
+const NEIGHBOUR_OFFSET = {desktop: 1.17, mobile: 0.8};
 const DWELL_MS = 6000;
 const SPIN_MS = 1150;
 /** Pixels of horizontal drag per turntable position. */
@@ -157,7 +175,7 @@ function shopifyImage(url: string, width: number): string {
 }
 
 function buildModels(products: HomeProduct[]): HeroModel[] {
-  return HERO_ORDER.map((slot) => {
+  return HERO_MODELS.map((slot) => {
     const handle = SHOPIFY_HOME_PRODUCT_HANDLES[slot];
     const product = products.find((item) => item.handle === handle);
     const cutout = HERO_CUTOUTS[slot];
@@ -195,17 +213,40 @@ function buildModels(products: HomeProduct[]): HeroModel[] {
   });
 }
 
+/**
+ * Ring radius that lands the neighbouring chair `target` px from the centre
+ * once projected, whatever the spacing between chairs.
+ */
+function solveRadius(perspective: number, target: number): number {
+  const theta = (STEP_DEG * Math.PI) / 180;
+  let low = 0;
+  let high = perspective * 0.9;
+  for (let i = 0; i < 40; i++) {
+    const radius = (low + high) / 2;
+    const projected =
+      (radius * Math.sin(theta) * perspective) /
+      (perspective - radius * Math.cos(theta));
+    if (projected < target) low = radius;
+    else high = radius;
+  }
+  return (low + high) / 2;
+}
+
 /** Camera and ring proportions, all relative to the stage box. */
 function measure(stage: HTMLElement): Geometry {
   const width = stage.clientWidth;
   const height = stage.clientHeight;
   const mobile = width < 768;
+  const perspective = height * 3.8;
+  const neighbour = mobile
+    ? Math.min(height * NEIGHBOUR_OFFSET.mobile, width * 0.68)
+    : height * NEIGHBOUR_OFFSET.desktop;
   return {
     width,
     height,
     itemHeight: height * 0.72,
-    radius: mobile ? Math.min(height * 1.1, width * 0.66) : height * 1.2,
-    perspective: height * 3.8,
+    radius: solveRadius(perspective, neighbour),
+    perspective,
     camera: height * 0.34,
     floor: height * 0.8,
   };
@@ -221,7 +262,11 @@ function project(rel: number, geometry: Geometry) {
   const feet = geometry.camera + (geometry.floor - geometry.camera) * scale;
   const distance = Math.abs(rel);
   const opacity =
-    distance <= 56 ? 1 : distance >= 98 ? 0 : 1 - (distance - 56) / 42;
+    distance <= FADE_FULL_DEG
+      ? 1
+      : distance >= FADE_GONE_DEG
+        ? 0
+        : 1 - (distance - FADE_FULL_DEG) / (FADE_GONE_DEG - FADE_FULL_DEG);
   return {x, y: feet - geometry.itemHeight, scale, opacity, depth: z3};
 }
 
@@ -418,6 +463,7 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
   return (
     <section
       className={`mr-turntable${rotating ? ' is-rotating' : ''}`}
+      data-count={COUNT}
       aria-roledescription="carousel"
       aria-labelledby={`${baseId}-heading`}
       style={{'--tt-dwell': `${DWELL_MS}ms`} as CSSProperties}
@@ -438,8 +484,9 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
             Powered wheelchairs built for the way you live.
           </h1>
           <p className="mr-turntable-lede">
-            Seven XSTO models, from everyday self-balancing to stair climbing,
-            supplied and supported in the UK by Bentech Medical.
+            {COUNT_WORDS[COUNT] ?? COUNT} XSTO models, from everyday
+            self-balancing to stair climbing, supplied and supported in the UK
+            by Bentech Medical.
           </p>
         </div>
       </div>

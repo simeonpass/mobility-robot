@@ -1,6 +1,6 @@
 import {
+  isHiddenStorefrontProductHandle,
   isMergedAwayProductHandle,
-  isUkUnavailableProductHandle,
 } from '~/lib/homepage-data';
 import {
   googleShoppingOfferId,
@@ -72,7 +72,9 @@ function googleMerchantLandingPath(
   if (mergedX12Pro || x12ProEdition) {
     const variantId = numericShopifyId(variant.id);
     const path = x12MergedPath('electric');
-    return variantId ? `${path}?variant=${X12_PRO_VARIANT_MIGRATION[variantId] ?? variantId}` : path;
+    return variantId
+      ? `${path}?variant=${X12_PRO_VARIANT_MIGRATION[variantId] ?? variantId}`
+      : path;
   }
 
   return storefrontProductUrl(productHandle, variant.id);
@@ -104,7 +106,7 @@ export function googleMerchantFeedRows(
   const rows: GoogleMerchantFeedRow[] = [];
 
   for (const product of products) {
-    if (!product.handle || isUkUnavailableProductHandle(product.handle)) {
+    if (!product.handle || isHiddenStorefrontProductHandle(product.handle)) {
       continue;
     }
 
@@ -113,10 +115,12 @@ export function googleMerchantFeedRows(
 
       const link = `${origin}${googleMerchantLandingPath(product.handle, variant)}`;
       const price = googleMerchantExVatPrice(variant, shopifyPricesExVat);
-      const excludedDestination = (isVatReliefVariant(variant.selectedOptions) ||
-        (isX12CanonicalHandle(product.handle) && getX12EditionValue(variant.selectedOptions) === X12_EDITION_PRO_VALUE))
-        ? VAT_RELIEF_EXCLUDED_DESTINATIONS
-        : undefined;
+      const excludedDestination =
+        isVatReliefVariant(variant.selectedOptions) ||
+        (isX12CanonicalHandle(product.handle) &&
+          getX12EditionValue(variant.selectedOptions) === X12_EDITION_PRO_VALUE)
+          ? VAT_RELIEF_EXCLUDED_DESTINATIONS
+          : undefined;
 
       for (const country of GOOGLE_SHOPPING_FEED_COUNTRIES) {
         const id = googleShoppingOfferId(product.id, variant.id, country);

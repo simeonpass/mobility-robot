@@ -8,6 +8,7 @@ import type {ProductItemFragment} from 'storefrontapi.generated';
 import {Ga4CollectionView} from '~/components/Ga4CollectionView';
 import {JsonLd} from '~/components/content/PageShell';
 import {buildMeta, itemListJsonLd, breadcrumbJsonLd} from '~/lib/seo';
+import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const collection = data?.collection;
@@ -66,7 +67,16 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
   return {
-    collection,
+    collection: {
+      ...collection,
+      products: {
+        ...collection.products,
+        // Paused and UK-unavailable chairs stay in Shopify but off the storefront.
+        nodes: collection.products.nodes.filter(
+          (product) => !isHiddenStorefrontProductHandle(product.handle),
+        ),
+      },
+    },
   };
 }
 

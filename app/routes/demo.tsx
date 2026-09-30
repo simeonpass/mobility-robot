@@ -16,6 +16,7 @@ import {useEnquiryTracking} from '~/components/forms/useEnquiryTracking';
 import {demoRequestSchema} from '~/lib/form-schemas';
 import {breadcrumbJsonLd, pageMeta} from '~/lib/seo';
 import {DEMO_MODELS, demoModel} from '~/lib/enquiry-intent';
+import {isPausedModelLabel} from '~/lib/homepage-data';
 
 export const meta: Route.MetaFunction = () =>
   pageMeta({
@@ -25,7 +26,7 @@ export const meta: Route.MetaFunction = () =>
     path: '/demo',
   });
 
-const MODEL_OPTIONS = DEMO_MODELS;
+const MODEL_OPTIONS = DEMO_MODELS.filter((model) => !isPausedModelLabel(model));
 
 const EXPECT_STEPS = [
   {

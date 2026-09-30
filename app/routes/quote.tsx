@@ -11,6 +11,7 @@ import {
 } from '~/components/forms/FormField';
 import {useValidatedApiForm} from '~/components/forms/useValidatedApiForm';
 import {quoteRequestSchema} from '~/lib/form-schemas';
+import {isPausedModelLabel} from '~/lib/homepage-data';
 import {pageMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () =>
@@ -21,22 +22,25 @@ export const meta: Route.MetaFunction = () =>
     path: '/quote',
   });
 
-const MODEL_OPTIONS = [
-  'M4',
-  'M4 Pro',
-  'M4B',
-  'M8',
-  'M8 Pro',
-  'X12',
-  'X12 Pro',
-  'Multiple / Unsure',
-] as const;
+const MODEL_OPTIONS = (
+  [
+    'M4',
+    'M4 Pro',
+    'M4B',
+    'M8',
+    'M8 Pro',
+    'X12',
+    'X12 Pro',
+    'Multiple / Unsure',
+  ] as const
+).filter((model) => !isPausedModelLabel(model));
 
 export default function QuotePage() {
-  const {errors, formError, loading, success, handleSubmit} = useValidatedApiForm({
-    schema: quoteRequestSchema,
-    action: '/api/quote-request',
-  });
+  const {errors, formError, loading, success, handleSubmit} =
+    useValidatedApiForm({
+      schema: quoteRequestSchema,
+      action: '/api/quote-request',
+    });
 
   return (
     <PageShell className="max-w-3xl">
@@ -52,7 +56,8 @@ export default function QuotePage() {
 
       {success ? (
         <FormSuccess>
-          Quote request received — we&apos;ll be in touch within one business day.
+          Quote request received — we&apos;ll be in touch within one business
+          day.
         </FormSuccess>
       ) : (
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -65,7 +70,11 @@ export default function QuotePage() {
           <FormField error={errors.phone} id="phone" label="Phone">
             <TextInput id="phone" name="phone" required type="tel" />
           </FormField>
-          <FormField error={errors.company} id="company" label="Company (optional)">
+          <FormField
+            error={errors.company}
+            id="company"
+            label="Company (optional)"
+          >
             <TextInput id="company" name="company" type="text" />
           </FormField>
           <FormField error={errors.model} id="model" label="Model">
@@ -81,10 +90,26 @@ export default function QuotePage() {
             </SelectInput>
           </FormField>
           <FormField error={errors.quantity} id="quantity" label="Quantity">
-            <TextInput defaultValue="1" id="quantity" min={1} name="quantity" required type="number" />
+            <TextInput
+              defaultValue="1"
+              id="quantity"
+              min={1}
+              name="quantity"
+              required
+              type="number"
+            />
           </FormField>
-          <FormField error={errors.vatReliefEligible} id="vatReliefEligible" label="VAT relief eligible?">
-            <SelectInput defaultValue="" id="vatReliefEligible" name="vatReliefEligible" required>
+          <FormField
+            error={errors.vatReliefEligible}
+            id="vatReliefEligible"
+            label="VAT relief eligible?"
+          >
+            <SelectInput
+              defaultValue=""
+              id="vatReliefEligible"
+              name="vatReliefEligible"
+              required
+            >
               <option disabled value="">
                 Select
               </option>

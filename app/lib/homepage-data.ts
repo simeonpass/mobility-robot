@@ -6,7 +6,8 @@ import {catalogToExVatAmount} from '~/lib/pricing-mode';
 import m8Poster from '~/assets/m8-hero-poster.jpg';
 import m8FullFilm from '~/assets/m8-full-film.mp4';
 
-export const HOMEPAGE_FLAGSHIP_HANDLES = [
+/** Every flagship chair the storefront knows about, paused or not. */
+export const ALL_FLAGSHIP_HANDLES = [
   'xsto-m4',
   'xsto-m4b',
   'xsto-m4-pro',
@@ -16,15 +17,84 @@ export const HOMEPAGE_FLAGSHIP_HANDLES = [
   'xsto-x12-pro',
 ] as const satisfies readonly HomepageProductHandle[];
 
-export type HomepageFlagshipHandle =
-  (typeof HOMEPAGE_FLAGSHIP_HANDLES)[number];
+export type HomepageFlagshipHandle = (typeof ALL_FLAGSHIP_HANDLES)[number];
+
+/**
+ * Models switched off across the storefront for now (the M8s are waiting on
+ * proper photography). A paused model drops out of the hero, range grid,
+ * navigation, footer, compare table, series pages, enquiry forms, search,
+ * shop-all, sitemaps and the Merchant Center feed, and its product URL
+ * temporarily redirects to the range. Remove a handle here to bring the
+ * model back everywhere at once.
+ */
+export const PAUSED_FLAGSHIP_HANDLES: readonly HomepageFlagshipHandle[] = [
+  'xsto-m8',
+  'xsto-m8-pro',
+];
+
+export function isPausedFlagshipSlot(slot: string): boolean {
+  return (PAUSED_FLAGSHIP_HANDLES as readonly string[]).includes(slot);
+}
+
+/** Enquiry-form labels ("M8 Pro") for models that are paused. */
+export function isPausedModelLabel(label: string): boolean {
+  return PAUSED_FLAGSHIP_HANDLES.some(
+    (slot) => HOMEPAGE_FLAGSHIP_LABELS[slot] === label,
+  );
+}
+
+/** Flagship chairs currently on sale and shown across the site. */
+export const HOMEPAGE_FLAGSHIP_HANDLES: readonly HomepageFlagshipHandle[] =
+  ALL_FLAGSHIP_HANDLES.filter((slot) => !isPausedFlagshipSlot(slot));
+
+export type ProductSeriesKey = 'm4' | 'm8' | 'x12';
+
+export const PRODUCT_SERIES: readonly {
+  key: ProductSeriesKey;
+  title: string;
+  slots: readonly HomepageFlagshipHandle[];
+}[] = [
+  {
+    key: 'm4',
+    title: 'M4 Series',
+    slots: ['xsto-m4', 'xsto-m4b', 'xsto-m4-pro'],
+  },
+  {key: 'm8', title: 'M8 Series', slots: ['xsto-m8', 'xsto-m8-pro']},
+  {key: 'x12', title: 'X12 Series', slots: ['xsto-x12', 'xsto-x12-pro']},
+];
+
+/** A series is paused once every chair in it is paused. */
+export function isPausedSeries(key: string): boolean {
+  const series = PRODUCT_SERIES.find((item) => item.key === key);
+  return Boolean(series?.slots.every((slot) => isPausedFlagshipSlot(slot)));
+}
+
+/** Series with at least one chair on sale, in catalogue order. */
+export const ACTIVE_PRODUCT_SERIES = PRODUCT_SERIES.filter(
+  (series) => !isPausedSeries(series.key),
+);
+
+/** "M4 and X12" / "M4, M8 and X12" — for copy that lists the range. */
+export function formatActiveSeriesList(conjunction = 'and'): string {
+  const names = ACTIVE_PRODUCT_SERIES.map((series) => series.key.toUpperCase());
+  if (names.length <= 1) return names.join('');
+  return `${names.slice(0, -1).join(', ')} ${conjunction} ${names[names.length - 1]}`;
+}
 
 export const HOMEPAGE_PRODUCT_BADGES: Record<
   HomepageFlagshipHandle,
   {badge: string; shortName: string; exploreLabel: string}
 > = {
-  'xsto-m8': {badge: 'Pre-order', shortName: 'XSTO M8', exploreLabel: 'Explore XSTO M8'},
-  'xsto-m8-pro': {badge: 'Pre-order', shortName: 'XSTO M8 Pro', exploreLabel: 'Explore XSTO M8 Pro'},
+  'xsto-m8': {
+    badge: 'Pre-order',
+    shortName: 'XSTO M8',
+    exploreLabel: 'Explore XSTO M8',
+  },
+  'xsto-m8-pro': {
+    badge: 'Pre-order',
+    shortName: 'XSTO M8 Pro',
+    exploreLabel: 'Explore XSTO M8 Pro',
+  },
   'xsto-m4': {
     badge: 'Self-Levelling',
     shortName: 'XSTO M4',
@@ -40,7 +110,11 @@ export const HOMEPAGE_PRODUCT_BADGES: Record<
     shortName: 'XSTO M4B',
     exploreLabel: 'Explore XSTO M4B',
   },
-  'xsto-x12-pro': {badge: 'Stair Climber', shortName: 'XSTO X12 Pro', exploreLabel: 'Explore XSTO X12 Pro'},
+  'xsto-x12-pro': {
+    badge: 'Stair Climber',
+    shortName: 'XSTO X12 Pro',
+    exploreLabel: 'Explore XSTO X12 Pro',
+  },
   'xsto-x12': {
     badge: 'Stair Climber',
     shortName: 'XSTO X12',
@@ -140,8 +214,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   {
     label: 'Headrest',
     values: {
-      'xsto-m8': "Confirm configuration",
-      'xsto-m8-pro': "Confirm configuration",
+      'xsto-m8': 'Confirm configuration',
+      'xsto-m8-pro': 'Confirm configuration',
       'xsto-m4': false,
       'xsto-m4-pro': true,
       'xsto-m4b': false,
@@ -164,8 +238,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   {
     label: 'Folding Footrest',
     values: {
-      'xsto-m8': "Manual",
-      'xsto-m8-pro': "Powered",
+      'xsto-m8': 'Manual',
+      'xsto-m8-pro': 'Powered',
       'xsto-m4': false,
       'xsto-m4-pro': false,
       'xsto-m4b': true,
@@ -176,8 +250,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   {
     label: 'Max Slope',
     values: {
-      'xsto-m8': "15°",
-      'xsto-m8-pro': "15°",
+      'xsto-m8': '15°',
+      'xsto-m8-pro': '15°',
       'xsto-m4': '10°',
       'xsto-m4-pro': '15°',
       'xsto-m4b': '10°',
@@ -188,8 +262,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   {
     label: 'Range',
     values: {
-      'xsto-m8': "Up to 54 km*",
-      'xsto-m8-pro': "Up to 54 km*",
+      'xsto-m8': 'Up to 54 km*',
+      'xsto-m8-pro': 'Up to 54 km*',
       'xsto-m4': '15 km',
       'xsto-m4-pro': '26 km',
       'xsto-m4b': '15 km',
@@ -200,8 +274,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   {
     label: 'Top Speed',
     values: {
-      'xsto-m8': "Confirm UK configuration",
-      'xsto-m8-pro': "Confirm UK configuration",
+      'xsto-m8': 'Confirm UK configuration',
+      'xsto-m8-pro': 'Confirm UK configuration',
       'xsto-m4': '6 km/h',
       'xsto-m4-pro': '6 km/h',
       'xsto-m4b': '6 km/h',
@@ -212,8 +286,8 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   {
     label: 'Weight',
     values: {
-      'xsto-m8': "68.6 kg (no batteries)",
-      'xsto-m8-pro': "72.6 kg (no batteries)",
+      'xsto-m8': '68.6 kg (no batteries)',
+      'xsto-m8-pro': '72.6 kg (no batteries)',
       'xsto-m4': '51.5 kg',
       'xsto-m4-pro': '60.1 kg',
       'xsto-m4b': '55.5 kg',
@@ -223,27 +297,28 @@ export const HOMEPAGE_COMPARISON_FEATURES: ComparisonFeatureRow[] = [
   },
 ];
 
-export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> = {
-  'xsto-m8': 'M8',
-  'xsto-m8-pro': 'M8 Pro',
-  'xsto-m4': 'M4',
-  'xsto-m4-pro': 'M4 Pro',
-  'xsto-m4b': 'M4B',
-  'xsto-x12': 'X12',
-  'xsto-x12-pro': 'X12 Pro',
-};
+export const HOMEPAGE_FLAGSHIP_LABELS: Record<HomepageFlagshipHandle, string> =
+  {
+    'xsto-m8': 'M8',
+    'xsto-m8-pro': 'M8 Pro',
+    'xsto-m4': 'M4',
+    'xsto-m4-pro': 'M4 Pro',
+    'xsto-m4b': 'M4B',
+    'xsto-x12': 'X12',
+    'xsto-x12-pro': 'X12 Pro',
+  };
 
 /**
  * Product thumbs for mega menu / nav (Shopify Files CDN).
  * Prefer transparent or clean cutouts when available.
  */
 export const HOMEPAGE_PRODUCT_THUMBS: Record<HomepageFlagshipHandle, string> = {
-  'xsto-m8': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m8-standard-original.webp',
-  'xsto-m8-pro': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m8-pro-front.webp',
-  'xsto-m4':
-    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m4-01.jpg',
-  'xsto-m4b':
-    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/M4B.png',
+  'xsto-m8':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m8-standard-original.webp',
+  'xsto-m8-pro':
+    'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m8-pro-front.webp',
+  'xsto-m4': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/m4-01.jpg',
+  'xsto-m4b': 'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/M4B.png',
   'xsto-m4-pro':
     'https://cdn.shopify.com/s/files/1/0904/4541/4778/files/xsto-m4-pro-mobility-wheelchair-adjustable-seat-backrest-9425362.jpg',
   'xsto-x12-pro':
@@ -314,10 +389,18 @@ export function isMergedAwayProductHandle(handle: string): boolean {
   return (MERGED_AWAY_PRODUCT_HANDLES as readonly string[]).includes(h);
 }
 
-/** Hidden from grids, search, sitemaps, and shop-all. */
+/** Shopify product handle → paused flagship chair? */
+export function isPausedProductHandle(handle: string): boolean {
+  const slot = getHomepageProductSlot(handle.trim().toLowerCase());
+  return slot ? isPausedFlagshipSlot(slot) : false;
+}
+
+/** Hidden from grids, search, sitemaps, shop-all and the merchant feed. */
 export function isHiddenStorefrontProductHandle(handle: string): boolean {
   return (
-    isUkUnavailableProductHandle(handle) || isMergedAwayProductHandle(handle)
+    isUkUnavailableProductHandle(handle) ||
+    isMergedAwayProductHandle(handle) ||
+    isPausedProductHandle(handle)
   );
 }
 
@@ -380,7 +463,9 @@ export const HOMEPAGE_HERO_POSTER_URL = m8Poster;
 export const HOMEPAGE_HERO_POSTER_SRC_SET = `${m8Poster} 1600w`;
 export const M8_FULL_VIDEO_URL = m8FullFilm;
 
-export function heroYoutubePosterUrl(videoId = HOMEPAGE_HERO_YOUTUBE_ID): string {
+export function heroYoutubePosterUrl(
+  videoId = HOMEPAGE_HERO_YOUTUBE_ID,
+): string {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 }
 
@@ -404,38 +489,44 @@ export function buildHeroYoutubeEmbedUrl(videoId: string): string {
 export {default as HOMEPAGE_HERO_POSTER} from '~/assets/hero-poster.jpg';
 
 /** Bullet specs for product cards — keyed by canonical slot. */
-export const HOMEPAGE_PRODUCT_BULLETS: Record<
-  HomepageProductHandle,
-  string[]
-> = {
-  'xsto-m8': ['Four-wheel drive · self-balancing chassis', '450–730 mm powered seat elevation', 'Manual reclining backrest · 150 kg capacity'],
-  'xsto-m8-pro': ['Four-wheel drive · self-balancing chassis', 'Powered recline and leg rest', '450–730 mm powered seat elevation · 150 kg capacity'],
-  'xsto-m4': [
-    'Self-balancing smart control platform',
-    'Electric height adjustment (347–650 mm)',
-    '15 km range · one-button folding',
-  ],
-  'xsto-m4-pro': [
-    '150 kg capacity · 26 km range',
-    '0–20° seat tilt · 135° backrest recline',
-    'Integrated LED head, tail and turn lights',
-  ],
-  'xsto-m4b': [
-    'New front wheels · folding footrest',
-    'Self-balancing chassis · 10° slopes',
-    'Electric height adjustment 347–650 mm',
-  ],
-  'xsto-x12': [
-    'Climbs stairs up to 40° incline',
-    '35 km range on dual batteries',
-    'Optional electric elevating leg rest',
-  ],
-  'xsto-x12-pro': [
-    'Climbs stairs up to 40° incline',
-    'Electric elevating leg rest',
-    '35 km dual-battery range',
-  ],
-};
+export const HOMEPAGE_PRODUCT_BULLETS: Record<HomepageProductHandle, string[]> =
+  {
+    'xsto-m8': [
+      'Four-wheel drive · self-balancing chassis',
+      '450–730 mm powered seat elevation',
+      'Manual reclining backrest · 150 kg capacity',
+    ],
+    'xsto-m8-pro': [
+      'Four-wheel drive · self-balancing chassis',
+      'Powered recline and leg rest',
+      '450–730 mm powered seat elevation · 150 kg capacity',
+    ],
+    'xsto-m4': [
+      'Self-balancing smart control platform',
+      'Electric height adjustment (347–650 mm)',
+      '15 km range · one-button folding',
+    ],
+    'xsto-m4-pro': [
+      '150 kg capacity · 26 km range',
+      '0–20° seat tilt · 135° backrest recline',
+      'Integrated LED head, tail and turn lights',
+    ],
+    'xsto-m4b': [
+      'New front wheels · folding footrest',
+      'Self-balancing chassis · 10° slopes',
+      'Electric height adjustment 347–650 mm',
+    ],
+    'xsto-x12': [
+      'Climbs stairs up to 40° incline',
+      '35 km range on dual batteries',
+      'Optional electric elevating leg rest',
+    ],
+    'xsto-x12-pro': [
+      'Climbs stairs up to 40° incline',
+      'Electric elevating leg rest',
+      '35 km dual-battery range',
+    ],
+  };
 
 export type ComparisonRow = {
   model: string;
@@ -477,10 +568,22 @@ export const HOMEPAGE_COMPARISON_ROWS: ComparisonRow[] = [
     foldedSize: '1040 × 592 × 770 mm',
   },
   {
-    model: 'M8', handle: 'xsto-m8', shopifyHandle: 'xsto-m8', weight: '68.6 kg', capacity: '150 kg', range: '54 km (optional battery)', foldedSize: '1063 × 610 × 730 mm',
+    model: 'M8',
+    handle: 'xsto-m8',
+    shopifyHandle: 'xsto-m8',
+    weight: '68.6 kg',
+    capacity: '150 kg',
+    range: '54 km (optional battery)',
+    foldedSize: '1063 × 610 × 730 mm',
   },
   {
-    model: 'M8 Pro', handle: 'xsto-m8-pro', shopifyHandle: 'xsto-m8-pro', weight: '72.6 kg', capacity: '150 kg', range: '54 km (optional battery)', foldedSize: '1129 × 610 × 730 mm',
+    model: 'M8 Pro',
+    handle: 'xsto-m8-pro',
+    shopifyHandle: 'xsto-m8-pro',
+    weight: '72.6 kg',
+    capacity: '150 kg',
+    range: '54 km (optional battery)',
+    foldedSize: '1129 × 610 × 730 mm',
   },
   {
     model: 'X12',

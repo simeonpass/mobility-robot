@@ -6,12 +6,12 @@ import {Ga4CollectionView} from '~/components/Ga4CollectionView';
 import {ACCESSORIES_COLLECTION_HANDLE} from '~/lib/accessories';
 import {partitionShopAllProducts} from '~/lib/shop-all';
 import {buildMeta, breadcrumbJsonLd, itemListJsonLd} from '~/lib/seo';
+import {formatActiveSeriesList} from '~/lib/homepage-data';
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'Shop All XSTO Wheelchairs & Accessories',
-    description:
-      'Compare XSTO M4, M8 and X12 series powered wheelchairs and compatible accessories. UK advice, demonstrations and support from Bentech Medical.',
+    description: `Compare XSTO ${formatActiveSeriesList()} series powered wheelchairs and compatible accessories. UK advice, demonstrations and support from Bentech Medical.`,
     path: '/collections/all',
   });
 

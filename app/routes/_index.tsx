@@ -16,7 +16,9 @@ import {
 import {ReviewsSection} from '~/components/home/ReviewsSection';
 import {TrustBar} from '~/components/TrustBar';
 import {
+  formatActiveSeriesList,
   HOMEPAGE_FLAGSHIP_HANDLES,
+  isPausedSeries,
   SHOPIFY_HOME_PRODUCT_HANDLES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
@@ -27,8 +29,9 @@ import {summarizeReviews} from '~/lib/reviews';
 export const meta: Route.MetaFunction = () =>
   buildMeta({
     title: 'XSTO Powered Wheelchairs UK | Mobility Robot',
-    description:
-      'Explore the XSTO M4, M8 and X12 series at Mobility Robot by Bentech Medical. Pre-order the new M8 and M8 Pro with a 10% deposit and UK support.',
+    description: isPausedSeries('m8')
+      ? `Explore the XSTO ${formatActiveSeriesList()} series at Mobility Robot by Bentech Medical: self-levelling and stair-climbing powered wheelchairs with free UK delivery, VAT relief for eligible customers and UK support.`
+      : 'Explore the XSTO M4, M8 and X12 series at Mobility Robot by Bentech Medical. Pre-order the new M8 and M8 Pro with a 10% deposit and UK support.',
     path: '/',
     image: undefined,
   });

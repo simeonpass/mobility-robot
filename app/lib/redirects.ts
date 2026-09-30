@@ -1,7 +1,9 @@
 import {redirect} from 'react-router';
 import {LEGACY_PUBLIC_HOSTS, SITE_URL} from '~/lib/const';
 import {
-  HOMEPAGE_FLAGSHIP_HANDLES,
+  ALL_FLAGSHIP_HANDLES,
+  isPausedProductHandle,
+  isPausedSeries,
   isUkUnavailableProductHandle,
   SHOPIFY_HOME_PRODUCT_HANDLES,
 } from '~/lib/homepage-data';
@@ -159,22 +161,28 @@ const PRODUCT_PREFIX_REDIRECTS: Array<{prefix: string; target: string}> = [
 ];
 
 export const LEGACY_REDIRECT_CACHE_CONTROL = 'public, max-age=3600';
+/** Paused models come back, so their redirects must not be cached or 301'd. */
+export const PAUSED_REDIRECT_CACHE_CONTROL = 'no-store';
 
 export type LegacyRedirectResult = {
   destination: string;
   cacheControl: string;
+  /** Defaults to 301; paused models use a temporary 302. */
+  status?: 301 | 302;
 };
 
 /**
  * Resolve a legacy URL to its new path, or null if no redirect applies.
  */
 const CANONICAL_PRODUCT_PATHS = new Set(
-  HOMEPAGE_FLAGSHIP_HANDLES.map(
+  ALL_FLAGSHIP_HANDLES.map(
     (slot) => `/products/${SHOPIFY_HOME_PRODUCT_HANDLES[slot]}`,
   ),
 );
 
-export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | null {
+export function resolveLegacyRedirect(
+  request: Request,
+): LegacyRedirectResult | null {
   const url = new URL(request.url);
   const pathname = url.pathname.replace(/\/+$/, '') || '/';
 
@@ -199,13 +207,34 @@ export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | 
     };
   }
 
+  // Temporarily paused models: send visitors to the range, but keep the
+  // URLs alive (302, uncached) for when the models return.
+  if (productMatch && isPausedProductHandle(productMatch[1])) {
+    return {
+      destination: '/collections/all',
+      cacheControl: PAUSED_REDIRECT_CACHE_CONTROL,
+      status: 302,
+    };
+  }
+  const seriesMatch = pathname.match(/^\/series\/([^/]+)$/);
+  if (seriesMatch && isPausedSeries(seriesMatch[1])) {
+    return {
+      destination: '/collections/all',
+      cacheControl: PAUSED_REDIRECT_CACHE_CONTROL,
+      status: 302,
+    };
+  }
+
   // Never prefix-redirect a live Shopify product URL. Handles like
   // xsto-x12-pro-ai-... start with the short xsto-x12- legacy prefix.
   if (!CANONICAL_PRODUCT_PATHS.has(pathname)) {
     for (const {prefix, target} of PRODUCT_PREFIX_REDIRECTS) {
       if (pathname === target) continue;
       if (pathname === prefix || pathname.startsWith(`${prefix}-`)) {
-        return {destination: target, cacheControl: LEGACY_REDIRECT_CACHE_CONTROL};
+        return {
+          destination: target,
+          cacheControl: LEGACY_REDIRECT_CACHE_CONTROL,
+        };
       }
     }
   }
@@ -217,7 +246,9 @@ export function resolveLegacyRedirect(request: Request): LegacyRedirectResult | 
  * 301 legacy public hosts (xsto.co.uk, www.*) → canonical SITE_URL.
  * Skips localhost and Oxygen/preview hosts that are not in LEGACY_PUBLIC_HOSTS.
  */
-export function resolveHostRedirect(request: Request): LegacyRedirectResult | null {
+export function resolveHostRedirect(
+  request: Request,
+): LegacyRedirectResult | null {
   const url = new URL(request.url);
   const host = url.hostname.toLowerCase();
   const canonicalHost = new URL(SITE_URL).hostname;
@@ -226,7 +257,10 @@ export function resolveHostRedirect(request: Request): LegacyRedirectResult | nu
   if (host === 'localhost' || host === '127.0.0.1') return null;
   if (!(LEGACY_PUBLIC_HOSTS as readonly string[]).includes(host)) return null;
 
-  const destination = new URL(`${url.pathname}${url.search}`, SITE_URL).toString();
+  const destination = new URL(
+    `${url.pathname}${url.search}`,
+    SITE_URL,
+  ).toString();
   return {destination, cacheControl: LEGACY_REDIRECT_CACHE_CONTROL};
 }
 
@@ -265,7 +299,7 @@ export function legacyRedirect(request: Request): Response | null {
   }
 
   throw redirect(destination, {
-    status: 301,
+    status: pathResolved?.status ?? 301,
     headers: {
       'Cache-Control':
         pathResolved?.cacheControl ??

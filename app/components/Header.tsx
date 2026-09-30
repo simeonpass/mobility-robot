@@ -19,8 +19,10 @@ import {
   type NavItem,
 } from '~/lib/site-navigation';
 import {
+  formatActiveSeriesList,
   getHomepageProductSlot,
   HOMEPAGE_PRODUCT_BADGES,
+  isPausedSeries,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 
@@ -198,83 +200,95 @@ function ModelsDropdown() {
           <div className="site-header-dropdown-intro">
             <p className="site-header-dropdown-eyebrow">Shop XSTO</p>
             <p className="site-header-dropdown-tagline">
-              Explore the M4, M8 and X12 series, from everyday self-levelling
-              chairs to four-wheel drive and stair-climbing capability.
+              Explore the {formatActiveSeriesList()} series, from everyday
+              self-levelling chairs to{' '}
+              {isPausedSeries('m8') ? '' : 'four-wheel drive and '}
+              stair-climbing capability.
             </p>
           </div>
 
           <div className="mr-nav-series">
-          {PRODUCT_NAV_GROUPS.map((group) => <section key={group.title}>
-          <Link className="mr-nav-series-title" to={`/series/${group.title.split(' ')[0].toLowerCase()}`} onClick={() => setOpen(false)}>{group.title} <span aria-hidden>↗</span></Link>
-          <ul>
-            {group.items.map((item) => {
-              const meta = getProductNavMeta(item.url);
-              return (
-                <li key={item.url}>
-                  <NavLink
-                    className={({isActive}) =>
-                      [
-                        'site-header-dropdown-item',
-                        isActive ? 'site-header-dropdown-item--active' : '',
-                      ]
-                        .filter(Boolean)
-                        .join(' ')
-                    }
-                    onClick={() => setOpen(false)}
-                    prefetch="intent"
-                    to={item.url}
-                  >
-                    {item.imageUrl ? (
-                      <span
-                        aria-hidden
-                        className="site-header-dropdown-item-thumb"
-                      >
-                        <img
-                          alt=""
-                          className="site-header-dropdown-item-thumb-img"
-                          decoding="async"
-                          height={56}
-                          loading="lazy"
-                          src={`${item.imageUrl}?width=112&height=112`}
-                          width={56}
-                        />
-                      </span>
-                    ) : (
-                      <span
-                        aria-hidden
-                        className="site-header-dropdown-item-icon"
-                      >
-                        {modelIconLabel(item.title)}
-                      </span>
-                    )}
-                    <span className="site-header-dropdown-item-body">
-                      <span className="site-header-dropdown-item-row">
-                        <span className="site-header-dropdown-item-title">
-                          {item.title}
-                        </span>
-                        {meta?.badge ? (
-                          <span className="site-header-dropdown-item-badge">
-                            {meta.badge}
+            {PRODUCT_NAV_GROUPS.map((group) => (
+              <section key={group.title}>
+                <Link
+                  className="mr-nav-series-title"
+                  to={`/series/${group.title.split(' ')[0].toLowerCase()}`}
+                  onClick={() => setOpen(false)}
+                >
+                  {group.title} <span aria-hidden>↗</span>
+                </Link>
+                <ul>
+                  {group.items.map((item) => {
+                    const meta = getProductNavMeta(item.url);
+                    return (
+                      <li key={item.url}>
+                        <NavLink
+                          className={({isActive}) =>
+                            [
+                              'site-header-dropdown-item',
+                              isActive
+                                ? 'site-header-dropdown-item--active'
+                                : '',
+                            ]
+                              .filter(Boolean)
+                              .join(' ')
+                          }
+                          onClick={() => setOpen(false)}
+                          prefetch="intent"
+                          to={item.url}
+                        >
+                          {item.imageUrl ? (
+                            <span
+                              aria-hidden
+                              className="site-header-dropdown-item-thumb"
+                            >
+                              <img
+                                alt=""
+                                className="site-header-dropdown-item-thumb-img"
+                                decoding="async"
+                                height={56}
+                                loading="lazy"
+                                src={`${item.imageUrl}?width=112&height=112`}
+                                width={56}
+                              />
+                            </span>
+                          ) : (
+                            <span
+                              aria-hidden
+                              className="site-header-dropdown-item-icon"
+                            >
+                              {modelIconLabel(item.title)}
+                            </span>
+                          )}
+                          <span className="site-header-dropdown-item-body">
+                            <span className="site-header-dropdown-item-row">
+                              <span className="site-header-dropdown-item-title">
+                                {item.title}
+                              </span>
+                              {meta?.badge ? (
+                                <span className="site-header-dropdown-item-badge">
+                                  {meta.badge}
+                                </span>
+                              ) : null}
+                            </span>
+                            {item.description ? (
+                              <span className="site-header-dropdown-item-desc">
+                                {item.description}
+                              </span>
+                            ) : null}
                           </span>
-                        ) : null}
-                      </span>
-                      {item.description ? (
-                        <span className="site-header-dropdown-item-desc">
-                          {item.description}
-                        </span>
-                      ) : null}
-                    </span>
-                    <ArrowRight
-                      aria-hidden
-                      className="site-header-dropdown-item-arrow"
-                      strokeWidth={2}
-                    />
-                  </NavLink>
-                </li>
-              );
-            })}
-          </ul>
-          </section>)}
+                          <ArrowRight
+                            aria-hidden
+                            className="site-header-dropdown-item-arrow"
+                            strokeWidth={2}
+                          />
+                        </NavLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))}
           </div>
 
           <div className="site-header-dropdown-footer">
@@ -342,12 +356,20 @@ function MobileNav({
         </NavLink>
       ) : null}
 
-      {PRODUCT_NAV_GROUPS.map((group) => <div className="site-header-mobile-section" key={group.title}>
-        <Link className="site-header-mobile-label" to={`/series/${group.title.split(' ')[0].toLowerCase()}`} onClick={close}>{group.title} ↗</Link>
-        {group.items.map((item) => (
-          <MobileNavLink close={close} item={item} key={item.url} />
-        ))}
-      </div>)}
+      {PRODUCT_NAV_GROUPS.map((group) => (
+        <div className="site-header-mobile-section" key={group.title}>
+          <Link
+            className="site-header-mobile-label"
+            to={`/series/${group.title.split(' ')[0].toLowerCase()}`}
+            onClick={close}
+          >
+            {group.title} ↗
+          </Link>
+          {group.items.map((item) => (
+            <MobileNavLink close={close} item={item} key={item.url} />
+          ))}
+        </div>
+      ))}
 
       <div className="site-header-mobile-section">
         <p className="site-header-mobile-label">Explore</p>
@@ -508,7 +530,11 @@ function CartBadge({count}: {count: number}) {
 
   return (
     <button
-      aria-label={count > 0 ? `Basket, ${count} ${count === 1 ? 'item' : 'items'}` : 'Basket'}
+      aria-label={
+        count > 0
+          ? `Basket, ${count} ${count === 1 ? 'item' : 'items'}`
+          : 'Basket'
+      }
       className="site-header-icon-btn site-header-cart-btn"
       onClick={() => {
         open('cart');

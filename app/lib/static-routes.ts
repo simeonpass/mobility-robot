@@ -1,4 +1,6 @@
-export const STATIC_SITEMAP_ROUTES = [
+import {isPausedSeries} from '~/lib/homepage-data';
+
+const ALL_STATIC_SITEMAP_ROUTES = [
   {path: '/', changefreq: 'weekly', priority: 1.0},
   {path: '/compare', changefreq: 'monthly', priority: 0.8},
   {path: '/series/m4', changefreq: 'weekly', priority: 0.8},
@@ -40,3 +42,11 @@ export const STATIC_SITEMAP_ROUTES = [
   {path: '/collections/all', changefreq: 'weekly', priority: 0.8},
   // /collections/accessories is supplied by Shopify's collections sitemap.
 ] as const;
+
+/** Series pages for paused models redirect, so keep them out of the sitemap. */
+export const STATIC_SITEMAP_ROUTES = ALL_STATIC_SITEMAP_ROUTES.filter(
+  (route) => {
+    const series = route.path.match(/^\/series\/([^/]+)$/)?.[1];
+    return !series || !isPausedSeries(series);
+  },
+);

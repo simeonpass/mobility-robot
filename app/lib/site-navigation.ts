@@ -1,5 +1,6 @@
 import {
   HOMEPAGE_PRODUCT_THUMBS,
+  isPausedFlagshipSlot,
   SHOPIFY_HOME_PRODUCT_HANDLES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
@@ -37,11 +38,23 @@ function chairItem(
   };
 }
 
+/** Drop paused chairs, and any series left with nothing to show. */
+function visibleGroups(groups: NavGroup[]): NavGroup[] {
+  return groups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) => !item.productSlot || !isPausedFlagshipSlot(item.productSlot),
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
+}
+
 /**
- * Flagship chairs in the Models menu.
- * Models grouped into the three product families.
+ * Flagship chairs in the Models menu, grouped into product families.
+ * Paused models (see PAUSED_FLAGSHIP_HANDLES) are left out automatically.
  */
-export const PRODUCT_NAV_GROUPS: NavGroup[] = [
+export const PRODUCT_NAV_GROUPS: NavGroup[] = visibleGroups([
   {
     title: 'M4 Series',
     items: [
@@ -50,15 +63,21 @@ export const PRODUCT_NAV_GROUPS: NavGroup[] = [
       chairItem('xsto-m4-pro', 'M4 Pro', 'Premium comfort & capacity'),
     ],
   },
-  {title: 'M8 Series', items: [
-    chairItem('xsto-m8', 'M8', 'New · four-wheel-drive mobility'),
-    chairItem('xsto-m8-pro', 'M8 Pro', 'New · powered recline & leg rest'),
-  ]},
-  {title: 'X12 Series', items: [
-    chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
-    chairItem('xsto-x12-pro', 'X12 Pro', 'Electric elevating leg rest'),
-  ]},
-];
+  {
+    title: 'M8 Series',
+    items: [
+      chairItem('xsto-m8', 'M8', 'New · four-wheel-drive mobility'),
+      chairItem('xsto-m8-pro', 'M8 Pro', 'New · powered recline & leg rest'),
+    ],
+  },
+  {
+    title: 'X12 Series',
+    items: [
+      chairItem('xsto-x12', 'X12', 'All-terrain stair climber'),
+      chairItem('xsto-x12-pro', 'X12 Pro', 'Electric elevating leg rest'),
+    ],
+  },
+]);
 
 /** Flat product links (all chairs). */
 export const PRODUCT_NAV_ITEMS: NavItem[] = PRODUCT_NAV_GROUPS.flatMap(
@@ -95,13 +114,7 @@ export const MAIN_NAV: NavItem[] = [
 export const FOOTER_QUICK_LINKS: NavItem[] = [
   {title: 'All wheelchairs', url: '/collections/all'},
   {title: 'Compare models', url: '/compare'},
-  {title: 'M4', url: productUrl('xsto-m4')},
-  {title: 'M4B', url: productUrl('xsto-m4b')},
-  {title: 'M4 Pro', url: productUrl('xsto-m4-pro')},
-  {title: 'M8', url: productUrl('xsto-m8')},
-  {title: 'M8 Pro', url: productUrl('xsto-m8-pro')},
-  {title: 'X12', url: productUrl('xsto-x12')},
-  {title: 'X12 Pro', url: productUrl('xsto-x12-pro')},
+  ...PRODUCT_NAV_ITEMS.map((item) => ({title: item.title, url: item.url})),
   {title: 'Accessories', url: '/collections/accessories'},
   {title: 'Videos', url: '/videos'},
   {title: 'Find a Dealer', url: '/stockists'},

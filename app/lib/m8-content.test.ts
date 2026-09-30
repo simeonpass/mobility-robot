@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {
+  ALL_FLAGSHIP_HANDLES,
   getHomepageProductSlot,
-  HOMEPAGE_FLAGSHIP_HANDLES,
   HOMEPAGE_COMPARISON_FEATURES,
 } from './homepage-data';
 import {getProductContent} from './product-content';
@@ -16,7 +16,7 @@ describe('M8 launch', () => {
   it('recognises both models as chairs, not accessories', () => {
     for (const handle of ['xsto-m8', 'xsto-m8-pro'] as const) {
       expect(getHomepageProductSlot(handle)).toBe(handle);
-      expect(HOMEPAGE_FLAGSHIP_HANDLES).toContain(handle);
+      expect(ALL_FLAGSHIP_HANDLES).toContain(handle);
       expect(isForcedPreorder(handle)).toBe(true);
       expect(getPreorderWeeks(handle)).toBe(12);
       expect(

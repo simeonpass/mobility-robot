@@ -1241,7 +1241,7 @@
 }
 
 /* The original X12 film, with readable copy and a compact phone presentation. */
-.mr-series-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0 0 28px; }
+.mr-series-links { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:12px; margin:0 0 28px; }
 .mr-series-links a { padding:18px 20px; border:1px solid #dce3ee; border-radius:10px; font-weight:700; color:#0c1b35; background:#f5f7fb; }
 .mr-series-links a:hover, .mr-series-links a[aria-current="page"] { border-color:#2155ed; background:#eef3ff; }
 .mr-series-links span { display:block; font-size:.8rem; font-weight:400; margin-top:4px; }
@@ -1441,25 +1441,54 @@
   pointer-events: none;
 }
 /* Server-rendered resting positions (front, left, right) so the first paint
-   already looks like a turntable; the script takes over on hydration. */
+   already looks like a turntable; the script takes over on hydration. The
+   constants depend on how many chairs share the ring (data-count). */
 .mr-turntable-item[data-pos='0'] {
-  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2923)) scale(1.4615);
   z-index: 3;
 }
-.mr-turntable-item[data-pos='1'] {
-  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1682), calc(var(--tt-stage-h) * 0.1928)) scale(1.2452);
-  z-index: 2;
-}
+.mr-turntable-item[data-pos='1'],
 .mr-turntable-item[data-pos='-1'] {
-  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1682), calc(var(--tt-stage-h) * 0.1928)) scale(1.2452);
   z-index: 2;
 }
-.mr-turntable-item[data-pos='2'],
-.mr-turntable-item[data-pos='-2'],
-.mr-turntable-item[data-pos='3'],
-.mr-turntable-item[data-pos='-3'] {
+.mr-turntable-item:not([data-pos='0']):not([data-pos='1']):not([data-pos='-1']) {
   opacity: 0;
   visibility: hidden;
+}
+.mr-turntable[data-count='4'] .mr-turntable-item[data-pos='0'] {
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2846)) scale(1.4449);
+}
+.mr-turntable[data-count='4'] .mr-turntable-item[data-pos='1'] {
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
+}
+.mr-turntable[data-count='4'] .mr-turntable-item[data-pos='-1'] {
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
+}
+.mr-turntable[data-count='5'] .mr-turntable-item[data-pos='0'] {
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2718)) scale(1.4170);
+}
+.mr-turntable[data-count='5'] .mr-turntable-item[data-pos='1'] {
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1260)) scale(1.1000);
+}
+.mr-turntable[data-count='5'] .mr-turntable-item[data-pos='-1'] {
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1260)) scale(1.1000);
+}
+.mr-turntable[data-count='6'] .mr-turntable-item[data-pos='0'] {
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2789)) scale(1.4324);
+}
+.mr-turntable[data-count='6'] .mr-turntable-item[data-pos='1'] {
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1618)) scale(1.1778);
+}
+.mr-turntable[data-count='6'] .mr-turntable-item[data-pos='-1'] {
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1618)) scale(1.1778);
+}
+.mr-turntable[data-count='7'] .mr-turntable-item[data-pos='0'] {
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2927)) scale(1.4624);
+}
+.mr-turntable[data-count='7'] .mr-turntable-item[data-pos='1'] {
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1929)) scale(1.2455);
+}
+.mr-turntable[data-count='7'] .mr-turntable-item[data-pos='-1'] {
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1929)) scale(1.2455);
 }
 
 /* Placard */
@@ -1666,14 +1695,41 @@
     margin-top: 6px;
   }
   /* Tighter ring on phones so the neighbours peek in at the edges. */
-  .mr-turntable-item[data-pos='0'] {
-    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2146)) scale(1.2925);
+  .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='0'] {
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2027)) scale(1.2667);
   }
-  .mr-turntable-item[data-pos='1'] {
-    transform: translate(calc(-50% + var(--tt-stage-h) * 0.7829), calc(var(--tt-stage-h) * 0.1556)) scale(1.1643);
+  .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='1'] {
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
   }
-  .mr-turntable-item[data-pos='-1'] {
-    transform: translate(calc(-50% - var(--tt-stage-h) * 0.7829), calc(var(--tt-stage-h) * 0.1556)) scale(1.1643);
+  .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='-1'] {
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
+  }
+  .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='0'] {
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2002)) scale(1.2613);
+  }
+  .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='1'] {
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1115)) scale(1.0684);
+  }
+  .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='-1'] {
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1115)) scale(1.0684);
+  }
+  .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='0'] {
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2073)) scale(1.2767);
+  }
+  .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='1'] {
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1359)) scale(1.1215);
+  }
+  .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='-1'] {
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1359)) scale(1.1215);
+  }
+  .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='0'] {
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2178)) scale(1.2997);
+  }
+  .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='1'] {
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1572)) scale(1.1679);
+  }
+  .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='-1'] {
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1572)) scale(1.1679);
   }
   .mr-turntable-edge {
     width: 10%;

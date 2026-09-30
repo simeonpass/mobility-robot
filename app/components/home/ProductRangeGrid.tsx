@@ -2,9 +2,11 @@ import {Link} from 'react-router';
 import {ArrowUpRight} from 'lucide-react';
 import type {HomeProductFragment} from 'storefrontapi.generated';
 import {
+  ACTIVE_PRODUCT_SERIES,
   getHomepageProductSlot,
   HOMEPAGE_FLAGSHIP_HANDLES,
   HOMEPAGE_PRODUCT_BADGES,
+  isPausedSeries,
   SHOPIFY_HOME_PRODUCT_HANDLES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
@@ -24,7 +26,8 @@ const descriptions: Record<HomepageFlagshipHandle, string> = {
     'A fresh take on the M4 platform, with redesigned front wheels and a folding footrest.',
   'xsto-m4-pro':
     'More seating adjustment, an integrated headrest and electric folding.',
-  'xsto-x12-pro': 'Stair-climbing capability with an electric elevating leg rest, assessment and training.',
+  'xsto-x12-pro':
+    'Stair-climbing capability with an electric elevating leg rest, assessment and training.',
   'xsto-x12':
     'Stair-climbing capability for suitable stairs, with assessment and training.',
 };
@@ -37,6 +40,12 @@ const mobileDescriptions: Record<HomepageFlagshipHandle, string> = {
   'xsto-x12-pro': 'Stair climbing · electric elevating leg rest',
   'xsto-x12': 'Stair climbing, with assessment & training',
 };
+const SERIES_COUNT_WORDS: Record<number, string> = {
+  1: 'One',
+  2: 'Two',
+  3: 'Three',
+};
+
 function productImageSrc(url: string, width: number): string {
   const parsed = new URL(url);
   parsed.searchParams.set('width', String(width));
@@ -59,7 +68,8 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
           <div>
             <p className="mr-eyebrow">The XSTO range</p>
             <h2>
-              Three series.
+              {SERIES_COUNT_WORDS[ACTIVE_PRODUCT_SERIES.length] ?? 'Three'}{' '}
+              series.
               <br />A world of possibilities.
             </h2>
             <p>
@@ -75,9 +85,11 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
           <Link to="/series/m4">
             M4 Series <span>Everyday freedom</span>
           </Link>
-          <Link to="/series/m8">
-            M8 Series <span>New · four-wheel drive</span>
-          </Link>
+          {isPausedSeries('m8') ? null : (
+            <Link to="/series/m8">
+              M8 Series <span>New · four-wheel drive</span>
+            </Link>
+          )}
           <Link to="/series/x12">
             X12 Series <span>Stair-climbing capability</span>
           </Link>
