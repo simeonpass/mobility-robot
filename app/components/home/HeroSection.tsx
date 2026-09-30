@@ -628,9 +628,10 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
             {current.promotion ? (
               <p className="mr-turntable-offer">
                 <strong>
-                  Save {current.promotion.savingExVatDisplay} this October
+                  Special offer: save {current.promotion.savingExVatDisplay}
                 </strong>
-                {' '}({current.promotion.savingIncVatDisplay} including VAT)
+                {' '}{current.promotion.offerName} ·{' '}
+                {current.promotion.savingIncVatDisplay} off including VAT
                 {current.promotion.previewing ? ' · preview' : ''}
               </p>
             ) : null}

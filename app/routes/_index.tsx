@@ -9,6 +9,7 @@ import {FaqPreview} from '~/components/home/FaqPreview';
 import {HeroSection} from '~/components/home/HeroSection';
 import {HomeCtaSection} from '~/components/home/HomeCtaSection';
 import {HomeMobileActions} from '~/components/home/HomeMobileActions';
+import {PromotionStrip} from '~/components/home/PromotionStrip';
 import {
   ProductRangeGrid,
   type HomeProduct,
@@ -72,6 +73,7 @@ export default function Homepage() {
     <div className="mr-home">
       <BrandStoryStrip />
       <HeroSection products={products} />
+      <PromotionStrip />
       <AwardsStrip />
       <TrustBar />
       <ProductRangeGrid products={products} />

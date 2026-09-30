@@ -16,8 +16,8 @@ export function AnnouncementBar() {
             to={`/products/${SHOPIFY_HOME_PRODUCT_HANDLES[promotion.slot]}`}
             data-promotion={promotion.id}
           >
-            <strong>{promotion.label}:</strong> {promotion.savingExVatDisplay}{' '}
-            off the new XSTO {promotion.modelLabel}
+            <strong>Special offer:</strong> save {promotion.savingExVatDisplay}{' '}
+            on the new XSTO {promotion.modelLabel} — {promotion.offerName}
             {promotion.previewing ? ' (preview)' : ''}
           </Link>
         ) : (

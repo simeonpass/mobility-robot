@@ -11,11 +11,11 @@ const before = new Date('2026-09-20T12:00:00Z');
 const after = new Date('2026-11-02T12:00:00Z');
 
 describe('M4B October launch price', () => {
-  it('runs from 1 to 31 October 2026 (UK time) only', () => {
+  it('runs from launch evening to 31 October 2026 (UK time) only', () => {
     expect(getActivePromotions(null, before)).toEqual([]);
     expect(getActivePromotions(null, after)).toEqual([]);
-    expect(getActivePromotions(null, new Date('2026-09-30T22:59:59Z'))).toEqual([]);
-    expect(getActivePromotions(null, new Date('2026-09-30T23:00:00Z'))).toHaveLength(1);
+    expect(getActivePromotions(null, new Date('2026-09-30T21:29:59Z'))).toEqual([]);
+    expect(getActivePromotions(null, new Date('2026-09-30T21:30:00Z'))).toHaveLength(1);
     expect(getActivePromotions(null, new Date('2026-10-31T23:59:59Z'))).toHaveLength(1);
     expect(getActivePromotions(null, new Date('2026-11-01T00:00:00Z'))).toEqual([]);
   });

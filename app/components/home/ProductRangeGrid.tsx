@@ -154,7 +154,7 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
                       <div className="mr-card-pricing">
                         {promotion ? (
                           <p className="mr-card-offer">
-                            Save {promotion.savingExVatDisplay} this October
+                            Special offer: save {promotion.savingExVatDisplay}
                             {' · '}
                             {promotion.highlights
                               .map((item, index) =>

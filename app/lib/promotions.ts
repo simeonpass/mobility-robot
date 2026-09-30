@@ -19,6 +19,8 @@ export type Promotion = {
   slot: HomepageFlagshipHandle;
   /** Short badge text. */
   label: string;
+  /** Name of the offer for sentences ("October launch price"). */
+  offerName: string;
   /** Saving off the ex-VAT (VAT-relief) price, in GBP. */
   savingExVat: number;
   /** ISO instants (UTC). */
@@ -35,17 +37,18 @@ export const PROMOTIONS: readonly Promotion[] = [
   {
     id: 'm4b-october-2026',
     slot: 'xsto-m4b',
-    label: 'October launch price',
+    label: 'Special offer · £500 off',
+    offerName: 'October launch price',
     savingExVat: 500,
-    // 1 October 2026 00:00 BST → 31 October 2026 23:59:59 GMT
-    startsAt: '2026-09-30T23:00:00Z',
+    // Live from launch evening (30 Sept) → 31 October 2026 23:59:59 GMT
+    startsAt: '2026-09-30T21:30:00Z',
     endsAt: '2026-10-31T23:59:59Z',
-    headline: 'Save £500 on the new M4B this October.',
+    headline: 'Special offer: save £500 on the new XSTO M4B.',
     description:
       'The M4 you know, with an improved folding footrest and new front suspension for a smoother ride over kerbs and rough paving.',
     highlights: ['Improved folding footrest', 'New front suspension'],
     terms:
-      'October launch price applies to XSTO M4B orders placed 1–31 October 2026, while stocks last. VAT relief still applies for eligible customers.',
+      'October launch price: £3,250 with VAT relief (was £3,750), or £3,900 including VAT (was £4,500). Applies to XSTO M4B orders placed by 31 October 2026, while stocks last.',
   },
 ];
 
