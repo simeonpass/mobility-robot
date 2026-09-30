@@ -32,6 +32,9 @@ describe('product image framing', () => {
           minVariantPrice: {amount: '15000', currencyCode: 'GBP'},
           maxVariantPrice: {amount: '15000', currencyCode: 'GBP'},
         },
+        compareAtPriceRange: {
+          minVariantPrice: {amount: '15000', currencyCode: 'GBP'},
+        },
         variants: {nodes: []},
       } satisfies HomeProductFragment;
 
