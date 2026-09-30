@@ -155,9 +155,9 @@ export const HOMEPAGE_VIDEO_ITEMS: readonly HomepageVideoItem[] = [
     id: 'm4b',
     // Shopify CDN MP4 (no dedicated M4B YouTube yet).
     videoUrl: HERO_VIDEO_URL,
-    title: 'XSTO M4B — New Front Wheels',
+    title: 'XSTO M4B — Improved Footrest & Front Suspension',
     description:
-      'See the M4B platform with redesigned front wheels, folding footrest, and self-balancing control',
+      'See the M4B platform with its improved folding footrest, new front suspension and self-balancing control',
   },
   {
     id: 'x12',
@@ -512,7 +512,7 @@ export const HOMEPAGE_PRODUCT_BULLETS: Record<HomepageProductHandle, string[]> =
       'Integrated LED head, tail and turn lights',
     ],
     'xsto-m4b': [
-      'New front wheels · folding footrest',
+      'Improved footrest · new front suspension',
       'Self-balancing chassis · 10° slopes',
       'Electric height adjustment 347–650 mm',
     ],

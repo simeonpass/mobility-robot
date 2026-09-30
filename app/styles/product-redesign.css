@@ -375,3 +375,14 @@
   .mr-shell:has(.mr-m8-mobile-demo) {padding-bottom:138px}
   .mr-product-page .product-mobile-atc:has(.mr-m8-mobile-demo)>div {row-gap:4px}
 }
+
+/* Launch-offer card above the buy box */
+.mr-product-promo { margin-bottom: 20px; padding: 18px 20px; border: 1px solid #f5d5a0; border-left: 4px solid #f2a23a; border-radius: 12px; background: #fff8ee; color: #101b35; }
+.mr-product-promo-label { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: .75rem; font-weight: 700; color: #7a4300; }
+.mr-product-promo-headline { margin: 0; font: 750 1.25rem/1.25 'Manrope', sans-serif; letter-spacing: -.03em; }
+.mr-product-promo-saving { margin: 8px 0 0; font-size: .875rem; line-height: 1.55; color: #3f4c63; }
+.mr-product-promo-highlights { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.mr-product-promo-highlights li { padding: 5px 10px; border-radius: 999px; background: #fff; border: 1px solid #f0d3a2; font-size: .78rem; font-weight: 600; color: #101b35; }
+.mr-product-promo-terms { margin: 12px 0 0; font-size: .72rem; line-height: 1.5; color: #6b7686; }
+.mr-chair-price .mr-chair-price-was { margin: 0 0 2px; font-size: .85rem; color: #6b7686 !important; }
+.mr-chair-price-was s { text-decoration-thickness: 1.5px; }

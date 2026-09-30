@@ -167,6 +167,12 @@ const HOME_PRODUCT_FRAGMENT = `#graphql
         currencyCode
       }
     }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
     variants(first: 50) {
       nodes {
         id

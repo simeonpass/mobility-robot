@@ -41,6 +41,8 @@ import {getProductDisplayName} from '~/lib/product-content';
 import {filterVisibleSelectedOptions} from '~/lib/product-vat-variants';
 import {withRequestedShopifyVariant} from '~/lib/product-variant-url';
 import {isHiddenStorefrontProductHandle} from '~/lib/homepage-data';
+import {promotionForHandle, useActivePromotions} from '~/lib/promotions';
+import {ProductPromotionCallout} from '~/components/product/ProductPromotionCallout';
 import {
   isX12CanonicalHandle,
   isX12ProShopifyHandle,
@@ -206,6 +208,7 @@ export default function Product() {
 
   const staticContent = getProductSpecs(product.handle);
   const displayName = getProductDisplayName(product.handle, product.title);
+  const promotion = promotionForHandle(useActivePromotions(), product.handle);
 
   const galleryItems = collectGalleryMedia({
     productImages: product.images.nodes,
@@ -307,6 +310,7 @@ export default function Product() {
                 <Link to={x12MergedPath('electric')} aria-current={isX12ProShopifyHandle(product.handle) ? 'page' : undefined}>X12 Pro · Electric leg rest</Link>
               </nav>
             )}
+            {promotion ? <ProductPromotionCallout promotion={promotion} /> : null}
             <ProductPurchasePanel
               key={product.handle}
               accessoryAddons={accessoryAddons}
@@ -573,6 +577,12 @@ const HOME_PRODUCT_FRAGMENT = `#graphql
         currencyCode
       }
       maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
         amount
         currencyCode
       }

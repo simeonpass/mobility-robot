@@ -25,6 +25,11 @@ import {catalogToExVatAmount, catalogToIncVatAmount} from '~/lib/pricing-mode';
 import {getProductDisplayName} from '~/lib/product-content';
 import {formatProductPrice} from '~/lib/product-pricing';
 import {getProductListPrice} from '~/lib/product-vat-variants';
+import {
+  promotionForSlot,
+  useActivePromotions,
+  type ActivePromotion,
+} from '~/lib/promotions';
 import m4ProCutout from '~/assets/hero/m4-pro-720.webp';
 import m4bCutout from '~/assets/hero/m4b-720.webp';
 import x12Cutout from '~/assets/hero/x12-720.webp';
@@ -66,7 +71,7 @@ const HERO_PITCH: Record<HomepageFlagshipHandle, string> = {
   'xsto-m4':
     'Self-levelling control and electric seat lifting for everyday journeys.',
   'xsto-m4b':
-    'The M4 platform with redesigned front wheels and a folding footrest.',
+    'The M4 platform with an improved folding footrest and new front suspension.',
   'xsto-m4-pro':
     'More seating adjustment, an integrated headrest and electric folding.',
   'xsto-x12':
@@ -127,6 +132,9 @@ type HeroModel = {
   pitch: string;
   badge: string;
   preOrder: boolean;
+  promotion: ActivePromotion | null;
+  /** Previous ex-VAT price when Shopify carries a compare-at price. */
+  wasExVat: string | null;
   exVat: string | null;
   incVat: string | null;
   deposit: string | null;
@@ -174,7 +182,10 @@ function shopifyImage(url: string, width: number): string {
   }
 }
 
-function buildModels(products: HomeProduct[]): HeroModel[] {
+function buildModels(
+  products: HomeProduct[],
+  promotions: ActivePromotion[],
+): HeroModel[] {
   return HERO_MODELS.map((slot) => {
     const handle = SHOPIFY_HOME_PRODUCT_HANDLES[slot];
     const product = products.find((item) => item.handle === handle);
@@ -184,6 +195,18 @@ function buildModels(products: HomeProduct[]): HeroModel[] {
     const price = product ? getProductListPrice(product) : null;
     const exVatAmount = price ? catalogToExVatAmount(price.amount) : null;
     const preOrder = PRE_ORDER_SLOTS.has(slot);
+    const promotion = promotionForSlot(promotions, slot);
+    const compareAt = product?.compareAtPriceRange?.minVariantPrice;
+    const wasExVat =
+      promotion &&
+      compareAt &&
+      price &&
+      Number(compareAt.amount) > Number(price.amount)
+        ? formatHeroPrice(
+            catalogToExVatAmount(compareAt.amount),
+            compareAt.currencyCode,
+          )
+        : null;
     return {
       slot,
       shortLabel: HOMEPAGE_FLAGSHIP_LABELS[slot],
@@ -193,8 +216,10 @@ function buildModels(products: HomeProduct[]): HeroModel[] {
       bundledImage: Boolean(cutout),
       fit: HERO_FIT[slot],
       pitch: HERO_PITCH[slot],
-      badge: HOMEPAGE_PRODUCT_BADGES[slot].badge,
+      badge: promotion ? promotion.label : HOMEPAGE_PRODUCT_BADGES[slot].badge,
       preOrder,
+      promotion,
+      wasExVat,
       exVat:
         price && exVatAmount !== null
           ? formatHeroPrice(exVatAmount, price.currencyCode)
@@ -271,11 +296,20 @@ function project(rel: number, geometry: Geometry) {
 }
 
 export function HeroSection({products}: {products: HomeProduct[]}) {
-  const models = useMemo(() => buildModels(products), [products]);
+  const promotions = useActivePromotions();
+  const models = useMemo(
+    () => buildModels(products, promotions),
+    [products, promotions],
+  );
+  // Open on the chair that is on promotion, otherwise the first in the ring.
+  const initialIndex = Math.max(
+    0,
+    models.findIndex((model) => model.promotion),
+  );
   const reducedMotion = useReducedMotion() ?? false;
   const baseId = useId();
 
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(initialIndex);
   const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -286,8 +320,8 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
   const geometryRef = useRef<Geometry | null>(null);
-  const positionRef = useRef(0);
-  const targetRef = useRef(0);
+  const positionRef = useRef(initialIndex);
+  const targetRef = useRef(initialIndex);
   const frameRef = useRef<number | null>(null);
   const dragRef = useRef<{
     startX: number;
@@ -483,11 +517,23 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
           <h1 id={`${baseId}-heading`}>
             Powered wheelchairs built for the way you live.
           </h1>
-          <p className="mr-turntable-lede">
-            {COUNT_WORDS[COUNT] ?? COUNT} XSTO models, from everyday
-            self-balancing to stair climbing, supplied and supported in the UK
-            by Bentech Medical.
-          </p>
+          {promotions[0] ? (
+            <p className="mr-turntable-lede">
+              <strong>{promotions[0].headline}</strong>{' '}
+              {promotions[0].highlights
+                .map((item, index) => (index ? item.toLowerCase() : item))
+                .join(', ')}
+              {' — one of '}
+              {COUNT_WORDS[COUNT]?.toLowerCase() ?? COUNT} XSTO models,
+              supplied and supported in the UK.
+            </p>
+          ) : (
+            <p className="mr-turntable-lede">
+              {COUNT_WORDS[COUNT] ?? COUNT} XSTO models, from everyday
+              self-balancing to stair climbing, supplied and supported in the UK
+              by Bentech Medical.
+            </p>
+          )}
         </div>
       </div>
 
@@ -571,14 +617,30 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
             <p className="mr-turntable-model">
               {current.name}
               <span
-                className={`mr-turntable-badge${current.preOrder ? '' : ' is-blue'}`}
+                className={`mr-turntable-badge${current.preOrder || current.promotion ? '' : ' is-blue'}`}
               >
                 {current.badge}
               </span>
             </p>
-            <p className="mr-turntable-pitch">{current.pitch}</p>
+            <p className="mr-turntable-pitch">
+              {current.promotion ? current.promotion.description : current.pitch}
+            </p>
+            {current.promotion ? (
+              <p className="mr-turntable-offer">
+                <strong>
+                  Save {current.promotion.savingExVatDisplay} this October
+                </strong>
+                {' '}({current.promotion.savingIncVatDisplay} including VAT)
+                {current.promotion.previewing ? ' · preview' : ''}
+              </p>
+            ) : null}
             {current.exVat ? (
               <p className="mr-turntable-price">
+                {current.wasExVat ? (
+                  <>
+                    <s>{current.wasExVat}</s>{' '}
+                  </>
+                ) : null}
                 <strong>From {current.exVat}</strong> with VAT relief, if
                 eligible, or {current.incVat} including VAT.
                 {current.deposit ? (
@@ -596,7 +658,9 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
             )}
             <div className="mr-turntable-actions">
               <Link className="mr-button" to={current.href} prefetch="intent">
-                Explore the {current.shortLabel}
+                {current.promotion
+                  ? `Shop the ${current.shortLabel} launch price`
+                  : `Explore the ${current.shortLabel}`}
                 <ArrowRight size={18} aria-hidden />
               </Link>
               <Link className="mr-turntable-compare" to="/compare">

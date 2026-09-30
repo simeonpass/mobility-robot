@@ -34,7 +34,7 @@ const pick = <T,>(values: readonly T[]) =>
 
 const MODEL_FOCUS = [
   'Everyday self-levelling',
-  'Revised wheels and footrest',
+  'Improved footrest and front suspension',
   'More seating adjustment',
   'Four-wheel-drive exploration',
   'Four-wheel drive with powered comfort',
@@ -63,7 +63,7 @@ const FEATURES = [
     label: 'Distinctive feature',
     values: [
       'Modular design',
-      'Folding footrest',
+      'Improved footrest and front suspension',
       'Backrest recline and seat tilt',
       'Four-wheel drive · manual recline',
       'Powered recline and leg rest',

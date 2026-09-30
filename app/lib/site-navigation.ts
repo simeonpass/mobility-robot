@@ -59,7 +59,7 @@ export const PRODUCT_NAV_GROUPS: NavGroup[] = visibleGroups([
     title: 'M4 Series',
     items: [
       chairItem('xsto-m4', 'M4', 'Self-levelling everyday chair'),
-      chairItem('xsto-m4b', 'M4B', 'Updated wheels & footrest'),
+      chairItem('xsto-m4b', 'M4B', 'Improved footrest & front suspension'),
       chairItem('xsto-m4-pro', 'M4 Pro', 'Premium comfort & capacity'),
     ],
   },

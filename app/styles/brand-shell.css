@@ -309,3 +309,10 @@
  .mr-site-header .mr-header-inner {padding-inline:12px}
  .mr-site-header .mr-brand-name {font-size:20px}
 }
+
+/* Promotion line in the announcement bar (replaces the delivery line while live). */
+.mr-announcement .mr-announcement-promo { color: #fff; text-decoration: underline; text-underline-offset: 4px; text-align: center; }
+.mr-announcement .mr-announcement-promo strong { color: #f2a23a; letter-spacing: 0; }
+@media (max-width: 639px) {
+  .mr-announcement-inner:has(.mr-announcement-promo) > p:first-child { display: none; }
+}

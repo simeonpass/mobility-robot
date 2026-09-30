@@ -354,6 +354,21 @@
   line-height: 1.7;
   margin-top: 3px;
 }
+.mr-card-badge.is-promotion {
+  background: #f2a23a;
+  border-color: #f2a23a;
+  color: #101b35;
+}
+.mr-card-offer {
+  margin: 0 0 8px !important;
+  color: #7a4300 !important;
+  font-weight: 700;
+}
+.mr-card-pricing s {
+  margin-right: 8px;
+  color: #7c8798;
+  font-size: 1rem;
+}
 .mr-card-deposit {
   margin-top: 8px;
   padding-top: 8px;
@@ -1783,4 +1798,29 @@
   .mr-turntable.is-rotating .mr-turntable-tab[aria-selected='true']::after {
     animation: none;
   }
+}
+
+/* Promotion line on the placard */
+.mr-home .mr-turntable-offer {
+  margin: 10px 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--tt-slate);
+}
+.mr-turntable-offer strong {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fff1dc;
+  color: #7a4300;
+  font-weight: 750;
+}
+.mr-turntable-price s {
+  color: var(--tt-slate);
+  font-weight: 500;
+  text-decoration-thickness: 1.5px;
+}
+.mr-home .mr-turntable-lede strong {
+  color: var(--tt-ink);
+  font-weight: 700;
 }

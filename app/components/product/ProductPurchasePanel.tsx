@@ -5,6 +5,7 @@ import type {
   MappedProductOptions,
   OptimisticCartLineInput,
 } from '@shopify/hydrogen';
+import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
 import type {ProductFragment} from 'storefrontapi.generated';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
@@ -361,6 +362,16 @@ export function ProductPurchasePanel({
     allChairVariants,
     true,
   );
+  // A Shopify compare-at price marks a sale: show what the chair was.
+  const compareAt = (
+    colourBaseVariant as {compareAtPrice?: MoneyV2 | null} | undefined
+  )?.compareAtPrice;
+  const chairWasPrice =
+    compareAt &&
+    chairStandardPrice &&
+    Number(compareAt.amount) > Number(colourBaseVariant?.price?.amount ?? 0)
+      ? getPurchaseDisplayPrice(compareAt, dualVatPricing, Boolean(chairReliefPrice))
+      : null;
   const standardPackagePrice = sumMoneyV2([
     chairStandardPrice,
     ...selectedAccessories.map(({product, standardVariant}) =>
@@ -507,6 +518,15 @@ export function ProductPurchasePanel({
     <div className="product-buy-box mr-product-buy-box">
       <section aria-label="Product price" className="product-price-card">
         <ProductPriceDisplay
+          wasDisplay={
+            chairWasPrice
+              ? formatProductPrice(
+                  Number(chairWasPrice.amount),
+                  chairWasPrice.currencyCode,
+                  {fractionDigits: 2},
+                )
+              : null
+          }
           incVatDisplay={
             chairStandardPrice
               ? formatProductPrice(
@@ -731,13 +751,20 @@ export function ProductPurchasePanel({
 function ProductPriceDisplay({
   incVatDisplay,
   exVatDisplay,
+  wasDisplay,
 }: {
   incVatDisplay: string | null;
   exVatDisplay: string | null;
+  wasDisplay?: string | null;
 }) {
   if (!incVatDisplay) return null;
   return (
     <div className="mr-chair-price">
+      {wasDisplay ? (
+        <p className="mr-chair-price-was">
+          Was <s>{wasDisplay}</s>
+        </p>
+      ) : null}
       <strong>{exVatDisplay ?? incVatDisplay}</strong>
       <p>{exVatDisplay ? 'With VAT relief, if eligible' : 'Including VAT'}</p>
       {exVatDisplay ? <p>{incVatDisplay} including VAT</p> : null}

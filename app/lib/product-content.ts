@@ -251,12 +251,12 @@ const CONTENT: Record<HomepageProductHandle, ProductContent> = {
   },
   'xsto-m4b': {
     displayName: 'XSTO M4B',
-    tagline: 'New Front Wheels · Folding Footrest',
+    tagline: 'Improved Folding Footrest · New Front Suspension',
     overview:
-      'The XSTO M4B builds on the award-winning M4 platform with redesigned front wheels and a folding footrest for easier transfers and a tidier folded footprint. Explore self-balancing, electric height adjustment and omnidirectional movement. Check the folded dimensions and lifting requirements against your vehicle before purchase.',
+      'The XSTO M4B builds on the award-winning M4 platform with an improved folding footrest for easier transfers and new front suspension for a smoother ride over kerbs and rough paving. Explore self-balancing, electric height adjustment and omnidirectional movement. Check the folded dimensions and lifting requirements against your vehicle before purchase.',
     highlights: [
-      'New front wheel design',
-      'New folding footrest',
+      'Improved folding footrest',
+      'New front suspension',
       'Self-balancing chassis · 10° slopes',
       'Electric height adjustment 347–650 mm',
     ],

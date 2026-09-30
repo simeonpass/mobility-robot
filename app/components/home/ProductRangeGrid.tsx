@@ -13,6 +13,7 @@ import {
 import {getProductDisplayName} from '~/lib/product-content';
 import {getProductListPrice} from '~/lib/product-vat-variants';
 import {getExVatDisplay, getIncVatDisplay} from '~/lib/product-pricing';
+import {promotionForSlot, useActivePromotions} from '~/lib/promotions';
 
 export type HomeProduct = HomeProductFragment;
 const descriptions: Record<HomepageFlagshipHandle, string> = {
@@ -23,7 +24,7 @@ const descriptions: Record<HomepageFlagshipHandle, string> = {
   'xsto-m4':
     'Self-levelling control and electric seat lifting for your everyday.',
   'xsto-m4b':
-    'A fresh take on the M4 platform, with redesigned front wheels and a folding footrest.',
+    'The M4 platform with an improved folding footrest and new front suspension.',
   'xsto-m4-pro':
     'More seating adjustment, an integrated headrest and electric folding.',
   'xsto-x12-pro':
@@ -35,7 +36,7 @@ const mobileDescriptions: Record<HomepageFlagshipHandle, string> = {
   'xsto-m8': 'Four-wheel drive · manual recline',
   'xsto-m8-pro': 'Powered recline & leg rest',
   'xsto-m4': 'Everyday self-levelling',
-  'xsto-m4b': 'Updated wheels & footrest',
+  'xsto-m4b': 'Improved footrest & front suspension',
   'xsto-m4-pro': 'Extra seating adjustment',
   'xsto-x12-pro': 'Stair climbing · electric elevating leg rest',
   'xsto-x12': 'Stair climbing, with assessment & training',
@@ -55,6 +56,7 @@ function productImageSrc(url: string, width: number): string {
 }
 
 export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
+  const promotions = useActivePromotions();
   const flagshipProducts = HOMEPAGE_FLAGSHIP_HANDLES.flatMap((slot) => {
     const product = products.find(
       (item) => item.handle === SHOPIFY_HOME_PRODUCT_HANDLES[slot],
@@ -104,6 +106,14 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
               const name = getProductDisplayName(product.handle, product.title);
               const price = getProductListPrice(product);
               const image = product.featuredImage;
+              const promotion = promotionForSlot(promotions, slot);
+              const compareAt = product.compareAtPriceRange?.minVariantPrice;
+              const wasPrice =
+                promotion &&
+                compareAt &&
+                Number(compareAt.amount) > Number(price.amount)
+                  ? getExVatDisplay(compareAt)
+                  : null;
               return (
                 <article className="mr-product-card" key={product.id}>
                   <Link
@@ -113,7 +123,11 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
                     aria-labelledby={`range-${product.handle}`}
                   >
                     <div className="mr-card-visual">
-                      <span className="mr-card-badge">{meta.badge}</span>
+                      <span
+                        className={`mr-card-badge${promotion ? ' is-promotion' : ''}`}
+                      >
+                        {promotion ? promotion.label : meta.badge}
+                      </span>
                       {image ? (
                         <img
                           alt={image.altText || name}
@@ -138,7 +152,19 @@ export function ProductRangeGrid({products}: {products: HomeProduct[]}) {
                         </span>
                       </p>
                       <div className="mr-card-pricing">
+                        {promotion ? (
+                          <p className="mr-card-offer">
+                            Save {promotion.savingExVatDisplay} this October
+                            {' · '}
+                            {promotion.highlights
+                              .map((item, index) =>
+                                index ? item.toLowerCase() : item,
+                              )
+                              .join(' and ')}
+                          </p>
+                        ) : null}
                         <span>From </span>
+                        {wasPrice ? <s>{wasPrice}</s> : null}
                         <strong>{getExVatDisplay(price)}</strong>
                         <p>With VAT relief, if eligible</p>
                         <p>{getIncVatDisplay(price)} including VAT</p>

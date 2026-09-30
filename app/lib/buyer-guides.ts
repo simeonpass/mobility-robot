@@ -40,7 +40,7 @@ export const BUYER_GUIDES: BuyerGuide[] = [
         id: 'models-to-compare',
         title: 'Which XSTO models should you compare?',
         paragraphs: [
-          'The M4 and M4B are the starting point for everyday self-levelling mobility. The M4B adds a different front wheel design and a folding footrest. The M4 Pro offers more seating adjustment. The X12 adds a separate stair-climbing capability.',
+          'The M4 and M4B are the starting point for everyday self-levelling mobility. The M4B adds an improved folding footrest and new front suspension. The M4 Pro offers more seating adjustment. The X12 adds a separate stair-climbing capability.',
           'Look at the complete chair as well as the levelling system. Seat height, user capacity, dimensions and controls all affect which model is practical for your day.',
         ],
         links: [{label: 'Compare the four XSTO models', to: '/compare'}],
@@ -192,7 +192,7 @@ export const BUYER_GUIDES: BuyerGuide[] = [
         id: 'm4b',
         title: 'M4B: a practical variation on the M4',
         paragraphs: [
-          'The XSTO M4B builds on the M4 with revised front wheels and a folding footrest. If you are choosing between these two models, try their controls, handling and transfer setup side by side.',
+          'The XSTO M4B builds on the M4 with an improved folding footrest and new front suspension. If you are choosing between these two models, try their controls, handling and transfer setup side by side.',
           'Look at the dimensions and total weight as well as the shared technology. Small differences can matter when you are moving through a particular doorway or loading a vehicle.',
         ],
         links: [{label: 'Explore the XSTO M4B', to: '/products/xsto-m4b-1'}],

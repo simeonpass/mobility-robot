@@ -50,7 +50,7 @@ export const m4bFAQs: ProductFAQ[] = [
   {
     question: 'Why choose the XSTO M4B?',
     answer:
-      'The M4B builds on the award-winning M4 platform with redesigned front wheels and an integrated folding footrest for easier transfers and a tidier folded footprint. It keeps self-balancing control, electric height adjustment (347–650 mm), 10° slope capability, and app-based remote control.',
+      'The M4B builds on the award-winning M4 platform with an improved integrated folding footrest for easier transfers and new front suspension for a smoother ride. It keeps self-balancing control, electric height adjustment (347–650 mm), 10° slope capability, and app-based remote control.',
   },
   {
     question: 'How does the M4B differ from the M4?',

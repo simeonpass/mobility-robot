@@ -16,6 +16,7 @@ import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
 import {applyReferralDiscount} from '~/lib/referral-discount';
 import {legacyRedirect} from '~/lib/redirects';
+import {getActivePromotions} from '~/lib/promotions';
 import {ConsentProvider} from '~/components/ConsentBanner';
 import {VatReliefProvider} from '~/components/vat-relief/VatReliefProvider';
 import {Ga4Tracker} from '~/components/Ga4Tracker';
@@ -100,6 +101,7 @@ export async function loader(args: Route.LoaderArgs) {
 
   return {
     ...deferredData,
+    promotions: getActivePromotions(args.request),
     ga4Id: env.PUBLIC_GA4_ID ?? null,
     shopId: env.PUBLIC_SHOP_ID || DEFAULT_SHOP_ID,
     shopDomain: env.PUBLIC_STORE_DOMAIN || null,

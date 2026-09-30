@@ -58,7 +58,7 @@ const PRODUCT_SEO: Record<
   'xsto-m4b': {
     title: 'XSTO M4B Powered Wheelchair',
     description:
-      'Explore the XSTO M4B powered wheelchair with redesigned front wheels and a folding footrest. Compare prices and book a UK demonstration.',
+      'Explore the XSTO M4B powered wheelchair with an improved folding footrest and new front suspension. October launch price: £500 off. Compare prices and book a UK demonstration.',
   },
   'xsto-x12': {
     title: 'XSTO X12 Stair-Climbing Wheelchair',
