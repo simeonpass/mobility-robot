@@ -1241,28 +1241,6 @@
 }
 
 /* The original X12 film, with readable copy and a compact phone presentation. */
-.mr-film-hero {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: #172438;
-  color: #fff;
-}
-.mr-film-media {
-  position: absolute;
-  inset: 0;
-}
-.mr-film-poster {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-.mr-film-native { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
-.mr-film-preorder { margin-top:24px; color:#eef3ff; font-size:.8125rem; line-height:1.6; }
-.mr-launch-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#ffa629; margin-right:8px; }
 .mr-series-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0 0 28px; }
 .mr-series-links a { padding:18px 20px; border:1px solid #dce3ee; border-radius:10px; font-weight:700; color:#0c1b35; background:#f5f7fb; }
 .mr-series-links a:hover, .mr-series-links a[aria-current="page"] { border-color:#2155ed; background:#eef3ff; }
@@ -1280,211 +1258,473 @@
 .mr-series-help h2 { font-size:1.7rem; margin-bottom:12px; }
 .mr-series-help p { margin-bottom:16px; }
 @media(max-width:600px) { .mr-series-links { gap:6px; } .mr-series-links a { padding:12px 8px; font-size:.85rem; } .mr-series-links span {font-size:.7rem;} }
-.mr-film-embed {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  container-type: size;
-  pointer-events: none;
-  opacity: 0;
-}
-.mr-film-embed-ready {
-  opacity: 1;
-}
-.mr-film-iframe {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  transform: translate(-50%, -50%);
-}
-@supports (height: 100cqh) {
-  .mr-film-iframe {
-    width: max(100cqw, 177.78cqh);
-    height: max(100cqh, 56.25cqw);
-  }
-}
-.mr-film-shade {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, #081422eb 0%, #081422bf 48%, #0814221a 85%),
-    linear-gradient(0deg, #08142299, transparent 60%);
-}
-.mr-film-content {
+
+/* ------------------------------------------------------------------
+   Homepage hero — the XSTO range on a revolving showroom turntable.
+   The chairs are laid out by HeroSection.tsx (a JS perspective
+   projection), so the stage must stay a plain box: no transforms,
+   masks or opacity here, or the chairs can no longer multiply their
+   white studio backgrounds into the stage colour.
+   ------------------------------------------------------------------ */
+.mr-turntable {
+  --tt-ink: #101b35;
+  --tt-slate: #526079;
+  --tt-blue: #2155ed;
+  --tt-line: #dfe6f0;
+  --tt-stage: #f6f8fc;
+  --tt-stage-h: clamp(300px, 40vh, 420px);
+  --tt-ease: cubic-bezier(0.22, 0.61, 0.3, 1);
   position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  min-height: 560px;
-  padding-block: 64px 80px;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff 0, var(--tt-stage) 170px);
+  color: var(--tt-ink);
+  padding-block: 30px 0;
 }
-.mr-film-copy {
-  max-width: 660px;
+.mr-turntable-head {
+  text-align: center;
+  max-width: 880px;
+  margin: 0 auto;
 }
-.mr-film-eyebrow {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #fff;
-  margin-bottom: 20px;
+.mr-home .mr-turntable h1 {
+  font-size: clamp(1.7rem, 2.5vw, 2.35rem);
+  line-height: 1.12;
+  margin: 0;
 }
-.mr-film-hero h1 {
-  color: #fff;
-  font-size: clamp(3rem, 5.5vw, 5rem);
-  line-height: 1.08;
-  margin-bottom: 24px;
-}
-.mr-film-intro {
-  color: #f1f4f8;
-  max-width: 430px;
-  margin-bottom: 28px;
-  font-size: 1rem;
-}
-.mr-film-product-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 12px 18px;
-  border: 1px solid #ffffff99;
-  border-radius: 7px;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 700;
-  background: #08142255;
-}
-.mr-film-product-link:hover {
-  background: #08142299;
-}
-.mr-film-toggle {
-  position: absolute;
-  z-index: 3;
-  bottom: 20px;
-  right: 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 10px 14px;
-  border: 1px solid #ffffff80;
-  border-radius: 7px;
-  color: #fff;
-  background: #081422cc;
-  font-size: 0.8125rem;
-  cursor: pointer;
-}
-.mr-home .mr-film-hero :is(a, button):focus-visible {
-  outline-color: #fff;
-}
-@media (max-width: 767px) {
-  .mr-film-media {
-    position: relative;
-    aspect-ratio: 16/9;
-  }
-  .mr-film-shade {
-    display: none;
-  }
-  .mr-film-content {
-    min-height: 0;
-    padding-block: 26px 30px;
-  }
-  .mr-film-hero h1 {
-    font-size: clamp(2.2rem, 8vw, 3rem);
-    margin-bottom: 16px;
-  }
-  .mr-film-eyebrow {
-    font-size: 0.6875rem;
-    margin-bottom: 12px;
-  }
-  .mr-film-intro {
-    font-size: 0.9375rem;
-    margin-bottom: 20px;
-    line-height: 1.6;
-  }
-  .mr-film-toggle {
-    right: 16px;
-    bottom: 12px;
-  }
-  .mr-film-hero .mr-actions {
-    gap: 8px;
-  }
-  .mr-film-hero .mr-button,
-  .mr-film-product-link {
-    font-size: 0.875rem;
-    padding-inline: 14px;
-  }
+.mr-home .mr-turntable-lede {
+  margin: 10px auto 0;
+  max-width: 720px;
+  color: var(--tt-slate);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 
-/* Let the chair, not a text overlay, be the focus of the launch film. */
-.mr-film-fullscreen .mr-film-showcase { position: absolute; inset: 0; }
-.mr-film-fullscreen .mr-film-media { position: absolute; inset: 0; aspect-ratio: auto; }
-.mr-film-fullscreen .mr-film-shade {
+/* Stage */
+.mr-turntable-stage {
+  --tt-item-h: calc(var(--tt-stage-h) * 0.72);
+  --tt-item-w: calc(var(--tt-item-h) * 1.06);
+  --tt-radius: calc(var(--tt-stage-h) * 1.2);
+  --tt-persp: calc(var(--tt-stage-h) * 3.8);
+  --tt-cam: calc(var(--tt-stage-h) * 0.34);
+  --tt-floor: calc(var(--tt-stage-h) * 0.8);
+  position: relative;
+  height: var(--tt-stage-h);
+  margin-top: 10px;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.mr-turntable-stage.is-dragging {
+  cursor: grabbing;
+}
+.mr-turntable-glow {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: min(60vw, 720px);
+  height: 70%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(33, 85, 237, 0.1) 0,
+    rgba(33, 85, 237, 0) 70%
+  );
+}
+/* The floor disc is a real circle seen through the same camera as the chairs. */
+.mr-turntable-floor-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  perspective: var(--tt-persp);
+  perspective-origin: 50% var(--tt-cam);
+}
+.mr-turntable-floor {
+  position: absolute;
+  left: 50%;
+  top: var(--tt-floor);
+  width: calc(var(--tt-radius) * 2.7);
+  height: calc(var(--tt-radius) * 2.7);
+  transform: translate(-50%, -50%) rotateX(90deg);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(16, 27, 53, 0.1) 0,
+    rgba(16, 27, 53, 0.04) 22%,
+    rgba(16, 27, 53, 0) 38%
+  );
+}
+.mr-turntable-floor::before,
+.mr-turntable-floor::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(16, 27, 53, 0.16);
+}
+.mr-turntable-floor::before {
+  inset: calc(50% - var(--tt-radius) * 1.08);
+}
+.mr-turntable-floor::after {
+  inset: calc(50% - var(--tt-radius) * 0.84);
+  border-color: rgba(16, 27, 53, 0.09);
+}
+.mr-turntable-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 14%;
+  pointer-events: none;
+  z-index: 2000;
+}
+.mr-turntable-edge.is-left {
+  left: 0;
+  background: linear-gradient(90deg, var(--tt-stage) 20%, rgba(246, 248, 252, 0));
+}
+.mr-turntable-edge.is-right {
+  right: 0;
+  background: linear-gradient(270deg, var(--tt-stage) 20%, rgba(246, 248, 252, 0));
+}
+
+.mr-turntable-item {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+  width: var(--tt-item-w);
+  height: var(--tt-item-h);
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+  mix-blend-mode: multiply;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: pointer;
+}
+.mr-turntable-item[data-current] {
+  cursor: default;
+}
+.mr-turntable-item img {
   display: block;
-  background: linear-gradient(90deg, rgba(8,20,34,.64) 0%, rgba(8,20,34,.32) 38%, transparent 72%);
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: bottom center;
+  /* Per-chair zoom/lift is set inline; it pivots on the wheels. */
+  transform-origin: 50% 100%;
+  pointer-events: none;
 }
-.mr-film-fullscreen .mr-film-content { min-height: clamp(580px, 72vh, 800px); padding-block: 64px 110px; pointer-events: none; }
-.mr-film-fullscreen .mr-film-content a { pointer-events: auto; }
-.mr-film-fullscreen .mr-film-copy { max-width: 580px; text-shadow: 0 2px 14px #08142270; }
-.mr-film-fullscreen .mr-film-intro { max-width: 410px; }
-.mr-film-fullscreen .mr-film-caption { position: absolute; inset: auto 24px 20px; z-index: 3; justify-content: flex-end; gap: 12px; padding: 0; }
-.mr-film-fullscreen .mr-film-toggle { position: static; }
-.mr-film-fullscreen .mr-film-watch { color: white; background: #08142299; border: 1px solid #ffffff80; border-radius: 7px; padding: 10px 14px; }
-@media (max-width: 767px) {
-  .mr-film-fullscreen .mr-film-content { min-height: 700px; min-height: min(780px, 90svh); padding: 250px 20px 88px; align-items: flex-end; }
-  .mr-film-fullscreen .mr-film-shade { background: linear-gradient(0deg, rgba(8,20,34,.78), rgba(8,20,34,.4) 40%, transparent 75%); }
-  .mr-film-fullscreen h1 { font-size: clamp(2rem, 8vw, 3rem); }
-  .mr-film-fullscreen .mr-film-intro { font-size: .9rem; margin-bottom: 18px; }
-  .mr-film-fullscreen .mr-film-preorder { margin-top: 16px; }
-  .mr-film-fullscreen .mr-film-caption { left: 20px; right: 20px; bottom: 16px; justify-content: space-between; }
-  .mr-film-fullscreen .mr-film-watch, .mr-film-fullscreen .mr-film-toggle { font-size: .75rem; padding-inline: 10px; }
+.mr-turntable-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -5%;
+  width: 96%;
+  height: 16%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(16, 27, 53, 0.28) 0,
+    rgba(16, 27, 53, 0.1) 45%,
+    rgba(16, 27, 53, 0) 72%
+  );
+  pointer-events: none;
 }
-.mr-film-editorial {
-  display: grid;
-  grid-template-columns: minmax(300px, .8fr) minmax(0, 1.45fr);
+/* Server-rendered resting positions (front, left, right) so the first paint
+   already looks like a turntable; the script takes over on hydration. */
+.mr-turntable-item[data-pos='0'] {
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2923)) scale(1.4615);
+  z-index: 3;
+}
+.mr-turntable-item[data-pos='1'] {
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1682), calc(var(--tt-stage-h) * 0.1928)) scale(1.2452);
+  z-index: 2;
+}
+.mr-turntable-item[data-pos='-1'] {
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1682), calc(var(--tt-stage-h) * 0.1928)) scale(1.2452);
+  z-index: 2;
+}
+.mr-turntable-item[data-pos='2'],
+.mr-turntable-item[data-pos='-2'],
+.mr-turntable-item[data-pos='3'],
+.mr-turntable-item[data-pos='-3'] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Placard */
+.mr-turntable-placard {
+  text-align: center;
+  margin: 4px auto 0;
+  max-width: 660px;
+  min-height: 176px;
+}
+.mr-turntable-placard-inner {
+  animation: tt-placard-in 0.55s var(--tt-ease) both;
+}
+@keyframes tt-placard-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.mr-home .mr-turntable-model {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  font-size: clamp(1.6rem, 2.3vw, 2.15rem);
+  line-height: 1.1;
+  margin: 0;
+  display: inline-flex;
   align-items: center;
-  gap: clamp(28px, 4vw, 72px);
-  padding: clamp(36px, 5vw, 76px) max(24px, calc((100vw - 1440px) / 2));
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.mr-turntable-badge {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #fff1dc;
+  color: #7a4300;
+  border: 1px solid #f5d5a0;
+}
+.mr-turntable-badge.is-blue {
+  background: #eaf0ff;
+  color: #163fc7;
+  border-color: #c9d7fb;
+}
+.mr-home .mr-turntable-pitch {
+  margin: 8px auto 0;
+  max-width: 620px;
+  color: var(--tt-slate);
+  font-size: 1rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.mr-home .mr-turntable-price {
+  margin: 10px 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--tt-slate);
+}
+.mr-turntable-price strong {
+  color: var(--tt-ink);
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+.mr-turntable-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.mr-turntable-compare {
+  color: var(--tt-ink);
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.mr-turntable-compare:hover {
+  color: var(--tt-blue);
+}
+
+/* Model strip */
+.mr-turntable-strip {
+  margin-top: 18px;
+  border-top: 1px solid var(--tt-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.mr-turntable-tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mr-turntable-tabs::-webkit-scrollbar {
+  display: none;
+}
+.mr-turntable-tab {
+  position: relative;
+  appearance: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 18px 14px 20px;
+  color: var(--tt-slate);
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  line-height: 1;
+}
+.mr-turntable-tab:hover {
+  color: var(--tt-ink);
+}
+.mr-turntable-tab[aria-selected='true'] {
+  color: var(--tt-ink);
+  font-weight: 750;
+}
+.mr-turntable-tab::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: -1px;
+  height: 2px;
+  background: var(--tt-blue);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+}
+.mr-turntable-tab[aria-selected='true']::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+/* While the turntable is turning, the active tab's rule fills over one dwell. */
+.mr-turntable.is-rotating .mr-turntable-tab[aria-selected='true']::after {
+  animation: tt-progress var(--tt-dwell, 6s) linear both;
+}
+@keyframes tt-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.mr-turntable-controls {
+  display: flex;
+  gap: 8px;
+  padding-block: 10px;
+}
+.mr-turntable-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #ccd5e4;
   background: #fff;
-  color: #0c1b35;
+  color: var(--tt-ink);
+  cursor: pointer;
 }
-.mr-film-editorial .mr-film-content { min-height: 0; padding: 0; }
-.mr-film-editorial .mr-film-copy { max-width: 440px; }
-.mr-film-editorial .mr-film-eyebrow { color: #2155ed; font-size: .7rem; letter-spacing: .1em; margin-bottom: 22px; }
-.mr-film-editorial h1 { color: #0c1b35; font-size: clamp(2.8rem, 4.8vw, 4.8rem); letter-spacing: -.055em; line-height: 1.03; margin-bottom: 24px; }
-.mr-film-editorial .mr-film-intro { color: #526077; font-size: 1rem; line-height: 1.75; margin-bottom: 26px; max-width: 360px; }
-.mr-film-editorial .mr-actions { align-items: flex-start; flex-direction: column; gap: 16px; }
-.mr-film-editorial .mr-button { background: #2155ed; border-color: #2155ed; }
-.mr-film-editorial .mr-film-product-link { min-height: 24px; padding: 0; border: 0; color: #34435b; background: transparent; font-size: .85rem; }
-.mr-film-editorial .mr-film-product-link:hover { color: #2155ed; }
-.mr-film-editorial .mr-film-preorder { color: #647086; font-size: .75rem; line-height: 1.8; margin-top: 28px; }
-.mr-film-showcase { min-width: 0; }
-.mr-film-editorial .mr-film-media { position: relative; inset: auto; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; background: #e9eef2; }
-.mr-film-editorial .mr-film-native, .mr-film-editorial .mr-film-poster { object-fit: contain; }
-.mr-film-caption { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; }
-.mr-film-watch { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #0c1b35; font-size: .8125rem; font-weight: 600; }
-.mr-film-watch:hover { color: #2155ed; }
-.mr-film-editorial .mr-film-toggle { position: static; padding: 8px 10px; min-height: 44px; border: 0; background: transparent; color: #526077; }
-.mr-home .mr-film-editorial :is(a, button):focus-visible { outline: 2px solid #2155ed; outline-offset: 4px; }
-@media (max-width: 899px) {
-  .mr-film-editorial { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; }
-  .mr-film-editorial .mr-film-content { order: 2; }
-  .mr-film-editorial .mr-film-copy { max-width: 100%; }
-  .mr-film-editorial h1 { font-size: clamp(2.7rem, 8vw, 4rem); }
-  .mr-film-editorial .mr-film-intro { max-width: 520px; }
-  .mr-film-editorial .mr-actions { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 20px; }
-  .mr-film-editorial .mr-film-preorder { margin-top: 20px; }
+.mr-turntable-controls button:hover {
+  background: #e8eef8;
 }
-@media (max-width: 479px) {
-  .mr-film-editorial { padding: 20px 20px 32px; gap: 20px; }
-  .mr-film-editorial .mr-film-eyebrow { margin-bottom: 14px; }
-  .mr-film-editorial h1 { margin-bottom: 18px; }
-  .mr-film-editorial .mr-film-intro { margin-bottom: 22px; }
-  .mr-film-editorial .mr-film-toggle { font-size: .75rem; padding-inline: 0; }
-  .mr-film-watch { font-size: .75rem; }
+.mr-home .mr-turntable :is(a, button):focus-visible {
+  outline: 2px solid var(--tt-blue);
+  outline-offset: 3px;
+}
+.mr-home .mr-turntable .mr-turntable-tab:focus-visible {
+  outline-offset: -6px;
+  border-radius: 8px;
+}
+
+@media (max-width: 767px) {
+  .mr-turntable {
+    --tt-stage-h: clamp(240px, 36vh, 300px);
+    padding-top: 26px;
+    background: linear-gradient(180deg, #ffffff 0, var(--tt-stage) 120px);
+  }
+  .mr-home .mr-turntable h1 {
+    font-size: clamp(1.5rem, 6.6vw, 1.85rem);
+  }
+  .mr-home .mr-turntable-lede {
+    font-size: 0.9375rem;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+  .mr-turntable-stage {
+    --tt-radius: calc(var(--tt-stage-h) * 0.86);
+    margin-top: 6px;
+  }
+  /* Tighter ring on phones so the neighbours peek in at the edges. */
+  .mr-turntable-item[data-pos='0'] {
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2146)) scale(1.2925);
+  }
+  .mr-turntable-item[data-pos='1'] {
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.7829), calc(var(--tt-stage-h) * 0.1556)) scale(1.1643);
+  }
+  .mr-turntable-item[data-pos='-1'] {
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.7829), calc(var(--tt-stage-h) * 0.1556)) scale(1.1643);
+  }
+  .mr-turntable-edge {
+    width: 10%;
+  }
+  .mr-turntable-placard {
+    min-height: 0;
+    padding: 0 4px;
+  }
+  .mr-home .mr-turntable-model {
+    font-size: 1.5rem;
+    gap: 10px;
+  }
+  .mr-home .mr-turntable-pitch {
+    font-size: 0.9375rem;
+  }
+  .mr-home .mr-turntable-price {
+    font-size: 0.875rem;
+  }
+  .mr-turntable-actions {
+    gap: 6px 16px;
+    margin-top: 14px;
+  }
+  .mr-turntable-actions .mr-button {
+    width: 100%;
+  }
+  .mr-turntable-strip {
+    margin-top: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0;
+  }
+  .mr-turntable-tabs {
+    width: 100%;
+  }
+  .mr-turntable-tab {
+    padding: 14px 10px 16px;
+    font-size: 0.85rem;
+  }
+  .mr-turntable-controls {
+    padding-block: 2px 12px;
+  }
+  .mr-turntable-controls button {
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mr-turntable-placard-inner {
+    animation: none;
+  }
+  .mr-turntable.is-rotating .mr-turntable-tab[aria-selected='true']::after {
+    animation: none;
+  }
 }

@@ -17,26 +17,12 @@ import {ReviewsSection} from '~/components/home/ReviewsSection';
 import {TrustBar} from '~/components/TrustBar';
 import {
   HOMEPAGE_FLAGSHIP_HANDLES,
-  HOMEPAGE_HERO_POSTER_URL,
-  HOMEPAGE_HERO_POSTER_SRC_SET,
   SHOPIFY_HOME_PRODUCT_HANDLES,
   type HomepageFlagshipHandle,
 } from '~/lib/homepage-data';
 import {buildMeta} from '~/lib/seo';
 import {getAllReviews, getHomepageFeaturedReviews} from '~/lib/reviews.server';
 import {summarizeReviews} from '~/lib/reviews';
-
-export const links: Route.LinksFunction = () => [
-  {
-    rel: 'preload',
-    as: 'image',
-    type: 'image/jpeg',
-    href: HOMEPAGE_HERO_POSTER_URL,
-    imageSrcSet: HOMEPAGE_HERO_POSTER_SRC_SET,
-    imageSizes: '100vw',
-    fetchPriority: 'high',
-  },
-];
 
 export const meta: Route.MetaFunction = () =>
   buildMeta({
@@ -82,7 +68,7 @@ export default function Homepage() {
   return (
     <div className="mr-home">
       <BrandStoryStrip />
-      <HeroSection />
+      <HeroSection products={products} />
       <AwardsStrip />
       <TrustBar />
       <ProductRangeGrid products={products} />
@@ -116,7 +102,10 @@ function dedupeProducts(products: HomeProduct[]): HomeProduct[] {
 }
 
 type AliasProductData = Partial<
-  Record<'m4' | 'm4Pro' | 'm4b' | 'm8' | 'm8Pro' | 'x12' | 'x12Pro', HomeProduct | null>
+  Record<
+    'm4' | 'm4Pro' | 'm4b' | 'm8' | 'm8Pro' | 'x12' | 'x12Pro',
+    HomeProduct | null
+  >
 >;
 
 function resolveHomeProducts(
