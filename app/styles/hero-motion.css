@@ -1,0 +1,304 @@
+/* Keep the existing turntable, then reveal genuine manufacturer movement at its centre. */
+.mr-motion-spotlight {
+  position: absolute;
+  inset: 4px 0 0;
+  z-index: 1900;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.45s,
+    transform 0.6s;
+}
+.mr-motion-spotlight.is-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+.mr-motion-film {
+  position: relative;
+  height: calc(100% - 24px);
+  width: min(60vw, 720px);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #dce5f3;
+  box-shadow: 0 18px 50px #193e7d14;
+}
+.mr-motion-film video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: white;
+}
+.mr-motion-film.is-studio {
+  width: min(52vw, 580px);
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  mix-blend-mode: multiply;
+}
+.mr-motion-film.is-studio video {
+  mix-blend-mode: multiply;
+}
+.mr-motion-film-label {
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #ffffffed;
+  border: 1px solid #dce5f3;
+  border-radius: 30px;
+  color: #173676;
+  font-size: 11px;
+  font-weight: 650;
+}
+.mr-motion-film-label > span {
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  background: #2155ed;
+  box-shadow: 0 0 0 4px #2155ed12;
+}
+.mr-turntable-item img,
+.mr-turntable-shadow {
+  transition:
+    opacity 0.4s,
+    filter 0.4s;
+}
+.is-demonstrating .mr-turntable-item[data-current] img,
+.is-demonstrating .mr-turntable-item[data-current] .mr-turntable-shadow {
+  opacity: 0;
+}
+.is-demonstrating .mr-turntable-item:not([data-current]) img {
+  opacity: 0.34;
+  filter: saturate(0.65);
+}
+.mr-motion-controls {
+  position: relative;
+  z-index: 2001;
+  text-align: center;
+  margin: 0 auto 20px;
+}
+.mr-motion-eyebrow {
+  margin: 0 0 10px;
+  color: #2155ed;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.mr-motion-functions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.mr-motion-functions button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: white;
+  border: 1px solid #dce5f3;
+  border-radius: 30px;
+  color: #526079;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.mr-motion-functions button[aria-pressed='true'] {
+  background: #2155ed;
+  border-color: #2155ed;
+  color: white;
+}
+.mr-motion-functions button:focus-visible {
+  outline: 2px solid #2155ed;
+  outline-offset: 3px;
+}
+.mr-motion-description {
+  margin: 10px auto 0;
+  color: #526079;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mr-motion-source {
+  margin: 4px 0 0;
+  color: #69748a;
+  font-size: 10px;
+}
+@media (max-width: 767px) {
+  .mr-motion-film,
+  .mr-motion-film.is-studio {
+    width: min(88vw, 540px);
+  }
+  .mr-motion-film {
+    height: calc(100% - 18px);
+    border-radius: 14px;
+  }
+  .mr-motion-film-label {
+    left: 10px;
+    bottom: 10px;
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+  .mr-motion-functions button {
+    min-height: 44px;
+    font-size: 11px;
+    padding: 7px 11px;
+  }
+  .mr-motion-description {
+    max-width: 340px;
+  }
+  .mr-motion-controls {
+    margin-bottom: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mr-motion-spotlight,
+  .mr-turntable-item img,
+  .mr-turntable-shadow,
+  .mr-motion-functions button {
+    transition: none;
+  }
+}
+
+.mr-motion-spotlight.is-studio {
+  mix-blend-mode: multiply;
+}
+@media (min-width: 768px) {
+  .mr-turntable {
+    --tt-stage-h: clamp(280px, 34vh, 360px);
+  }
+}
+
+/* Keep the product, price and navigation together in shorter preview windows. */
+.mr-home .mr-turntable {
+  --tt-stage-h: clamp(200px, 32svh, 340px);
+  padding-top: 18px;
+}
+.mr-home .mr-turntable-placard {
+  min-height: 0;
+}
+.mr-home .mr-motion-controls {
+  margin-bottom: 12px;
+}
+.mr-home .mr-turntable-strip {
+  margin-top: 12px;
+}
+@media (max-height: 1000px) {
+  .mr-home .mr-turntable {
+    --tt-stage-h: clamp(180px, calc(100svh - 530px), 290px);
+    padding-top: 14px;
+  }
+  .mr-home .mr-turntable h1 {
+    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  }
+  .mr-home .mr-turntable-lede,
+  .mr-home .mr-turntable-pitch,
+  .mr-home .mr-motion-eyebrow,
+  .mr-home .mr-motion-description {
+    display: none;
+  }
+  .mr-home .mr-motion-controls {
+    margin-bottom: 10px;
+  }
+  .mr-home .mr-turntable-model {
+    font-size: 1.5rem;
+  }
+  .mr-home .mr-turntable-offer,
+  .mr-home .mr-turntable-price {
+    margin-top: 6px;
+  }
+  .mr-home .mr-turntable-actions {
+    margin-top: 10px;
+  }
+  .mr-home .mr-turntable-strip {
+    margin-top: 10px;
+  }
+  .mr-motion-film {
+    width: min(66vw, 640px);
+    height: calc(100% - 12px);
+  }
+}
+@media (max-width: 767px) {
+  .mr-home .mr-turntable {
+    --tt-stage-h: clamp(170px, calc(100svh - 590px), 270px);
+    padding-top: 12px;
+  }
+  .mr-home .mr-turntable h1 {
+    font-size: 1.35rem;
+    max-width: 420px;
+    margin-inline: auto;
+  }
+  .mr-home .mr-turntable-lede,
+  .mr-home .mr-turntable-pitch,
+  .mr-home .mr-motion-eyebrow,
+  .mr-home .mr-motion-description {
+    display: none;
+  }
+  .mr-motion-film,
+  .mr-motion-film.is-studio {
+    width: min(88vw, 480px);
+  }
+  .mr-home .mr-turntable-model {
+    font-size: 1.25rem;
+    gap: 6px;
+  }
+  .mr-home .mr-turntable-actions {
+    gap: 0 12px;
+    margin-top: 8px;
+  }
+  .mr-home .mr-turntable-actions .mr-button {
+    width: auto;
+    padding: 10px 14px;
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .mr-home .mr-turntable-compare {
+    font-size: 11px;
+  }
+  .mr-home .mr-turntable-tabs {
+    justify-content: center;
+  }
+  .mr-home .mr-turntable-tab {
+    min-height: 44px;
+    padding: 12px 10px;
+  }
+  .mr-home .mr-turntable-controls {
+    padding-block: 2px 8px;
+  }
+}
+
+/* A single, closely framed chair keeps the movement easy to follow. */
+.mr-motion-film.is-portrait {
+  width: auto;
+  aspect-ratio: 1.12;
+  background: #eef0f5;
+}
+.mr-motion-film.is-portrait video {
+  object-fit: cover;
+}
+.mr-motion-film.is-portrait .mr-motion-film-label {
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.mr-motion-credit {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  color: #526079;
+  font-size: 9px;
+  letter-spacing: .04em;
+}

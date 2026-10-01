@@ -26,9 +26,9 @@ export function PromotionStrip() {
             <span>on the new XSTO {promotion.modelLabel}</span>
           </p>
           <p className="mr-offer-strip-detail">
-            {promotion.description} {promotion.savingIncVatDisplay} off including
-            VAT, or {promotion.savingExVatDisplay} off with VAT relief — until
-            31 October, while stocks last.
+            {promotion.savingExVatDisplay} off with VAT relief, if eligible, or{' '}
+            {promotion.savingIncVatDisplay} off including VAT. Until 31 October,
+            while stocks last.
           </p>
           <Link className="mr-button mr-button-amber" to={href} prefetch="intent">
             Shop the {promotion.modelLabel} offer

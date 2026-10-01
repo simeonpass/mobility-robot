@@ -12,6 +12,8 @@ import {
 import {ArrowRight, ChevronLeft, ChevronRight, Pause, Play} from 'lucide-react';
 import {useReducedMotion} from 'framer-motion';
 import {Link} from 'react-router';
+import {HeroMotionDemo, HERO_MOTION_CLIPS} from './HeroMotionDemo';
+import '~/styles/hero-motion.css';
 import type {HomeProduct} from '~/components/home/ProductRangeGrid';
 import {
   HOMEPAGE_FLAGSHIP_LABELS,
@@ -116,7 +118,7 @@ const FADE_FULL_DEG = STEP_DEG * 1.1;
 const FADE_GONE_DEG = Math.min(STEP_DEG * 1.9, 150);
 /** Where the neighbouring chair sits, as a multiple of the stage height. */
 const NEIGHBOUR_OFFSET = {desktop: 1.17, mobile: 0.8};
-const DWELL_MS = 6000;
+const DWELL_MS = 11000;
 const SPIN_MS = 1150;
 /** Pixels of horizontal drag per turntable position. */
 const DRAG_PX_PER_STEP = {desktop: 220, mobile: 140};
@@ -314,8 +316,22 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [inView, setInView] = useState(true);
+  const [visiblePage, setVisiblePage] = useState(true);
+  const [motionStarted, setMotionStarted] = useState(false);
+  const [motionReady, setMotionReady] = useState(false);
+  const [clipIndex, setClipIndex] = useState(0);
+  const [manualDemo, setManualDemo] = useState(false);
+  const [showMotion, setShowMotion] = useState(true);
   const rotating =
-    hydrated && !reducedMotion && !paused && !hovered && !focused;
+    hydrated &&
+    inView &&
+    visiblePage &&
+    !reducedMotion &&
+    !paused &&
+    !hovered &&
+    !focused &&
+    !manualDemo;
 
   const stageRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
@@ -354,6 +370,10 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
 
   const animateTo = useCallback(
     (target: number) => {
+      setMotionStarted(false);
+      setMotionReady(false);
+      setClipIndex(0);
+      setManualDemo(false);
       targetRef.current = target;
       setActive(mod(Math.round(target), COUNT));
       cancelFrame();
@@ -416,6 +436,32 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
       cancelFrame();
     };
   }, [cancelFrame, paint]);
+
+  useEffect(() => {
+    if (!hydrated || reducedMotion || !showMotion) return;
+    const timer = window.setTimeout(
+      () => setMotionStarted(true),
+      SPIN_MS + 250,
+    );
+    return () => window.clearTimeout(timer);
+  }, [active, hydrated, reducedMotion, showMotion]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      {threshold: 0.15},
+    );
+    observer.observe(stage);
+    const onVisibility = () => setVisiblePage(!document.hidden);
+    onVisibility();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
 
   // Auto-advance while nothing is asking the turntable to hold still.
   useEffect(() => {
@@ -492,6 +538,11 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
   }
 
   const current = models[active];
+  const clips = HERO_MOTION_CLIPS[current.slot] ?? [];
+  const clip = clips[clipIndex] ?? clips[0];
+  const motionMounted =
+    hydrated && !reducedMotion && showMotion && motionStarted && Boolean(clip);
+  const demoVisible = motionMounted && motionReady;
   const panelId = `${baseId}-panel`;
 
   return (
@@ -524,8 +575,8 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
                 .map((item, index) => (index ? item.toLowerCase() : item))
                 .join(', ')}
               {' — one of '}
-              {COUNT_WORDS[COUNT]?.toLowerCase() ?? COUNT} XSTO models,
-              supplied and supported in the UK.
+              {COUNT_WORDS[COUNT]?.toLowerCase() ?? COUNT} XSTO models, supplied
+              and supported in the UK.
             </p>
           ) : (
             <p className="mr-turntable-lede">
@@ -539,7 +590,7 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
 
       {/* The turntable is decorative for assistive tech: the placard and strip carry the content. */}
       <div
-        className="mr-turntable-stage"
+        className={`mr-turntable-stage${demoVisible ? ' is-demonstrating' : ''}`}
         ref={stageRef}
         aria-hidden="true"
         onMouseEnter={() => setHovered(true)}
@@ -602,11 +653,74 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
             </button>
           );
         })}
+        {motionMounted && clip ? (
+          <div
+            className={`mr-motion-spotlight${demoVisible ? ' is-ready' : ''}${clip.studio ? ' is-studio' : ''}`}
+          >
+            <HeroMotionDemo
+              key={`${current.slot}-${clip.id}`}
+              clip={clip}
+              playing={!paused && inView && visiblePage}
+              onReady={setMotionReady}
+            />
+          </div>
+        ) : null}
         <div className="mr-turntable-edge is-left" />
         <div className="mr-turntable-edge is-right" />
       </div>
 
       <div className="xsto-container">
+        {clip ? (
+          <div className="mr-motion-controls">
+            <p className="mr-motion-eyebrow">
+              {reducedMotion ? 'Explore the details' : 'See what it can do'}
+            </p>
+            {!reducedMotion ? (
+              <div
+                className="mr-motion-functions"
+                role="group"
+                aria-label={`${current.name} demonstrations`}
+              >
+                {clips.map((item, index) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-pressed={showMotion && clipIndex === index}
+                    onClick={() => {
+                      if (index !== clipIndex || !showMotion)
+                        setMotionReady(false);
+                      setClipIndex(index);
+                      setMotionStarted(true);
+                      setShowMotion(true);
+                      setManualDemo(true);
+                      setPaused(false);
+                    }}
+                  >
+                    <Play size={12} aria-hidden />
+                    {item.label}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  aria-pressed={!showMotion}
+                  onClick={() => {
+                    setShowMotion(false);
+                    setMotionReady(false);
+                  }}
+                >
+                  Chair view
+                </button>
+              </div>
+            ) : null}
+            <p className="mr-motion-description">{clip.description}</p>
+            <p className="mr-motion-source">
+              Manufacturer demonstration ·{' '}
+              {current.slot.startsWith('xsto-x12')
+                ? 'X12 series shown; equipment varies by model.'
+                : 'Optional equipment may be shown.'}
+            </p>
+          </div>
+        ) : null}
         <div
           className="mr-turntable-placard"
           id={panelId}
@@ -616,21 +730,23 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
           <div className="mr-turntable-placard-inner" key={current.slot}>
             <p className="mr-turntable-model">
               {current.name}
-              <span
-                className={`mr-turntable-badge${current.preOrder || current.promotion ? '' : ' is-blue'}`}
-              >
-                {current.badge}
-              </span>
+              {!current.promotion ? (
+                <span className={`mr-turntable-badge${current.preOrder ? '' : ' is-blue'}`}>
+                  {current.badge}
+                </span>
+              ) : null}
             </p>
             <p className="mr-turntable-pitch">
-              {current.promotion ? current.promotion.description : current.pitch}
+              {current.promotion
+                ? current.promotion.description
+                : current.pitch}
             </p>
             {current.promotion ? (
               <p className="mr-turntable-offer">
                 <strong>
                   Special offer: save {current.promotion.savingExVatDisplay}
-                </strong>
-                {' '}{current.promotion.offerName} ·{' '}
+                </strong>{' '}
+                {current.promotion.offerName} ·{' '}
                 {current.promotion.savingIncVatDisplay} off including VAT
                 {current.promotion.previewing ? ' · preview' : ''}
               </p>
@@ -705,9 +821,12 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
             {hydrated && !reducedMotion ? (
               <button
                 type="button"
-                aria-label={paused ? 'Resume rotation' : 'Pause rotation'}
+                aria-label={paused ? 'Resume animation' : 'Pause animation'}
                 aria-pressed={paused}
-                onClick={() => setPaused((value) => !value)}
+                onClick={() => {
+                  setPaused((value) => !value);
+                  setManualDemo(false);
+                }}
               >
                 {paused ? (
                   <Play size={16} aria-hidden />
