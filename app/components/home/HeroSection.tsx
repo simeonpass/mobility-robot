@@ -116,6 +116,25 @@ const FADE_FULL_DEG = STEP_DEG * 1.1;
 const FADE_GONE_DEG = Math.min(STEP_DEG * 1.9, 150);
 /** Where the neighbouring chair sits, as a multiple of the stage height. */
 const NEIGHBOUR_OFFSET = {desktop: 1.17, mobile: 0.8};
+/** Podium disc radius and visible thickness, as multiples of the stage height. */
+const PODIUM_RADIUS = 0.3;
+const PODIUM_THICKNESS = 0.045;
+/** Where the wheels sit on the disc, as a fraction of its projected height. */
+const PODIUM_SEAT = 0.62;
+
+/**
+ * Demo-mode clips: when a chair reaches the front, its still fades into a
+ * short looping clip of the chair running through its functions (seat lift,
+ * recline, legrest). Add one per model as `~/assets/hero/<slot>-demo.mp4`
+ * and import it here. Clips must show the chair fixed in frame on a pure
+ * white background, wheels near the bottom edge, 6–12 s, ≤1280 px wide,
+ * H.264 MP4 (the white melts into the stage exactly like the stills).
+ */
+const HERO_DEMO_CLIPS: Partial<
+  Record<HomepageFlagshipHandle, {src: string; durationMs: number}>
+> = {};
+/** Give a clip time to be seen before the ring moves on. */
+const CLIP_DWELL_MS = 11000;
 const DWELL_MS = 6000;
 const SPIN_MS = 1150;
 /** Pixels of horizontal drag per turntable position. */
@@ -269,11 +288,11 @@ function measure(stage: HTMLElement): Geometry {
   return {
     width,
     height,
-    itemHeight: height * 0.72,
+    itemHeight: height * 0.68,
     radius: solveRadius(perspective, neighbour),
     perspective,
     camera: height * 0.34,
-    floor: height * 0.8,
+    floor: height * 0.72,
   };
 }
 
@@ -314,6 +333,8 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  // The front chair's clip plays once the ring has settled on it.
+  const [settled, setSettled] = useState(false);
   const rotating =
     hydrated && !reducedMotion && !paused && !hovered && !focused;
 
@@ -397,7 +418,7 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
     if (!stage) return;
     const layout = () => {
       geometryRef.current = measure(stage);
-      const {itemHeight, radius, perspective, camera, floor} =
+      const {height, itemHeight, radius, perspective, camera, floor} =
         geometryRef.current;
       stage.style.setProperty('--tt-item-h', `${itemHeight}px`);
       stage.style.setProperty('--tt-item-w', `${itemHeight * 1.06}px`);
@@ -405,6 +426,19 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
       stage.style.setProperty('--tt-persp', `${perspective}px`);
       stage.style.setProperty('--tt-cam', `${camera}px`);
       stage.style.setProperty('--tt-floor', `${floor}px`);
+      // Podium under the front chair: a floor circle of radius PODIUM_RADIUS
+      // seen through the same camera — its projected ellipse and thickness.
+      const podiumRadius = height * PODIUM_RADIUS;
+      const front = perspective / (perspective - radius);
+      const far = camera + (floor - camera) * (perspective / (perspective - radius + podiumRadius));
+      const near = camera + (floor - camera) * (perspective / (perspective - radius - podiumRadius));
+      const feet = camera + (floor - camera) * front;
+      stage.style.setProperty('--tt-podium-w', `${podiumRadius * 2 * front}px`);
+      // The photo's lowest pixel is the near wheel, so seat the chair a little
+      // forward of the disc's centre rather than on its far rim.
+      stage.style.setProperty('--tt-podium-top', `${feet - PODIUM_SEAT * (near - far)}px`);
+      stage.style.setProperty('--tt-podium-h', `${near - far}px`);
+      stage.style.setProperty('--tt-podium-t', `${height * PODIUM_THICKNESS * front}px`);
       paint();
     };
     layout();
@@ -417,14 +451,26 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
     };
   }, [cancelFrame, paint]);
 
-  // Auto-advance while nothing is asking the turntable to hold still.
+  // Auto-advance while nothing is asking the turntable to hold still; hold
+  // longer on a chair that has a demo clip to show.
+  const activeClip = HERO_DEMO_CLIPS[models[active].slot];
   useEffect(() => {
     if (!rotating) return;
+    const dwell = activeClip
+      ? Math.max(DWELL_MS, CLIP_DWELL_MS, activeClip.durationMs + SPIN_MS)
+      : DWELL_MS;
     const timer = window.setInterval(() => {
       if (!document.hidden) stepBy(1);
-    }, DWELL_MS);
+    }, dwell);
     return () => window.clearInterval(timer);
-  }, [rotating, stepBy, active]);
+  }, [rotating, stepBy, active, activeClip]);
+
+  useEffect(() => {
+    setSettled(false);
+    if (!hydrated || reducedMotion) return;
+    const timer = window.setTimeout(() => setSettled(true), SPIN_MS + 150);
+    return () => window.clearTimeout(timer);
+  }, [active, hydrated, reducedMotion]);
 
   function onPointerDown(event: PointerEvent<HTMLDivElement>) {
     if (event.button !== 0) return;
@@ -549,10 +595,8 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
         onPointerUp={onPointerEnd}
         onPointerCancel={onPointerEnd}
       >
-        <div className="mr-turntable-glow" />
-        <div className="mr-turntable-floor-wrap">
-          <div className="mr-turntable-floor" />
-        </div>
+        <div className="mr-turntable-horizon" />
+        <div className="mr-turntable-podium" />
         {models.map((model, index) => {
           const relative = mod(index - active + COUNT / 2, COUNT) - COUNT / 2;
           const nearFront = Math.abs(relative) <= 1;
@@ -599,11 +643,21 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
                 decoding="async"
                 draggable={false}
               />
+              {index === active && settled && HERO_DEMO_CLIPS[model.slot] ? (
+                <video
+                  className="mr-turntable-clip"
+                  src={HERO_DEMO_CLIPS[model.slot]?.src}
+                  muted
+                  autoPlay
+                  loop
+                  playsInline
+                  preload="auto"
+                  aria-hidden="true"
+                />
+              ) : null}
             </button>
           );
         })}
-        <div className="mr-turntable-edge is-left" />
-        <div className="mr-turntable-edge is-right" />
       </div>
 
       <div className="xsto-container">

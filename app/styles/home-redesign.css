@@ -1287,7 +1287,7 @@
   --tt-blue: #2155ed;
   --tt-line: #dfe6f0;
   --tt-stage: #f6f8fc;
-  --tt-stage-h: clamp(300px, 40vh, 420px);
+  --tt-stage-h: clamp(320px, 42vh, 450px);
   --tt-ease: cubic-bezier(0.22, 0.61, 0.3, 1);
   position: relative;
   isolation: isolate;
@@ -1315,91 +1315,94 @@
   text-wrap: pretty;
 }
 
-/* Stage */
+/* Stage — a showroom: pale wall, soft floor meeting it at the camera's
+   horizon, warm light pooling on a podium under the front chair. */
 .mr-turntable-stage {
-  --tt-item-h: calc(var(--tt-stage-h) * 0.72);
+  --tt-item-h: calc(var(--tt-stage-h) * 0.68);
   --tt-item-w: calc(var(--tt-item-h) * 1.06);
   --tt-radius: calc(var(--tt-stage-h) * 1.2);
   --tt-persp: calc(var(--tt-stage-h) * 3.8);
   --tt-cam: calc(var(--tt-stage-h) * 0.34);
-  --tt-floor: calc(var(--tt-stage-h) * 0.8);
+  --tt-floor: calc(var(--tt-stage-h) * 0.72);
   position: relative;
   height: var(--tt-stage-h);
-  margin-top: 10px;
+  margin-top: 14px;
   touch-action: pan-y;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
+  background:
+    radial-gradient(
+      ellipse 42% 30% at 50% 100%,
+      rgba(242, 162, 58, 0.26) 0,
+      rgba(242, 162, 58, 0) 100%
+    ),
+    radial-gradient(
+      ellipse 60% 55% at 50% 38%,
+      rgba(33, 85, 237, 0.12) 0,
+      rgba(33, 85, 237, 0) 70%
+    ),
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f1f5fc 32%,
+      #e6edf8 34.5%,
+      #e9eff8 60%,
+      #f4f7fc 100%
+    );
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
 }
 .mr-turntable-stage.is-dragging {
   cursor: grabbing;
 }
-.mr-turntable-glow {
+/* Horizon line where the floor meets the wall. */
+.mr-turntable-horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--tt-cam);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(16, 27, 53, 0.1) 25%, rgba(16, 27, 53, 0.1) 75%, transparent);
+  pointer-events: none;
+}
+/* Podium under the front chair: top disc + side, sized by the same camera
+   as the chairs (per-count constants below, live values from the script). */
+.mr-turntable-podium {
   position: absolute;
   left: 50%;
-  top: 30%;
-  width: min(60vw, 720px);
-  height: 70%;
+  top: var(--tt-podium-top);
+  width: var(--tt-podium-w);
+  height: var(--tt-podium-h);
   transform: translateX(-50%);
   pointer-events: none;
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(33, 85, 237, 0.1) 0,
-    rgba(33, 85, 237, 0) 70%
-  );
+  z-index: 1;
 }
-/* The floor disc is a real circle seen through the same camera as the chairs. */
-.mr-turntable-floor-wrap {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  perspective: var(--tt-persp);
-  perspective-origin: 50% var(--tt-cam);
-}
-.mr-turntable-floor {
-  position: absolute;
-  left: 50%;
-  top: var(--tt-floor);
-  width: calc(var(--tt-radius) * 2.7);
-  height: calc(var(--tt-radius) * 2.7);
-  transform: translate(-50%, -50%) rotateX(90deg);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(16, 27, 53, 0.1) 0,
-    rgba(16, 27, 53, 0.04) 22%,
-    rgba(16, 27, 53, 0) 38%
-  );
-}
-.mr-turntable-floor::before,
-.mr-turntable-floor::after {
+.mr-turntable-podium::before {
+  /* side */
   content: '';
   position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(16, 27, 53, 0.16);
-}
-.mr-turntable-floor::before {
-  inset: calc(50% - var(--tt-radius) * 1.08);
-}
-.mr-turntable-floor::after {
-  inset: calc(50% - var(--tt-radius) * 0.84);
-  border-color: rgba(16, 27, 53, 0.09);
-}
-.mr-turntable-edge {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 14%;
-  pointer-events: none;
-  z-index: 2000;
-}
-.mr-turntable-edge.is-left {
   left: 0;
-  background: linear-gradient(90deg, var(--tt-stage) 20%, rgba(246, 248, 252, 0));
-}
-.mr-turntable-edge.is-right {
   right: 0;
-  background: linear-gradient(270deg, var(--tt-stage) 20%, rgba(246, 248, 252, 0));
+  top: 50%;
+  height: calc(50% + var(--tt-podium-t));
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  background: linear-gradient(180deg, #c7d3e6 0%, #aebdd6 70%, #9fb0cc 100%);
+  box-shadow: 0 18px 30px -12px rgba(16, 27, 53, 0.35);
+}
+.mr-turntable-podium::after {
+  /* top disc */
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 50% 40%, #ffffff 0, #f3f6fb 55%, #e3eaf5 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(16, 27, 53, 0.08),
+    inset 0 -6px 14px rgba(33, 85, 237, 0.08),
+    0 0 0 6px rgba(242, 162, 58, 0.18),
+    0 0 40px 10px rgba(242, 162, 58, 0.16);
 }
 
 .mr-turntable-item {
@@ -1455,9 +1458,9 @@
   );
   pointer-events: none;
 }
-/* Server-rendered resting positions (front, left, right) so the first paint
-   already looks like a turntable; the script takes over on hydration. The
-   constants depend on how many chairs share the ring (data-count). */
+/* Server-rendered resting positions (front, left, right) and podium size so
+   the first paint already looks right; the script takes over on hydration.
+   The constants depend on how many chairs share the ring (data-count). */
 .mr-turntable-item[data-pos='0'] {
   z-index: 3;
 }
@@ -1469,47 +1472,71 @@
   opacity: 0;
   visibility: hidden;
 }
+.mr-turntable[data-count='4'] {
+  --tt-podium-w: calc(var(--tt-stage-h) * 0.8669);
+  --tt-podium-top: calc(var(--tt-stage-h) * 0.8104);
+  --tt-podium-h: calc(var(--tt-stage-h) * 0.1269);
+  --tt-podium-t: calc(var(--tt-stage-h) * 0.0650);
+}
 .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='0'] {
-  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2846)) scale(1.4449);
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2090)) scale(1.4449);
 }
 .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='1'] {
-  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0400)) scale(1.0000);
 }
 .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='-1'] {
-  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0400)) scale(1.0000);
+}
+.mr-turntable[data-count='5'] {
+  --tt-podium-w: calc(var(--tt-stage-h) * 0.8502);
+  --tt-podium-top: calc(var(--tt-stage-h) * 0.8028);
+  --tt-podium-h: calc(var(--tt-stage-h) * 0.1220);
+  --tt-podium-t: calc(var(--tt-stage-h) * 0.0638);
 }
 .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='0'] {
-  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2718)) scale(1.4170);
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.1985)) scale(1.4170);
 }
 .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='1'] {
-  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1260)) scale(1.1000);
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0780)) scale(1.1000);
 }
 .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='-1'] {
-  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1260)) scale(1.1000);
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.0780)) scale(1.1000);
+}
+.mr-turntable[data-count='6'] {
+  --tt-podium-w: calc(var(--tt-stage-h) * 0.8594);
+  --tt-podium-top: calc(var(--tt-stage-h) * 0.8070);
+  --tt-podium-h: calc(var(--tt-stage-h) * 0.1247);
+  --tt-podium-t: calc(var(--tt-stage-h) * 0.0645);
 }
 .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='0'] {
-  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2789)) scale(1.4324);
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2043)) scale(1.4324);
 }
 .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='1'] {
-  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1618)) scale(1.1778);
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1075)) scale(1.1778);
 }
 .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='-1'] {
-  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1618)) scale(1.1778);
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1075)) scale(1.1778);
+}
+.mr-turntable[data-count='7'] {
+  --tt-podium-w: calc(var(--tt-stage-h) * 0.8774);
+  --tt-podium-top: calc(var(--tt-stage-h) * 0.8151);
+  --tt-podium-h: calc(var(--tt-stage-h) * 0.1300);
+  --tt-podium-t: calc(var(--tt-stage-h) * 0.0658);
 }
 .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='0'] {
-  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2927)) scale(1.4624);
+  transform: translate(-50%, calc(var(--tt-stage-h) * 0.2157)) scale(1.4624);
 }
 .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='1'] {
-  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1929)) scale(1.2455);
+  transform: translate(calc(-50% + var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1333)) scale(1.2455);
 }
 .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='-1'] {
-  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1929)) scale(1.2455);
+  transform: translate(calc(-50% - var(--tt-stage-h) * 1.1700), calc(var(--tt-stage-h) * 0.1333)) scale(1.2455);
 }
 
 /* Placard */
 .mr-turntable-placard {
   text-align: center;
-  margin: 4px auto 0;
+  margin: 22px auto 0;
   max-width: 660px;
   min-height: 176px;
 }
@@ -1710,44 +1737,65 @@
     margin-top: 6px;
   }
   /* Tighter ring on phones so the neighbours peek in at the edges. */
+  .mr-turntable[data-count='4'] {
+    --tt-podium-w: calc(var(--tt-stage-h) * 0.7600);
+    --tt-podium-top: calc(var(--tt-stage-h) * 0.7610);
+    --tt-podium-h: calc(var(--tt-stage-h) * 0.0972);
+    --tt-podium-t: calc(var(--tt-stage-h) * 0.0570);
+  }
   .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='0'] {
-    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2027)) scale(1.2667);
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.1413)) scale(1.2667);
   }
   .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='1'] {
-    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0400)) scale(1.0000);
   }
   .mr-turntable[data-count='4'] .mr-turntable-item[data-pos='-1'] {
-    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0800)) scale(1.0000);
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0400)) scale(1.0000);
+  }
+  .mr-turntable[data-count='5'] {
+    --tt-podium-w: calc(var(--tt-stage-h) * 0.7568);
+    --tt-podium-top: calc(var(--tt-stage-h) * 0.7595);
+    --tt-podium-h: calc(var(--tt-stage-h) * 0.0964);
+    --tt-podium-t: calc(var(--tt-stage-h) * 0.0568);
   }
   .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='0'] {
-    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2002)) scale(1.2613);
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.1393)) scale(1.2613);
   }
   .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='1'] {
-    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1115)) scale(1.0684);
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0660)) scale(1.0684);
   }
   .mr-turntable[data-count='5'] .mr-turntable-item[data-pos='-1'] {
-    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1115)) scale(1.0684);
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0660)) scale(1.0684);
+  }
+  .mr-turntable[data-count='6'] {
+    --tt-podium-w: calc(var(--tt-stage-h) * 0.7660);
+    --tt-podium-top: calc(var(--tt-stage-h) * 0.7639);
+    --tt-podium-h: calc(var(--tt-stage-h) * 0.0988);
+    --tt-podium-t: calc(var(--tt-stage-h) * 0.0575);
   }
   .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='0'] {
-    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2073)) scale(1.2767);
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.1452)) scale(1.2767);
   }
   .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='1'] {
-    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1359)) scale(1.1215);
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0862)) scale(1.1215);
   }
   .mr-turntable[data-count='6'] .mr-turntable-item[data-pos='-1'] {
-    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1359)) scale(1.1215);
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.0862)) scale(1.1215);
+  }
+  .mr-turntable[data-count='7'] {
+    --tt-podium-w: calc(var(--tt-stage-h) * 0.7798);
+    --tt-podium-top: calc(var(--tt-stage-h) * 0.7704);
+    --tt-podium-h: calc(var(--tt-stage-h) * 0.1024);
+    --tt-podium-t: calc(var(--tt-stage-h) * 0.0585);
   }
   .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='0'] {
-    transform: translate(-50%, calc(var(--tt-stage-h) * 0.2178)) scale(1.2997);
+    transform: translate(-50%, calc(var(--tt-stage-h) * 0.1539)) scale(1.2997);
   }
   .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='1'] {
-    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1572)) scale(1.1679);
+    transform: translate(calc(-50% + var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1038)) scale(1.1679);
   }
   .mr-turntable[data-count='7'] .mr-turntable-item[data-pos='-1'] {
-    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1572)) scale(1.1679);
-  }
-  .mr-turntable-edge {
-    width: 10%;
+    transform: translate(calc(-50% - var(--tt-stage-h) * 0.8000), calc(var(--tt-stage-h) * 0.1038)) scale(1.1679);
   }
   .mr-turntable-placard {
     min-height: 0;
@@ -1891,5 +1939,29 @@
   }
   .mr-offer-strip .mr-button {
     width: 100%;
+  }
+}
+
+/* Demo-mode clip fading in over the front chair's still */
+.mr-turntable-clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  animation: tt-clip-in 0.9s ease both;
+}
+@keyframes tt-clip-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mr-turntable-clip {
+    display: none;
   }
 }
