@@ -13,6 +13,8 @@ export type BuyerGuide = {
   description: string;
   category: string;
   summary: string;
+  answer: string;
+  updated: string;
   sections: BuyerGuideSection[];
 };
 
@@ -20,6 +22,8 @@ export type BuyerGuide = {
 export const BUYER_GUIDES: BuyerGuide[] = [
   {
     slug: 'self-levelling-wheelchairs',
+    answer: "A self-levelling wheelchair adjusts its chassis or seating as the ground angle changes, within its operating limits. Self-levelling is different from seat lifting and does not, by itself, mean a wheelchair can climb stairs.",
+    updated: '2026-10-01',
     title: 'Self-levelling wheelchairs, explained.',
     metaTitle: 'Self-Levelling Wheelchairs: A Buyer’s Guide',
     description:
@@ -40,10 +44,10 @@ export const BUYER_GUIDES: BuyerGuide[] = [
         id: 'models-to-compare',
         title: 'Which XSTO models should you compare?',
         paragraphs: [
-          'The M4 and M4B are the starting point for everyday self-levelling mobility. The M4B adds an improved folding footrest and new front suspension. The M4 Pro offers more seating adjustment. The X12 adds a separate stair-climbing capability.',
+          'The M4 and M4B are the starting point for everyday self-levelling mobility. The M4B adds an improved folding footrest and new front suspension. The M4 Pro offers more seating adjustment. The X12 and X12 Pro add a separate stair-climbing capability.',
           'Look at the complete chair as well as the levelling system. Seat height, user capacity, dimensions and controls all affect which model is practical for your day.',
         ],
-        links: [{label: 'Compare the four XSTO models', to: '/compare'}],
+        links: [{label: 'Compare the five XSTO models', to: '/compare'}],
       },
       {
         id: 'operating-limits',
@@ -85,6 +89,8 @@ export const BUYER_GUIDES: BuyerGuide[] = [
   },
   {
     slug: 'stair-climbing-wheelchairs',
+    answer: "A stair-climbing wheelchair is designed to negotiate suitable stairs using a specialised mechanism. The XSTO X12 and X12 Pro offer this capability; suitability of the user, staircase and operating procedure needs assessment before purchase.",
+    updated: '2026-10-01',
     title: 'Stair-climbing wheelchairs. Start with the right questions.',
     metaTitle: 'Stair-Climbing Wheelchairs: Buyer’s Guide',
     description:
@@ -98,7 +104,7 @@ export const BUYER_GUIDES: BuyerGuide[] = [
         title: 'What is a stair-climbing wheelchair?',
         paragraphs: [
           'A stair-climbing wheelchair is designed to negotiate suitable stairs using a specialised mechanism and control system. It is a distinct capability: a powered wheelchair that handles slopes is not necessarily able to climb stairs.',
-          'Within this range, the XSTO X12 is the stair-climbing model. The M4, M4B and M4 Pro are not stair climbers.',
+          'Within this range, the XSTO X12 and X12 Pro are the stair-climbing models. The M4, M4B and M4 Pro are not stair climbers.',
         ],
         links: [
           {
@@ -136,14 +142,15 @@ export const BUYER_GUIDES: BuyerGuide[] = [
         id: 'x12-editions',
         title: 'X12 or X12 Pro?',
         paragraphs: [
-          'The range offers the X12 with a standard leg rest and the X12 Pro with an electric elevating leg rest. Both editions are selected from the X12 product page.',
+          'The range offers the X12 with a standard leg rest and the X12 Pro with an electric elevating leg rest. Each model has its own product page; compare the chosen configuration and current specification.',
           'Ask the team to explain your chosen configuration and any optional accessories shown in photographs. Check the complete specification and price for the edition you intend to order.',
         ],
         links: [
           {
-            label: 'View X12 editions and current prices',
+            label: 'View X12 specifications and current prices',
             to: '/products/x12-all-terrain-mobility-robot',
           },
+          {label: 'View X12 Pro with electric elevating leg rest', to: '/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'},
         ],
       },
       {
@@ -161,13 +168,15 @@ export const BUYER_GUIDES: BuyerGuide[] = [
   },
   {
     slug: 'choosing-an-xsto-wheelchair',
+    answer: "Start by comparing everyday access, seating, transfers and transport. The M4, M4B and M4 Pro offer everyday self-levelling options, while the X12 and X12 Pro add stair-climbing capability for suitable stairs with assessment and training.",
+    updated: '2026-10-01',
     title: 'Which XSTO is right for you?',
     metaTitle: 'Which XSTO Wheelchair Should I Choose?',
     description:
-      'Choose between XSTO M4, M4B, M4 Pro and X12 with a practical guide to everyday use, seating, transport, demonstrations and pricing.',
+      'Choose between XSTO M4, M4B, M4 Pro, X12 and X12 Pro with a practical guide to everyday use, seating, transport, demonstrations and pricing.',
     category: 'Find your fit',
     summary:
-      'A practical way to compare the M4, M4B, M4 Pro and X12 around your own life.',
+      'A practical way to compare the M4, M4B, M4 Pro, X12 and X12 Pro around your own life.',
     sections: [
       {
         id: 'everyday-priorities',

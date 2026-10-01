@@ -21,6 +21,10 @@ function robotsTxtData({url}: {url?: string}) {
 User-agent: *
 ${generalDisallowRules({sitemapUrl})}
 
+# Search discovery access; keep the same private-path exclusions.
+User-agent: OAI-SearchBot
+${generalDisallowRules({sitemapUrl})}
+
 # Google adsbot ignores robots.txt unless specifically named!
 User-agent: adsbot-google
 Disallow: /cart

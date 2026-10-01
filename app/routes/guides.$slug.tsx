@@ -39,6 +39,7 @@ export default function BuyerGuidePage({loaderData}: Route.ComponentProps) {
           headline: guide.title,
           description: guide.description,
           inLanguage: 'en-GB',
+          dateModified: guide.updated,
           mainEntityOfPage: `${SITE_URL}${path}`,
           author: {'@id': `${SITE_URL}/#organization`},
           publisher: {'@id': `${SITE_URL}/#organization`},
@@ -56,6 +57,8 @@ export default function BuyerGuidePage({loaderData}: Route.ComponentProps) {
       />
       <div className="mr-discovery-article-layout">
         <article className="mr-discovery-article" aria-label={guide.title}>
+          <p className="mr-discovery-note">Updated <time dateTime={guide.updated}>{new Date(`${guide.updated}T12:00:00Z`).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'})}</time> · Mobility Robot buying guidance</p>
+          <p>{guide.answer}</p>
           {guide.sections.map((section) => (
             <section aria-labelledby={section.id} key={section.id}>
               <h2 id={section.id}>{section.title}</h2>
