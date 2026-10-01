@@ -61,8 +61,8 @@ export function FooterMain() {
             </address>
             <div className="mt-3 flex items-center gap-2">
               <SocialLink
-                href="https://www.facebook.com/xstouk"
-                label="Facebook"
+                href="https://www.facebook.com/XSTOMobilityofficial"
+                label="XSTO Mobility on Facebook"
               >
                 <svg
                   aria-hidden
@@ -74,8 +74,8 @@ export function FooterMain() {
                 </svg>
               </SocialLink>
               <SocialLink
-                href="https://www.instagram.com/xstouk"
-                label="Instagram"
+                href="https://www.instagram.com/xsto_mobility/"
+                label="XSTO Mobility on Instagram"
               >
                 <svg
                   aria-hidden
@@ -87,8 +87,8 @@ export function FooterMain() {
                 </svg>
               </SocialLink>
               <SocialLink
-                href="https://www.youtube.com/@xstouk"
-                label="YouTube"
+                href="https://www.youtube.com/@XSTOMobility"
+                label="XSTO Mobility on YouTube"
               >
                 <svg
                   aria-hidden
