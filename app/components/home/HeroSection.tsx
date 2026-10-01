@@ -116,11 +116,6 @@ const FADE_FULL_DEG = STEP_DEG * 1.1;
 const FADE_GONE_DEG = Math.min(STEP_DEG * 1.9, 150);
 /** Where the neighbouring chair sits, as a multiple of the stage height. */
 const NEIGHBOUR_OFFSET = {desktop: 1.17, mobile: 0.8};
-/** Podium disc radius and visible thickness, as multiples of the stage height. */
-const PODIUM_RADIUS = 0.3;
-const PODIUM_THICKNESS = 0.045;
-/** Where the wheels sit on the disc, as a fraction of its projected height. */
-const PODIUM_SEAT = 0.62;
 
 /**
  * Demo-mode clips: when a chair reaches the front, its still fades into a
@@ -137,6 +132,8 @@ const HERO_DEMO_CLIPS: Partial<
 const CLIP_DWELL_MS = 11000;
 const DWELL_MS = 6000;
 const SPIN_MS = 1150;
+/** Stage look: 'gallery' (white, airy), 'showroom' (wall + floor + colour) or 'night' (navy studio). */
+const HERO_LOOK: 'gallery' | 'showroom' | 'night' = 'gallery';
 /** Pixels of horizontal drag per turntable position. */
 const DRAG_PX_PER_STEP = {desktop: 220, mobile: 140};
 
@@ -288,11 +285,11 @@ function measure(stage: HTMLElement): Geometry {
   return {
     width,
     height,
-    itemHeight: height * 0.68,
+    itemHeight: height * 0.6,
     radius: solveRadius(perspective, neighbour),
     perspective,
     camera: height * 0.34,
-    floor: height * 0.72,
+    floor: height * 0.66,
   };
 }
 
@@ -426,19 +423,6 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
       stage.style.setProperty('--tt-persp', `${perspective}px`);
       stage.style.setProperty('--tt-cam', `${camera}px`);
       stage.style.setProperty('--tt-floor', `${floor}px`);
-      // Podium under the front chair: a floor circle of radius PODIUM_RADIUS
-      // seen through the same camera — its projected ellipse and thickness.
-      const podiumRadius = height * PODIUM_RADIUS;
-      const front = perspective / (perspective - radius);
-      const far = camera + (floor - camera) * (perspective / (perspective - radius + podiumRadius));
-      const near = camera + (floor - camera) * (perspective / (perspective - radius - podiumRadius));
-      const feet = camera + (floor - camera) * front;
-      stage.style.setProperty('--tt-podium-w', `${podiumRadius * 2 * front}px`);
-      // The photo's lowest pixel is the near wheel, so seat the chair a little
-      // forward of the disc's centre rather than on its far rim.
-      stage.style.setProperty('--tt-podium-top', `${feet - PODIUM_SEAT * (near - far)}px`);
-      stage.style.setProperty('--tt-podium-h', `${near - far}px`);
-      stage.style.setProperty('--tt-podium-t', `${height * PODIUM_THICKNESS * front}px`);
       paint();
     };
     layout();
@@ -544,6 +528,7 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
     <section
       className={`mr-turntable${rotating ? ' is-rotating' : ''}`}
       data-count={COUNT}
+      data-look={HERO_LOOK}
       aria-roledescription="carousel"
       aria-labelledby={`${baseId}-heading`}
       style={{'--tt-dwell': `${DWELL_MS}ms`} as CSSProperties}
@@ -595,8 +580,6 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
         onPointerUp={onPointerEnd}
         onPointerCancel={onPointerEnd}
       >
-        <div className="mr-turntable-horizon" />
-        <div className="mr-turntable-podium" />
         {models.map((model, index) => {
           const relative = mod(index - active + COUNT / 2, COUNT) - COUNT / 2;
           const nearFront = Math.abs(relative) <= 1;
@@ -643,6 +626,18 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
                 decoding="async"
                 draggable={false}
               />
+              <span className="mr-turntable-reflection" aria-hidden="true">
+                <img
+                  alt=""
+                  src={src}
+                  style={fitStyle}
+                  width={720}
+                  height={760}
+                  loading={nearFront ? 'eager' : 'lazy'}
+                  decoding="async"
+                  draggable={false}
+                />
+              </span>
               {index === active && settled && HERO_DEMO_CLIPS[model.slot] ? (
                 <video
                   className="mr-turntable-clip"
