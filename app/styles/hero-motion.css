@@ -175,65 +175,50 @@
 .mr-motion-spotlight.is-studio {
   mix-blend-mode: multiply;
 }
-@media (min-width: 768px) {
-  .mr-turntable {
-    --tt-stage-h: clamp(280px, 34vh, 360px);
-  }
-}
-
-/* Keep the product, price and navigation together in shorter preview windows. */
+/* Let the hero breathe instead of squeezing it into the viewport height. */
 .mr-home .mr-turntable {
-  --tt-stage-h: clamp(200px, 32svh, 340px);
-  padding-top: 18px;
+  --tt-stage-h: clamp(260px, 30vw, 340px);
+  padding-top: 32px;
+}
+.mr-home .mr-turntable-stage {
+  margin-top: 24px;
+  margin-bottom: 32px;
 }
 .mr-home .mr-turntable-placard {
   min-height: 0;
 }
 .mr-home .mr-motion-controls {
-  margin-bottom: 12px;
+  margin-bottom: 28px;
 }
-.mr-home .mr-turntable-strip {
+.mr-home .mr-motion-functions {
+  gap: 10px;
+}
+.mr-home .mr-motion-source {
   margin-top: 12px;
 }
-@media (max-height: 1000px) {
-  .mr-home .mr-turntable {
-    --tt-stage-h: clamp(180px, calc(100svh - 530px), 290px);
-    padding-top: 14px;
-  }
-  .mr-home .mr-turntable h1 {
-    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
-  }
-  .mr-home .mr-turntable-lede,
-  .mr-home .mr-turntable-pitch,
-  .mr-home .mr-motion-eyebrow,
-  .mr-home .mr-motion-description {
-    display: none;
-  }
-  .mr-home .mr-motion-controls {
-    margin-bottom: 10px;
-  }
-  .mr-home .mr-turntable-model {
-    font-size: 1.5rem;
-  }
-  .mr-home .mr-turntable-offer,
-  .mr-home .mr-turntable-price {
-    margin-top: 6px;
-  }
-  .mr-home .mr-turntable-actions {
-    margin-top: 10px;
-  }
-  .mr-home .mr-turntable-strip {
-    margin-top: 10px;
-  }
-  .mr-motion-film {
-    width: min(66vw, 640px);
-    height: calc(100% - 12px);
-  }
+.mr-home .mr-turntable-actions {
+  margin-top: 20px;
+}
+.mr-home .mr-turntable-strip {
+  margin-top: 28px;
+}
+.mr-home .mr-turntable-lede,
+.mr-home .mr-turntable-pitch,
+.mr-home .mr-motion-eyebrow,
+.mr-home .mr-motion-description {
+  display: none;
 }
 @media (max-width: 767px) {
   .mr-home .mr-turntable {
-    --tt-stage-h: clamp(170px, calc(100svh - 590px), 270px);
-    padding-top: 12px;
+    --tt-stage-h: clamp(220px, 60vw, 270px);
+    padding-top: 24px;
+  }
+  .mr-home .mr-turntable-stage {
+    margin-top: 20px;
+    margin-bottom: 24px;
+  }
+  .mr-home .mr-motion-controls {
+    margin-bottom: 24px;
   }
   .mr-home .mr-turntable h1 {
     font-size: 1.35rem;
