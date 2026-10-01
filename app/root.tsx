@@ -149,6 +149,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={appStyles}></link>
         <JsonLd data={sitewideJsonLdGraph(true)} />
         <Meta />
+        <meta name="msvalidate.01" content="1784260E956C868F6D343DD3C472D30C" />
         <Links />
       </head>
       <body>
