@@ -61,5 +61,7 @@ export function ShopChat({shopDomain, inboxExternalId}: ShopifyInboxProps) {
 
   const src = `https://cdn.shopify.com/shopifycloud/shopify_chat/storefront/shopifyChatV1.js?${params.toString()}`;
 
-  return <Script async id="shopify-inbox" src={src} suppressHydrationWarning />;
+  // This mounts after page load: use the executable client-side loader.
+  // A plain React-rendered script element is inert when inserted after hydration.
+  return <Script async id="shopify-inbox" src={src} waitForHydration />;
 }
