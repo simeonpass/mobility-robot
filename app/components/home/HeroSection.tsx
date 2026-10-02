@@ -303,10 +303,10 @@ export function HeroSection({products}: {products: HomeProduct[]}) {
     () => buildModels(products, promotions),
     [products, promotions],
   );
-  // Open on the chair that is on promotion, otherwise the first in the ring.
+  // Welcome visitors with the M4, then rotate through the remaining models.
   const initialIndex = Math.max(
     0,
-    models.findIndex((model) => model.promotion),
+    models.findIndex((model) => model.slot === 'xsto-m4'),
   );
   const reducedMotion = useReducedMotion() ?? false;
   const baseId = useId();
