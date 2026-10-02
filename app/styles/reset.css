@@ -28,6 +28,20 @@ a:not([class*='btn-']):hover {
   cursor: pointer;
 }
 
+/* Native <button> defaults to an arrow cursor; CTAs should show the hand/finger. */
+button:not(:disabled),
+[type='submit']:not(:disabled),
+[type='button']:not(:disabled),
+a[class*='btn-'] {
+  cursor: pointer;
+}
+
+button:disabled,
+[type='submit']:disabled,
+[type='button']:disabled {
+  cursor: not-allowed;
+}
+
 hr {
   border-bottom: none;
   border-top: 1px solid hsl(var(--border));
