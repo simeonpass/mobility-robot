@@ -13,6 +13,7 @@ import {
 import type {Route} from './+types/root';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
+import brandRedStyles from '~/styles/brand-red.css?url';
 import {PageLayout} from './components/PageLayout';
 import {applyReferralDiscount} from '~/lib/referral-discount';
 import {legacyRedirect} from '~/lib/redirects';
@@ -151,6 +152,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <Meta />
         <meta name="msvalidate.01" content="1784260E956C868F6D343DD3C472D30C" />
         <Links />
+        <link rel="stylesheet" href={brandRedStyles} />
       </head>
       <body>
         {children}
