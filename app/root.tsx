@@ -27,6 +27,7 @@ import {sitewideJsonLdGraph} from '~/lib/seo';
 import {getJudgemeConfig} from '~/lib/judgeme';
 import {DEFAULT_SHOP_ID, HTML_LANG} from '~/lib/const';
 import {setShopifyPricesExVat} from '~/lib/pricing-mode';
+import {SITE_ICON_LINKS} from '~/lib/site-icons';
 
 export type RootLoader = typeof loader;
 
@@ -87,9 +88,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
     },
-    {rel: 'icon', type: 'image/png', sizes: '512x512', href: '/mobility-robot-favicon.png'},
-    {rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png?v=mobility-m1'},
-    {rel: 'manifest', href: '/site.webmanifest'},
+    ...SITE_ICON_LINKS,
   ];
 }
 
