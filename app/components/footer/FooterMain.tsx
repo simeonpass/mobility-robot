@@ -4,7 +4,7 @@ import {
   FOOTER_QUICK_LINKS,
   FOOTER_SUPPORT_LINKS,
 } from '~/lib/site-navigation';
-import {MobilityRobotBrand} from '~/components/Header';
+import {JointBrand} from '~/components/Header';
 import {DistributorDisclaimer} from '~/components/footer/DistributorDisclaimer';
 import {FooterBottom} from '~/components/footer/FooterBottom';
 import {SafetyDisclaimer} from '~/components/footer/SafetyDisclaimer';
@@ -24,13 +24,13 @@ export function FooterMain() {
         <div className="grid gap-6 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-5 lg:col-span-4">
             <NavLink
-              aria-label="Mobility Robot by Bentech Medical — home"
+              aria-label="XSTO and Bentech Medical — home"
               className="mr-footer-brand-link"
               end
               prefetch="intent"
               to="/"
             >
-              <MobilityRobotBrand light />
+              <JointBrand light />
             </NavLink>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">
               XSTO products. UK advice, demonstrations and aftercare from

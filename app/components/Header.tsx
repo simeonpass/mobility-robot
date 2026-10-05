@@ -8,8 +8,7 @@ import {
 } from '@shopify/hydrogen';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
-import homepageLogo from '~/assets/mobility-robot-horizontal-trimmed.png';
-import darkBackgroundLogo from '~/assets/mobility-robot-logo-dark-background.png';
+import {HEADER_LOGO} from '~/lib/site-branding';
 import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
@@ -31,15 +30,17 @@ interface HeaderProps {
   isLoggedIn: Promise<boolean>;
 }
 
-/** Customer-facing brand, with the legal business as its supporting byline. */
-export function MobilityRobotBrand({light = false}: {light?: boolean}) {
+/** Joint XSTO and Bentech Medical distributor identity. */
+export function JointBrand({light = false}: {light?: boolean}) {
+  const logo = light ? HEADER_LOGO.light : HEADER_LOGO.dark;
+
   return (
     <span>
       <img
-        src={light ? darkBackgroundLogo : homepageLogo}
-        alt="Mobility Robot by Bentech Medical"
-        width={2075}
-        height={325}
+        src={logo.src}
+        alt={logo.alt}
+        width={logo.width}
+        height={logo.height}
         className="mr-homepage-logo"
         fetchPriority={light ? 'auto' : 'high'}
         decoding="async"
@@ -53,13 +54,13 @@ export function Header({isLoggedIn, cart}: HeaderProps) {
     <header className="site-header site-header--solid mr-site-header">
       <div className="xsto-container mr-header-inner">
         <NavLink
-          aria-label="Mobility Robot by Bentech Medical — home"
+          aria-label="XSTO and Bentech Medical — home"
           className="site-header-logo min-w-0 shrink-0"
           end
           prefetch="intent"
           to="/"
         >
-          <MobilityRobotBrand />
+          <JointBrand />
         </NavLink>
         <HeaderMenu isLoggedIn={isLoggedIn} viewport="desktop" />
         <HeaderCtas cart={cart} isLoggedIn={isLoggedIn} />

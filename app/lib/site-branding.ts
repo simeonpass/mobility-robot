@@ -3,13 +3,13 @@ export const HEADER_LOGO = {
     src: '/images/xsto-bentech-header.png',
     width: 1000,
     height: 300,
-    alt: 'Mobility Robot — Official UK XSTO distributor, Bentech Medical Ltd',
+    alt: 'XSTO and Bentech Medical Ltd — Official UK Distributor',
   },
   light: {
     src: '/images/xsto-bentech-header-light.png',
     width: 800,
     height: 250,
-    alt: 'Mobility Robot — Official UK XSTO distributor, Bentech Medical Ltd',
+    alt: 'XSTO and Bentech Medical Ltd — Official UK Distributor',
   },
 } as const;
 
@@ -17,7 +17,7 @@ export const FOOTER_LOGO = {
   src: '/images/xsto-bentech-footer.png',
   width: 1000,
   height: 300,
-  alt: 'Mobility Robot — Official UK XSTO distributor, Bentech Medical Ltd',
+  alt: 'XSTO and Bentech Medical Ltd — Official UK Distributor',
 } as const;
 
 /** Display height in the header; width scales from intrinsic aspect ratio. */
