@@ -28,6 +28,13 @@ a:not([class*='btn-']):hover {
   cursor: pointer;
 }
 
+/* Inline links must remain identifiable without relying on colour alone. */
+a.underline,
+p a:not([class*='btn-']) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 hr {
   border-bottom: none;
   border-top: 1px solid hsl(var(--border));

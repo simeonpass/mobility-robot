@@ -48,7 +48,7 @@ export const warrantySections: ContentSection[] = [
     id: 'claims',
     title: 'Making a claim',
     paragraphs: [
-      'Contact sales@bentechmeduk.com or call 0208 050 4849 with your order number, serial number and a description of the issue. Photos or video help us assess claims quickly. Do not attempt repairs that may void your warranty.',
+      'Contact sales@bentechmeduk.com or call 020 8050 4849 with your order number, serial number and a description of the issue. Photos or video help us assess claims quickly. Do not attempt repairs that may void your warranty.',
     ],
   },
 ];

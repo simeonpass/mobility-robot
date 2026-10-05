@@ -1,13 +1,13 @@
 export function SafetyDisclaimer() {
   return (
-    <p className="max-w-4xl text-xs leading-relaxed text-white/70">
+    <p className="mr-footer-disclaimer">
       *Safe use of XSTO mobility products requires exercising judgement and
       common sense at all times. Users are responsible for operating their
-      device safely and assessing terrain, gradients, and conditions before
-      use. Always follow the operating guidelines in your user manual. Neither
-      XSTO nor Bentech Medical Limited is liable for accidents or injuries
-      resulting from unsafe operation, failure to follow instructions, or use
-      beyond the product&apos;s stated capabilities.
+      device safely and assessing terrain, gradients, and conditions before use.
+      Always follow the operating guidelines in your user manual. Neither XSTO
+      nor Bentech Medical Limited is liable for accidents or injuries resulting
+      from unsafe operation, failure to follow instructions, or use beyond the
+      product&apos;s stated capabilities.
     </p>
   );
 }

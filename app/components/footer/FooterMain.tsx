@@ -1,28 +1,17 @@
 import {NavLink} from 'react-router';
-import {
-  COMPANY,
-  FOOTER_QUICK_LINKS,
-  FOOTER_SUPPORT_LINKS,
-} from '~/lib/site-navigation';
-import {JointBrand} from '~/components/Header';
+import {COMPANY, FOOTER_NAV_GROUPS} from '~/lib/site-navigation';
+import {HEADER_LOGO} from '~/lib/site-branding';
 import {DistributorDisclaimer} from '~/components/footer/DistributorDisclaimer';
 import {FooterBottom} from '~/components/footer/FooterBottom';
+import {FooterNewsletter} from '~/components/footer/FooterNewsletter';
 import {SafetyDisclaimer} from '~/components/footer/SafetyDisclaimer';
-
-const LEGAL_URLS = new Set(['/privacy', '/terms', '/vat-relief']);
-const SUPPORT_PRIMARY = FOOTER_SUPPORT_LINKS.filter(
-  (link) => !LEGAL_URLS.has(link.url),
-);
-const LEGAL_LINKS = FOOTER_SUPPORT_LINKS.filter((link) =>
-  LEGAL_URLS.has(link.url),
-);
 
 export function FooterMain() {
   return (
-    <div className="mr-footer-main text-white">
+    <div className="mr-footer-main">
       <div className="mr-footer-content xsto-container">
-        <div className="grid gap-6 md:grid-cols-12 md:gap-8">
-          <div className="md:col-span-5 lg:col-span-4">
+        <div className="mr-footer-grid">
+          <div className="mr-footer-brand">
             <NavLink
               aria-label="XSTO and Bentech Medical — home"
               className="mr-footer-brand-link"
@@ -30,36 +19,36 @@ export function FooterMain() {
               prefetch="intent"
               to="/"
             >
-              <JointBrand light />
+              <img
+                {...HEADER_LOGO.dark}
+                className="mr-footer-logo"
+                loading="lazy"
+                decoding="async"
+              />
             </NavLink>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">
-              XSTO products. UK advice, demonstrations and aftercare from
-              Bentech Medical Limited.
+            <p className="mr-footer-intro">
+              Intelligent mobility, personal support.
             </p>
-            <address className="mt-3 space-y-1 not-italic text-sm leading-relaxed text-white/65">
+            <p className="mr-footer-description">
+              Discover the XSTO range with UK advice, demonstrations and
+              aftercare from Bentech Medical.
+            </p>
+            <address className="mr-footer-contact">
               <p>
-                <a
-                  className="text-white/85 transition-colors hover:text-white"
-                  href={COMPANY.phoneHref}
-                >
+                <a className="mr-footer-phone" href={COMPANY.phoneHref}>
                   {COMPANY.phone}
                 </a>
               </p>
               <p>
-                <a
-                  className="text-white/85 transition-colors hover:text-white"
-                  href={`mailto:${COMPANY.email}`}
-                >
-                  {COMPANY.email}
-                </a>
+                <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
               </p>
-              <p className="text-white/70">
+              <p className="mr-footer-address">
                 {COMPANY.address}
                 <br />
                 {COMPANY.city}, {COMPANY.postcode}
               </p>
             </address>
-            <div className="mt-3 flex items-center gap-2">
+            <div className="mr-footer-socials">
               <SocialLink
                 href="https://www.facebook.com/XSTOMobilityofficial"
                 label="XSTO Mobility on Facebook"
@@ -102,20 +91,22 @@ export function FooterMain() {
             </div>
           </div>
 
-          <div className="mr-footer-link-columns grid grid-cols-2 gap-8 sm:grid-cols-3 md:col-span-7 lg:col-span-8 lg:gap-10">
-            <FooterLinkColumn links={FOOTER_QUICK_LINKS} title="Shop" />
-            <FooterLinkColumn links={SUPPORT_PRIMARY} title="Support" />
-            <FooterLinkColumn
-              className="col-span-2 sm:col-span-1"
-              links={LEGAL_LINKS}
-              title="Legal"
-            />
+          <div className="mr-footer-link-columns">
+            {FOOTER_NAV_GROUPS.map((group) => (
+              <FooterLinkColumn
+                key={group.title}
+                links={group.items}
+                title={group.title}
+              />
+            ))}
           </div>
         </div>
 
+        <FooterNewsletter />
+
         <details className="mr-footer-notices">
           <summary>Product safety &amp; distributor information</summary>
-          <div className="space-y-4 pb-4">
+          <div className="mr-footer-notices-content">
             <SafetyDisclaimer />
             <DistributorDisclaimer />
           </div>
@@ -130,14 +121,12 @@ export function FooterMain() {
 function FooterLinkColumn({
   title,
   links,
-  className,
 }: {
   title: string;
   links: Array<{title: string; url: string}>;
-  className?: string;
 }) {
   return (
-    <nav aria-label={title} className={className}>
+    <nav aria-label={title}>
       <div className="mr-footer-links-desktop">
         <h2 className="mr-footer-links-heading">{title}</h2>
         <FooterLinks links={links} />
@@ -156,7 +145,8 @@ function FooterLinks({links}: {links: Array<{title: string; url: string}>}) {
       {links.map((link) => (
         <li key={link.url}>
           <NavLink
-            className="text-sm text-white/70 transition-colors hover:text-white"
+            className="mr-footer-link"
+            end={link.url === '/collections/all'}
             prefetch="intent"
             to={link.url}
           >
@@ -180,7 +170,7 @@ function SocialLink({
   return (
     <a
       aria-label={label}
-      className="inline-flex size-10 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-white/35 hover:bg-white/8 hover:text-white"
+      className="mr-footer-social-link"
       href={href}
       rel="noopener noreferrer"
       target="_blank"

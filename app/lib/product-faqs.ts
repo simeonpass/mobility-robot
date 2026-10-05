@@ -118,7 +118,7 @@ export const m4ProFAQs: ProductFAQ[] = [
   {
     question: 'What warranty comes with the M4 Pro?',
     answer:
-      'The M4 Pro is covered by the standard XSTO manufacturer warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts (motors, controller, etc.), and 1 year on the battery. Free UK mainland delivery is included, and our customer support team is available on 0208 050 4849.',
+      'The M4 Pro is covered by the standard XSTO manufacturer warranty: 5 years on the frame and base seat structure, 1 year on electrical and mechanical parts (motors, controller, etc.), and 1 year on the battery. Free UK mainland delivery is included, and our customer support team is available on 020 8050 4849.',
   },
   {
     question: 'Can I claim VAT relief on the M4 Pro?',
@@ -133,7 +133,7 @@ export const m4ProFAQs: ProductFAQ[] = [
   {
     question: 'How do I make a warranty claim?',
     answer:
-      'Contact our UK support team at sales@bentechmeduk.com or call 0208 050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.',
+      'Contact our UK support team at sales@bentechmeduk.com or call 020 8050 4849 with your order number and a short description (photo or video where possible). As the official UK distributor, Bentech Medical Ltd manages all warranty claims directly with the manufacturer on your behalf — no need to ship anything overseas.',
   },
 ];
 
@@ -235,6 +235,6 @@ export const generalFAQs: ProductFAQ[] = [
   {
     question: 'Who provides UK customer support?',
     answer:
-      'Bentech Medical Ltd provides free UK-based phone and email support on 0208 050 4849 and sales@bentechmeduk.com. Our team handles sales, delivery, warranty and after-sales support for all XSTO products in the UK.',
+      'Bentech Medical Ltd provides free UK-based phone and email support on 020 8050 4849 and sales@bentechmeduk.com. Our team handles sales, delivery, warranty and after-sales support for all XSTO products in the UK.',
   },
 ];

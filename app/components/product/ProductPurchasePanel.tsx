@@ -35,6 +35,7 @@ import {
   formatProductPrice,
   getExVatDisplay,
   getPurchaseDisplayPrice,
+  getVariantCompareAtPrice,
   getVariantDisplayPrice,
   sumMoneyV2,
 } from '~/lib/product-pricing';
@@ -362,16 +363,11 @@ export function ProductPurchasePanel({
     allChairVariants,
     true,
   );
-  // A Shopify compare-at price marks a sale: show what the chair was.
-  const compareAt = (
-    colourBaseVariant as {compareAtPrice?: MoneyV2 | null} | undefined
-  )?.compareAtPrice;
-  const chairWasPrice =
-    compareAt &&
-    chairStandardPrice &&
-    Number(compareAt.amount) > Number(colourBaseVariant?.price?.amount ?? 0)
-      ? getPurchaseDisplayPrice(compareAt, dualVatPricing, Boolean(chairReliefPrice))
-      : null;
+  const chairWasPrice = getVariantCompareAtPrice(
+    colourBaseVariant,
+    allChairVariants,
+    Boolean(chairReliefPrice),
+  );
   const standardPackagePrice = sumMoneyV2([
     chairStandardPrice,
     ...selectedAccessories.map(({product, standardVariant}) =>

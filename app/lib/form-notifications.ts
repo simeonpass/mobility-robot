@@ -109,7 +109,7 @@ export async function sendFormNotification(
       ok: false,
       configured: false,
       error:
-        'Form email is not configured on the server. Please email sales@bentechmeduk.com directly or call 0208 050 4849.',
+        'Form email is not configured on the server. Please email sales@bentechmeduk.com directly or call 020 8050 4849.',
     };
   }
 

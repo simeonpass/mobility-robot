@@ -27,7 +27,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       {
         question: 'Do you deliver to Scottish Highlands and Northern Ireland?',
         answer:
-          'Yes. We deliver across the UK and Ireland. Scottish Highlands, Northern Ireland and offshore islands may have extended lead times — contact us on 0208 050 4849 for a delivery estimate before ordering.',
+          'Yes. We deliver across the UK and Ireland. Scottish Highlands, Northern Ireland and offshore islands may have extended lead times — contact us on 020 8050 4849 for a delivery estimate before ordering.',
       },
       {
         question: 'Can I book a demonstration before I buy?',
@@ -49,7 +49,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       {
         question: 'Who handles warranty claims in the UK?',
         answer:
-          'Bentech Medical Ltd, as the official UK distributor, manages all warranty claims directly with the manufacturer. Contact sales@bentechmeduk.com or call 0208 050 4849.',
+          'Bentech Medical Ltd, as the official UK distributor, manages all warranty claims directly with the manufacturer. Contact sales@bentechmeduk.com or call 020 8050 4849.',
       },
     ],
   },

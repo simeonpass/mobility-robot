@@ -40,6 +40,31 @@ export function getVariantDisplayPrice(
   );
 }
 
+/** A sale comparison must use the same VAT variant as the displayed price. */
+export function getVariantCompareAtPrice<
+  T extends VatPricedVariant<MoneyV2['currencyCode']> & {
+    compareAtPrice?: MoneyV2 | null;
+  },
+>(
+  selected: T | null | undefined,
+  variants: T[],
+  vatRelief: boolean,
+): MoneyV2 | null {
+  const resolved = resolveVatPurchaseVariant(selected, variants, vatRelief);
+  const comparison = resolved?.compareAtPrice;
+  if (
+    !comparison ||
+    !resolved?.price ||
+    Number(comparison.amount) <= Number(resolved.price.amount)
+  )
+    return null;
+  return getPurchaseDisplayPrice(
+    comparison,
+    variantsHaveVatOption(variants),
+    vatRelief,
+  );
+}
+
 export function formatProductPrice(
   amount: number,
   currencyCode: string,

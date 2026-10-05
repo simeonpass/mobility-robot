@@ -12,6 +12,7 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import '~/styles/brand-shell.css';
+import '~/styles/footer.css';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;

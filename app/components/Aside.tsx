@@ -66,7 +66,13 @@ export function Aside({
       role="dialog"
       aria-labelledby={hideHeader ? undefined : id}
     >
-      <button className="close-outside" onClick={close} type="button" />
+      <button
+        className="close-outside"
+        onClick={close}
+        type="button"
+        aria-label="Close panel"
+        tabIndex={-1}
+      />
       <aside>
         {hideHeader ? null : (
           <header>

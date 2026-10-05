@@ -136,6 +136,47 @@ export const FOOTER_SUPPORT_LINKS: NavItem[] = [
   {title: 'Terms', url: '/terms'},
 ];
 
+/** Balanced footer groups, with the same available models as the main menu. */
+export const FOOTER_NAV_GROUPS: NavGroup[] = [
+  {
+    title: 'Explore the range',
+    items: [
+      ...PRODUCT_NAV_ITEMS.map((item) => ({
+        title: `XSTO ${item.title}`,
+        url: item.url,
+      })),
+      {title: 'All wheelchairs', url: '/collections/all'},
+      {title: 'Accessories', url: '/collections/accessories'},
+    ],
+  },
+  {
+    title: 'Find your fit',
+    items: [
+      {title: 'Compare models', url: '/compare'},
+      {title: 'Book a demonstration', url: '/demo'},
+      {title: 'Find a dealer', url: '/stockists'},
+      {title: 'Buyer guides', url: '/guides'},
+      {title: 'Watch the range', url: '/videos'},
+      {title: 'VAT relief explained', url: '/vat-relief'},
+      {title: 'Request a quote', url: '/quote'},
+      {title: 'International enquiries', url: '/international'},
+    ],
+  },
+  {
+    title: 'Here to help',
+    items: [
+      {title: 'Contact our team', url: '/contact'},
+      {title: 'Help & advice', url: '/support'},
+      {title: 'Frequently asked questions', url: '/faq'},
+      {title: 'Delivery information', url: '/delivery'},
+      {title: 'Warranty & aftercare', url: '/warranty'},
+      {title: 'Returns policy', url: '/returns'},
+      {title: 'Your orders', url: '/account/orders'},
+      {title: 'About Mobility Robot', url: '/about'},
+    ],
+  },
+];
+
 /** @deprecated Use FOOTER_QUICK_LINKS */
 export const FOOTER_SHOP_LINKS = FOOTER_QUICK_LINKS;
 
@@ -158,7 +199,7 @@ export const COMPANY = {
   address: 'Unit 2 Old Forge Road',
   city: 'Wimborne, Dorset',
   postcode: 'BH21 7RR',
-  phone: '0208 050 4849',
+  phone: '020 8050 4849',
   phoneHref: 'tel:+442080504849',
   email: 'sales@bentechmeduk.com',
   disclaimer:
