@@ -38,6 +38,31 @@ function contrastOnWhite(rgb: number[]) {
 }
 
 describe('joint XSTO / Bentech colour palette', () => {
+  it('keeps the brighter hero washes readable with the existing navy and slate text', () => {
+    const hero = styles[4];
+    const washes = ['daeaf6', 'e8f1f7', 'f6eddc', 'ffffff'];
+    const textColours = ['233048', '596474'];
+    const luminance = (hex: string) => {
+      const [r, g, b] = hex.match(/../g)!.map((channel) => {
+        const value = parseInt(channel, 16) / 255;
+        return value <= 0.04045
+          ? value / 12.92
+          : ((value + 0.055) / 1.055) ** 2.4;
+      });
+      return r * 0.2126 + g * 0.7152 + b * 0.0722;
+    };
+    for (const wash of washes) {
+      for (const text of textColours) {
+        expect(
+          (luminance(wash) + 0.05) / (luminance(text) + 0.05),
+        ).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+    for (const wash of washes.slice(0, 3)) expect(hero).toContain(`#${wash}`);
+    expect(hero).toContain('.mr-home .mr-turntable {');
+    expect(hero).not.toMatch(/filter:\s*brightness/);
+  });
+
   it("uses the logo's ink navy with a softened red accent", () => {
     expect(tokenRgb('red')).toEqual([163, 70, 77]);
     expect(tokenRgb('navy')).toEqual([35, 48, 72]);

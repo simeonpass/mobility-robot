@@ -177,8 +177,72 @@
 }
 /* Let the hero breathe instead of squeezing it into the viewport height. */
 .mr-home .mr-turntable {
+  --tt-stage: #e8f1f7;
+  --tt-line: #c7d7e4;
   --tt-stage-h: clamp(260px, 30vw, 340px);
   padding-top: 32px;
+  background:
+    radial-gradient(
+      ellipse 62% 54% at 50% 35%,
+      #fff 0%,
+      rgb(255 255 255 / 94%) 25%,
+      rgb(255 255 255 / 0%) 76%
+    ),
+    linear-gradient(115deg, #daeaf6 0%, var(--tt-stage) 52%, #f6eddc 100%);
+  border-bottom: 1px solid var(--tt-line);
+}
+.mr-home .mr-turntable-head {
+  max-width: 1080px;
+}
+.mr-home .mr-turntable h1 {
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  line-height: 1.14;
+}
+.mr-home .mr-turntable-glow {
+  top: 4%;
+  width: min(84vw, 1020px);
+  height: 110%;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    rgb(255 255 255 / 96%) 0%,
+    rgb(255 255 255 / 54%) 42%,
+    rgb(255 255 255 / 0%) 72%
+  );
+}
+/* Keep the product photos blending into the continuous light, with no side bands. */
+.mr-home .mr-turntable-edge {
+  background: none;
+}
+.mr-home .mr-turntable-floor {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgb(91 126 158 / 12%) 0%,
+    rgb(91 126 158 / 5%) 22%,
+    rgb(91 126 158 / 0%) 38%
+  );
+}
+.mr-home .mr-turntable-floor::before {
+  border-color: rgb(75 115 150 / 24%);
+}
+.mr-home .mr-turntable-floor::after {
+  border-color: rgb(75 115 150 / 13%);
+}
+.mr-home .mr-turntable-badge {
+  background: rgb(255 255 255 / 88%);
+  border-color: var(--tt-line);
+}
+.mr-home .mr-turntable .mr-button {
+  box-shadow: 0 8px 22px hsl(var(--brand-navy-hsl) / 18%);
+}
+.mr-home .mr-turntable .mr-button:hover {
+  box-shadow: 0 10px 26px hsl(var(--brand-navy-hsl) / 24%);
+}
+.mr-home .mr-motion-functions button,
+.mr-home .mr-turntable-controls button {
+  border-color: var(--tt-line);
+}
+.mr-home .mr-motion-functions button[aria-pressed='true'] {
+  border-color: var(--brand-action);
 }
 .mr-home .mr-turntable-stage {
   margin-top: 24px;
@@ -201,6 +265,11 @@
 }
 .mr-home .mr-turntable-strip {
   margin-top: 28px;
+  padding-inline: 18px;
+  border: 1px solid var(--tt-line);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  background: rgb(255 255 255 / 78%);
 }
 .mr-home .mr-turntable-lede,
 .mr-home .mr-turntable-pitch,
@@ -221,7 +290,7 @@
     margin-bottom: 24px;
   }
   .mr-home .mr-turntable h1 {
-    font-size: 1.35rem;
+    font-size: clamp(1.5rem, 6.6vw, 1.85rem);
     max-width: 420px;
     margin-inline: auto;
   }
@@ -254,6 +323,9 @@
   }
   .mr-home .mr-turntable-tabs {
     justify-content: center;
+  }
+  .mr-home .mr-turntable-strip {
+    padding-inline: 8px;
   }
   .mr-home .mr-turntable-tab {
     min-height: 44px;
