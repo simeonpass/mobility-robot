@@ -232,8 +232,8 @@
 .mr-shell .mr-cart-attached-accessory a.font-semibold {font-size:.85rem}
 .mr-shell .overlay--cart button[aria-label*='quantity'] {min-height:44px;min-width:40px}
 .mr-shell .overlay--cart form>button.text-xs {min-height:44px;padding-inline:6px}
-/* The third-party launcher must not obscure menu, basket or search controls. */
-body:has(.overlay.expanded) #dummy-chat-button-iframe {
+/* Keep the launcher clear of navigation, purchase and cookie-consent controls. */
+body:has(.overlay.expanded, [data-consent-overlay]) #dummy-chat-button-iframe {
   visibility: hidden !important;
   pointer-events: none !important;
 }

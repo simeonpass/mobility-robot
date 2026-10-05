@@ -119,6 +119,7 @@ function ConsentBanner() {
 
   return (
     <div
+      data-consent-overlay
       aria-labelledby="consent-banner-title"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background p-3 shadow-strong sm:p-4 md:p-6"
       role="dialog"
@@ -169,7 +170,7 @@ function ConsentPreferencesPanel() {
   const [marketing, setMarketing] = useState(consent.preferences.marketing);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end bg-navy/40 p-4 md:items-center md:justify-center">
+    <div data-consent-overlay className="fixed inset-0 z-50 flex items-end bg-navy/40 p-4 md:items-center md:justify-center">
       <div className="w-full max-w-lg rounded-xl border border-border bg-background p-6 shadow-strong">
         <h2 className="text-lg font-semibold text-foreground">Cookie preferences</h2>
         <div className="mt-4 space-y-4">

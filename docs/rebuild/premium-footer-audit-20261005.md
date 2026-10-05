@@ -6,7 +6,7 @@
 - Balanced the links into product range, buying advice and support groups. Retained native mobile accordions, legal information, distributor/safety notices and payment information.
 - Integrated the existing newsletter form with clear labelling, privacy information and loading/success/error states. No subscription was submitted during verification.
 - Restored visible underlines on inline links and labelled the off-panel close control.
-- Hid the third-party chat launcher while a menu, basket or search panel is open, so it cannot cover those controls.
+- Hid the third-party chat launcher while a menu, basket, search or cookie-consent panel is open, so it cannot cover those controls.
 - Standardised the display of the existing phone number to 020 8050 4849; telephone destinations are unchanged.
 - Corrected crossed-out comparison pricing to use the same VAT variant as the headline price. Actual catalogue, basket and checkout prices were not changed.
 
@@ -27,4 +27,4 @@
 - A read-only production dependency audit reported 11 advisories (4 high, 6 moderate, 1 low; no critical). A coordinated framework/dependency update and regression test is needed. No automatic audit-fix or dependency upgrades were applied during this design pass. An advisory alone does not establish that a deployed feature is exploitable.
 - Payment completion, live newsletter delivery, account authentication and every possible product/variant combination were not exercised. No real orders or subscriptions were created.
 
-Publishing should be followed by live desktop/mobile smoke checks, verification of the M4B comparison price, and checks that the footer accordions and mobile panels behave correctly without preview overrides.
+Initial live desktop/mobile smoke checks passed on home, M4B, contact and basket pages without preview overrides, broken images or horizontal overflow. The M4B comparison displays £3,750 against £3,250 on the same VAT-relief basis, with £3,900 including VAT unchanged. A final check identified a cookie-notice/chat overlap; the consent-overlay marker and launcher visibility rule address that without changing consent choices or tracking behaviour.
