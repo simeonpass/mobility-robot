@@ -5,7 +5,7 @@ export function loader() {
     start_url: '/',
     display: 'browser',
     background_color: '#ffffff',
-    theme_color: '#2155ed',
+    theme_color: '#1b2955',
     icons: [{src: '/favicon.png', sizes: '512x512', type: 'image/png', purpose: 'any'}],
   }, {headers: {'Content-Type': 'application/manifest+json', 'Cache-Control': 'public, max-age=3600'}});
 }

@@ -112,79 +112,98 @@
 
 @layer base {
   :root {
-    /* Mobility Robot — navy, electric blue and warm amber. */
+    /* Sampled from the existing joint XSTO / Bentech logo, not a new identity. */
+    --brand-red-hsl: 354.5763 73.4440% 47.2549%;
+    --brand-red-hover-hsl: 354.3624 74.8744% 39.0196%;
+    --brand-navy-hsl: 225.5172 51.7857% 21.9608%;
+    --brand-navy-deep-hsl: 223.1250 74.4186% 16.8627%;
+    --brand-navy-light-hsl: 223.6364 34.5912% 31.1765%;
+    --brand-ink-hsl: 218.9189 34.5794% 20.9804%;
+    --brand-red: hsl(var(--brand-red-hsl));
+    --brand-red-hover: hsl(var(--brand-red-hover-hsl));
+    --brand-navy: hsl(var(--brand-navy-hsl));
+    --brand-navy-deep: hsl(var(--brand-navy-deep-hsl));
+    --brand-surface: #f5f6f8;
+    --brand-surface-soft: #fafafb;
+    --brand-surface-active: #eceef3;
+    --brand-border: #dce0e7;
+    --brand-muted: #526079;
+    --brand-red-soft: #fff1f2;
+    --brand-red-border: #edc1c6;
+    /* White maintains contrast where logo red would be too dark on navy. */
+    --brand-on-dark-accent: #fff;
 
     --background: 0 0% 100%;
-    --foreground: 222 54% 14%;
+    --foreground: var(--brand-navy-hsl);
 
     --cream: 210 20% 99%;
     --cream-deep: 214 18% 96%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 54% 14%;
+    --card-foreground: var(--brand-navy-hsl);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 54% 14%;
+    --popover-foreground: var(--brand-navy-hsl);
 
-    /* Electric blue action colour; amber is reserved for demonstration CTAs. */
-    --primary: 225 85% 53%;
+    /* Logo red for primary actions, with white labels. */
+    --primary: var(--brand-red-hsl);
     --primary-foreground: 0 0% 100%;
 
     --secondary: 214 18% 96%;
-    --secondary-foreground: 222 54% 14%;
+    --secondary-foreground: var(--brand-navy-hsl);
 
     --muted: 214 16% 93%;
     --muted-foreground: 216 12% 42%;
 
-    --accent: 225 85% 53%;
+    --accent: var(--brand-red-hsl);
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 55%;
+    --destructive: 0 72% 42%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214 16% 88%;
     --input: 214 16% 88%;
-    --ring: 216 39% 20%;
+    --ring: var(--brand-ink-hsl);
 
     --radius: 0.75rem;
 
-    /* Logo navy family (#203048 / #182850) */
-    --xsto-blue: 222 54% 14%;
-    --xsto-blue-light: 216 36% 24%;
-    --xsto-blue-dark: 219 70% 10%;
+    /* The joint logo's navy family. */
+    --xsto-blue: var(--brand-navy-hsl);
+    --xsto-blue-light: var(--brand-navy-light-hsl);
+    --xsto-blue-dark: var(--brand-navy-deep-hsl);
     --xsto-blue-muted: 216 14% 48%;
 
-    /* Legacy accent token names retained for component compatibility */
-    --gold: 225 85% 53%;
-    --gold-light: 225 80% 48%;
-    --gold-dark: 225 80% 42%;
+    /* Legacy gold/orange names alias logo red for existing components. */
+    --gold: var(--brand-red-hsl);
+    --gold-light: var(--brand-red-hover-hsl);
+    --gold-dark: var(--brand-red-hover-hsl);
     /* Darkened for WCAG AA contrast on white (~4.5:1+) */
     --vat-price: 160 78% 26%;
 
-    --navy: 222 54% 14%;
-    --navy-light: 216 36% 24%;
-    --navy-soft: 216 40% 18%;
+    --navy: var(--brand-navy-hsl);
+    --navy-light: var(--brand-navy-light-hsl);
+    --navy-soft: var(--brand-navy-hsl);
 
     --slate: 216 12% 42%;
     --slate-light: 216 10% 54%;
 
-    --xsto-orange: 225 85% 53%;
-    --xsto-orange-light: 225 80% 48%;
-    --xsto-orange-dark: 225 80% 42%;
+    --xsto-orange: var(--brand-red-hsl);
+    --xsto-orange-light: var(--brand-red-hover-hsl);
+    --xsto-orange-dark: var(--brand-red-hover-hsl);
 
     --gradient-gold: linear-gradient(
       135deg,
-      hsl(225 85% 53%) 0%,
-      hsl(225 80% 48%) 100%
+      hsl(var(--brand-red-hsl)) 0%,
+      hsl(var(--brand-red-hover-hsl)) 100%
     );
     --gradient-xsto: linear-gradient(
       135deg,
-      hsl(216 39% 20%) 0%,
+      hsl(var(--brand-ink-hsl)) 0%,
       hsl(216 32% 28%) 100%
     );
     --gradient-navy: linear-gradient(
       135deg,
-      hsl(216 39% 20%) 0%,
+      hsl(var(--brand-ink-hsl)) 0%,
       hsl(224 54% 16%) 100%
     );
     --gradient-hero: linear-gradient(
@@ -193,21 +212,21 @@
       hsl(214 18% 97%) 100%
     );
 
-    --shadow-soft: 0 4px 20px -4px hsl(216 39% 20% / 0.06);
-    --shadow-medium: 0 8px 30px -8px hsl(216 39% 20% / 0.1);
-    --shadow-strong: 0 20px 60px -15px hsl(216 39% 20% / 0.15);
+    --shadow-soft: 0 4px 20px -4px hsl(var(--brand-ink-hsl) / 0.06);
+    --shadow-medium: 0 8px 30px -8px hsl(var(--brand-ink-hsl) / 0.1);
+    --shadow-strong: 0 20px 60px -15px hsl(var(--brand-ink-hsl) / 0.15);
     --shadow-luxe:
-      0 30px 80px -30px hsl(216 39% 20% / 0.22),
-      0 8px 24px -8px hsl(216 39% 20% / 0.08);
-    --shadow-gold: 0 4px 12px -2px hsl(225 85% 53% / 0.25);
-    --shadow-gold-glow: 0 18px 50px -12px hsl(225 85% 53% / 0.3);
-    --shadow-xsto: 0 8px 30px -8px hsl(216 39% 20% / 0.25);
+      0 30px 80px -30px hsl(var(--brand-ink-hsl) / 0.22),
+      0 8px 24px -8px hsl(var(--brand-ink-hsl) / 0.08);
+    --shadow-gold: 0 4px 12px -2px hsl(var(--brand-red-hsl) / 0.25);
+    --shadow-gold-glow: 0 18px 50px -12px hsl(var(--brand-red-hsl) / 0.3);
+    --shadow-xsto: 0 8px 30px -8px hsl(var(--brand-ink-hsl) / 0.25);
 
     --gradient-gold-sheen: linear-gradient(
       135deg,
-      hsl(225 80% 48%) 0%,
-      hsl(225 85% 53%) 45%,
-      hsl(225 80% 42%) 100%
+      hsl(var(--brand-red-hover-hsl)) 0%,
+      hsl(var(--brand-red-hsl)) 45%,
+      hsl(var(--brand-red-hover-hsl)) 100%
     );
     --gradient-cream: linear-gradient(
       180deg,
@@ -217,18 +236,18 @@
     );
     --gradient-radial-gold: radial-gradient(
       circle at 50% 0%,
-      hsl(225 85% 53% / 0.07),
+      hsl(var(--brand-red-hsl) / 0.07),
       transparent 60%
     );
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 54% 14%;
-    --sidebar-primary: 216 39% 20%;
+    --sidebar-foreground: var(--brand-navy-hsl);
+    --sidebar-primary: var(--brand-ink-hsl);
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 214 18% 96%;
-    --sidebar-accent-foreground: 216 39% 20%;
+    --sidebar-accent-foreground: var(--brand-ink-hsl);
     --sidebar-border: 214 16% 88%;
-    --sidebar-ring: 216 39% 20%;
+    --sidebar-ring: var(--brand-ink-hsl);
 
     /* Hydrogen layout tokens — aliased to brand palette */
     --aside-width: 400px;
@@ -436,8 +455,8 @@
     @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-sm font-semibold text-white no-underline shadow-gold transition-all hover:brightness-105 hover:text-white disabled:cursor-not-allowed disabled:opacity-60;
     background-image: linear-gradient(
       135deg,
-      hsl(225 80% 42%) 0%,
-      #2155ed 100%
+      hsl(var(--brand-red-hover-hsl)) 0%,
+      var(--brand-red) 100%
     );
     color: #ffffff;
   }
@@ -678,7 +697,7 @@
 
   .site-header-cart-count {
     @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1.5 text-[0.75rem] font-semibold leading-none text-white sm:h-6 sm:min-w-6;
-    background-color: #2155ed;
+    background-color: var(--brand-red);
     color: #fff;
   }
 
@@ -752,7 +771,7 @@
     @apply m-0 grid list-none grid-cols-1 gap-2 p-4 sm:grid-cols-2 sm:p-5;
   }
   .mr-nav-series { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 20px; }
-  .mr-nav-series-title { display:flex; justify-content:space-between; font-weight:700; font-size:14px; padding:0 6px 12px; color:#0c1b35; }
+  .mr-nav-series-title { display:flex; justify-content:space-between; font-weight:700; font-size:14px; padding:0 6px 12px; color:var(--brand-navy); }
   .mr-nav-series ul { display:grid; gap:8px; list-style:none; padding:0; margin:0; }
   .mr-nav-series .site-header-dropdown-item { padding:10px 8px; gap:8px; }
   .mr-nav-series .site-header-dropdown-item-thumb { width:42px; height:42px; flex-shrink:0; }
@@ -1930,10 +1949,10 @@ a.btn-checkout,
 button.btn-checkout {
   background-image: linear-gradient(
     135deg,
-    hsl(225 80% 42%) 0%,
-    #2155ed 100%
+    hsl(var(--brand-red-hover-hsl)) 0%,
+    var(--brand-red) 100%
   ) !important;
-  box-shadow: 0 4px 16px -2px hsl(225 85% 53% / 0.4);
+  box-shadow: 0 4px 16px -2px hsl(var(--brand-red-hsl) / 0.4);
 }
 
 a.btn-checkout:hover,

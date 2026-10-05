@@ -39,12 +39,12 @@ export function StockistCard({
               {dealer.name}
             </span>
             {typeof distanceKm === 'number' ? (
-              <span className="shrink-0 text-[0.6875rem] font-medium tabular-nums text-navy/50">
+              <span className="shrink-0 text-[0.6875rem] font-medium tabular-nums text-muted-foreground">
                 {distanceKm.toFixed(0)} km
               </span>
             ) : null}
           </span>
-          <span className="mt-0.5 block text-xs leading-snug text-navy/55">
+          <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
             {dealer.city}
             {dealer.regions?.length ? ` · ${dealer.regions[0]}` : ''}
           </span>
@@ -80,7 +80,7 @@ export function StockistCard({
             </a>
             {dealer.website ? (
               <a
-                className="font-medium text-navy/55 hover:text-navy"
+                className="font-medium text-muted-foreground hover:text-navy"
                 href={dealer.website}
                 rel="noopener noreferrer"
                 target="_blank"
@@ -97,7 +97,7 @@ export function StockistCard({
               </span>
             ) : null}
             {dealer.hours ? (
-              <span className="text-[0.6875rem] text-navy/50">{dealer.hours}</span>
+              <span className="text-[0.6875rem] text-muted-foreground">{dealer.hours}</span>
             ) : null}
           </div>
         </div>

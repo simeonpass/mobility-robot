@@ -146,7 +146,7 @@ export default function DemoPage() {
           ) : (
             <form className="mt-8 space-y-6" noValidate onSubmit={handleSubmit}>
               <fieldset className="space-y-4">
-                <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-navy/55">
+                <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   Your details
                 </legend>
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -194,7 +194,7 @@ export default function DemoPage() {
               </fieldset>
 
               <fieldset className="space-y-4">
-                <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-navy/55">
+                <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   Preferences
                 </legend>
                 <FormField

@@ -48,7 +48,7 @@ export function VideosLibrary() {
                 >
                   {section.title}
                 </h2>
-                <p className="mt-2 text-sm leading-relaxed text-navy/60 md:text-base">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
                   {section.description}
                 </p>
               </div>
@@ -116,7 +116,7 @@ function VideoCard({
         <h3 className="font-semibold text-navy" id={titleId}>
           {video.title}
         </h3>
-        <p className="mt-2 text-sm leading-relaxed text-navy/60">
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {video.description}
         </p>
       </div>

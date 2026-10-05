@@ -23,8 +23,8 @@
   border-radius: 20px;
   overflow: hidden;
   background: #fff;
-  border: 1px solid #dce5f3;
-  box-shadow: 0 18px 50px #193e7d14;
+  border: 1px solid var(--brand-border);
+  box-shadow: 0 18px 50px hsl(var(--brand-navy-hsl) / 0.08);
 }
 .mr-motion-film video {
   display: block;
@@ -53,9 +53,9 @@
   gap: 8px;
   padding: 8px 12px;
   background: #ffffffed;
-  border: 1px solid #dce5f3;
+  border: 1px solid var(--brand-border);
   border-radius: 30px;
-  color: #173676;
+  color: var(--brand-navy);
   font-size: 11px;
   font-weight: 650;
 }
@@ -63,8 +63,8 @@
   height: 6px;
   width: 6px;
   border-radius: 50%;
-  background: #2155ed;
-  box-shadow: 0 0 0 4px #2155ed12;
+  background: var(--brand-red);
+  box-shadow: 0 0 0 4px hsl(var(--brand-red-hsl) / 0.07);
 }
 .mr-turntable-item img,
 .mr-turntable-shadow {
@@ -88,7 +88,7 @@
 }
 .mr-motion-eyebrow {
   margin: 0 0 10px;
-  color: #2155ed;
+  color: var(--brand-red);
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -109,31 +109,31 @@
   gap: 7px;
   padding: 8px 14px;
   background: white;
-  border: 1px solid #dce5f3;
+  border: 1px solid var(--brand-border);
   border-radius: 30px;
-  color: #526079;
+  color: var(--brand-muted);
   font-size: 12px;
   cursor: pointer;
   transition: background 0.2s;
 }
 .mr-motion-functions button[aria-pressed='true'] {
-  background: #2155ed;
-  border-color: #2155ed;
+  background: var(--brand-red);
+  border-color: var(--brand-red);
   color: white;
 }
 .mr-motion-functions button:focus-visible {
-  outline: 2px solid #2155ed;
+  outline: 2px solid var(--brand-red);
   outline-offset: 3px;
 }
 .mr-motion-description {
   margin: 10px auto 0;
-  color: #526079;
+  color: var(--brand-muted);
   font-size: 12px;
   line-height: 1.5;
 }
 .mr-motion-source {
   margin: 4px 0 0;
-  color: #69748a;
+  color: var(--brand-muted);
   font-size: 10px;
 }
 @media (max-width: 767px) {
@@ -268,7 +268,7 @@
 .mr-motion-film.is-portrait {
   width: auto;
   aspect-ratio: 1.12;
-  background: #eef0f5;
+  background: var(--brand-surface);
 }
 .mr-motion-film.is-portrait video {
   object-fit: cover;
@@ -283,7 +283,7 @@
   position: absolute;
   top: 10px;
   left: 12px;
-  color: #526079;
+  color: var(--brand-muted);
   font-size: 9px;
   letter-spacing: .04em;
 }

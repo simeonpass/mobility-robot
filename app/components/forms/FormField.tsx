@@ -1,5 +1,5 @@
 const inputClassName =
-  'w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base text-foreground transition-colors placeholder:text-muted-foreground/80 focus-visible:border-navy/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy/15 sm:text-sm';
+  'w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base text-foreground transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:text-sm';
 const labelClassName = 'mb-1.5 block text-sm font-medium text-foreground';
 const errorClassName = 'mt-1.5 text-xs text-destructive';
 

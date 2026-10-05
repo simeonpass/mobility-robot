@@ -100,7 +100,7 @@ export default function StockistsPage() {
         <fetcher.Form className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-end" method="post">
           <div className="min-w-0 flex-1">
             <label
-              className="mb-1 block text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-navy/50"
+              className="mb-1 block text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground"
               htmlFor="postcode-search"
             >
               Find nearest
@@ -122,7 +122,7 @@ export default function StockistsPage() {
             {searching ? 'Searching…' : 'Search'}
           </button>
         </fetcher.Form>
-        <p className="shrink-0 text-xs text-navy/50 sm:pb-2.5 sm:text-right">
+        <p className="shrink-0 text-xs text-muted-foreground sm:pb-2.5 sm:text-right">
           {rankedDealers
             ? `${displayDealers.length} nearest results`
             : `${DEALERS.length} UK & Ireland partners`}
@@ -150,7 +150,7 @@ export default function StockistsPage() {
             <h2 className="text-sm font-semibold text-navy">
               {rankedDealers ? 'Nearest stockists' : 'All stockists'}
             </h2>
-            <span className="text-[0.6875rem] text-navy/45">
+            <span className="text-[0.6875rem] text-muted-foreground">
               Tap a pin or a name
             </span>
           </div>
