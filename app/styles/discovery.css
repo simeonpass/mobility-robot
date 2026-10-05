@@ -28,7 +28,7 @@
   margin-bottom: 1.8rem;
 }
 .mr-discovery .mr-discovery-eyebrow {
-  color: var(--brand-red);
+  color: var(--brand-action);
   font-size: 0.75rem;
   line-height: 1.6;
   font-weight: 700;
@@ -56,7 +56,7 @@
 }
 .mr-discovery a:focus-visible,
 .mr-discovery [tabindex]:focus-visible {
-  outline: 3px solid var(--brand-red);
+  outline: 3px solid var(--brand-action);
   outline-offset: 5px;
 }
 .mr-discovery-grid {
@@ -82,14 +82,14 @@
 }
 .mr-discovery .mr-guide-card h2 a:hover,
 .mr-discovery .mr-guide-card h3 a:hover {
-  color: var(--brand-red);
+  color: var(--brand-action);
 }
 .mr-discovery .mr-guide-card > p:not(.mr-discovery-eyebrow) {
   margin: 1rem 0 1.5rem;
 }
 .mr-discovery .mr-guide-number {
   font-family: var(--font-display);
-  color: var(--brand-red-hover);
+  color: var(--brand-action-hover);
   font-size: 2.8rem;
   line-height: 1;
   font-weight: 600;
@@ -109,7 +109,7 @@
   margin-top: auto;
 }
 .mr-discovery .mr-discovery-link:hover {
-  color: var(--brand-red);
+  color: var(--brand-action);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -121,7 +121,7 @@
   padding: 0.95rem 1.4rem;
   min-height: 48px;
   border-radius: 0.5rem;
-  background: var(--brand-red);
+  background: var(--brand-action);
   color: #fff;
   font-weight: 700;
   line-height: 1.4;
@@ -129,7 +129,7 @@
   text-decoration: none;
 }
 .mr-discovery-button:hover {
-  background: var(--brand-red-hover);
+  background: var(--brand-action-hover);
   color: #fff;
 }
 .mr-discovery-actions {
@@ -147,7 +147,7 @@
   margin-top: clamp(3rem, 6vw, 5rem);
   padding: clamp(1.8rem, 4vw, 3.5rem);
   border-radius: 1.2rem;
-  border-top: 5px solid var(--brand-red);
+  border-top: 5px solid var(--brand-action-hover);
   background: var(--brand-navy);
 }
 .mr-discovery-cta h2 {
@@ -211,7 +211,7 @@
   align-items: center;
   gap: 0.4rem;
   min-height: 44px;
-  color: var(--brand-red);
+  color: var(--brand-action);
   text-decoration: underline;
   text-underline-offset: 3px;
   font-weight: 600;
@@ -246,7 +246,7 @@
   font-size: 0.95rem;
 }
 .mr-discovery-sidebar nav a:hover {
-  color: var(--brand-red);
+  color: var(--brand-action);
   text-decoration: underline;
 }
 .mr-discovery-aside-cta p {
@@ -321,7 +321,7 @@
   align-items: center;
   gap: 0.3rem;
   min-height: 44px;
-  color: var(--brand-red);
+  color: var(--brand-action);
   font-size: 0.85rem;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -359,7 +359,7 @@
 }
 .mr-discovery .mr-discovery-notice {
   padding: 1.1rem;
-  border-left: 3px solid var(--brand-red);
+  border-left: 3px solid var(--brand-action);
   background: white;
   margin-top: 1.5rem;
   font-size: 0.95rem;
@@ -385,7 +385,7 @@
   height: 2.5rem;
   border-radius: 50%;
   background: var(--brand-surface-active);
-  color: var(--brand-red);
+  color: var(--brand-action);
   font-weight: 700;
   font-size: 0.85rem;
 }
@@ -396,7 +396,7 @@
   margin-top: 0.65rem;
 }
 .mr-discovery .mr-support-card > svg {
-  color: var(--brand-red);
+  color: var(--brand-action);
   margin-bottom: 1.4rem;
 }
 @media (min-width: 1024px) {
@@ -447,4 +447,13 @@
   .mr-discovery > header h1 {
     font-size: clamp(2.3rem, 9vw, 3.5rem);
   }
+}
+
+.mr-discovery-cta .mr-discovery-button {
+  background: #fff;
+  color: var(--brand-navy);
+}
+.mr-discovery-cta .mr-discovery-button:hover {
+  background: var(--brand-surface-active);
+  color: var(--brand-navy);
 }

@@ -55,7 +55,7 @@
 /* A compact link to the business story, including on phones. */
 .mr-home .mr-story-strip { display: block; font-size: 14px; }
 .mr-story-mobile-copy { display: none; }
-.mr-story-strip a { min-height: 44px; color: var(--brand-red); }
+.mr-story-strip a { min-height: 44px; color: var(--brand-action); }
 .mr-story-strip .mr-transition-inner { padding-block: 5px; }
 
 .mr-awards-bar { background: #fff; border-bottom: 1px solid var(--brand-border); padding-block: 18px; }
@@ -70,7 +70,7 @@
 .mr-awards-red-dot-link { right: 0; width: 48%; }
 .mr-awards-good-design { display: flex; align-items: center; width: 210px; max-width: 36%; min-height: 60px; }
 .mr-awards-good-design img { width: 100%; height: auto; }
-.mr-awards-logos a:focus-visible { outline: 2px solid var(--brand-red); outline-offset: 5px; border-radius: 2px; }
+.mr-awards-logos a:focus-visible { outline: 2px solid var(--brand-action); outline-offset: 5px; border-radius: 2px; }
 @media (max-width: 767px) {
   .mr-awards-bar { padding-block: 16px; }
   .mr-awards-bar-inner { flex-direction: column; gap: 14px; }
@@ -94,17 +94,17 @@
 .mr-design-awards-list li { min-width: 0; }
 .mr-design-awards-list a {
   display: flex; flex-direction: column; height: 100%; padding: 22px;
-  border: 1px solid var(--brand-border); border-top: 3px solid var(--brand-red);
+  border: 1px solid var(--brand-border); border-top: 3px solid var(--brand-action);
   border-radius: 10px; background: #fff; color: var(--brand-navy); text-decoration: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
-.mr-design-awards-list a:hover { border-color: var(--brand-red); box-shadow: 0 6px 20px hsl(var(--brand-navy-hsl) / 0.04); }
-.mr-design-awards-list a:focus-visible { outline: 3px solid var(--brand-red); outline-offset: 4px; }
-.mr-design-award-year { display: flex; align-items: center; gap: 7px; margin-bottom: 20px; color: var(--brand-red); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+.mr-design-awards-list a:hover { border-color: var(--brand-action); box-shadow: 0 6px 20px hsl(var(--brand-navy-hsl) / 0.04); }
+.mr-design-awards-list a:focus-visible { outline: 3px solid var(--brand-action); outline-offset: 4px; }
+.mr-design-award-year { display: flex; align-items: center; gap: 7px; margin-bottom: 20px; color: var(--brand-action); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
 .mr-design-award-name { font-family: var(--font-display); font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.2; }
 .mr-design-award-category { font-size: 14px; color: var(--brand-muted); margin-top: 6px; }
 .mr-design-award-detail { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid var(--brand-border); padding-top: 14px; margin-top: 22px; font-size: 12px; color: var(--brand-muted); }
-.mr-design-award-detail svg { color: var(--brand-red); flex-shrink: 0; }
+.mr-design-award-detail svg { color: var(--brand-action); flex-shrink: 0; }
 @media (max-width: 1023px) {
   .mr-design-awards-grid { grid-template-columns: 1fr; gap: 20px; }
   .mr-design-awards-intro > p:not(.mr-eyebrow) { margin-top: 8px; }
@@ -115,7 +115,7 @@
   .mr-story-strip a { font-size: 13px; gap: 4px; }
   .mr-design-awards { padding-block: 24px; }
   .mr-design-awards-list { grid-template-columns: 1fr; gap: 10px; }
-  .mr-design-awards-list a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 14px 16px; border-top-width: 1px; border-left: 3px solid var(--brand-red); }
+  .mr-design-awards-list a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 14px 16px; border-top-width: 1px; border-left: 3px solid var(--brand-action); }
   .mr-design-award-year { grid-column: 2; grid-row: 1; margin: 0; font-size: 12px; letter-spacing: .02em; }
   .mr-design-award-year svg { width: 16px; height: 16px; }
   .mr-design-award-name { grid-column: 1; grid-row: 1; font-size: 20px; }
@@ -127,7 +127,7 @@
   font-weight: 750;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--brand-red);
+  color: var(--brand-action);
   margin-bottom: 18px;
 }
 .mr-actions {
@@ -144,7 +144,7 @@
   min-height: 50px;
   padding: 13px 20px;
   border: 1px solid transparent;
-  background: var(--brand-red);
+  background: var(--brand-action);
   color: #fff;
   font-size: 0.9rem;
   font-weight: 700;
@@ -156,8 +156,8 @@
   text-align: center;
 }
 .mr-button:hover {
-  background: var(--brand-red-hover);
-  box-shadow: 0 6px 16px hsl(var(--brand-red-hsl) / 0.13);
+  background: var(--brand-action-hover);
+  box-shadow: 0 6px 16px hsl(var(--brand-action-hsl) / 0.13);
 }
 .mr-button-outline {
   border-color: var(--brand-border);
@@ -168,11 +168,11 @@
   background: var(--brand-surface-active);
 }
 .mr-button-amber {
-  background: var(--brand-red);
+  background: var(--brand-action);
   color: #fff;
 }
 .mr-button-amber:hover {
-  background: var(--brand-red-hover);
+  background: var(--brand-action-hover);
 }
 .mr-trust {
   background: #fff;
@@ -196,7 +196,7 @@
   border: 0;
 }
 .mr-trust svg {
-  color: var(--brand-red);
+  color: var(--brand-action);
   flex-shrink: 0;
 }
 .mr-trust a {
@@ -237,7 +237,7 @@
   gap: 10px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--brand-red);
+  color: var(--brand-action);
   line-height: 1.5;
 }
 .mr-text-link:hover {
@@ -268,7 +268,7 @@
   flex-direction: column;
 }
 .mr-product-card:focus-within {
-  outline: 3px solid var(--brand-red);
+  outline: 3px solid var(--brand-action);
   outline-offset: 3px;
 }
 .mr-mobile-copy,
@@ -355,13 +355,13 @@
   margin-top: 3px;
 }
 .mr-card-badge.is-promotion {
-  background: var(--brand-red);
-  border-color: var(--brand-red);
-  color: #fff;
+  background: var(--brand-surface-active);
+  border-color: var(--brand-border);
+  color: var(--brand-red-hover);
 }
 .mr-card-offer {
   margin: 0 0 8px !important;
-  color: var(--brand-red-hover) !important;
+  color: var(--brand-action-hover) !important;
   font-weight: 700;
 }
 .mr-card-pricing s {
@@ -375,7 +375,7 @@
   border-top: 1px solid var(--brand-border);
 }
 .mr-card-deposit p:first-child {
-  color: var(--brand-red);
+  color: var(--brand-action);
   font-weight: 700;
 }
 .mr-mobile-actions {
@@ -478,7 +478,7 @@
 }
 .mr-final-cta {
   background: var(--brand-navy);
-  border-top: 5px solid var(--brand-red);
+  border-top: 5px solid var(--brand-action-hover);
   color: #cbd5e6;
   border-radius: 14px;
   padding: 54px;
@@ -540,7 +540,7 @@
   margin-top: 14px;
 }
 .mr-home :is(a, button, summary):focus-visible {
-  outline: 3px solid var(--brand-red);
+  outline: 3px solid var(--brand-action);
   outline-offset: 5px;
 }
 .mr-feature :is(a, button):focus-visible,
@@ -860,7 +860,7 @@
     text-decoration: none;
   }
   .mr-mobile-actions-primary {
-    background: var(--brand-red);
+    background: var(--brand-action);
     color: #fff;
   }
   .mr-mobile-actions-secondary {
@@ -908,7 +908,7 @@
 .mr-hero h1 > span:not(.mr-hero-opening) {
   white-space: nowrap;
   text-decoration: underline;
-  text-decoration-color: var(--brand-red);
+  text-decoration-color: var(--brand-action);
   text-decoration-thickness: 4px;
   text-underline-offset: 9px;
   text-decoration-skip-ink: none;
@@ -932,7 +932,7 @@
   color: var(--brand-muted);
 }
 .mr-hero-note svg {
-  color: var(--brand-red);
+  color: var(--brand-action);
   flex-shrink: 0;
 }
 .mr-hero-showcase {
@@ -1015,7 +1015,7 @@
   color: var(--brand-navy);
 }
 .mr-hero-model-name svg {
-  color: var(--brand-red);
+  color: var(--brand-action);
   flex-shrink: 0;
 }
 .mr-hero-model-detail {
@@ -1258,7 +1258,7 @@
 /* The original X12 film, with readable copy and a compact phone presentation. */
 .mr-series-links { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:12px; margin:0 0 28px; }
 .mr-series-links a { padding:18px 20px; border:1px solid var(--brand-border); border-radius:10px; font-weight:700; color:var(--brand-navy); background:var(--brand-surface); }
-.mr-series-links a:hover, .mr-series-links a[aria-current="page"] { border-color:var(--brand-red); background:var(--brand-surface-active); }
+.mr-series-links a:hover, .mr-series-links a[aria-current="page"] { border-color:var(--brand-action); background:var(--brand-surface-active); }
 .mr-series-links span { display:block; font-size:.8rem; font-weight:400; margin-top:4px; }
 .mr-series-models { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
 .mr-series-models .mr-card-visual { aspect-ratio:4/3; background:var(--brand-surface); }
@@ -1267,7 +1267,7 @@
 .mr-series-models h2 { font-size:2rem; margin-bottom:10px; }
 .mr-series-features { padding-left:20px; margin:20px 0; line-height:1.9; }
 .mr-series-price strong { font-size:1.6rem; color:var(--brand-navy); }
-.mr-series-deposit { margin:20px 0!important; padding:16px; background:var(--brand-surface-active); border-radius:8px; color:var(--brand-red)!important; font-weight:600; }
+.mr-series-deposit { margin:20px 0!important; padding:16px; background:var(--brand-surface-active); border-radius:8px; color:var(--brand-action)!important; font-weight:600; }
 .mr-series-models .mr-button { margin-top:24px; }
 .mr-series-help { margin:50px 0 0; padding:32px; border-radius:14px; background:var(--brand-surface); }
 .mr-series-help h2 { font-size:1.7rem; margin-bottom:12px; }
@@ -1284,7 +1284,7 @@
 .mr-turntable {
   --tt-ink: var(--brand-navy);
   --tt-slate: var(--brand-muted);
-  --tt-blue: var(--brand-red);
+  --tt-blue: var(--brand-action);
   --tt-line: var(--brand-border);
   --tt-stage: var(--brand-surface);
   --tt-stage-h: clamp(300px, 40vh, 420px);
@@ -1548,13 +1548,13 @@
   line-height: 1;
   padding: 6px 10px;
   border-radius: 999px;
-  background: var(--brand-red-soft);
-  color: var(--brand-red-hover);
-  border: 1px solid var(--brand-red-border);
+  background: var(--brand-surface);
+  color: var(--brand-action-hover);
+  border: 1px solid var(--brand-border);
 }
 .mr-turntable-badge.is-blue {
   background: var(--brand-surface-active);
-  color: var(--brand-red);
+  color: var(--brand-action);
   border-color: var(--brand-border);
 }
 .mr-home .mr-turntable-pitch {
@@ -1641,7 +1641,7 @@
   right: 14px;
   top: -1px;
   height: 2px;
-  background: var(--tt-blue);
+  background: var(--brand-red);
   transform: scaleX(0);
   transform-origin: left;
   opacity: 0;
@@ -1811,8 +1811,8 @@
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
-  background: var(--brand-red-soft);
-  color: var(--brand-red-hover);
+  background: var(--brand-surface);
+  color: var(--brand-action-hover);
   font-weight: 750;
 }
 .mr-turntable-price s {
@@ -1827,7 +1827,7 @@
 
 /* Special-offer strip under the hero */
 .mr-offer-strip {
-  background: linear-gradient(110deg, var(--brand-surface-active), #fff 65%, var(--brand-red-soft));
+  background: linear-gradient(110deg, var(--brand-surface-active), #fff 65%, var(--brand-surface));
   color: var(--brand-navy);
   border-top: 1px solid var(--brand-border);
   border-bottom: 1px solid var(--brand-border);
@@ -1837,7 +1837,7 @@
 }
 .mr-offer-strip-kicker {
   margin: 0 0 10px;
-  color: var(--brand-red);
+  color: var(--brand-red-hover);
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -1861,7 +1861,7 @@
 }
 .mr-offer-strip-saving strong {
   font-size: 2.6rem;
-  color: var(--brand-red);
+  color: var(--brand-action);
   letter-spacing: -0.05em;
 }
 .mr-home .mr-offer-strip-detail {
@@ -1893,4 +1893,19 @@
   .mr-offer-strip .mr-button {
     width: 100%;
   }
+}
+
+/* Quiet white actions remain distinct against the dark feature panels. */
+.mr-feature .mr-button,
+.mr-final-cta .mr-button {
+  background: #fff;
+  border-color: #fff;
+  color: var(--brand-navy);
+  box-shadow: none;
+}
+.mr-feature .mr-button:hover,
+.mr-final-cta .mr-button:hover {
+  background: var(--brand-surface-active);
+  border-color: var(--brand-surface-active);
+  color: var(--brand-navy);
 }

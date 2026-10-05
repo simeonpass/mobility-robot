@@ -112,25 +112,28 @@
 
 @layer base {
   :root {
-    /* Sampled from the existing joint XSTO / Bentech logo, not a new identity. */
-    --brand-red-hsl: 354.5763 73.4440% 47.2549%;
-    --brand-red-hover-hsl: 354.3624 74.8744% 39.0196%;
-    --brand-navy-hsl: 225.5172 51.7857% 21.9608%;
-    --brand-navy-deep-hsl: 223.1250 74.4186% 16.8627%;
-    --brand-navy-light-hsl: 223.6364 34.5912% 31.1765%;
+    /* Tonal palette: the logo's XSTO ink navy, softened slate and restrained burgundy. */
+    --brand-red-hsl: 355.4839 39.9142% 45.6863%;
+    --brand-red-hover-hsl: 355.5000 42.1053% 37.2549%;
+    --brand-navy-hsl: 218.9189 34.5794% 20.9804%;
+    --brand-navy-deep-hsl: 216.4286 36.8421% 14.9020%;
+    --brand-navy-light-hsl: 214.7368 24.0506% 30.9804%;
     --brand-ink-hsl: 218.9189 34.5794% 20.9804%;
     --brand-red: hsl(var(--brand-red-hsl));
     --brand-red-hover: hsl(var(--brand-red-hover-hsl));
     --brand-navy: hsl(var(--brand-navy-hsl));
     --brand-navy-deep: hsl(var(--brand-navy-deep-hsl));
-    --brand-surface: #f5f6f8;
-    --brand-surface-soft: #fafafb;
-    --brand-surface-active: #eceef3;
-    --brand-border: #dce0e7;
-    --brand-muted: #526079;
-    --brand-red-soft: #fff1f2;
-    --brand-red-border: #edc1c6;
-    /* White maintains contrast where logo red would be too dark on navy. */
+    /* Calm navy actions; red is reserved for a few small promotional accents. */
+    --brand-action-hsl: var(--brand-navy-hsl);
+    --brand-action-hover-hsl: var(--brand-navy-light-hsl);
+    --brand-action: hsl(var(--brand-action-hsl));
+    --brand-action-hover: hsl(var(--brand-action-hover-hsl));
+    --brand-surface: #f6f6f4;
+    --brand-surface-soft: #fbfbfa;
+    --brand-surface-active: #edeff1;
+    --brand-border: #dfe2e6;
+    --brand-muted: #596474;
+    /* Light actions and labels remain readable on dark panels. */
     --brand-on-dark-accent: #fff;
 
     --background: 0 0% 100%;
@@ -145,8 +148,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: var(--brand-navy-hsl);
 
-    /* Logo red for primary actions, with white labels. */
-    --primary: var(--brand-red-hsl);
+    /* Navy primary actions with high-contrast white labels. */
+    --primary: var(--brand-action-hsl);
     --primary-foreground: 0 0% 100%;
 
     --secondary: 214 18% 96%;
@@ -155,7 +158,7 @@
     --muted: 214 16% 93%;
     --muted-foreground: 216 12% 42%;
 
-    --accent: var(--brand-red-hsl);
+    --accent: var(--brand-action-hsl);
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 42%;
@@ -173,10 +176,10 @@
     --xsto-blue-dark: var(--brand-navy-deep-hsl);
     --xsto-blue-muted: 216 14% 48%;
 
-    /* Legacy gold/orange names alias logo red for existing components. */
-    --gold: var(--brand-red-hsl);
-    --gold-light: var(--brand-red-hover-hsl);
-    --gold-dark: var(--brand-red-hover-hsl);
+    /* Legacy gold/orange names use the restrained navy action palette. */
+    --gold: var(--brand-action-hsl);
+    --gold-light: var(--brand-action-hover-hsl);
+    --gold-dark: var(--brand-action-hover-hsl);
     /* Darkened for WCAG AA contrast on white (~4.5:1+) */
     --vat-price: 160 78% 26%;
 
@@ -187,24 +190,24 @@
     --slate: 216 12% 42%;
     --slate-light: 216 10% 54%;
 
-    --xsto-orange: var(--brand-red-hsl);
-    --xsto-orange-light: var(--brand-red-hover-hsl);
-    --xsto-orange-dark: var(--brand-red-hover-hsl);
+    --xsto-orange: var(--brand-action-hsl);
+    --xsto-orange-light: var(--brand-action-hover-hsl);
+    --xsto-orange-dark: var(--brand-action-hover-hsl);
 
     --gradient-gold: linear-gradient(
       135deg,
-      hsl(var(--brand-red-hsl)) 0%,
-      hsl(var(--brand-red-hover-hsl)) 100%
+      hsl(var(--brand-action-hsl)) 0%,
+      hsl(var(--brand-action-hover-hsl)) 100%
     );
     --gradient-xsto: linear-gradient(
       135deg,
       hsl(var(--brand-ink-hsl)) 0%,
-      hsl(216 32% 28%) 100%
+      hsl(var(--brand-navy-light-hsl)) 100%
     );
     --gradient-navy: linear-gradient(
       135deg,
       hsl(var(--brand-ink-hsl)) 0%,
-      hsl(224 54% 16%) 100%
+      hsl(var(--brand-navy-deep-hsl)) 100%
     );
     --gradient-hero: linear-gradient(
       180deg,
@@ -218,15 +221,15 @@
     --shadow-luxe:
       0 30px 80px -30px hsl(var(--brand-ink-hsl) / 0.22),
       0 8px 24px -8px hsl(var(--brand-ink-hsl) / 0.08);
-    --shadow-gold: 0 4px 12px -2px hsl(var(--brand-red-hsl) / 0.25);
-    --shadow-gold-glow: 0 18px 50px -12px hsl(var(--brand-red-hsl) / 0.3);
+    --shadow-gold: 0 4px 12px -2px hsl(var(--brand-action-hsl) / 0.12);
+    --shadow-gold-glow: 0 18px 50px -12px hsl(var(--brand-action-hsl) / 0.12);
     --shadow-xsto: 0 8px 30px -8px hsl(var(--brand-ink-hsl) / 0.25);
 
     --gradient-gold-sheen: linear-gradient(
       135deg,
-      hsl(var(--brand-red-hover-hsl)) 0%,
-      hsl(var(--brand-red-hsl)) 45%,
-      hsl(var(--brand-red-hover-hsl)) 100%
+      hsl(var(--brand-action-hover-hsl)) 0%,
+      hsl(var(--brand-action-hsl)) 45%,
+      hsl(var(--brand-action-hover-hsl)) 100%
     );
     --gradient-cream: linear-gradient(
       180deg,
@@ -236,7 +239,7 @@
     );
     --gradient-radial-gold: radial-gradient(
       circle at 50% 0%,
-      hsl(var(--brand-red-hsl) / 0.07),
+      hsl(var(--brand-action-hsl) / 0.07),
       transparent 60%
     );
 
@@ -436,7 +439,7 @@
 
   /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-medium transition-shadow hover:shadow-strong;
+    @apply inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-navy-light;
   }
 
   .btn-secondary {
@@ -444,20 +447,17 @@
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center rounded-lg bg-gradient-gold-sheen px-6 py-3 text-sm font-semibold text-primary-foreground shadow-gold-glow transition-all hover:brightness-105;
+    @apply inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-navy-light;
   }
 
   .btn-atc {
-    @apply inline-flex h-14 items-center justify-center rounded-lg bg-navy px-6 text-[0.9375rem] font-semibold tracking-[-0.01em] text-white no-underline shadow-medium transition-all hover:bg-navy-light hover:shadow-strong;
+    @apply inline-flex h-14 items-center justify-center rounded-lg bg-navy px-6 text-[0.9375rem] font-semibold tracking-[-0.01em] text-white no-underline shadow-soft transition-colors hover:bg-navy-light;
   }
 
   .btn-checkout {
-    @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-sm font-semibold text-white no-underline shadow-gold transition-all hover:brightness-105 hover:text-white disabled:cursor-not-allowed disabled:opacity-60;
-    background-image: linear-gradient(
-      135deg,
-      hsl(var(--brand-red-hover-hsl)) 0%,
-      var(--brand-red) 100%
-    );
+    @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-sm font-semibold text-white no-underline shadow-soft transition-colors hover:bg-navy-light hover:text-white disabled:cursor-not-allowed disabled:opacity-60;
+    background-image: none;
+    background-color: var(--brand-action);
     color: #ffffff;
   }
 
@@ -697,7 +697,7 @@
 
   .site-header-cart-count {
     @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1.5 text-[0.75rem] font-semibold leading-none text-white sm:h-6 sm:min-w-6;
-    background-color: var(--brand-red);
+    background-color: var(--brand-action);
     color: #fff;
   }
 
@@ -1947,18 +1947,15 @@ a.site-header-cta:hover {
 
 a.btn-checkout,
 button.btn-checkout {
-  background-image: linear-gradient(
-    135deg,
-    hsl(var(--brand-red-hover-hsl)) 0%,
-    var(--brand-red) 100%
-  ) !important;
-  box-shadow: 0 4px 16px -2px hsl(var(--brand-red-hsl) / 0.4);
+  background-image: none !important;
+  background-color: var(--brand-action) !important;
+  box-shadow: 0 2px 5px hsl(var(--brand-action-hsl) / 0.08);
 }
 
 a.btn-checkout:hover,
 button.btn-checkout:hover {
   color: #ffffff !important;
-  filter: brightness(1.06);
+  background-color: var(--brand-action-hover) !important;
 }
 
 a.btn-checkout span,

@@ -38,9 +38,9 @@ function contrastOnWhite(rgb: number[]) {
 }
 
 describe('joint XSTO / Bentech colour palette', () => {
-  it('uses the colours sampled from the approved joint logo', () => {
-    expect(tokenRgb('red')).toEqual([209, 32, 48]);
-    expect(tokenRgb('navy')).toEqual([27, 41, 85]);
+  it("uses the logo's ink navy with a softened red accent", () => {
+    expect(tokenRgb('red')).toEqual([163, 70, 77]);
+    expect(tokenRgb('navy')).toEqual([35, 48, 72]);
     expect(tokenRgb('ink')).toEqual([35, 48, 72]);
   });
 
@@ -57,10 +57,23 @@ describe('joint XSTO / Bentech colour palette', () => {
     }
   });
 
-  it('keeps existing action aliases on the shared logo-red token', () => {
+  it('uses navy for everyday actions and keeps red as an accent', () => {
+    expect(styles[0]).toContain('--brand-action-hsl: var(--brand-navy-hsl);');
     for (const token of ['primary', 'accent', 'gold', 'xsto-orange']) {
-      expect(styles[0]).toContain(`--${token}: var(--brand-red-hsl);`);
+      expect(styles[0]).toContain(`--${token}: var(--brand-action-hsl);`);
     }
+  });
+
+  it('avoids solid red buttons and pink offer panels', () => {
+    for (const stylesheet of styles.filter((_, index) => index !== 4)) {
+      const withoutSmallMarkers = stylesheet.replace(
+        /\.mr-turntable-tab::after\s*\{[^}]*\}/g,
+        '',
+      );
+      expect(withoutSmallMarkers).not.toContain('background: var(--brand-red)');
+      expect(stylesheet).not.toContain('background: var(--brand-red-soft)');
+    }
+    expect(styles[3]).toContain('border-left: 3px solid var(--brand-red)');
   });
 
   it('does not reintroduce the retired electric-blue and amber brand accents', () => {
