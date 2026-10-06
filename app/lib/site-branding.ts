@@ -1,41 +1,14 @@
-export const HEADER_LOGO = {
-  dark: {
-    src: '/images/xsto-bentech-header.png',
-    width: 1000,
-    height: 300,
-    alt: 'XSTO and Bentech Medical Ltd — Official UK Distributor',
-  },
-  light: {
-    src: '/images/xsto-bentech-header-light.png',
-    width: 800,
-    height: 250,
-    alt: 'XSTO and Bentech Medical Ltd — Official UK Distributor',
-  },
+/** Customer-facing trading name shown as the site wordmark. */
+export const SITE_BRAND_NAME = 'Mobility Robot';
+
+/** Accessible name for the home link wrapping the brand lockup. */
+export const SITE_BRAND_HOME_LABEL =
+  'Mobility Robot, official UK distributor of XSTO — home';
+
+/** XSTO's own mark, used only as a labelled endorsement beside the wordmark. */
+export const XSTO_LOGO = {
+  src: '/images/xsto-logo.png',
+  width: 334,
+  height: 166,
+  alt: 'XSTO',
 } as const;
-
-export const FOOTER_LOGO = {
-  src: '/images/xsto-bentech-footer.png',
-  width: 1000,
-  height: 300,
-  alt: 'XSTO and Bentech Medical Ltd — Official UK Distributor',
-} as const;
-
-/** Display height in the header; width scales from intrinsic aspect ratio. */
-export const HEADER_LOGO_DISPLAY_HEIGHT = 64;
-
-/** Display height in the footer; compact but readable. */
-export const FOOTER_LOGO_DISPLAY_HEIGHT = 44;
-
-export function headerLogoDisplayWidth(
-  height = HEADER_LOGO_DISPLAY_HEIGHT,
-): number {
-  return Math.round(
-    (HEADER_LOGO.dark.width / HEADER_LOGO.dark.height) * height,
-  );
-}
-
-export function footerLogoDisplayWidth(
-  height = FOOTER_LOGO_DISPLAY_HEIGHT,
-): number {
-  return Math.round((FOOTER_LOGO.width / FOOTER_LOGO.height) * height);
-}

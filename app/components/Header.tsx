@@ -8,7 +8,8 @@ import {
 } from '@shopify/hydrogen';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
-import {HEADER_LOGO} from '~/lib/site-branding';
+import {SiteBrand} from '~/components/SiteBrand';
+import {SITE_BRAND_HOME_LABEL} from '~/lib/site-branding';
 import {
   HEADER_CTA,
   HEADER_MOBILE_EXTRA_NAV,
@@ -30,37 +31,18 @@ interface HeaderProps {
   isLoggedIn: Promise<boolean>;
 }
 
-/** Joint XSTO and Bentech Medical distributor identity. */
-export function JointBrand({light = false}: {light?: boolean}) {
-  const logo = light ? HEADER_LOGO.light : HEADER_LOGO.dark;
-
-  return (
-    <span>
-      <img
-        src={logo.src}
-        alt={logo.alt}
-        width={logo.width}
-        height={logo.height}
-        className="mr-homepage-logo"
-        fetchPriority={light ? 'auto' : 'high'}
-        decoding="async"
-      />
-    </span>
-  );
-}
-
 export function Header({isLoggedIn, cart}: HeaderProps) {
   return (
     <header className="site-header site-header--solid mr-site-header">
       <div className="xsto-container mr-header-inner">
         <NavLink
-          aria-label="XSTO and Bentech Medical — home"
+          aria-label={SITE_BRAND_HOME_LABEL}
           className="site-header-logo min-w-0 shrink-0"
           end
           prefetch="intent"
           to="/"
         >
-          <JointBrand />
+          <SiteBrand priority />
         </NavLink>
         <HeaderMenu isLoggedIn={isLoggedIn} viewport="desktop" />
         <HeaderCtas cart={cart} isLoggedIn={isLoggedIn} />

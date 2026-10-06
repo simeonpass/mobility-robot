@@ -1,6 +1,7 @@
 import {NavLink} from 'react-router';
 import {COMPANY, FOOTER_NAV_GROUPS} from '~/lib/site-navigation';
-import {HEADER_LOGO} from '~/lib/site-branding';
+import {SITE_BRAND_HOME_LABEL} from '~/lib/site-branding';
+import {SiteBrand} from '~/components/SiteBrand';
 import {DistributorDisclaimer} from '~/components/footer/DistributorDisclaimer';
 import {FooterBottom} from '~/components/footer/FooterBottom';
 import {FooterNewsletter} from '~/components/footer/FooterNewsletter';
@@ -13,18 +14,13 @@ export function FooterMain() {
         <div className="mr-footer-grid">
           <div className="mr-footer-brand">
             <NavLink
-              aria-label="XSTO and Bentech Medical — home"
+              aria-label={SITE_BRAND_HOME_LABEL}
               className="mr-footer-brand-link"
               end
               prefetch="intent"
               to="/"
             >
-              <img
-                {...HEADER_LOGO.dark}
-                className="mr-footer-logo"
-                loading="lazy"
-                decoding="async"
-              />
+              <SiteBrand />
             </NavLink>
             <p className="mr-footer-intro">
               Intelligent mobility, personal support.

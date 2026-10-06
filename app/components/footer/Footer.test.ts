@@ -4,7 +4,7 @@ import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {Footer} from '../Footer';
 import {FooterNewsletter} from './FooterNewsletter';
 import {FOOTER_NAV_GROUPS, PRODUCT_NAV_ITEMS} from '~/lib/site-navigation';
-import {HEADER_LOGO} from '~/lib/site-branding';
+import {XSTO_LOGO} from '~/lib/site-branding';
 
 const state = vi.hoisted(() => ({
   status: 'idle',
@@ -42,11 +42,13 @@ describe('premium storefront footer', () => {
     state.data = undefined;
   });
 
-  it('uses the full joint logo on the light footer, with intrinsic dimensions', () => {
+  it('leads with the Mobility Robot name and shows XSTO as a labelled endorsement', () => {
     const html = renderToStaticMarkup(createElement(Footer));
-    expect(html).toContain(`src="${HEADER_LOGO.dark.src}"`);
-    expect(html).toContain('width="1000" height="300"');
-    expect(html).not.toContain(HEADER_LOGO.light.src);
+    expect(html).toContain('class="mr-lockup-name">Mobility Robot<');
+    expect(html).toContain('Official UK distributor');
+    expect(html).toContain(`src="${XSTO_LOGO.src}"`);
+    expect(html).toContain('width="334" height="166"');
+    expect(html).not.toContain('xsto-bentech-header');
     expect(html).toContain('id="site-footer"');
   });
 

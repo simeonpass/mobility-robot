@@ -19,14 +19,6 @@
   display: inline-block;
   max-width: 100%;
 }
-.mr-footer-logo {
-  display: block;
-  width: 280px;
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  mix-blend-mode: multiply;
-}
 .mr-footer-intro {
   margin: 22px 0 8px;
   font-size: 15px;
@@ -326,9 +318,6 @@
   .mr-footer-intro,
   .mr-footer-description {
     grid-column: 1;
-  }
-  .mr-footer-logo {
-    width: 260px;
   }
   .mr-footer-contact {
     grid-column: 2;
