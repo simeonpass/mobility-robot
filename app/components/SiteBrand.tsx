@@ -1,14 +1,17 @@
-import {SITE_BRAND_NAME, XSTO_LOGO} from '~/lib/site-branding';
+import {XSTO_LOGO} from '~/lib/site-branding';
 
 /**
- * Bentech Medical wordmark with the XSTO endorsement on one line beneath it.
- * The distributor's own name leads; the manufacturer's logo is a smaller,
- * labelled endorsement so the site never reads as XSTO's own.
+ * Mobility Robot wordmark with the XSTO endorsement on one line beneath it.
+ * The site's own name leads, with "Robot" in the accent colour; the
+ * manufacturer's logo is a smaller, labelled endorsement so the site never
+ * reads as XSTO's own.
  */
 export function SiteBrand({priority = false}: {priority?: boolean}) {
   return (
     <span className="mr-lockup">
-      <span className="mr-lockup-name">{SITE_BRAND_NAME}</span>
+      <span className="mr-lockup-name">
+        Mobility <span className="mr-lockup-accent">Robot</span>
+      </span>
       <span className="mr-lockup-endorsement">
         <span className="mr-lockup-label">Official UK distributor of</span>
         <img

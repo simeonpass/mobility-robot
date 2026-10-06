@@ -35,12 +35,13 @@
 .mr-header-inner { display: flex; height: var(--header-height); align-items: center; gap: 20px; }
 .mr-header-inner .site-header-logo { overflow: visible; }
 .mr-lockup { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 6px; color: var(--brand-navy); }
-.mr-lockup-name { font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1; letter-spacing: -.035em; white-space: nowrap; }
+.mr-lockup-name { font-family: var(--font-display); font-size: 25px; font-weight: 800; line-height: 1; letter-spacing: -.035em; white-space: nowrap; }
+.mr-lockup-accent { color: var(--brand-red); }
 .mr-lockup-endorsement { display: flex; align-items: center; gap: 6px; }
 .mr-lockup-label { color: var(--brand-muted); font-size: 12px; font-weight: 500; line-height: 1; letter-spacing: .01em; white-space: nowrap; }
 .mr-lockup-xsto { display: block; width: auto; height: 17px; transform: translateY(-2px); }
 @media (max-width: 767px) {
-  .mr-lockup-name { font-size: clamp(17px, 5.3vw, 21px); }
+  .mr-lockup-name { font-size: 21px; }
   .mr-lockup-label { font-size: 11px; }
   .mr-lockup-xsto { height: 15px; }
 }
