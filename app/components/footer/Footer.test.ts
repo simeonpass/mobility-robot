@@ -42,10 +42,10 @@ describe('premium storefront footer', () => {
     state.data = undefined;
   });
 
-  it('leads with the Mobility Robot name and shows XSTO as a labelled endorsement', () => {
+  it('leads with the Bentech Medical name and shows XSTO as a labelled endorsement', () => {
     const html = renderToStaticMarkup(createElement(Footer));
-    expect(html).toContain('class="mr-lockup-name">Mobility Robot<');
-    expect(html).toContain('Official UK distributor');
+    expect(html).toContain('class="mr-lockup-name">Bentech Medical Ltd<');
+    expect(html).toContain('Official UK distributor of');
     expect(html).toContain(`src="${XSTO_LOGO.src}"`);
     expect(html).toContain('width="334" height="166"');
     expect(html).not.toContain('xsto-bentech-header');
