@@ -1,6 +1,6 @@
 import {Suspense, useEffect, useId, useRef, useState} from 'react';
 import {Await, Link, NavLink, useAsyncValue, useLocation} from 'react-router';
-import {ArrowRight, Search} from 'lucide-react';
+import {ArrowRight, ChevronRight, Search} from 'lucide-react';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -339,23 +339,25 @@ function MobileNav({
       className="site-header-mobile"
       role="navigation"
     >
-      <Link className="mr-mobile-search" to="/search" onClick={close}>
-        <Search size={20} aria-hidden /> Search products
-      </Link>
-      {isLoggedIn ? (
-        <NavLink
-          className={navLinkClass(false, 'site-header-mobile-account')}
-          onClick={close}
-          prefetch="intent"
-          to="/account"
-        >
-          <Suspense fallback="Sign in">
-            <Await errorElement="Sign in" resolve={isLoggedIn}>
-              {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
-            </Await>
-          </Suspense>
-        </NavLink>
-      ) : null}
+      <div className="site-header-mobile-tools">
+        <Link className="mr-mobile-search" to="/search" onClick={close}>
+          <Search size={20} aria-hidden /> Search products
+        </Link>
+        {isLoggedIn ? (
+          <NavLink
+            className={navLinkClass(false, 'site-header-mobile-account')}
+            onClick={close}
+            prefetch="intent"
+            to="/account"
+          >
+            <Suspense fallback="Sign in">
+              <Await errorElement="Sign in" resolve={isLoggedIn}>
+                {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
+              </Await>
+            </Suspense>
+          </NavLink>
+        ) : null}
+      </div>
 
       {PRODUCT_NAV_GROUPS.map((group) => (
         <div className="site-header-mobile-section" key={group.title}>
@@ -429,6 +431,12 @@ function MobileNavLink({item, close}: {item: NavItem; close: () => void}) {
           </span>
         ) : null}
       </span>
+      <ChevronRight
+        aria-hidden
+        className="site-header-mobile-link-arrow"
+        size={16}
+        strokeWidth={1.75}
+      />
     </NavLink>
   );
 }

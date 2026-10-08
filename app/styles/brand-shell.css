@@ -203,16 +203,92 @@
 .mr-shell .overlay>aside {background:#fff;box-shadow:0 10px 36px hsl(var(--brand-navy-hsl) / 0.11)}
 .mr-shell .overlay>aside>header {height:68px;border-color:var(--brand-border)}
 .mr-shell .overlay>aside>header .close {min-width:44px;min-height:44px;border-radius:8px;font-size:26px;font-weight:400}
-.mr-shell .site-header-mobile {gap:0}
-.mr-shell .site-header-mobile-section {padding-block:14px}
-.mr-shell .site-header-mobile-link {min-height:50px;padding:8px 10px;border-radius:7px}
-.mr-shell .site-header-mobile-link-desc {display:none}
-.mr-shell .site-header-mobile-link-thumb {width:38px;height:38px;min-width:38px}
-.mr-shell .site-header-mobile-link-thumb-img {width:38px;height:38px;object-fit:contain}
-.mr-shell .site-header-mobile-label {margin-bottom:9px;font-size:.68rem;letter-spacing:.1em}
-.mr-shell .site-header-mobile-footer {padding-top:18px}
-.mr-shell .site-header-mobile-account {font-size:.85rem;min-height:44px}
-.mr-shell .mr-mobile-search {display:flex;align-items:center;gap:12px;min-height:48px;margin-bottom:12px;padding:12px 14px;border:1px solid var(--brand-border);border-radius:8px;background:var(--brand-surface);color:var(--brand-muted);font-size:1rem}
+/* Give the mobile drawer its own rhythm and alignment, independent of desktop links. */
+.mr-shell .overlay--mobile > aside > header {
+  height: auto;
+  min-height: 60px;
+  padding: max(8px, env(safe-area-inset-top)) 16px 8px;
+}
+.mr-shell .overlay--mobile > aside > header h3 { font-size: 17px; font-weight: 650; }
+.mr-shell .overlay--mobile > aside > main {
+  padding: 12px 16px max(20px, env(safe-area-inset-bottom));
+}
+.mr-shell .site-header-mobile { gap: 0; padding: 0; }
+.mr-shell .site-header-mobile-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+}
+.mr-shell .mr-mobile-search {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  background: var(--brand-surface);
+  color: var(--brand-muted);
+  font-size: 15px;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.mr-shell .mr-mobile-search svg { flex-shrink: 0; }
+.mr-shell .site-header-mobile-account {
+  flex-shrink: 0;
+  justify-content: center;
+  min-height: 48px;
+  margin: 0;
+  padding: 8px;
+  font-size: 14px;
+}
+.mr-shell .site-header-mobile-section { gap: 2px; padding-block: 8px; }
+.mr-shell .site-header-mobile-label {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  margin: 0;
+  padding-inline: 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: .1em;
+  text-decoration: none;
+}
+.mr-shell a.site-header-mobile-label { min-height: 44px; }
+.mr-shell .site-header-mobile-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  line-height: 1.4;
+  text-align: left;
+}
+.mr-shell .site-header-mobile-link--product { min-height: 56px; font-weight: 600; }
+.mr-shell .site-header-mobile-link-desc { display: none; }
+.mr-shell .site-header-mobile-link-thumb {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 8px;
+  background: var(--brand-surface);
+}
+.mr-shell .site-header-mobile-link-thumb-img { width: 44px; height: 44px; object-fit: contain; mix-blend-mode: multiply; }
+.mr-shell .site-header-mobile-link-text { flex: 1; overflow-wrap: anywhere; }
+.mr-shell .site-header-mobile-link-arrow { flex-shrink: 0; color: var(--brand-muted); }
+.mr-shell .site-header-mobile-footer { margin-top: 4px; padding-top: 12px; }
+.mr-shell .site-header-cta--mobile { margin-top: 0; }
+@media (max-width: 479px) {
+  .mr-shell .overlay--mobile { --aside-width: 100vw; }
+}
+
 .mr-cart-icon {display:none}
 .mr-accessory-tip {max-width:620px;margin-bottom:22px;color:var(--brand-muted);font-size:.93rem;line-height:1.7}
 .mr-accessory-filters {display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--brand-border);padding-bottom:22px}
