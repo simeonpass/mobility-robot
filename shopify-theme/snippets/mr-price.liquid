@@ -2,10 +2,12 @@
   List price for a chair, as "inc|ex|compare_ex" in pence for the caller to split.
   - Product with a "VAT" option: the cheapest variant that is not "VAT Relief" is the
     VAT-inclusive price.
-  - Otherwise the product's lowest price is read as VAT-inclusive or VAT-exclusive
-    according to the shop's "prices include tax" setting.
+  - Otherwise the product's lowest price is read as the VAT-exclusive (VAT relief)
+    price and 20% is added for the including-VAT figure. If the catalogue is ever
+    switched to VAT-inclusive prices, set catalog_includes_vat to true below.
 {%- endcomment -%}
 {%- liquid
+  assign catalog_includes_vat = false
   assign inc = 0
   assign ex = 0
   assign cmp_ex = 0
@@ -26,7 +28,7 @@
   endif
   if inc == 0
     assign cmp = product.compare_at_price_min | default: 0
-    if shop.taxes_included
+    if catalog_includes_vat
       assign inc = product.price_min
       assign ex = inc | divided_by: 1.2 | round
       if cmp > inc
