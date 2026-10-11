@@ -1,22 +1,21 @@
 {%- comment -%}
-  List price for a chair: the cheapest "Standard" (VAT-inclusive) variant when the
-  product has a VAT option, otherwise the product's lowest price.
+  List price for a chair: the cheapest variant that is not a "VAT Relief" variant
+  (the VAT-inclusive price), falling back to the product's lowest price.
   Outputs "inc|ex|compare_ex" in pence, for the caller to split.
 {%- endcomment -%}
 {%- liquid
-  assign inc = product.price_min
+  assign inc = 0
   assign cmp = 0
-  if product.options contains 'VAT'
-    assign inc = 0
-    for v in product.variants
-      unless v.options contains 'VAT Relief'
-        if inc == 0 or v.price < inc
-          assign inc = v.price
-          assign cmp = v.compare_at_price | default: 0
-        endif
-      endunless
-    endfor
-  else
+  for v in product.variants
+    unless v.title contains 'VAT Relief'
+      if inc == 0 or v.price < inc
+        assign inc = v.price
+        assign cmp = v.compare_at_price | default: 0
+      endif
+    endunless
+  endfor
+  if inc == 0
+    assign inc = product.price_min
     assign cmp = product.compare_at_price_min | default: 0
   endif
   assign ex = inc | divided_by: 1.2 | round
