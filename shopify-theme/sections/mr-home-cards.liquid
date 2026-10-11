@@ -1,0 +1,64 @@
+{%- comment -%} Three-column cards: plain benefit cards, or linked guide cards. {%- endcomment -%}
+<section class="mr-section{% if section.settings.style == 'benefits' %} mr-soft mr-support-section{% else %} mr-guides-section{% endif %}">
+  <div class="xsto-container">
+    <div class="mr-section-intro">
+      <div>
+        <p class="mr-eyebrow">{{ section.settings.eyebrow }}</p>
+        <h2>{{ section.settings.heading_1 }}{% if section.settings.heading_2 != blank %}<br>{{ section.settings.heading_2 }}{% endif %}</h2>
+      </div>
+      {%- if section.settings.link_label != blank and section.settings.link_label != nil -%}
+        <a class="mr-text-link" href="{{ section.settings.link_url }}">{{ section.settings.link_label }} {% render 'mr-icon', name: 'arrow-right', size: 18 %}</a>
+      {%- endif -%}
+    </div>
+    <div class="mr-three-grid">
+      {%- for block in section.blocks -%}
+        {%- if section.settings.style == 'benefits' -%}
+          <article class="mr-benefit" {{ block.shopify_attributes }}>
+            <p class="mr-eyebrow">{{ block.settings.label }}</p>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </article>
+        {%- else -%}
+          <a class="mr-guide-card" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
+            <p class="mr-eyebrow">{{ block.settings.label }}</p>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.text }}</p>
+            <span class="mr-text-link" aria-hidden="true">
+              <span class="mr-desktop-copy">{{ section.settings.card_link_label }}</span>
+              {% render 'mr-icon', name: 'arrow-right', size: 18 %}
+            </span>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "MR three cards",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "select", "id": "style", "label": "Style", "default": "benefits", "options": [ { "value": "benefits", "label": "Benefits (tinted background)" }, { "value": "guides", "label": "Guide links" } ] },
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "The people behind Mobility Robot" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "XSTO innovation." },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2", "default": "Bentech Medical support." },
+    { "type": "text", "id": "link_label", "label": "Top link label" },
+    { "type": "text", "id": "link_url", "label": "Top link URL" },
+    { "type": "text", "id": "card_link_label", "label": "Card link label", "default": "Read the guide" }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Small heading" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "text", "id": "url", "label": "URL (guide links only)" }
+      ]
+    }
+  ],
+  "presets": [ { "name": "MR three cards" } ]
+}
+{% endschema %}

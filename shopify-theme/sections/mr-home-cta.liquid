@@ -1,0 +1,41 @@
+{%- assign phone_href = section.settings.phone | remove: ' ' | remove_first: '0' | prepend: 'tel:+44' -%}
+<section class="mr-section">
+  <div class="xsto-container">
+    <div class="mr-final-cta">
+      <div>
+        <p class="mr-eyebrow">{{ section.settings.eyebrow }}</p>
+        <h2>{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.text }}</p>
+      </div>
+      <div class="mr-actions">
+        <a class="mr-button mr-button-amber" href="{{ section.settings.button_url }}">{{ section.settings.button_label }} {% render 'mr-icon', name: 'arrow-right', size: 18 %}</a>
+        <a class="mr-cta-phone" href="{{ phone_href }}">{% render 'mr-icon', name: 'phone', size: 18 %} {{ section.settings.phone }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+{%- if section.settings.show_mobile_bar -%}
+  <nav class="mr-mobile-actions" aria-label="Get help choosing a wheelchair">
+    <a class="mr-mobile-actions-primary" href="{{ section.settings.button_url }}" data-enquiry-action="demo" data-enquiry-placement="home_mobile">{% render 'mr-icon', name: 'calendar-days', size: 18 %} {{ section.settings.mobile_button_label }}</a>
+    <a class="mr-mobile-actions-secondary" href="{{ phone_href }}" data-enquiry-action="call" data-enquiry-placement="home_mobile">{% render 'mr-icon', name: 'phone', size: 18 %} {{ section.settings.mobile_call_label }}</a>
+  </nav>
+{%- endif -%}
+{% schema %}
+{
+  "name": "MR call to action",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Your next chapter starts here" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Let’s find your next move." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Tell us what matters to you. We’ll help you explore the range and arrange a demonstration." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Book a demonstration" },
+    { "type": "text", "id": "button_url", "label": "Button URL", "default": "/demo" },
+    { "type": "text", "id": "phone", "label": "Phone", "default": "020 8050 4849" },
+    { "type": "checkbox", "id": "show_mobile_bar", "label": "Show the fixed bar on phones", "default": true },
+    { "type": "text", "id": "mobile_button_label", "label": "Phone bar button label", "default": "Book a demo" },
+    { "type": "text", "id": "mobile_call_label", "label": "Phone bar call label", "default": "Call us" }
+  ],
+  "presets": [ { "name": "MR call to action" } ]
+}
+{% endschema %}

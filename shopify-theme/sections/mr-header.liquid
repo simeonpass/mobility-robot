@@ -1,0 +1,406 @@
+{%- liquid
+  assign model_blocks = section.blocks | where: 'type', 'model'
+  assign link_blocks = section.blocks | where: 'type', 'link'
+  assign mobile_link_blocks = section.blocks | where: 'type', 'mobile_link'
+  assign series_joined = ''
+  for block in model_blocks
+    assign series_joined = series_joined | append: block.settings.series | append: '|'
+  endfor
+  assign series_list = series_joined | split: '|' | uniq
+  assign cta_url = section.settings.cta_url
+  assign cta_label = section.settings.cta_label
+  if customer
+    assign account_label = 'Account'
+  else
+    assign account_label = 'Sign in'
+  endif
+-%}
+
+{%- comment -%} Basket drawer {%- endcomment -%}
+<div aria-modal="true" class="overlay overlay--cart" role="dialog" aria-label="Basket" data-mr-aside="cart">
+  <button class="close-outside" type="button" aria-label="Close panel" tabindex="-1" data-mr-aside-close></button>
+  <aside>
+    <main>
+      <section aria-label="Cart drawer" class="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
+        <div class="flex items-center gap-3 border-b border-border px-4 py-3">
+          <div class="flex size-10 items-center justify-center rounded-full bg-gold/10">
+            <svg aria-hidden="true" class="size-5 text-gold" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+          </div>
+          <h2 class="text-xl font-semibold text-foreground">Your Cart</h2>
+          <div class="ml-auto flex items-center gap-3">
+            {%- if cart.item_count > 0 -%}
+              <span class="rounded-full bg-secondary px-3 py-1 text-sm font-medium text-foreground">{{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}</span>
+            {%- endif -%}
+            <button aria-label="Close cart" class="inline-flex size-9 items-center justify-center rounded-lg text-xl text-muted-foreground hover:bg-secondary hover:text-foreground" type="button" data-mr-aside-close>&times;</button>
+          </div>
+        </div>
+        {%- if cart.item_count == 0 -%}
+          <div class="overflow-y-auto px-4">
+            <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
+              <div class="mb-6 flex size-20 items-center justify-center rounded-full bg-secondary">
+                <svg aria-hidden="true" class="size-5 text-gold" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+              </div>
+              <h3 class="text-xl font-semibold text-foreground">Your cart is empty</h3>
+              <p class="mt-2 max-w-xs text-sm text-muted-foreground">Add some products to get started with your order.</p>
+              <a class="mt-6 inline-flex rounded-lg bg-gold px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-gold-light" href="{{ routes.root_url }}#product-range" data-mr-aside-close>Continue shopping</a>
+            </div>
+          </div>
+        {%- else -%}
+          <div class="overflow-y-auto overscroll-contain px-4 py-3">
+            <ul class="space-y-2" aria-label="Cart line items">
+              {%- for item in cart.items -%}
+                <li class="flex gap-3 rounded-lg border border-border p-3">
+                  {%- if item.image -%}
+                    <img class="size-20 shrink-0 rounded-md object-contain bg-secondary" src="{{ item.image | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy">
+                  {%- endif -%}
+                  <div class="min-w-0 flex-1">
+                    <a class="text-sm font-semibold text-foreground" href="{{ item.url }}">{{ item.product.title }}</a>
+                    {%- unless item.product.has_only_default_variant -%}
+                      <p class="mt-0.5 text-xs text-muted-foreground">{{ item.variant.title }}</p>
+                    {%- endunless -%}
+                    <p class="mt-2 text-sm text-foreground">{{ item.quantity }} × <span class="font-medium">{{ item.final_price | money }}</span></p>
+                    <a class="mt-1 inline-block text-xs text-muted-foreground underline underline-offset-4" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0">Remove</a>
+                  </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+          <div class="shrink-0 border-t border-border bg-background px-4 py-3">
+            <div class="flex justify-between">
+              <span class="text-base font-semibold text-foreground">Subtotal</span>
+              <span class="text-base font-semibold text-foreground">{{ cart.total_price | money }}</span>
+            </div>
+            <div class="mt-3 space-y-2">
+              <a class="btn-checkout w-full py-3.5 !text-white no-underline hover:!text-white" href="{{ routes.cart_url }}"><span class="text-white">Review basket &amp; checkout</span></a>
+              <p class="text-center text-[11px] text-muted-foreground">VAT relief and delivery are confirmed in the basket.</p>
+            </div>
+          </div>
+        {%- endif -%}
+      </section>
+    </main>
+  </aside>
+</div>
+
+{%- comment -%} Search drawer {%- endcomment -%}
+<div aria-modal="true" class="overlay overlay--search" role="dialog" aria-labelledby="mr-aside-search-title" data-mr-aside="search">
+  <button class="close-outside" type="button" aria-label="Close panel" tabindex="-1" data-mr-aside-close></button>
+  <aside>
+    <header>
+      <h3 id="mr-aside-search-title">Search</h3>
+      <button class="close reset" aria-label="Close" type="button" data-mr-aside-close>&times;</button>
+    </header>
+    <main>
+      <div class="predictive-search">
+        <br>
+        <form class="predictive-search-form" action="{{ routes.search_url }}" method="get" role="search">
+          <input aria-label="Search products, guides and pages" name="q" placeholder="Search" type="search" data-mr-search-input>
+          &nbsp;
+          <button type="submit">Search</button>
+        </form>
+      </div>
+    </main>
+  </aside>
+</div>
+
+{%- comment -%} Mobile menu drawer {%- endcomment -%}
+<div aria-modal="true" class="overlay overlay--mobile" role="dialog" aria-labelledby="mr-aside-mobile-title" data-mr-aside="mobile">
+  <button class="close-outside" type="button" aria-label="Close panel" tabindex="-1" data-mr-aside-close></button>
+  <aside>
+    <header>
+      <h3 id="mr-aside-mobile-title">Menu</h3>
+      <button class="close reset" aria-label="Close" type="button" data-mr-aside-close>&times;</button>
+    </header>
+    <main>
+      <nav aria-label="Mobile navigation" class="site-header-mobile" role="navigation">
+        <div class="site-header-mobile-tools">
+          <a class="mr-mobile-search" href="{{ routes.search_url }}">{% render 'mr-icon', name: 'search', size: 20 %} Search products</a>
+          <a class="site-header-link site-header-mobile-account" href="{{ routes.account_url }}">{{ account_label }}</a>
+        </div>
+
+        {%- for series in series_list -%}
+          {%- assign series_key = series | split: ' ' | first | downcase -%}
+          <div class="site-header-mobile-section">
+            <a class="site-header-mobile-label" href="{{ routes.root_url }}series/{{ series_key }}">{{ series }} ↗</a>
+            {%- for block in model_blocks -%}
+              {%- if block.settings.series == series -%}
+                {%- assign p = block.settings.product | default: all_products[block.settings.handle] -%}
+                <a class="site-header-link site-header-mobile-link site-header-mobile-link--product" href="{{ p.url | default: '#' }}" {{ block.shopify_attributes }}>
+                  {%- if p.featured_image -%}
+                    <span aria-hidden="true" class="site-header-mobile-link-thumb">
+                      <img alt="" class="site-header-mobile-link-thumb-img" decoding="async" height="48" loading="lazy" src="{{ p.featured_image | image_url: width: 96, height: 96 }}" width="48">
+                    </span>
+                  {%- endif -%}
+                  <span class="site-header-mobile-link-text">
+                    <span>{{ block.settings.title }}</span>
+                    {%- if block.settings.description != blank -%}
+                      <span class="site-header-mobile-link-desc">{{ block.settings.description }}</span>
+                    {%- endif -%}
+                  </span>
+                  {% render 'mr-icon', name: 'chevron-right', size: 16, stroke: 1.75, class: 'site-header-mobile-link-arrow' %}
+                </a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endfor -%}
+
+        <div class="site-header-mobile-section">
+          <p class="site-header-mobile-label">Explore</p>
+          {%- for block in link_blocks -%}
+            <a class="site-header-link site-header-mobile-link" href="{{ block.settings.url }}">
+              <span class="site-header-mobile-link-text"><span>{{ block.settings.title }}</span></span>
+              {% render 'mr-icon', name: 'chevron-right', size: 16, stroke: 1.75, class: 'site-header-mobile-link-arrow' %}
+            </a>
+          {%- endfor -%}
+          {%- for block in mobile_link_blocks -%}
+            <a class="site-header-link site-header-mobile-link" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
+              <span class="site-header-mobile-link-text"><span>{{ block.settings.title }}</span></span>
+              {% render 'mr-icon', name: 'chevron-right', size: 16, stroke: 1.75, class: 'site-header-mobile-link-arrow' %}
+            </a>
+          {%- endfor -%}
+        </div>
+
+        <div class="site-header-mobile-footer">
+          <a class="site-header-cta site-header-cta--mobile" href="{{ cta_url }}">{{ cta_label }}</a>
+        </div>
+      </nav>
+    </main>
+  </aside>
+</div>
+
+<header class="site-header site-header--solid mr-site-header">
+  <div class="xsto-container mr-header-inner">
+    <a aria-label="XSTO and Bentech Medical — home" class="site-header-logo min-w-0 shrink-0" href="{{ routes.root_url }}">
+      <span>
+        {%- if section.settings.logo -%}
+          <img src="{{ section.settings.logo | image_url: width: 1000 }}" alt="{{ section.settings.logo_alt | escape }}" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" class="mr-homepage-logo" fetchpriority="high" decoding="async">
+        {%- else -%}
+          <img src="{{ 'mr-xsto-bentech-header.png' | asset_url }}" alt="{{ section.settings.logo_alt | escape }}" width="1000" height="300" class="mr-homepage-logo" fetchpriority="high" decoding="async">
+        {%- endif -%}
+      </span>
+    </a>
+
+    <nav aria-label="Main navigation" class="site-header-nav-desktop mx-auto min-w-0 flex-1 items-center justify-center gap-0.5" role="navigation">
+      <div class="site-header-dropdown" data-mr-dropdown>
+        <button aria-controls="mr-models-menu" aria-expanded="false" class="site-header-link site-header-dropdown-trigger" type="button" data-mr-dropdown-trigger>
+          {{ section.settings.range_label }}
+          <svg aria-hidden="true" class="site-header-chevron size-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="site-header-dropdown-panel" id="mr-models-menu" hidden data-mr-dropdown-panel>
+          <div class="site-header-dropdown-intro">
+            <p class="site-header-dropdown-eyebrow">{{ section.settings.range_eyebrow }}</p>
+            <p class="site-header-dropdown-tagline">{{ section.settings.range_tagline }}</p>
+          </div>
+
+          <div class="mr-nav-series">
+            {%- for series in series_list -%}
+              {%- assign series_key = series | split: ' ' | first | downcase -%}
+              <section>
+                <a class="mr-nav-series-title" href="{{ routes.root_url }}series/{{ series_key }}">{{ series }} <span aria-hidden="true">↗</span></a>
+                <ul>
+                  {%- for block in model_blocks -%}
+                    {%- if block.settings.series == series -%}
+                      {%- assign p = block.settings.product | default: all_products[block.settings.handle] -%}
+                      <li>
+                        <a class="site-header-dropdown-item" href="{{ p.url | default: '#' }}">
+                          {%- if p.featured_image -%}
+                            <span aria-hidden="true" class="site-header-dropdown-item-thumb">
+                              <img alt="" class="site-header-dropdown-item-thumb-img" decoding="async" height="56" loading="lazy" src="{{ p.featured_image | image_url: width: 112, height: 112 }}" width="56">
+                            </span>
+                          {%- else -%}
+                            <span aria-hidden="true" class="site-header-dropdown-item-icon">{{ block.settings.title | remove: ' ' | slice: 0, 4 }}</span>
+                          {%- endif -%}
+                          <span class="site-header-dropdown-item-body">
+                            <span class="site-header-dropdown-item-row">
+                              <span class="site-header-dropdown-item-title">{{ block.settings.title }}</span>
+                              {%- if block.settings.badge != blank -%}
+                                <span class="site-header-dropdown-item-badge">{{ block.settings.badge }}</span>
+                              {%- endif -%}
+                            </span>
+                            {%- if block.settings.description != blank -%}
+                              <span class="site-header-dropdown-item-desc">{{ block.settings.description }}</span>
+                            {%- endif -%}
+                          </span>
+                          {% render 'mr-icon', name: 'arrow-right', class: 'site-header-dropdown-item-arrow' %}
+                        </a>
+                      </li>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+              </section>
+            {%- endfor -%}
+          </div>
+
+          <div class="site-header-dropdown-footer">
+            <div class="site-header-dropdown-footer-links">
+              <a class="site-header-dropdown-footer-link site-header-dropdown-footer-link--primary" href="{{ routes.all_products_collection_url }}">View all chairs</a>
+              <a class="site-header-dropdown-footer-link" href="{{ routes.collections_url }}/accessories">Accessories</a>
+              <a class="site-header-dropdown-footer-link" href="{{ cta_url }}">{{ cta_label }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {%- for block in link_blocks -%}
+        <a class="site-header-link" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>{{ block.settings.title }}</a>
+      {%- endfor -%}
+    </nav>
+
+    <nav aria-label="Account and cart" class="site-header-ctas ml-auto flex shrink-0 items-center gap-0 sm:gap-0.5" role="navigation">
+      <a class="site-header-cta site-header-cta--compact" href="{{ cta_url }}">{{ section.settings.cta_label_short }}</a>
+      <a class="site-header-cta site-header-cta--desktop" href="{{ cta_url }}">{{ cta_label }}</a>
+      <button aria-label="Open menu" class="site-header-icon-btn site-header-menu-toggle" type="button" data-mr-aside-open="mobile">
+        <svg aria-hidden="true" class="size-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      </button>
+      <a class="site-header-link site-header-link--quiet site-header-account-link" href="{{ routes.account_url }}">{{ account_label }}</a>
+      <button aria-label="Search" class="site-header-icon-btn site-header-search-toggle" type="button" data-mr-aside-open="search">
+        <svg aria-hidden="true" class="size-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+        <span class="sr-only">Search</span>
+      </button>
+      <button aria-label="{% if cart.item_count > 0 %}Basket, {{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}{% else %}Basket{% endif %}" class="site-header-icon-btn site-header-cart-btn" type="button" data-mr-aside-open="cart">
+        <svg class="mr-cart-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="site-header-cart-label">Basket</span>
+        <span class="site-header-cart-count">{{ cart.item_count }}</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "MR header",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo", "info": "Leave empty to use the XSTO and Bentech Medical logo that ships with the theme." },
+    { "type": "text", "id": "logo_alt", "label": "Logo description", "default": "XSTO and Bentech Medical Ltd — Official UK Distributor" },
+    { "type": "header", "content": "Range menu" },
+    { "type": "text", "id": "range_label", "label": "Menu label", "default": "Our range" },
+    { "type": "text", "id": "range_eyebrow", "label": "Small heading", "default": "Shop XSTO" },
+    { "type": "textarea", "id": "range_tagline", "label": "Intro", "default": "Explore the M4 and X12 series, from everyday self-levelling chairs to stair-climbing capability." },
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Book a demo" },
+    { "type": "text", "id": "cta_label_short", "label": "Button label on small screens", "default": "Demo" },
+    { "type": "text", "id": "cta_url", "label": "Button URL", "default": "/demo" }
+  ],
+  "blocks": [
+    {
+      "type": "model",
+      "name": "Wheelchair model",
+      "settings": [
+        { "type": "text", "id": "series", "label": "Series", "default": "M4 Series", "info": "Models with the same series name are grouped together." },
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "handle", "label": "Product handle", "info": "Used when no product is picked above." },
+        { "type": "text", "id": "title", "label": "Short name", "default": "M4" },
+        { "type": "text", "id": "description", "label": "Description" },
+        { "type": "text", "id": "badge", "label": "Badge" }
+      ]
+    },
+    {
+      "type": "link",
+      "name": "Menu link",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Label", "default": "Link" },
+        { "type": "text", "id": "url", "label": "URL", "default": "/" }
+      ]
+    },
+    {
+      "type": "mobile_link",
+      "name": "Extra mobile menu link",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Label", "default": "Contact us" },
+        { "type": "text", "id": "url", "label": "URL", "default": "/contact" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "model",
+        "settings": {
+          "series": "M4 Series",
+          "handle": "buy-robot-wheelchair",
+          "title": "M4",
+          "description": "Self-levelling everyday chair",
+          "badge": "Self-Levelling"
+        }
+      },
+      {
+        "type": "model",
+        "settings": {
+          "series": "M4 Series",
+          "handle": "xsto-m4b-1",
+          "title": "M4B",
+          "description": "Improved footrest & front suspension",
+          "badge": "New"
+        }
+      },
+      {
+        "type": "model",
+        "settings": {
+          "series": "M4 Series",
+          "handle": "xsto-m4-pro",
+          "title": "M4 Pro",
+          "description": "Premium comfort & capacity",
+          "badge": "Customisable"
+        }
+      },
+      {
+        "type": "model",
+        "settings": {
+          "series": "X12 Series",
+          "handle": "x12-all-terrain-mobility-robot",
+          "title": "X12",
+          "description": "All-terrain stair climber",
+          "badge": "Stair Climber"
+        }
+      },
+      {
+        "type": "model",
+        "settings": {
+          "series": "X12 Series",
+          "handle": "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition",
+          "title": "X12 Pro",
+          "description": "Electric elevating leg rest",
+          "badge": "Stair Climber"
+        }
+      },
+      {
+        "type": "link",
+        "settings": {
+          "title": "Accessories",
+          "url": "/collections/accessories"
+        }
+      },
+      {
+        "type": "link",
+        "settings": {
+          "title": "Compare",
+          "url": "/compare"
+        }
+      },
+      {
+        "type": "link",
+        "settings": {
+          "title": "Find a dealer",
+          "url": "/stockists"
+        }
+      },
+      {
+        "type": "link",
+        "settings": {
+          "title": "Help & advice",
+          "url": "/support"
+        }
+      },
+      {
+        "type": "mobile_link",
+        "settings": {
+          "title": "Contact us",
+          "url": "/contact"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

@@ -1,0 +1,33 @@
+<section class="mr-awards-bar" aria-labelledby="design-awards-heading">
+  <div class="xsto-container mr-awards-bar-inner">
+    <div class="mr-awards-bar-copy">
+      <h2 id="design-awards-heading">{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.text }}</p>
+    </div>
+    <div class="mr-awards-logos">
+      <div class="mr-awards-pair">
+        <img src="{{ 'mr-if-reddot-awards.webp' | asset_url }}" width="638" height="173" alt="iF Design Award 2025 and Red Dot winner 2025" loading="lazy" decoding="async">
+        <a class="mr-awards-if-link" href="{{ section.settings.if_url }}" target="_blank" rel="noopener noreferrer" aria-label="XSTO M4 — iF Design Award 2025 winner record (opens in a new tab)"></a>
+        <a class="mr-awards-red-dot-link" href="{{ section.settings.red_dot_url }}" target="_blank" rel="noopener noreferrer" aria-label="XSTO M4 — Red Dot 2025 winner record (opens in a new tab)"></a>
+      </div>
+      <a class="mr-awards-good-design" href="{{ section.settings.good_design_url }}" target="_blank" rel="noopener noreferrer" aria-label="XSTO M4 — Good Design Award 2025 winner record (opens in a new tab)">
+        <img src="{{ 'mr-good-design-award.svg' | asset_url }}" width="258" height="40" alt="Good Design Award" loading="lazy" decoding="async">
+      </a>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "MR design awards",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Award-winning design" },
+    { "type": "text", "id": "text", "label": "Text", "default": "XSTO M4 · International recognition · 2025" },
+    { "type": "url", "id": "if_url", "label": "iF Design Award link", "default": "https://ifdesign.com/en/winner-ranking/project/xsto-mobility-robot/680124" },
+    { "type": "url", "id": "red_dot_url", "label": "Red Dot link", "default": "https://www.red-dot.org/project/xsto-mobility-robot-81361" },
+    { "type": "url", "id": "good_design_url", "label": "Good Design Award link", "default": "https://www.g-mark.org/en/gallery/winners/33173?years=2025" }
+  ],
+  "presets": [ { "name": "MR design awards" } ]
+}
+{% endschema %}

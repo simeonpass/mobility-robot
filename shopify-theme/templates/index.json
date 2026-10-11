@@ -1,0 +1,554 @@
+{
+  "layout": "mr",
+  "sections": {
+    "story": {
+      "type": "mr-home-story-strip",
+      "settings": {}
+    },
+    "hero": {
+      "type": "mr-home-hero",
+      "settings": {},
+      "blocks": {
+        "model_1": {
+          "type": "model",
+          "settings": {
+            "product": "buy-robot-wheelchair",
+            "label": "M4",
+            "name": "XSTO M4",
+            "badge": "Self-Levelling",
+            "pitch": "Self-levelling control and electric seat lifting for everyday journeys.",
+            "zoom": 1.06,
+            "lift": 0.075,
+            "clip_note": "Optional equipment may be shown.",
+            "clip1_file": "mr-hero-m4-lift-tilt.mp4",
+            "clip1_label": "Seat lift & tilt",
+            "clip1_description": "Rise to the moment. Find your comfortable angle.",
+            "clip1_style": "studio",
+            "clip2_file": "mr-hero-m4-fold.mp4",
+            "clip2_label": "Folding & transport",
+            "clip2_description": "See how the M4 folds and separates for transport.",
+            "clip2_style": "studio"
+          }
+        },
+        "model_2": {
+          "type": "model",
+          "settings": {
+            "product": "xsto-m4b-1",
+            "label": "M4B",
+            "name": "XSTO M4B",
+            "badge": "New",
+            "pitch": "The M4 platform with an improved folding footrest and new front suspension.",
+            "cutout": "mr-hero-m4b-720.webp",
+            "zoom": 0.95,
+            "lift": 0.03,
+            "clip_note": "Optional equipment may be shown.",
+            "clip1_file": "mr-hero-m4b-seat-lift.mp4",
+            "clip1_label": "Seat elevation",
+            "clip1_description": "Watch the seat rise, with the leg rest moving with it.",
+            "clip1_style": "portrait",
+            "clip1_caption": "Rise to the moment",
+            "clip2_file": "mr-hero-m4b-seat-tilt.mp4",
+            "clip2_label": "Seat tilt",
+            "clip2_description": "See the seat and leg rest adjust together.",
+            "clip2_style": "portrait",
+            "clip2_caption": "Find your comfortable angle"
+          }
+        },
+        "model_3": {
+          "type": "model",
+          "settings": {
+            "product": "xsto-m4-pro",
+            "label": "M4 Pro",
+            "name": "XSTO M4 Pro",
+            "badge": "Customisable",
+            "pitch": "More seating adjustment, an integrated headrest and electric folding.",
+            "cutout": "mr-hero-m4-pro-720.webp",
+            "zoom": 0.95,
+            "lift": 0.03,
+            "clip_note": "Optional equipment may be shown.",
+            "clip1_file": "mr-hero-m4-pro-recline.mp4",
+            "clip1_label": "Backrest recline",
+            "clip1_description": "See the adjustable backrest move into a resting position.",
+            "clip1_style": "film",
+            "clip2_file": "mr-hero-m4-pro-seat-width.mp4",
+            "clip2_label": "Seat adjustment",
+            "clip2_description": "A closer look at the adjustable seating.",
+            "clip2_style": "studio"
+          }
+        },
+        "model_4": {
+          "type": "model",
+          "settings": {
+            "product": "x12-all-terrain-mobility-robot",
+            "label": "X12",
+            "name": "XSTO X12",
+            "badge": "Stair Climber",
+            "pitch": "Stair-climbing capability for suitable stairs, with assessment and training included.",
+            "cutout": "mr-hero-x12-720.webp",
+            "zoom": 0.95,
+            "lift": 0.02,
+            "clip_note": "X12 series shown; equipment varies by model.",
+            "clip1_file": "mr-hero-x12-tracks.mp4",
+            "clip1_label": "Tracks & stairs",
+            "clip1_description": "Watch the X12-series tracks deploy. Stair use requires assessment and training.",
+            "clip1_style": "film",
+            "clip2_file": "mr-hero-x12-levelling.mp4",
+            "clip2_label": "Self-levelling",
+            "clip2_description": "See the X12 series adapt to changing terrain.",
+            "clip2_style": "film"
+          }
+        },
+        "model_5": {
+          "type": "model",
+          "settings": {
+            "product": "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition",
+            "label": "X12 Pro",
+            "name": "XSTO X12 Pro",
+            "badge": "Stair Climber",
+            "pitch": "The X12 with an electric elevating leg rest and Pro-exclusive comfort.",
+            "zoom": 1.14,
+            "lift": 0.125,
+            "clip_note": "X12 series shown; equipment varies by model.",
+            "clip1_file": "mr-hero-x12-pro-boarding.mp4",
+            "clip1_label": "Boarding position",
+            "clip1_description": "See the X12-series seat change position for access.",
+            "clip1_style": "film",
+            "clip2_file": "mr-hero-x12-pro-rocking.mp4",
+            "clip2_label": "Rocking mode",
+            "clip2_description": "A gentle change of position, demonstrated by XSTO.",
+            "clip2_style": "film"
+          }
+        }
+      },
+      "block_order": [
+        "model_1",
+        "model_2",
+        "model_3",
+        "model_4",
+        "model_5"
+      ]
+    },
+    "offer": {
+      "type": "mr-home-offer",
+      "settings": {}
+    },
+    "awards": {
+      "type": "mr-home-awards",
+      "settings": {}
+    },
+    "trust": {
+      "type": "mr-home-trust",
+      "settings": {},
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "UK delivery",
+            "detail": "Delivery details",
+            "url": "/delivery"
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "icon": "shield-check",
+            "title": "Warranty support",
+            "detail": "Cover explained",
+            "url": "/warranty"
+          }
+        },
+        "item_3": {
+          "type": "item",
+          "settings": {
+            "icon": "headphones",
+            "title": "Bentech Medical",
+            "detail": "Your UK support team",
+            "url": "/support"
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "icon": "badge-percent",
+            "title": "VAT relief",
+            "detail": "For eligible purchases",
+            "url": "/vat-relief"
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4"
+      ]
+    },
+    "range": {
+      "type": "mr-home-range",
+      "settings": {},
+      "blocks": {
+        "range_1": {
+          "type": "series",
+          "settings": {
+            "title": "M4 Series",
+            "detail": "Everyday freedom",
+            "url": "/series/m4"
+          }
+        },
+        "range_2": {
+          "type": "series",
+          "settings": {
+            "title": "X12 Series",
+            "detail": "Stair-climbing capability",
+            "url": "/series/x12"
+          }
+        },
+        "range_3": {
+          "type": "model",
+          "settings": {
+            "product": "buy-robot-wheelchair",
+            "short_name": "XSTO M4",
+            "badge": "Self-Levelling",
+            "description": "Self-levelling control and electric seat lifting for your everyday.",
+            "mobile_description": "Everyday self-levelling",
+            "explore_label": "Explore XSTO M4"
+          }
+        },
+        "range_4": {
+          "type": "model",
+          "settings": {
+            "product": "xsto-m4b-1",
+            "short_name": "XSTO M4B",
+            "badge": "New",
+            "description": "The M4 platform with an improved folding footrest and new front suspension.",
+            "mobile_description": "Improved footrest & front suspension",
+            "explore_label": "Explore XSTO M4B"
+          }
+        },
+        "range_5": {
+          "type": "model",
+          "settings": {
+            "product": "xsto-m4-pro",
+            "short_name": "XSTO M4 Pro",
+            "badge": "Customisable",
+            "description": "More seating adjustment, an integrated headrest and electric folding.",
+            "mobile_description": "Extra seating adjustment",
+            "explore_label": "Explore XSTO M4 Pro"
+          }
+        },
+        "range_6": {
+          "type": "model",
+          "settings": {
+            "product": "x12-all-terrain-mobility-robot",
+            "short_name": "XSTO X12",
+            "badge": "Stair Climber",
+            "description": "Stair-climbing capability for suitable stairs, with assessment and training.",
+            "mobile_description": "Stair climbing, with assessment & training",
+            "explore_label": "Explore XSTO X12"
+          }
+        },
+        "range_7": {
+          "type": "model",
+          "settings": {
+            "product": "xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition",
+            "short_name": "XSTO X12 Pro",
+            "badge": "Stair Climber",
+            "description": "Stair-climbing capability with an electric elevating leg rest, assessment and training.",
+            "mobile_description": "Stair climbing · electric elevating leg rest",
+            "explore_label": "Explore XSTO X12 Pro"
+          }
+        }
+      },
+      "block_order": [
+        "range_1",
+        "range_2",
+        "range_3",
+        "range_4",
+        "range_5",
+        "range_6",
+        "range_7"
+      ]
+    },
+    "feature": {
+      "type": "mr-home-feature",
+      "settings": {}
+    },
+    "benefits": {
+      "type": "mr-home-cards",
+      "settings": {
+        "style": "benefits"
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "label": "01 / CHOOSE WITH CONFIDENCE",
+            "title": "Real advice. From real people.",
+            "text": "Talk through your daily routine with Bentech Medical, the official UK distributor of XSTO."
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "label": "02 / EXPERIENCE THE DIFFERENCE",
+            "title": "Try the technology for yourself.",
+            "text": "A demonstration helps you assess seating, controls, transfers and the way the chair handles."
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "label": "03 / KEEP MOVING",
+            "title": "Support beyond the purchase.",
+            "text": "Speak to our UK team for warranty questions, compatible accessories and aftercare."
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3"
+      ]
+    },
+    "guides": {
+      "type": "mr-home-cards",
+      "settings": {
+        "style": "guides",
+        "eyebrow": "A little knowledge. A lot of confidence.",
+        "heading_1": "Your questions, explored.",
+        "heading_2": "",
+        "link_label": "All buyer guides",
+        "link_url": "/guides"
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "label": "Understanding the technology",
+            "title": "Self-levelling wheelchairs, explained.",
+            "text": "What the technology does and what to try during a demonstration.",
+            "url": "/guides/self-levelling-wheelchairs"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "label": "Planning your next move",
+            "title": "A guide to stair-climbing wheelchairs.",
+            "text": "The questions to ask about stairs, training and your everyday routes.",
+            "url": "/guides/stair-climbing-wheelchairs"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "label": "Find your fit",
+            "title": "Which XSTO is right for you?",
+            "text": "A practical way to compare the M4, M4B, M4 Pro and X12.",
+            "url": "/guides/choosing-an-xsto-wheelchair"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3"
+      ]
+    },
+    "videos": {
+      "type": "mr-home-videos",
+      "settings": {},
+      "blocks": {
+        "video_1": {
+          "type": "video",
+          "settings": {
+            "title": "XSTO M4 — Essential Edition",
+            "description": "See the M4's self-balancing technology, foldable design, and omnidirectional movement in action",
+            "youtube_id": "D-7Pt3OUdQg"
+          }
+        },
+        "video_2": {
+          "type": "video",
+          "settings": {
+            "title": "XSTO M4 Pro — Premium Edition",
+            "description": "Discover the M4 Pro with integrated headrest, electric folding, and LED safety lighting",
+            "youtube_id": "R2eyc-2uYNQ"
+          }
+        },
+        "video_3": {
+          "type": "video",
+          "settings": {
+            "title": "XSTO M4B — Improved Footrest & Front Suspension",
+            "description": "See the M4B platform with its improved folding footrest, new front suspension and self-balancing control",
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/24482dbe89234283a018301fa020db98.mp4"
+          }
+        },
+        "video_4": {
+          "type": "video",
+          "settings": {
+            "title": "XSTO X12 — Stair Climber",
+            "description": "See the X12 in action on suitable stairs and outdoor routes. Compare X12 and X12 Pro with its electric elevating leg rest on their individual product pages",
+            "youtube_id": "ihXdzLuNz2s"
+          }
+        }
+      },
+      "block_order": [
+        "video_1",
+        "video_2",
+        "video_3",
+        "video_4"
+      ]
+    },
+    "reviews": {
+      "type": "mr-home-reviews",
+      "settings": {
+        "average": "4.8",
+        "count": "369"
+      },
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "author": "Mary Crawford",
+            "rating": 5,
+            "title": "Perfect for church",
+            "body": "Fits down the church aisle and I can raise the seat to see over the pew in front. Small things that matter.",
+            "date": "1 Mar 2026",
+            "product_name": "XSTO M4"
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "author": "Marcia Campbell",
+            "rating": 5,
+            "title": "Wish I'd bought one sooner",
+            "body": "Spent three years with an uncomfortable powerchair before discovering the M4. What a difference. Don't hesitate — just buy one.",
+            "date": "26 Feb 2026",
+            "product_name": "XSTO M4"
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "author": "Ernest Boothroyd",
+            "rating": 5,
+            "title": "Five stars isn't enough",
+            "body": "If I could give six stars I would. The M4 has given me back my independence, my social life, and my dignity. I cannot recommend it highly enough.",
+            "date": "24 Feb 2026",
+            "product_name": "XSTO M4"
+          }
+        },
+        "review_4": {
+          "type": "review",
+          "settings": {
+            "author": "Mei Chen",
+            "rating": 5,
+            "title": "Lovely smooth ride",
+            "body": "The ride quality is wonderful. Smooth, quiet, and comfortable. It feels like gliding rather than rolling. Makes every journey a pleasure rather than an ordeal.",
+            "date": "23 Feb 2026",
+            "product_name": "XSTO M4"
+          }
+        },
+        "review_5": {
+          "type": "review",
+          "settings": {
+            "author": "Bernard Kelley",
+            "rating": 5,
+            "title": "Workshop access",
+            "body": "I have a small woodworking workshop and the M4 lets me move between benches easily. Sideways movement is key.",
+            "date": "21 Feb 2026",
+            "product_name": "XSTO M4"
+          }
+        },
+        "review_6": {
+          "type": "review",
+          "settings": {
+            "author": "Priya Sharma",
+            "rating": 5,
+            "title": "Love the indicator lights",
+            "body": "The LED lights on the M4 are a nice touch. They make me visible in the dark winter evenings which is important for safety. Thoughtful design detail.",
+            "date": "20 Feb 2026",
+            "product_name": "XSTO M4"
+          }
+        }
+      },
+      "block_order": [
+        "review_1",
+        "review_2",
+        "review_3",
+        "review_4",
+        "review_5",
+        "review_6"
+      ]
+    },
+    "faq": {
+      "type": "mr-home-faq",
+      "settings": {},
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "What makes an XSTO wheelchair different?",
+            "answer": "The range combines electric mobility with features such as self-levelling control and adjustable seating. The M4 and M4B focus on everyday use, the M4 Pro adds more seating adjustment, and the X12 adds stair-climbing capability. Compare the models around the places you need to go."
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "Can all XSTO wheelchairs climb stairs?",
+            "answer": "No. The X12 is the stair-climbing model in this range. The M4, M4B and M4 Pro are not stair-climbing chairs. For the X12, suitable stair dimensions, surface conditions, an assessment and proper training are essential."
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I try a wheelchair before buying?",
+            "answer": "Yes. Request a demonstration with the UK team. Tell us which models interest you, your location and the everyday situations you would like to try. The team will confirm availability and arrangements."
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "How does VAT relief work?",
+            "answer": "Qualifying customers can buy eligible products without VAT for personal or domestic use. Eligibility is not automatic; you must complete a declaration. Both VAT-relief and VAT-inclusive prices are shown. Read the VAT relief guide or ask the team for help."
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you deliver outside the UK?",
+            "answer": "Please enquire before ordering internationally. Product availability, local support, delivery, import charges and destination requirements need to be confirmed for your country. The UK delivery offer does not apply to overseas orders."
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5"
+      ]
+    },
+    "cta": {
+      "type": "mr-home-cta",
+      "settings": {}
+    }
+  },
+  "order": [
+    "story",
+    "hero",
+    "offer",
+    "awards",
+    "trust",
+    "range",
+    "feature",
+    "benefits",
+    "guides",
+    "videos",
+    "reviews",
+    "faq",
+    "cta"
+  ]
+}

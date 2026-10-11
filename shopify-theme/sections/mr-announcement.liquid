@@ -1,0 +1,28 @@
+{%- include 'mr-promo' -%}
+<div class="site-announcement mr-announcement sticky top-0 z-50">
+  <div class="xsto-container mr-announcement-inner">
+    <p>{{ section.settings.text }} <strong>{{ section.settings.text_strong }}</strong></p>
+    {%- if mr_promo -%}
+      <a class="mr-announcement-promo" href="{{ routes.root_url }}products/{{ mr_promo_handle }}" data-promotion="{{ mr_promo_id }}">
+        <strong>Special offer:</strong> save {{ mr_promo_saving_ex }} on the new XSTO {{ mr_promo_model }} — {{ mr_promo_offer_name }}
+      </a>
+    {%- else -%}
+      <p class="mr-announcement-delivery">{{ section.settings.fallback }}</p>
+    {%- endif -%}
+    <a class="mr-announcement-international" href="{{ section.settings.link_url }}">{{ section.settings.link_label }}</a>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "MR announcement bar",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Text", "default": "Official UK distributor of" },
+    { "type": "text", "id": "text_strong", "label": "Bold text", "default": "XSTO" },
+    { "type": "text", "id": "fallback", "label": "Middle text when no offer is running", "default": "Free UK mainland wheelchair delivery" },
+    { "type": "text", "id": "link_label", "label": "Right link label", "default": "International enquiries" },
+    { "type": "text", "id": "link_url", "label": "Right link URL", "default": "/international" }
+  ]
+}
+{% endschema %}

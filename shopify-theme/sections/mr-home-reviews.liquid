@@ -1,0 +1,92 @@
+{%- liquid
+  assign rounded = section.settings.average | round
+  assign extra = section.blocks.size | minus: 2
+-%}
+{%- if section.blocks.size > 0 -%}
+<section aria-label="Customer reviews" class="xsto-section bg-[#f7f6f4]">
+  <div class="xsto-container">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      {% render 'mr-section-intro', align: 'left', label: section.settings.eyebrow, title: section.settings.title, accent: section.settings.accent, description: section.settings.description %}
+      <div class="shrink-0 md:pb-1 md:text-right">
+        <div class="flex items-center gap-2 md:justify-end">
+          <span role="img" aria-label="{{ section.settings.average }} out of 5 stars" class="inline-flex items-center gap-0.5 text-gold text-base">
+            {%- for i in (1..5) -%}<span aria-hidden="true">{% if i <= rounded %}★{% else %}☆{% endif %}</span>{%- endfor -%}
+          </span>
+          <span class="font-display text-2xl font-semibold tracking-tight text-navy">{{ section.settings.average }}</span>
+        </div>
+        <p class="mt-1 text-sm text-navy/70">Based on {{ section.settings.count }} reviews</p>
+      </div>
+    </div>
+
+    <div class="mr-review-grid mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8" id="homepage-featured-reviews" data-expanded="false">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign words = block.settings.author | split: ' '
+          assign initials = words.first | slice: 0
+          if words.size > 1
+            assign last_initial = words.last | slice: 0
+            assign initials = initials | append: last_initial
+          endif
+        -%}
+        <article class="flex h-full flex-col border-t border-border/80 pt-5 " {{ block.shopify_attributes }}>
+          <div class="flex items-start gap-3">
+            <div aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-full bg-navy/[0.06] text-[0.6875rem] font-semibold tracking-wide text-navy">{{ initials | upcase }}</div>
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <p class="text-sm font-semibold text-navy">{{ block.settings.author }}</p>
+                <span role="img" aria-label="{{ block.settings.rating }}.0 out of 5 stars" class="inline-flex items-center gap-0.5 text-gold text-sm">
+                  {%- for i in (1..5) -%}<span aria-hidden="true">{% if i <= block.settings.rating %}★{% else %}☆{% endif %}</span>{%- endfor -%}
+                </span>
+              </div>
+              {%- if block.settings.title != blank -%}
+                <h3 class="mt-1.5 text-[0.9375rem] font-medium leading-snug text-navy">{{ block.settings.title }}</h3>
+              {%- endif -%}
+              <p class="mt-1.5 text-sm leading-relaxed text-navy/70 line-clamp-4">{{ block.settings.body }}</p>
+              <p class="mt-2 text-xs text-navy/70">{{ block.settings.date }}{% if block.settings.product_name != blank %} · {{ block.settings.product_name }}{% endif %}</p>
+            </div>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+    {%- if section.blocks.size > 2 -%}
+      <button class="mr-mobile-review-toggle mr-button mr-button-outline" type="button" aria-controls="homepage-featured-reviews" aria-expanded="false" data-mr-review-toggle data-more="Show {{ extra }} more reviews" data-fewer="Show fewer reviews">Show {{ extra }} more reviews</button>
+    {%- endif -%}
+
+    <p class="mt-8 text-center">
+      <a class="text-sm font-semibold text-gold underline-offset-4 hover:underline" href="{{ section.settings.link_url }}">{{ section.settings.link_label }}</a>
+    </p>
+  </div>
+</section>
+{%- endif -%}
+{% schema %}
+{
+  "name": "MR reviews",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Happy customers" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Look at our" },
+    { "type": "text", "id": "accent", "label": "Heading accent", "default": "fantastic reviews." },
+    { "type": "textarea", "id": "description", "label": "Text", "default": "So many happy customers — real experiences from people who chose XSTO." },
+    { "type": "text", "id": "average", "label": "Average rating", "default": "4.8" },
+    { "type": "text", "id": "count", "label": "Number of reviews", "default": "369" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Read M4 reviews on the product page →" },
+    { "type": "text", "id": "link_url", "label": "Link URL", "default": "/products/buy-robot-wheelchair" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "author", "label": "Name" },
+        { "type": "range", "id": "rating", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "textarea", "id": "body", "label": "Review" },
+        { "type": "text", "id": "date", "label": "Date" },
+        { "type": "text", "id": "product_name", "label": "Product", "default": "XSTO M4" }
+      ]
+    }
+  ],
+  "presets": [ { "name": "MR reviews" } ]
+}
+{% endschema %}

@@ -1,0 +1,200 @@
+{%- include 'mr-promo' -%}
+{%- liquid
+  assign models = section.blocks | where: 'type', 'model'
+  assign count = models.size
+  assign base_id = 'mr-tt-' | append: section.id
+  case count
+    when 3
+      assign count_word = 'Three'
+    when 4
+      assign count_word = 'Four'
+    when 5
+      assign count_word = 'Five'
+    when 6
+      assign count_word = 'Six'
+    when 7
+      assign count_word = 'Seven'
+    else
+      assign count_word = count
+  endcase
+-%}
+<section class="mr-turntable" data-count="{{ count }}" aria-roledescription="carousel" aria-labelledby="{{ base_id }}-heading" style="--tt-dwell: {{ section.settings.dwell | times: 1000 }}ms" data-mr-turntable data-dwell="{{ section.settings.dwell | times: 1000 }}" data-base-id="{{ base_id }}">
+  <div class="xsto-container">
+    <div class="mr-turntable-head">
+      <h1 id="{{ base_id }}-heading">{{ section.settings.heading }}</h1>
+      {%- if mr_promo -%}
+        <p class="mr-turntable-lede"><strong>{{ mr_promo_headline }}</strong> {{ mr_promo_highlight_1 }}, {{ mr_promo_highlight_2 | downcase }} — one of {{ count_word | downcase }} XSTO models, supplied and supported in the UK.</p>
+      {%- else -%}
+        <p class="mr-turntable-lede">{{ count_word }} {{ section.settings.lede }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="mr-turntable-stage" aria-hidden="true" data-mr-turntable-stage>
+    <div class="mr-turntable-glow"></div>
+    <div class="mr-turntable-floor-wrap">
+      <div class="mr-turntable-floor"></div>
+    </div>
+    {%- for block in models -%}
+      {%- liquid
+        assign product = block.settings.product
+        assign rel = forloop.index0
+        assign doubled = forloop.index0 | times: 2
+        if doubled >= count
+          assign rel = forloop.index0 | minus: count
+        endif
+        assign near_front = false
+        if rel == 0 or rel == 1 or rel == -1
+          assign near_front = true
+        endif
+        assign lift_pct = block.settings.lift | times: 100.0 | round: 1
+      -%}
+      <button type="button" tabindex="-1" class="mr-turntable-item" data-pos="{{ rel }}"{% if forloop.first %} data-current="true"{% endif %} data-mr-turntable-item>
+        <span class="mr-turntable-shadow"></span>
+        {%- if block.settings.cutout != blank -%}
+          <img alt="" src="{{ block.settings.cutout | asset_url }}" style="transform: translateY({{ lift_pct }}%) scale({{ block.settings.zoom }})" width="720" height="760" loading="{% if near_front %}eager{% else %}lazy{% endif %}"{% if forloop.first %} fetchpriority="high"{% endif %} decoding="async" draggable="false">
+        {%- elsif product.featured_image -%}
+          <img alt="" src="{{ product.featured_image | image_url: width: 900 }}" style="transform: translateY({{ lift_pct }}%) scale({{ block.settings.zoom }})" srcset="{{ product.featured_image | image_url: width: 600 }} 600w, {{ product.featured_image | image_url: width: 900 }} 900w, {{ product.featured_image | image_url: width: 1200 }} 1200w" sizes="(min-width: 768px) 32vw, 72vw" width="720" height="760" loading="{% if near_front %}eager{% else %}lazy{% endif %}"{% if forloop.first %} fetchpriority="high"{% endif %} decoding="async" draggable="false">
+        {%- endif -%}
+      </button>
+    {%- endfor -%}
+    <div class="mr-turntable-edge is-left"></div>
+    <div class="mr-turntable-edge is-right"></div>
+  </div>
+
+  <div class="xsto-container">
+    {%- for block in models -%}
+      {%- if block.settings.clip1_file != blank -%}
+        <div class="mr-motion-controls" data-mr-motion-controls="{{ forloop.index0 }}"{% unless forloop.first %} hidden{% endunless %}>
+          <p class="mr-motion-eyebrow" data-mr-motion-eyebrow>See what it can do</p>
+          <div class="mr-motion-functions" role="group" aria-label="{{ block.settings.name | escape }} demonstrations" data-mr-motion-functions>
+            <button type="button" aria-pressed="true" data-mr-clip="0" data-file="{{ block.settings.clip1_file | asset_url }}" data-poster="{{ block.settings.clip1_file | replace: '.mp4', '.jpg' | asset_url }}" data-style="{{ block.settings.clip1_style }}" data-caption="{{ block.settings.clip1_caption | default: block.settings.clip1_label | escape }}" data-description="{{ block.settings.clip1_description | escape }}">
+              {%- render 'mr-icon', name: 'play', size: 12 -%}
+              {{ block.settings.clip1_label }}
+            </button>
+            {%- if block.settings.clip2_file != blank -%}
+              <button type="button" aria-pressed="false" data-mr-clip="1" data-file="{{ block.settings.clip2_file | asset_url }}" data-poster="{{ block.settings.clip2_file | replace: '.mp4', '.jpg' | asset_url }}" data-style="{{ block.settings.clip2_style }}" data-caption="{{ block.settings.clip2_caption | default: block.settings.clip2_label | escape }}" data-description="{{ block.settings.clip2_description | escape }}">
+                {%- render 'mr-icon', name: 'play', size: 12 -%}
+                {{ block.settings.clip2_label }}
+              </button>
+            {%- endif -%}
+            <button type="button" aria-pressed="false" data-mr-clip="off">Chair view</button>
+          </div>
+          <p class="mr-motion-description" data-mr-motion-description>{{ block.settings.clip1_description }}</p>
+          <p class="mr-motion-source">Manufacturer demonstration · {{ block.settings.clip_note }}</p>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <div class="mr-turntable-placard" id="{{ base_id }}-panel" role="tabpanel" aria-labelledby="{{ base_id }}-tab-0" data-mr-turntable-panel>
+      {%- for block in models -%}
+        {%- liquid
+          assign product = block.settings.product
+          assign is_promo = false
+          if mr_promo and product.handle == mr_promo_handle
+            assign is_promo = true
+          endif
+          assign has_price = false
+          if product != blank
+            assign has_price = true
+            capture price_data
+              render 'mr-price', product: product
+            endcapture
+            assign price_parts = price_data | strip | split: '|'
+            assign inc = price_parts[0] | plus: 0
+            assign ex = price_parts[1] | plus: 0
+            assign cmp_ex = price_parts[2] | plus: 0
+          endif
+        -%}
+        <div class="mr-turntable-placard-inner" data-mr-turntable-placard="{{ forloop.index0 }}"{% unless forloop.first %} hidden{% endunless %} {{ block.shopify_attributes }}>
+          <p class="mr-turntable-model">
+            {{ block.settings.name }}
+            {%- unless is_promo -%}
+              <span class="mr-turntable-badge is-blue">{{ block.settings.badge }}</span>
+            {%- endunless -%}
+          </p>
+          <p class="mr-turntable-pitch">{% if is_promo %}{{ mr_promo_description }}{% else %}{{ block.settings.pitch }}{% endif %}</p>
+          {%- if is_promo -%}
+            <p class="mr-turntable-offer"><strong>Special offer: save {{ mr_promo_saving_ex }}</strong> {{ mr_promo_offer_name }} · {{ mr_promo_saving_inc }} off including VAT</p>
+          {%- endif -%}
+          {%- if has_price -%}
+            <p class="mr-turntable-price">
+              {%- if is_promo and cmp_ex > 0 -%}<s>{{ cmp_ex | money_without_trailing_zeros }}</s> {% endif -%}
+              <strong>From {{ ex | money_without_trailing_zeros }}</strong> with VAT relief, if eligible, or {{ inc | money_without_trailing_zeros }} including VAT.
+            </p>
+          {%- else -%}
+            <p class="mr-turntable-price">Ask our UK team for current pricing and availability.</p>
+          {%- endif -%}
+          <div class="mr-turntable-actions">
+            <a class="mr-button" href="{{ product.url | default: routes.all_products_collection_url }}">
+              {%- if is_promo -%}Shop the {{ block.settings.label }} launch price{%- else -%}Explore the {{ block.settings.label }}{%- endif -%}
+              {% render 'mr-icon', name: 'arrow-right', size: 18 %}
+            </a>
+            <a class="mr-turntable-compare" href="{{ section.settings.compare_url }}">{{ section.settings.compare_label }}</a>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="mr-turntable-strip">
+      <div class="mr-turntable-tabs" role="tablist" aria-label="Choose a wheelchair">
+        {%- for block in models -%}
+          <button type="button" role="tab" id="{{ base_id }}-tab-{{ forloop.index0 }}" class="mr-turntable-tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="{{ base_id }}-panel" tabindex="{% if forloop.first %}0{% else %}-1{% endif %}" data-mr-turntable-tab>{{ block.settings.label }}</button>
+        {%- endfor -%}
+      </div>
+      <div class="mr-turntable-controls">
+        <button type="button" aria-label="Previous wheelchair" data-mr-turntable-prev>{% render 'mr-icon', name: 'chevron-left', size: 18 %}</button>
+        <button type="button" aria-label="Pause animation" aria-pressed="false" hidden data-mr-turntable-pause>
+          <span data-mr-icon-pause>{% render 'mr-icon', name: 'pause', size: 16 %}</span>
+          <span data-mr-icon-play hidden>{% render 'mr-icon', name: 'play', size: 16 %}</span>
+        </button>
+        <button type="button" aria-label="Next wheelchair" data-mr-turntable-next>{% render 'mr-icon', name: 'chevron-right', size: 18 %}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MR hero turntable",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Powered wheelchairs built for the way you live." },
+    { "type": "textarea", "id": "lede", "label": "Intro when no offer is running", "info": "The number of models is added in front automatically.", "default": "XSTO models, from everyday self-balancing to stair climbing, supplied and supported in the UK by Bentech Medical." },
+    { "type": "range", "id": "dwell", "label": "Seconds on each wheelchair", "min": 5, "max": 20, "step": 1, "default": 11 },
+    { "type": "text", "id": "compare_label", "label": "Compare link label", "default": "Compare all models" },
+    { "type": "text", "id": "compare_url", "label": "Compare link URL", "default": "/compare" }
+  ],
+  "blocks": [
+    {
+      "type": "model",
+      "name": "Wheelchair",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "label", "label": "Short name", "default": "M4" },
+        { "type": "text", "id": "name", "label": "Full name", "default": "XSTO M4" },
+        { "type": "text", "id": "badge", "label": "Badge" },
+        { "type": "textarea", "id": "pitch", "label": "Description" },
+        { "type": "header", "content": "Image" },
+        { "type": "text", "id": "cutout", "label": "Cut-out image file", "info": "File name of a transparent image in the theme's assets. Leave empty to use the product's main image." },
+        { "type": "number", "id": "zoom", "label": "Image zoom", "default": 1 },
+        { "type": "number", "id": "lift", "label": "Image lift", "default": 0, "info": "Fraction of the image height, for example 0.075" },
+        { "type": "header", "content": "Demonstration films" },
+        { "type": "text", "id": "clip_note", "label": "Note under the films", "default": "Optional equipment may be shown." },
+        { "type": "text", "id": "clip1_file", "label": "Film 1 file", "info": "File name of an .mp4 in the theme's assets. A .jpg with the same name is used as the poster." },
+        { "type": "text", "id": "clip1_label", "label": "Film 1 label" },
+        { "type": "text", "id": "clip1_description", "label": "Film 1 description" },
+        { "type": "text", "id": "clip1_caption", "label": "Film 1 caption" },
+        { "type": "select", "id": "clip1_style", "label": "Film 1 style", "default": "film", "options": [ { "value": "film", "label": "Film" }, { "value": "studio", "label": "Studio (white background)" }, { "value": "portrait", "label": "Portrait" } ] },
+        { "type": "text", "id": "clip2_file", "label": "Film 2 file" },
+        { "type": "text", "id": "clip2_label", "label": "Film 2 label" },
+        { "type": "text", "id": "clip2_description", "label": "Film 2 description" },
+        { "type": "text", "id": "clip2_caption", "label": "Film 2 caption" },
+        { "type": "select", "id": "clip2_style", "label": "Film 2 style", "default": "film", "options": [ { "value": "film", "label": "Film" }, { "value": "studio", "label": "Studio (white background)" }, { "value": "portrait", "label": "Portrait" } ] }
+      ]
+    }
+  ],
+  "presets": [ { "name": "MR hero turntable" } ]
+}
+{% endschema %}

@@ -1,0 +1,24 @@
+<aside class="mr-transition mr-story-strip" aria-label="Our story">
+  <div class="xsto-container mr-transition-inner">
+    <p>
+      <span class="mr-story-desktop-copy"><strong>{{ section.settings.text_strong }}</strong> {{ section.settings.text }}</span>
+      <strong class="mr-story-mobile-copy">{{ section.settings.text_mobile }}</strong>
+    </p>
+    <a href="{{ section.settings.link_url }}">{{ section.settings.link_label }} {% render 'mr-icon', name: 'arrow-right', size: 16 %}</a>
+  </div>
+</aside>
+{% schema %}
+{
+  "name": "MR story strip",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "text_strong", "label": "Bold text", "default": "Bentech Medical’s XSTO range has a new home." },
+    { "type": "text", "id": "text", "label": "Text", "default": "Welcome to Mobility Robot." },
+    { "type": "text", "id": "text_mobile", "label": "Text on phones", "default": "XSTO has a new home." },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Our story" },
+    { "type": "text", "id": "link_url", "label": "Link URL", "default": "/about#our-brand" }
+  ],
+  "presets": [ { "name": "MR story strip" } ]
+}
+{% endschema %}

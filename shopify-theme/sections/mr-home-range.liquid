@@ -1,0 +1,121 @@
+{%- include 'mr-promo' -%}
+{%- liquid
+  assign models = section.blocks | where: 'type', 'model'
+  assign series = section.blocks | where: 'type', 'series'
+-%}
+<section class="mr-section" id="product-range">
+  <div class="xsto-container">
+    <div class="mr-section-intro">
+      <div>
+        <p class="mr-eyebrow">{{ section.settings.eyebrow }}</p>
+        <h2>{{ section.settings.heading_1 }}<br>{{ section.settings.heading_2 }}</h2>
+        <p>{{ section.settings.text }}</p>
+      </div>
+      <a class="mr-text-link" href="{{ section.settings.compare_url }}">{{ section.settings.compare_label }} {% render 'mr-icon', name: 'arrow-up-right', size: 18 %}</a>
+    </div>
+    {%- if series.size > 0 -%}
+      <nav class="mr-series-links" aria-label="Explore by series">
+        {%- for block in series -%}
+          <a href="{{ block.settings.url }}" {{ block.shopify_attributes }}>{{ block.settings.title }} <span>{{ block.settings.detail }}</span></a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+    <div class="mr-product-grid">
+      {%- for block in models -%}
+        {%- liquid
+          assign product = block.settings.product
+          if product == blank
+            continue
+          endif
+          assign is_promo = false
+          if mr_promo and product.handle == mr_promo_handle
+            assign is_promo = true
+          endif
+          capture price_data
+            render 'mr-price', product: product
+          endcapture
+          assign price_parts = price_data | strip | split: '|'
+          assign inc = price_parts[0] | plus: 0
+          assign ex = price_parts[1] | plus: 0
+          assign cmp_ex = price_parts[2] | plus: 0
+          assign image = product.featured_image
+        -%}
+        <article class="mr-product-card" {{ block.shopify_attributes }}>
+          <a class="mr-product-card-link" href="{{ product.url }}" aria-labelledby="range-{{ product.handle }}">
+            <div class="mr-card-visual">
+              <span class="mr-card-badge{% if is_promo %} is-promotion{% endif %}">{% if is_promo %}{{ mr_promo_label }}{% else %}{{ block.settings.badge }}{% endif %}</span>
+              {%- if image -%}
+                <img alt="{{ image.alt | default: block.settings.short_name | escape }}" src="{{ image | image_url: width: 800 }}" srcset="{{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 600 }} 600w, {{ image | image_url: width: 800 }} 800w" sizes="(min-width: 1200px) 23vw, 46vw" width="{{ image.width | default: 800 }}" height="{{ image.height | default: 800 }}" loading="lazy" decoding="async">
+              {%- endif -%}
+            </div>
+            <div class="mr-card-body">
+              <h3 id="range-{{ product.handle }}">{{ block.settings.short_name }}</h3>
+              <p>
+                <span class="mr-desktop-copy">{{ block.settings.description }}</span>
+                <span class="mr-mobile-copy">{{ block.settings.mobile_description }}</span>
+              </p>
+              <div class="mr-card-pricing">
+                {%- if is_promo -%}
+                  <p class="mr-card-offer">Special offer: save {{ mr_promo_saving_ex }} · {{ mr_promo_highlight_1 }} and {{ mr_promo_highlight_2 | downcase }}</p>
+                {%- endif -%}
+                <span>From </span>
+                {%- if is_promo and cmp_ex > 0 -%}<s>{{ cmp_ex | money }}</s>{%- endif -%}
+                <strong>{{ ex | money }}</strong>
+                <p>With VAT relief, if eligible</p>
+                <p>{{ inc | money_without_trailing_zeros }} including VAT</p>
+              </div>
+              <span class="mr-text-link">
+                <span class="mr-desktop-copy">{{ block.settings.explore_label }}</span>
+                <span class="mr-mobile-copy">View model</span>
+                {% render 'mr-icon', name: 'arrow-up-right', size: 18 %}
+              </span>
+            </div>
+          </a>
+        </article>
+      {%- endfor -%}
+    </div>
+    <p class="mr-range-note">{{ section.settings.note }} <a href="{{ section.settings.note_link_url }}">{{ section.settings.note_link_label }}</a>.</p>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "MR product range",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "The XSTO range" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "Two series." },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2", "default": "A world of possibilities." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Start with the way you want to live. We’ll help you find the chair to match." },
+    { "type": "text", "id": "compare_label", "label": "Compare link label", "default": "Compare all models" },
+    { "type": "text", "id": "compare_url", "label": "Compare link URL", "default": "/compare" },
+    { "type": "textarea", "id": "note", "label": "Note under the grid", "default": "All prices in GBP. VAT relief requires eligibility and a declaration. Photography may show optional equipment." },
+    { "type": "text", "id": "note_link_label", "label": "Note link label", "default": "VAT relief explained" },
+    { "type": "text", "id": "note_link_url", "label": "Note link URL", "default": "/vat-relief" }
+  ],
+  "blocks": [
+    {
+      "type": "series",
+      "name": "Series link",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "M4 Series" },
+        { "type": "text", "id": "detail", "label": "Detail", "default": "Everyday freedom" },
+        { "type": "text", "id": "url", "label": "URL", "default": "/series/m4" }
+      ]
+    },
+    {
+      "type": "model",
+      "name": "Wheelchair",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "short_name", "label": "Name", "default": "XSTO M4" },
+        { "type": "text", "id": "badge", "label": "Badge" },
+        { "type": "textarea", "id": "description", "label": "Description" },
+        { "type": "text", "id": "mobile_description", "label": "Description on phones" },
+        { "type": "text", "id": "explore_label", "label": "Link label", "default": "Explore XSTO M4" }
+      ]
+    }
+  ],
+  "presets": [ { "name": "MR product range" } ]
+}
+{% endschema %}

@@ -1,0 +1,28 @@
+{%- include 'mr-promo' -%}
+{%- if mr_promo -%}
+  <section class="mr-offer-strip" aria-label="Special offer on the XSTO {{ mr_promo_model }}" data-promotion="{{ mr_promo_id }}">
+    <div class="xsto-container mr-offer-strip-inner">
+      <p class="mr-offer-strip-kicker">Special offer · {{ mr_promo_offer_name }}</p>
+      <div class="mr-offer-strip-body">
+        <p class="mr-offer-strip-saving">
+          <span>Save</span>
+          <strong>{{ mr_promo_saving_ex }}</strong>
+          <span>on the new XSTO {{ mr_promo_model }}</span>
+        </p>
+        <p class="mr-offer-strip-detail">{{ mr_promo_saving_ex }} off with VAT relief, if eligible, or {{ mr_promo_saving_inc }} off including VAT. Until {{ mr_promo_until }}, while stocks last.</p>
+        <a class="mr-button mr-button-amber" href="{{ routes.root_url }}products/{{ mr_promo_handle }}">Shop the {{ mr_promo_model }} offer {% render 'mr-icon', name: 'arrow-right', size: 18 %}</a>
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+{% schema %}
+{
+  "name": "MR special offer strip",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "paragraph", "content": "Shows automatically while the offer in the mr-promo snippet is running, and hides itself when it ends." }
+  ],
+  "presets": [ { "name": "MR special offer strip" } ]
+}
+{% endschema %}

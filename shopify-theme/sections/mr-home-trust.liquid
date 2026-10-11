@@ -1,0 +1,34 @@
+<section class="mr-trust" aria-label="Buying with Mobility Robot">
+  <ul class="xsto-container">
+    {%- for block in section.blocks -%}
+      <li {{ block.shopify_attributes }}>
+        {% render 'mr-icon', name: block.settings.icon, size: 25, stroke: 1.6 %}
+        <a href="{{ block.settings.url }}">
+          <strong>{{ block.settings.title }}</strong>
+          <span>{{ block.settings.detail }}</span>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</section>
+{% schema %}
+{
+  "name": "MR trust bar",
+  "tag": "div",
+  "class": "mr-contents",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "truck", "options": [ { "value": "truck", "label": "Delivery van" }, { "value": "shield-check", "label": "Shield" }, { "value": "headphones", "label": "Headphones" }, { "value": "badge-percent", "label": "Percent badge" }, { "value": "phone", "label": "Phone" }, { "value": "calendar-days", "label": "Calendar" } ] },
+        { "type": "text", "id": "title", "label": "Title", "default": "UK delivery" },
+        { "type": "text", "id": "detail", "label": "Detail", "default": "Delivery details" },
+        { "type": "text", "id": "url", "label": "URL", "default": "/delivery" }
+      ]
+    }
+  ],
+  "presets": [ { "name": "MR trust bar" } ]
+}
+{% endschema %}

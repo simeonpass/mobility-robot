@@ -1,0 +1,191 @@
+{%- liquid
+  assign column_blocks = section.blocks | where: 'type', 'column'
+  assign phone_href = section.settings.phone | remove: ' ' | remove_first: '0' | prepend: 'tel:+44'
+-%}
+<footer class="mr-footer mt-auto" id="site-footer">
+  <div class="mr-footer-main">
+    <div class="mr-footer-content xsto-container">
+      <div class="mr-footer-grid">
+        <div class="mr-footer-brand">
+          <a aria-label="XSTO and Bentech Medical — home" class="mr-footer-brand-link" href="{{ routes.root_url }}">
+            {%- if section.settings.logo -%}
+              <img src="{{ section.settings.logo | image_url: width: 1000 }}" alt="{{ section.settings.logo_alt | escape }}" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" class="mr-footer-logo" loading="lazy" decoding="async">
+            {%- else -%}
+              <img src="{{ 'mr-xsto-bentech-header.png' | asset_url }}" alt="{{ section.settings.logo_alt | escape }}" width="1000" height="300" class="mr-footer-logo" loading="lazy" decoding="async">
+            {%- endif -%}
+          </a>
+          <p class="mr-footer-intro">{{ section.settings.intro }}</p>
+          <p class="mr-footer-description">{{ section.settings.description }}</p>
+          <address class="mr-footer-contact">
+            <p><a class="mr-footer-phone" href="{{ phone_href }}">{{ section.settings.phone }}</a></p>
+            <p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></p>
+            <p class="mr-footer-address">{{ section.settings.address_line_1 }}<br>{{ section.settings.address_line_2 }}</p>
+          </address>
+          <div class="mr-footer-socials">
+            {%- if section.settings.facebook_url != blank -%}
+              <a aria-label="XSTO Mobility on Facebook" class="mr-footer-social-link" href="{{ section.settings.facebook_url }}" rel="noopener noreferrer" target="_blank">
+                <svg aria-hidden="true" class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.instagram_url != blank -%}
+              <a aria-label="XSTO Mobility on Instagram" class="mr-footer-social-link" href="{{ section.settings.instagram_url }}" rel="noopener noreferrer" target="_blank">
+                <svg aria-hidden="true" class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.youtube_url != blank -%}
+              <a aria-label="XSTO Mobility on YouTube" class="mr-footer-social-link" href="{{ section.settings.youtube_url }}" rel="noopener noreferrer" target="_blank">
+                <svg aria-hidden="true" class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div class="mr-footer-link-columns">
+          {%- for block in column_blocks -%}
+            {%- capture links_html -%}
+              <ul class="mr-footer-links">
+                {%- assign lines = block.settings.links | newline_to_br | split: '<br />' -%}
+                {%- for line in lines -%}
+                  {%- assign parts = line | strip | split: '|' -%}
+                  {%- if parts.size > 1 -%}
+                    <li><a class="mr-footer-link" href="{{ parts[1] | strip }}">{{ parts[0] | strip }}</a></li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            {%- endcapture -%}
+            <nav aria-label="{{ block.settings.title | escape }}" {{ block.shopify_attributes }}>
+              <div class="mr-footer-links-desktop">
+                <h2 class="mr-footer-links-heading">{{ block.settings.title }}</h2>
+                {{ links_html }}
+              </div>
+              <details class="mr-footer-link-group">
+                <summary>{{ block.settings.title }}</summary>
+                {{ links_html }}
+              </details>
+            </nav>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <section class="mr-footer-newsletter" aria-labelledby="footer-newsletter-title">
+        <div class="mr-footer-signup">
+          <div class="mr-footer-newsletter-copy">
+            <h2 id="footer-newsletter-title">{{ section.settings.newsletter_title }}</h2>
+            <p>{{ section.settings.newsletter_text }}</p>
+          </div>
+
+          <div class="mr-footer-newsletter-form">
+            {%- form 'customer', class: 'mr-footer-signup-form', id: 'mr-footer-newsletter' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <label class="sr-only" for="footer-newsletter-email">Email address</label>
+              <input autocomplete="email" class="mr-footer-email" id="footer-newsletter-email" name="contact[email]" placeholder="Your email address" aria-describedby="footer-newsletter-privacy" required type="email">
+              <button class="mr-newsletter-button" type="submit">Subscribe</button>
+              {%- if form.posted_successfully? -%}
+                {%- assign mr_newsletter_ok = true -%}
+              {%- endif -%}
+              {%- if form.errors -%}
+                {%- assign mr_newsletter_error = true -%}
+              {%- endif -%}
+            {%- endform -%}
+            <p class="mr-footer-privacy" id="footer-newsletter-privacy">How we use your details: our <a class="underline underline-offset-4" href="{{ section.settings.privacy_url }}">privacy policy</a>.</p>
+            {%- if mr_newsletter_ok -%}
+              <p class="mr-footer-form-message" role="status">Thanks for subscribing.</p>
+            {%- endif -%}
+            {%- if mr_newsletter_error -%}
+              <p class="mr-footer-form-message is-error" role="alert">Please enter a valid email address.</p>
+            {%- endif -%}
+          </div>
+        </div>
+      </section>
+
+      <details class="mr-footer-notices">
+        <summary>{{ section.settings.notices_title }}</summary>
+        <div class="mr-footer-notices-content">
+          <p class="mr-footer-disclaimer">{{ section.settings.safety_notice }}</p>
+          <div class="mr-footer-disclaimer">
+            <p><strong>{{ section.settings.distributor_title }}</strong></p>
+            <p>{{ section.settings.distributor_notice }}</p>
+            <p>{{ section.settings.trademark_notice }}</p>
+          </div>
+        </div>
+      </details>
+
+      <div class="mr-footer-bottom">
+        <div class="mr-footer-company">
+          <p>© {{ 'now' | date: '%Y' }} {{ section.settings.company_name }}</p>
+          <nav class="mr-footer-legal" aria-label="Legal">
+            <a href="{{ section.settings.privacy_url }}">Privacy policy</a>
+            <a href="{{ section.settings.terms_url }}">Terms &amp; conditions</a>
+          </nav>
+        </div>
+        <div class="mr-footer-payments">
+          <p>{{ section.settings.payments_text }}</p>
+          <div class="flex max-w-full flex-wrap items-center justify-center gap-1.5 md:justify-end">
+            <div aria-label="Visa" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 bg-[#1A1F71]" role="img"><span class="text-[0.6rem] font-bold italic tracking-[0.12em] text-white">VISA</span></div>
+            <div aria-label="Mastercard" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 border border-black/10 bg-white" role="img"><svg aria-hidden="true" class="h-[18px] w-[28px]" viewBox="0 0 32 20"><circle cx="11.5" cy="10" fill="#EB001B" r="7.5"/><circle cx="20.5" cy="10" fill="#F79E1B" r="7.5"/><path d="M16 4.6a7.5 7.5 0 0 1 0 10.8 7.5 7.5 0 0 1 0-10.8Z" fill="#FF5F00"/></svg></div>
+            <div aria-label="American Express" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 bg-[#2E77BC]" role="img"><span class="text-[0.6rem] font-bold tracking-[0.1em] text-white">AMEX</span></div>
+            <div aria-label="PayPal" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 border border-black/10 bg-white" role="img"><span class="text-[0.6rem] font-bold tracking-tight"><span class="text-[#003087]">Pay</span><span class="text-[#0076A8]">Pal</span></span></div>
+            <div aria-label="Apple Pay" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 bg-black" role="img"><span class="inline-flex items-center gap-1 text-[0.6rem] font-medium text-white"><svg aria-hidden="true" class="h-3 w-2.5" viewBox="0 0 14 17" fill="currentColor"><path d="M11.7 8.8c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.2-2.8.9-3.5.9-.7 0-1.9-.8-3.1-.8C1.8 3.7.1 4.8.1 7.3c0 1.5.6 3.1 1.5 4.1.8 1 1.7 2 2.9 2 1.1 0 1.5-.7 2.9-.7s1.7.7 2.9.7c1.2 0 2-1 2.8-2 .9-1.2 1.2-2.4 1.2-2.4s-2.3-.9-2.3-3.2ZM9.6 2.4C10.2 1.7 10.6.7 10.5 0c-.9 0-2 .6-2.6 1.3-.6.7-1.1 1.7-1 2.7 1 .1 2-.5 2.7-1.6Z"/></svg>Pay</span></div>
+            <div aria-label="Google Pay" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 border border-black/10 bg-white" role="img"><span class="text-[0.6rem] font-semibold tracking-tight text-[#3C4043]"><span class="text-[#4285F4]">G</span> Pay</span></div>
+            <div aria-label="Klarna" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 bg-[#FFB3C7]" role="img"><span class="text-[0.6rem] font-bold tracking-wide text-[#0B051D]">Klarna</span></div>
+            <div aria-label="Clearpay" class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-md px-2.5 h-7 bg-[#B2FCE4]" role="img"><span class="text-[0.6rem] font-bold tracking-wide text-black">clearpay</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "MR footer",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo", "info": "Leave empty to use the XSTO and Bentech Medical logo that ships with the theme." },
+    { "type": "text", "id": "logo_alt", "label": "Logo description", "default": "XSTO and Bentech Medical Ltd — Official UK Distributor" },
+    { "type": "text", "id": "intro", "label": "Intro", "default": "Intelligent mobility, personal support." },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Discover the XSTO range with UK advice, demonstrations and aftercare from Bentech Medical." },
+    { "type": "header", "content": "Contact" },
+    { "type": "text", "id": "phone", "label": "Phone", "default": "020 8050 4849" },
+    { "type": "text", "id": "email", "label": "Email", "default": "sales@bentechmeduk.com" },
+    { "type": "text", "id": "address_line_1", "label": "Address line 1", "default": "Unit 2 Old Forge Road" },
+    { "type": "text", "id": "address_line_2", "label": "Address line 2", "default": "Wimborne, Dorset, BH21 7RR" },
+    { "type": "header", "content": "Social links" },
+    { "type": "url", "id": "facebook_url", "label": "Facebook", "default": "https://www.facebook.com/XSTOMobilityofficial" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram", "default": "https://www.instagram.com/xsto_mobility/" },
+    { "type": "url", "id": "youtube_url", "label": "YouTube", "default": "https://www.youtube.com/@XSTOMobility" },
+    { "type": "header", "content": "Newsletter" },
+    { "type": "text", "id": "newsletter_title", "label": "Heading", "default": "Stay in the loop" },
+    { "type": "text", "id": "newsletter_text", "label": "Text", "default": "Product news and offers from Mobility Robot." },
+    { "type": "header", "content": "Notices" },
+    { "type": "text", "id": "notices_title", "label": "Notices heading", "default": "Product safety & distributor information" },
+    { "type": "textarea", "id": "safety_notice", "label": "Safety notice", "default": "*Safe use of XSTO mobility products requires exercising judgement and common sense at all times. Users are responsible for operating their device safely and assessing terrain, gradients, and conditions before use. Always follow the operating guidelines in your user manual. Neither XSTO nor Bentech Medical Limited is liable for accidents or injuries resulting from unsafe operation, failure to follow instructions, or use beyond the product's stated capabilities." },
+    { "type": "text", "id": "distributor_title", "label": "Distributor heading", "default": "Official UK distributor of XSTO" },
+    { "type": "textarea", "id": "distributor_notice", "label": "Distributor notice", "default": "Mobility Robot is the online store and trading name of Bentech Medical Limited, the official UK distributor of XSTO. XSTO manufactures the products. Bentech Medical Limited is an independent UK company providing sales, demonstrations and aftercare." },
+    { "type": "text", "id": "trademark_notice", "label": "Trademark notice", "default": "XSTO is a trademark of its manufacturer." },
+    { "type": "header", "content": "Bottom bar" },
+    { "type": "text", "id": "company_name", "label": "Company name", "default": "Bentech Medical Limited" },
+    { "type": "text", "id": "privacy_url", "label": "Privacy policy URL", "default": "/privacy" },
+    { "type": "text", "id": "terms_url", "label": "Terms URL", "default": "/terms" },
+    { "type": "text", "id": "payments_text", "label": "Payments text", "default": "Payment options vary by order and eligibility." }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Explore the range" },
+        { "type": "textarea", "id": "links", "label": "Links", "info": "One link per line, written as Label|/url" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "column", "settings": { "title": "Explore the range", "links": "XSTO M4|/products/buy-robot-wheelchair\nXSTO M4B|/products/xsto-m4b-1\nXSTO M4 Pro|/products/xsto-m4-pro\nXSTO X12|/products/x12-all-terrain-mobility-robot\nXSTO X12 Pro|/products/xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition\nAll wheelchairs|/collections/all\nAccessories|/collections/accessories" } },
+      { "type": "column", "settings": { "title": "Find your fit", "links": "Compare models|/compare\nBook a demonstration|/demo\nFind a dealer|/stockists\nBuyer guides|/guides\nWatch the range|/videos\nVAT relief explained|/vat-relief\nRequest a quote|/quote\nInternational enquiries|/international" } },
+      { "type": "column", "settings": { "title": "Here to help", "links": "Contact our team|/contact\nHelp & advice|/support\nFrequently asked questions|/faq\nDelivery information|/delivery\nWarranty & aftercare|/warranty\nReturns policy|/returns\nYour orders|/account/orders\nAbout Mobility Robot|/about" } }
+    ]
+  }
+}
+{% endschema %}

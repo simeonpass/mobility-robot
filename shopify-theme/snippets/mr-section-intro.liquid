@@ -1,0 +1,8 @@
+{%- comment -%} Centred or left-aligned section heading with an accent word. {%- endcomment -%}
+<div class="mb-8 max-w-3xl animate-fade-in sm:mb-10 {% if align == 'left' %}text-left{% else %}text-center mx-auto{% endif %}">
+  <p class="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">{{ label }}</p>
+  <h2 class="font-display mt-2.5 text-[1.65rem] font-semibold leading-tight tracking-tight text-foreground sm:mt-3 sm:text-3xl md:text-4xl lg:text-[2.75rem] lg:leading-tight">{{ title }} <span class="text-gold">{{ accent }}</span></h2>
+  {%- if description != blank -%}
+    <p class="mt-3 font-sans text-[0.9375rem] leading-relaxed text-muted-foreground sm:mt-4 sm:text-base md:text-lg">{{ description }}</p>
+  {%- endif -%}
+</div>

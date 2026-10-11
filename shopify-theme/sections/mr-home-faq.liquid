@@ -1,0 +1,47 @@
+<section class="mr-section mr-soft">
+  <div class="xsto-container mr-faq-grid">
+    <div>
+      <p class="mr-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2>{{ section.settings.heading_1 }}<br>{{ section.settings.heading_2 }}</h2>
+      <p>{{ section.settings.text }}</p>
+      <a class="mr-text-link" href="{{ section.settings.link_url }}">{{ section.settings.link_label }} {% render 'mr-icon', name: 'arrow-right', size: 18 %}</a>
+    </div>
+    <div>
+      {%- for block in section.blocks -%}
+        <details {{ block.shopify_attributes }}>
+          <summary>{{ block.settings.question }}</summary>
+          <p>{{ block.settings.answer }}</p>
+        </details>
+      {%- endfor -%}
+      <a class="mr-text-link mt-6" href="{{ section.settings.all_url }}">{{ section.settings.all_label }} {% render 'mr-icon', name: 'arrow-right', size: 18 %}</a>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "MR questions",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Good to know" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "Let’s make" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2", "default": "things clearer." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Choosing a wheelchair is personal. We’re here to help you understand your options." },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Talk to our team" },
+    { "type": "text", "id": "link_url", "label": "Link URL", "default": "/contact" },
+    { "type": "text", "id": "all_label", "label": "All questions link label", "default": "View all FAQs" },
+    { "type": "text", "id": "all_url", "label": "All questions link URL", "default": "/faq" }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question" },
+        { "type": "textarea", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [ { "name": "MR questions" } ]
+}
+{% endschema %}

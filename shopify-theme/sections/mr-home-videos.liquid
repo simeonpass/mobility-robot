@@ -1,0 +1,67 @@
+<section class="xsto-section bg-gradient-cream" id="experience-range" data-mr-videos>
+  <div class="xsto-container">
+    {% render 'mr-section-intro', label: section.settings.eyebrow, title: section.settings.title, accent: section.settings.accent, description: section.settings.description %}
+
+    <div class="mr-video-grid grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign delay = forloop.index0 | times: 80
+          if block.settings.youtube_id != blank
+            assign thumb = 'https://img.youtube.com/vi/' | append: block.settings.youtube_id | append: '/hqdefault.jpg'
+          else
+            assign thumb = 'mr-m4-hero-new.webp' | asset_url
+          endif
+        -%}
+        <button aria-label="Play {{ block.settings.title | escape }}" class="mr-video-card group overflow-hidden rounded-2xl border border-border/70 bg-card text-left shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary animate-fade-in-up" style="animation-delay: {{ delay }}ms" type="button" data-mr-video data-title="{{ block.settings.title | escape }}" data-youtube="{{ block.settings.youtube_id }}" data-video="{{ block.settings.video_url }}" {{ block.shopify_attributes }}>
+          <div class="mr-video-thumb relative aspect-video overflow-hidden bg-navy">
+            <img alt="" class="size-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105" decoding="async" loading="lazy" src="{{ thumb }}" width="480" height="270">
+            <div class="absolute inset-0 bg-navy/25 transition-colors group-hover:bg-navy/15"></div>
+            <span class="mr-video-play absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary-foreground/95 text-navy shadow-luxe transition-transform group-hover:scale-105">
+              {% render 'mr-icon', name: 'play', stroke: 0, class: 'ml-0.5 size-6 fill-current' %}
+            </span>
+          </div>
+          <div class="mr-video-copy p-5">
+            <h3 class="font-semibold text-foreground">{{ block.settings.title }}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{{ block.settings.description }}</p>
+          </div>
+        </button>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<template data-mr-video-dialog-template>
+  <dialog aria-labelledby="mr-video-dialog-title" class="fixed inset-0 m-auto max-h-[calc(100dvh_-_2rem)] w-[calc(100%_-_2rem)] max-w-5xl overflow-y-auto rounded-2xl border border-white/10 bg-navy p-0 text-white shadow-luxe backdrop:bg-navy/90 backdrop:backdrop-blur-sm">
+    <div class="flex items-center justify-between gap-4 px-4 py-3">
+      <p class="text-base font-semibold" id="mr-video-dialog-title"></p>
+      <button aria-label="Close video" class="min-h-11 shrink-0 rounded-full border border-white/30 px-4 text-sm font-semibold hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" type="button" data-mr-video-close>Close</button>
+    </div>
+    <div class="aspect-video w-full" data-mr-video-frame data-poster="{{ 'mr-m4-hero-new.webp' | asset_url }}" data-video-class="size-full object-contain" data-iframe-class="size-full border-0"></div>
+  </dialog>
+</template>
+{% schema %}
+{
+  "name": "MR videos",
+  "tag": "div",
+  "class": "mr-contents",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "See it in action" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Experience the" },
+    { "type": "text", "id": "accent", "label": "Heading accent", "default": "range." },
+    { "type": "textarea", "id": "description", "label": "Text", "default": "Watch the range in action, from everyday self-levelling to the X12’s stair-climbing capability." }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "textarea", "id": "description", "label": "Description" },
+        { "type": "text", "id": "youtube_id", "label": "YouTube video ID" },
+        { "type": "text", "id": "video_url", "label": "Video file URL", "info": "Used when there is no YouTube ID." }
+      ]
+    }
+  ],
+  "presets": [ { "name": "MR videos" } ]
+}
+{% endschema %}

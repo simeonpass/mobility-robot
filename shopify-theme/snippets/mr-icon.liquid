@@ -1,0 +1,22 @@
+{%- comment -%} Lucide icons used by the Mobility Robot sections. Usage: {% render 'mr-icon', name: 'arrow-right', size: 18 %} {%- endcomment -%}
+{%- liquid
+  assign s = size | default: 24
+  assign sw = stroke | default: 2
+-%}
+<svg xmlns="http://www.w3.org/2000/svg" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ sw }}" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-{{ name }}{% if class %} {{ class }}{% endif %}" aria-hidden="true">
+{%- case name -%}
+  {%- when 'arrow-right' -%}<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+  {%- when 'arrow-up-right' -%}<path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+  {%- when 'chevron-left' -%}<path d="m15 18-6-6 6-6"/>
+  {%- when 'chevron-right' -%}<path d="m9 18 6-6-6-6"/>
+  {%- when 'pause' -%}<rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/>
+  {%- when 'play' -%}<path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/>
+  {%- when 'search' -%}<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+  {%- when 'truck' -%}<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>
+  {%- when 'shield-check' -%}<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
+  {%- when 'headphones' -%}<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>
+  {%- when 'badge-percent' -%}<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/>
+  {%- when 'phone' -%}<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/>
+  {%- when 'calendar-days' -%}<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>
+{%- endcase -%}
+</svg>

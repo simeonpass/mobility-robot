@@ -1,0 +1,29 @@
+{%- comment -%}
+  Time-boxed promotion (ported from the Hydrogen site's promotions config).
+  The saving itself comes from the product's price and compare-at price in Shopify;
+  this only drives the messaging, and switches it off when the window closes.
+  Pulled in with include so the variables are available to the calling section.
+  To end or change the offer, edit the values below.
+{%- endcomment -%}
+{%- liquid
+  assign mr_promo = false
+  assign mr_promo_id = 'm4b-october-2026'
+  assign mr_promo_handle = 'xsto-m4b-1'
+  assign mr_promo_model = 'M4B'
+  assign mr_promo_label = 'Special offer · £500 off'
+  assign mr_promo_offer_name = 'October launch price'
+  assign mr_promo_saving_ex = '£500'
+  assign mr_promo_saving_inc = '£600'
+  assign mr_promo_headline = 'Special offer: save £500 on the new XSTO M4B.'
+  assign mr_promo_description = 'The M4 you know, with an improved folding footrest and new front suspension for a smoother ride over kerbs and rough paving.'
+  assign mr_promo_highlight_1 = 'Improved folding footrest'
+  assign mr_promo_highlight_2 = 'New front suspension'
+  assign mr_promo_until = '31 October'
+  comment
+    Live 30 Sept 2026 21:30 UTC to 31 Oct 2026 23:59:59 UTC
+  endcomment
+  assign mr_promo_now = 'now' | date: '%s' | plus: 0
+  if mr_promo_now >= 1790803800 and mr_promo_now <= 1793491199
+    assign mr_promo = true
+  endif
+-%}
