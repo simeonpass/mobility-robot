@@ -13,22 +13,32 @@
 </style>
 {%- liquid
   assign rank = 0
-  assign has_preorder = false
+  assign preorder_seconds = 0
   for item in cart.items
     assign product = item.product
+    assign tracked_out = false
+    if item.variant.inventory_management != blank and item.variant.inventory_quantity <= 0
+      assign tracked_out = true
+    endif
     capture kind
       render 'mr-product-hidden', handle: product.handle
     endcapture
     if kind == 'chair'
       if product.handle contains 'x12'
         assign rank = 3
+      elsif tracked_out
+        assign preorder_seconds = 7257600
       elsif rank < 1
         assign rank = 1
       endif
     else
       include 'mr-accessory-compat'
-      if mr_fits_x12
-        assign has_preorder = true
+      if tracked_out and mr_fits_x12 == false
+        assign preorder_seconds = 7257600
+      elsif mr_fits_x12
+        if preorder_seconds < 2419200
+          assign preorder_seconds = 2419200
+        endif
       elsif rank < 2
         assign rank = 2
       endif
@@ -40,11 +50,11 @@
   elsif rank == 3
     assign in_stock_eta = 'Delivers in 10 days'
   endif
-  assign arrival = 'now' | date: '%s' | plus: 2419200 | date: '%-d %B %Y'
-  if has_preorder and rank > 0
+  assign arrival = 'now' | date: '%s' | plus: preorder_seconds | date: '%-d %B %Y'
+  if preorder_seconds > 0 and rank > 0
     assign delivery_headline = 'Split delivery'
-    assign delivery_eta = 'Pre-order accessories arrive around ' | append: arrival
-  elsif has_preorder
+    assign delivery_eta = 'Pre-order items arrive around ' | append: arrival
+  elsif preorder_seconds > 0
     assign delivery_headline = 'Pre-order'
     assign delivery_eta = 'Est. arrival around ' | append: arrival
   else
