@@ -1,27 +1,44 @@
 {%- comment -%}
-  List price for a chair: the cheapest variant that is not a "VAT Relief" variant
-  (the VAT-inclusive price), falling back to the product's lowest price.
-  Outputs "inc|ex|compare_ex" in pence, for the caller to split.
+  List price for a chair, as "inc|ex|compare_ex" in pence for the caller to split.
+  - Product with a "VAT" option: the cheapest variant that is not "VAT Relief" is the
+    VAT-inclusive price.
+  - Otherwise the product's lowest price is read as VAT-inclusive or VAT-exclusive
+    according to the shop's "prices include tax" setting.
 {%- endcomment -%}
 {%- liquid
   assign inc = 0
-  assign cmp = 0
-  for v in product.variants
-    unless v.title contains 'VAT Relief'
-      if inc == 0 or v.price < inc
-        assign inc = v.price
-        assign cmp = v.compare_at_price | default: 0
-      endif
-    endunless
-  endfor
-  if inc == 0
-    assign inc = product.price_min
-    assign cmp = product.compare_at_price_min | default: 0
-  endif
-  assign ex = inc | divided_by: 1.2 | round
+  assign ex = 0
   assign cmp_ex = 0
-  if cmp > inc
-    assign cmp_ex = cmp | divided_by: 1.2 | round
+  if product.options contains 'VAT'
+    assign cmp = 0
+    for v in product.variants
+      unless v.options contains 'VAT Relief'
+        if inc == 0 or v.price < inc
+          assign inc = v.price
+          assign cmp = v.compare_at_price | default: 0
+        endif
+      endunless
+    endfor
+    assign ex = inc | divided_by: 1.2 | round
+    if cmp > inc
+      assign cmp_ex = cmp | divided_by: 1.2 | round
+    endif
+  endif
+  if inc == 0
+    assign cmp = product.compare_at_price_min | default: 0
+    if shop.taxes_included
+      assign inc = product.price_min
+      assign ex = inc | divided_by: 1.2 | round
+      if cmp > inc
+        assign cmp_ex = cmp | divided_by: 1.2 | round
+      endif
+    else
+      assign ex = product.price_min
+      assign inc = ex | times: 1.2 | round
+      if cmp > ex
+        assign cmp_ex = cmp
+      endif
+    endif
   endif
 -%}
 {{- inc }}|{{ ex }}|{{ cmp_ex -}}
