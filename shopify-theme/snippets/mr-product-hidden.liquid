@@ -1,0 +1,16 @@
+{%- comment -%} Outputs "chair", "hidden" or "" for a product handle: wheelchairs, and products kept off the storefront (EzGo2, M8, deposits). {%- endcomment -%}
+{%- liquid
+  assign h = handle | downcase
+  assign first6 = h | slice: 0, 6
+  assign first10 = h | slice: 0, 10
+  case h
+    when 'buy-robot-wheelchair', 'xsto-m4b-1', 'xsto-m4-pro', 'x12-all-terrain-mobility-robot', 'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'
+      echo 'chair'
+    when 'xsto-m8', 'xsto-m8-pro', 'ezgo2-mobility-robot'
+      echo 'hidden'
+    else
+      if first10 == 'xsto-ezgo2' or first6 == 'ezgo2-' or h contains 'deposit' or h contains 'selling-plan'
+        echo 'hidden'
+      endif
+  endcase
+-%}

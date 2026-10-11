@@ -1,0 +1,39 @@
+{%- paginate blog.articles by 12 -%}
+<div class="xsto-container py-8 md:py-12 ">
+  <header class="mb-8 max-w-3xl">
+    <h1 class="text-3xl font-bold text-foreground md:text-4xl">{{ blog.title | default: 'News & Updates' | escape }}</h1>
+    <p class="mt-3 text-base leading-relaxed text-muted-foreground md:text-lg">News, product updates and mobility guides from the official UK XSTO distributor.</p>
+  </header>
+  <div>
+    {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}"><span><span aria-hidden="true">↑</span> Load previous</span></a>{%- endif -%}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {%- for article in blog.articles -%}
+        <article class="overflow-hidden rounded-xl border border-border bg-card">
+          <a class="block no-underline" href="{{ article.url }}">
+            {%- if article.image -%}
+              <img alt="{{ article.image.alt | default: article.title | escape }}" class="w-full object-cover" style="aspect-ratio:16/9" src="{{ article.image | image_url: width: 800 }}" srcset="{{ article.image | image_url: width: 400 }} 400w, {{ article.image | image_url: width: 800 }} 800w, {{ article.image | image_url: width: 1200 }} 1200w" sizes="(min-width: 768px) 33vw, 100vw" loading="lazy" decoding="async">
+            {%- endif -%}
+            <div class="p-5">
+              <time class="text-xs text-muted-foreground" datetime="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}">{{ article.published_at | date: '%-d %B %Y' }}</time>
+              <h2 class="mt-1 text-lg font-semibold text-foreground">{{ article.title | escape }}</h2>
+              {%- assign excerpt = article.excerpt | strip_html | strip -%}
+              {%- if excerpt != blank -%}
+                <p class="mt-2 line-clamp-3 text-sm text-muted-foreground">{{ excerpt }}</p>
+              {%- endif -%}
+              <span class="mt-3 inline-block text-sm font-semibold text-gold">Read article →</span>
+            </div>
+          </a>
+        </article>
+      {%- endfor -%}
+    </div>
+    {%- if paginate.next -%}<a href="{{ paginate.next.url }}"><span>Load more <span aria-hidden="true">↓</span></span></a>{%- endif -%}
+  </div>
+</div>
+{%- endpaginate -%}
+{% schema %}
+{
+  "name": "MR blog",
+  "tag": "div",
+  "class": "mr-contents"
+}
+{% endschema %}

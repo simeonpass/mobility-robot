@@ -1,0 +1,23 @@
+{%- comment -%}
+  Responsive Shopify image, matching the markup the Hydrogen site produced.
+  Usage: {% render 'mr-image', image: image, alt: '', class: '', sizes: '100vw', loading: 'lazy', priority: false, style: '' %}
+{%- endcomment -%}
+{%- liquid
+  assign widths = '200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000' | split: ','
+  assign max_width = image.width | default: 3000
+  capture srcset
+    for w in widths
+      assign n = w | plus: 0
+      if n <= max_width or forloop.first
+        unless forloop.first
+          echo ', '
+        endunless
+        echo image | image_url: width: n
+        echo ' '
+        echo n
+        echo 'w'
+      endif
+    endfor
+  endcapture
+-%}
+<img alt="{{ alt | default: image.alt | escape }}" decoding="async" loading="{{ loading | default: 'lazy' }}" sizes="{{ sizes | default: '100vw' }}" src="{{ image | image_url: width: 800 }}" srcset="{{ srcset }}" width="{{ image.width }}" height="{{ image.height }}" style="width:100%;aspect-ratio:{{ image.width | default: 1 }}/{{ image.height | default: 1 }};{{ style }}" class="{{ class }}"{% if priority %} fetchpriority="high"{% endif %}>

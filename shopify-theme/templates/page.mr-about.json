@@ -1,0 +1,12 @@
+{
+  "layout": "mr",
+  "sections": {
+    "main": {
+      "type": "mr-page-about",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

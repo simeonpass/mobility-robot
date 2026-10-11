@@ -1,0 +1,114 @@
+{%- comment -%}
+  Accessories collection with the "filter by wheelchair" chips. Compatibility comes from snippets/mr-accessory-compat.liquid.
+  /collections/accessories?chair=m4 (m4b, m4-pro, x12) opens with that filter applied.
+{%- endcomment -%}
+{%- liquid
+  assign items = collection.products | sort: 'title'
+  assign total = 0
+  assign count_m4 = 0
+  assign count_m4b = 0
+  assign count_m4_pro = 0
+  assign count_x12 = 0
+-%}
+{%- capture cards -%}
+  {%- for product in items -%}
+    {%- capture kind -%}{% render 'mr-product-hidden', handle: product.handle %}{%- endcapture -%}
+    {%- if kind != '' -%}{%- continue -%}{%- endif -%}
+    {%- include 'mr-accessory-compat' -%}
+    {%- liquid
+      assign total = total | plus: 1
+      assign padded = mr_slots | prepend: '|' | append: '|'
+      if padded contains '|m4|'
+        assign count_m4 = count_m4 | plus: 1
+      endif
+      if padded contains '|m4b|'
+        assign count_m4b = count_m4b | plus: 1
+      endif
+      if padded contains '|m4-pro|'
+        assign count_m4_pro = count_m4_pro | plus: 1
+      endif
+      if padded contains '|x12|'
+        assign count_x12 = count_x12 | plus: 1
+      endif
+    -%}
+    <li data-mr-acc-item data-slots="{{ padded }}">{% render 'mr-card-accessory', product: product, label: mr_compat_label, fits_x12: mr_fits_x12, style: 'catalog' %}</li>
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign chip = 'inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium no-underline transition-colors' -%}
+<div class="accessories-page bg-background">
+  <div class="xsto-container py-10 md:py-14">
+    <header class="mb-10 max-w-3xl md:mb-12">
+      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Shop by compatibility</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-foreground md:text-4xl">{{ collection.title | escape }}</h1>
+      <p class="mt-3 text-base leading-relaxed text-muted-foreground md:text-lg">{{ collection.description | strip_html | strip | default: 'Find bags, batteries, cushions and mounts organised by the XSTO chair they fit. Pick your model below, or browse everything.' }}</p>
+    </header>
+    <div class="mr-accessory-catalog" data-mr-accessories>
+      <p class="mr-accessory-tip">Buying a wheelchair? You can add compatible extras directly on its product page.</p>
+      <nav aria-label="Filter accessories by wheelchair" class="mr-accessory-filters">
+        <a aria-current="page" class="{{ chip }} border-foreground bg-foreground text-background" data-mr-acc-chip="all" data-label="All accessories" href="{{ collection.url }}">All<span class="tabular-nums text-xs text-background/70">{{ total }}</span></a>
+        <a class="{{ chip }} border-border bg-background text-foreground hover:border-foreground/40 hover:no-underline" data-mr-acc-chip="m4" data-label="Accessories for XSTO M4" href="{{ collection.url }}?chair=m4">M4<span class="tabular-nums text-xs text-muted-foreground">{{ count_m4 }}</span></a>
+        <a class="{{ chip }} border-border bg-background text-foreground hover:border-foreground/40 hover:no-underline" data-mr-acc-chip="m4b" data-label="Accessories for XSTO M4B" href="{{ collection.url }}?chair=m4b">M4B<span class="tabular-nums text-xs text-muted-foreground">{{ count_m4b }}</span></a>
+        <a class="{{ chip }} border-border bg-background text-foreground hover:border-foreground/40 hover:no-underline" data-mr-acc-chip="m4-pro" data-label="Accessories for XSTO M4 Pro" href="{{ collection.url }}?chair=m4-pro">M4 Pro<span class="tabular-nums text-xs text-muted-foreground">{{ count_m4_pro }}</span></a>
+        <a class="{{ chip }} border-border bg-background text-foreground hover:border-foreground/40 hover:no-underline" data-mr-acc-chip="x12" data-label="Accessories for XSTO X12" href="{{ collection.url }}?chair=x12">X12<span class="tabular-nums text-xs text-muted-foreground">{{ count_x12 }}</span></a>
+      </nav>
+      <div class="mr-accessory-results">
+        <h2 data-mr-acc-heading>All accessories</h2>
+        <span data-mr-acc-count>{{ total }} items</span>
+      </div>
+      {%- if total > 0 -%}
+        <ul class="mr-accessory-grid">{{ cards }}</ul>
+      {%- endif -%}
+      <p data-mr-acc-empty{% if total > 0 %} hidden{% endif %}>No accessories are currently listed for this model. <a href="/pages/contact">Ask our team for help</a>.</p>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    var root = document.querySelector('[data-mr-accessories]');
+    if (!root) return;
+    var chips = [].slice.call(root.querySelectorAll('[data-mr-acc-chip]'));
+    var items = [].slice.call(root.querySelectorAll('[data-mr-acc-item]'));
+    var on = ['border-foreground', 'bg-foreground', 'text-background'];
+    var off = ['border-border', 'bg-background', 'text-foreground', 'hover:border-foreground/40', 'hover:no-underline'];
+    function apply(slot) {
+      if (slot === 'x12-pro' || slot === 'xsto-x12-pro') slot = 'x12';
+      slot = (slot || 'all').replace(/^xsto-/, '');
+      var chip = chips.filter(function (c) { return c.getAttribute('data-mr-acc-chip') === slot; })[0];
+      if (!chip) { slot = 'all'; chip = chips[0]; }
+      var shown = 0;
+      items.forEach(function (item) {
+        var match = slot === 'all' || item.getAttribute('data-slots').indexOf('|' + slot + '|') !== -1;
+        item.hidden = !match;
+        if (match) shown++;
+      });
+      chips.forEach(function (c) {
+        var active = c === chip;
+        on.forEach(function (name) { c.classList.toggle(name, active); });
+        off.forEach(function (name) { c.classList.toggle(name, !active); });
+        var count = c.querySelector('span');
+        count.classList.toggle('text-background/70', active);
+        count.classList.toggle('text-muted-foreground', !active);
+        if (active) c.setAttribute('aria-current', 'page'); else c.removeAttribute('aria-current');
+      });
+      root.querySelector('[data-mr-acc-heading]').textContent = chip.getAttribute('data-label');
+      root.querySelector('[data-mr-acc-count]').textContent = shown + ' items';
+      root.querySelector('[data-mr-acc-empty]').hidden = shown > 0;
+    }
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function (event) {
+        if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+        event.preventDefault();
+        history.replaceState(null, '', chip.getAttribute('href'));
+        apply(chip.getAttribute('data-mr-acc-chip'));
+      });
+    });
+    apply(new URLSearchParams(location.search).get('chair'));
+  })();
+</script>
+{% schema %}
+{
+  "name": "MR accessories",
+  "tag": "div",
+  "class": "mr-contents"
+}
+{% endschema %}

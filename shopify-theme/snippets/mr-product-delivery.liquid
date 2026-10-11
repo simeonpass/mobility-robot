@@ -1,0 +1,66 @@
+{%- comment -%}
+  Stock and delivery estimate under the buy button.
+  kind: 'chair' (3–4 working days), 'x12' (always in stock, 10 days), 'x12-accessory' (about 4 weeks), or blank (5–7 working days).
+{%- endcomment -%}
+{%- liquid
+  assign status = 'in_stock'
+  assign headline = 'In stock'
+  assign detail = 'Free UK mainland delivery'
+  assign eta = 'Delivers in 5–7 working days'
+  if kind == 'chair'
+    assign eta = 'Delivers in 3–4 working days'
+  elsif kind == 'x12'
+    assign eta = 'Delivers in 10 days'
+  endif
+  assign tracked_out = false
+  if variant.inventory_management != blank and variant.inventory_quantity <= 0
+    assign tracked_out = true
+  endif
+  if variant.available == false
+    assign status = 'sold_out'
+    assign headline = 'Currently unavailable'
+    assign detail = 'This model is out of stock.'
+    assign eta = 'Contact us for availability'
+  elsif kind == 'x12-accessory'
+    assign status = 'preorder'
+    assign headline = 'Pre-order'
+    assign detail = 'Available to order now · estimated delivery ~4 weeks'
+    assign arrival = 'now' | date: '%s' | plus: 2419200 | date: '%-d %B %Y'
+    assign eta = 'Est. arrival around ' | append: arrival
+  elsif tracked_out and kind != 'x12'
+    assign status = 'preorder'
+    assign headline = 'Pre-order'
+    assign detail = 'Estimated delivery ~12 weeks'
+    assign arrival = 'now' | date: '%s' | plus: 7257600 | date: '%-d %B %Y'
+    assign eta = 'Est. arrival around ' | append: arrival
+  endif
+  case status
+    when 'preorder'
+      assign box = 'border-amber-200/80 bg-amber-50/60'
+      assign ring = 'ring-amber-500/20'
+      assign dot = 'bg-amber-500'
+      assign icon = 'calendar-clock'
+    when 'sold_out'
+      assign box = 'border-border bg-secondary/50'
+      assign ring = 'ring-muted/30'
+      assign dot = 'bg-muted-foreground'
+      assign icon = 'package'
+    else
+      assign box = 'border-emerald-200/80 bg-emerald-50/60'
+      assign ring = 'ring-emerald-500/20'
+      assign dot = 'bg-emerald-500'
+      assign icon = 'truck'
+  endcase
+-%}
+<div class="flex items-start gap-2.5 rounded-lg border px-3 py-2.5 {{ box }}">
+  <span aria-hidden="true" class="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-background ring-2 {{ ring }}">{% render 'mr-icon', name: icon, stroke: 1.75, class: 'size-3.5 text-foreground' %}</span>
+  <div class="min-w-0 flex-1">
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+      <span aria-hidden="true" class="size-1.5 shrink-0 rounded-full {{ dot }}"></span>
+      <p class="text-[0.8125rem] font-semibold text-navy">{{ headline }}</p>
+      <span class="hidden text-slate sm:inline">·</span>
+      <p class="text-[0.8125rem] text-slate">{{ detail }}</p>
+    </div>
+    <p class="mt-0.5 text-[0.8125rem] font-medium text-navy">{{ eta }}</p>
+  </div>
+</div>

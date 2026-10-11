@@ -1,0 +1,5 @@
+{%- comment -%} Star rating. Usage: {% render 'mr-stars', rating: 4.8, size: 'sm' %} {%- endcomment -%}
+{%- assign rounded = rating | round -%}
+<span role="img" aria-label="{{ rating }} out of 5 stars" class="inline-flex items-center gap-0.5 text-gold {% if size == 'md' %}text-base{% else %}text-sm{% endif %}">
+  {%- for i in (1..5) -%}<span aria-hidden="true">{% if i <= rounded %}★{% else %}☆{% endif %}</span>{%- endfor -%}
+</span>

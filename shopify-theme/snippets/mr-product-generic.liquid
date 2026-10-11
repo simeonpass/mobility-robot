@@ -1,0 +1,85 @@
+{%- comment -%}
+  Product page for accessories and any product without its own wheelchair page.
+  Title, description, photos, price and stock come from Shopify.
+{%- endcomment -%}
+{%- liquid
+  assign is_accessory = false
+  for c in product.collections
+    if c.handle == 'accessories'
+      assign is_accessory = true
+    endif
+  endfor
+  assign delivery_kind = ''
+  if is_accessory and mr_fits_x12
+    assign delivery_kind = 'x12-accessory'
+  endif
+  assign tabs_id = 'mr-tabs-' | append: product.id
+-%}
+<div class="product-page product-page--has-mobile-atc mr-product-page bg-background pb-0">
+  <script type="application/ld+json">{{ product | structured_data }}</script>
+  <div class="xsto-container mr-product-container">
+    <nav aria-label="Breadcrumb" class="mr-product-breadcrumbs text-slate"><ol class="flex flex-wrap items-center gap-1.5"><li><a href="{{ routes.root_url }}" class="transition-colors hover:text-navy">Home</a></li><li aria-hidden="true" class="text-border">/</li><li><a href="{{ routes.all_products_collection_url }}" class="transition-colors hover:text-navy">Shop</a></li><li aria-hidden="true" class="text-border">/</li><li aria-current="page" class="font-medium text-navy">{{ product.title }}</li></ol></nav>
+    <div class="product mr-product-layout">
+      <header class="mr-product-heading">
+        <h1 class="mr-product-title font-display">{{ product.title }}</h1>
+        {%- if is_accessory -%}<p class="mr-product-tagline">{{ mr_compat_label }}</p>{%- endif -%}
+      </header>
+      <div class="mr-product-media min-w-0">
+        {% render 'mr-product-gallery', product: product, title: product.title %}
+        <p class="mr-product-photo-note">Optional accessories may be shown.</p>
+      </div>
+      <div class="product-main min-w-0">
+        {% render 'mr-product-buy', product: product, variant: mr_variant, title: product.title, is_chair: false, delivery_kind: delivery_kind %}
+      </div>
+    </div>
+
+    <section aria-labelledby="{{ tabs_id }}-heading" class="mr-product-details" data-mr-tabs>
+      <p class="mr-product-section-eyebrow">The detail matters</p>
+      <h2 class="mr-product-section-heading font-display" id="{{ tabs_id }}-heading">Get to know your next move.</h2>
+      <div aria-label="Product information" class="mr-product-tabs flex gap-1 overflow-x-auto border-b border-border" role="tablist">
+        <button aria-controls="{{ tabs_id }}-panel-overview" aria-selected="true" class="shrink-0 border-b-2 px-4 py-4 text-base font-semibold tracking-[-0.01em] transition-colors border-navy text-navy" id="{{ tabs_id }}-tab-overview" role="tab" tabindex="0" type="button">Description</button>
+        <button aria-controls="{{ tabs_id }}-panel-delivery" aria-selected="false" class="shrink-0 border-b-2 px-4 py-4 text-base font-semibold tracking-[-0.01em] transition-colors border-transparent text-slate hover:text-navy" id="{{ tabs_id }}-tab-delivery" role="tab" tabindex="-1" type="button">Shipping &amp; Returns</button>
+      </div>
+      <div class="py-6 md:py-8">
+        <div aria-labelledby="{{ tabs_id }}-tab-overview" id="{{ tabs_id }}-panel-overview" role="tabpanel" tabindex="0">
+          {%- if is_accessory -%}
+            <div class="mb-8 rounded-2xl border border-border bg-secondary/40 px-5 py-4 md:px-6">
+              <p class="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Compatibility</p>
+              <p class="mt-1 text-base font-semibold text-foreground">{{ mr_compat_label }}</p>
+              <ul class="mt-3 flex flex-wrap gap-2">
+                {%- assign slots = mr_slots | split: '|' -%}
+                {%- for slot in slots -%}
+                  {%- case slot -%}
+                    {%- when 'm4' -%}<li><a href="{{ routes.root_url }}products/buy-robot-wheelchair" class="inline-flex min-h-9 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium text-navy no-underline transition-colors hover:border-navy/30 hover:bg-navy/[0.03]">XSTO M4</a></li>
+                    {%- when 'm4b' -%}<li><a href="{{ routes.root_url }}products/xsto-m4b-1" class="inline-flex min-h-9 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium text-navy no-underline transition-colors hover:border-navy/30 hover:bg-navy/[0.03]">XSTO M4B</a></li>
+                    {%- when 'm4-pro' -%}<li><a href="{{ routes.root_url }}products/xsto-m4-pro" class="inline-flex min-h-9 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium text-navy no-underline transition-colors hover:border-navy/30 hover:bg-navy/[0.03]">XSTO M4 Pro</a></li>
+                    {%- when 'x12' -%}<li><a href="{{ routes.root_url }}products/x12-all-terrain-mobility-robot" class="inline-flex min-h-9 items-center rounded-lg border border-border bg-background px-3 text-sm font-medium text-navy no-underline transition-colors hover:border-navy/30 hover:bg-navy/[0.03]">XSTO X12</a></li>
+                  {%- endcase -%}
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+          <div class="product-description max-w-3xl">{{ product.description }}</div>
+          <p class="mt-10 text-sm text-muted-foreground">Browse more <a href="{{ routes.collections_url }}/accessories" class="font-semibold text-gold hover:underline">XSTO accessories</a>.</p>
+        </div>
+        <div aria-labelledby="{{ tabs_id }}-tab-delivery" id="{{ tabs_id }}-panel-delivery" role="tabpanel" tabindex="0" hidden>
+          <div class="max-w-3xl space-y-4 text-base leading-relaxed text-foreground">
+            {%- if is_accessory and mr_fits_x12 -%}
+              <p>X12 accessories are available to order now on a ~4 week pre-order / backorder. You can still add them to your basket today.</p>
+              <p>They usually ship by parcel courier as a spare, or alongside an X12 when the dates line up. Warranty cover follows the accessory type — contact us if you need help confirming fitment.</p>
+            {%- elsif is_accessory -%}
+              <p>Accessories typically ship with free UK mainland delivery when ordered with an XSTO wheelchair, or as a standalone spare.</p>
+              <p>In-stock accessories usually dispatch within a few working days. Warranty cover follows the accessory type — contact us if you need help confirming fitment or spare-part eligibility.</p>
+            {%- else -%}
+              <p>Free UK mainland delivery on eligible XSTO products. Contact us for warranty and delivery details.</p>
+            {%- endif -%}
+          </div>
+          <p class="mt-6 text-sm"><a href="{{ routes.root_url }}pages/returns" class="font-semibold text-gold hover:underline">Read our returns policy</a> · <a href="{{ routes.root_url }}pages/warranty" class="font-semibold text-gold hover:underline">Warranty information</a></p>
+        </div>
+      </div>
+    </section>
+
+    {% render 'mr-product-related', current: product.handle %}
+  </div>
+  <section aria-labelledby="product-app-download-heading" class="border-t border-border/40 bg-gradient-to-b from-background to-cream/40 pb-12 pt-14 md:pb-16 md:pt-20"><div class="xsto-container"><div class="grid items-end gap-10 lg:grid-cols-2 lg:gap-16"><div class="text-center lg:text-left"><h2 class="font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl" id="product-app-download-heading">Download the XSTO App</h2><p class="mt-3 text-base text-muted-foreground md:text-lg">Activate intelligent control — monitor battery, mileage, and remotely drive your chair.</p><div class="mt-8 flex flex-wrap justify-center gap-8 lg:justify-start"><div class="flex flex-col items-center"><div class="rounded-xl border border-border/60 bg-background p-3 shadow-medium"><img alt="Download the iOS app" class="size-32 object-contain md:size-36" height="140" loading="lazy" src="{{ 'mr-xsto-app-ios-qr.png' | asset_url }}" width="140"/></div><span class="mt-3 text-sm text-muted-foreground">Download the iOS app</span></div><div class="flex flex-col items-center"><div class="rounded-xl border border-border/60 bg-background p-3 shadow-medium"><img alt="Download the Android app" class="size-32 object-contain md:size-36" height="140" loading="lazy" src="{{ 'mr-xsto-app-android-qr.png' | asset_url }}" width="140"/></div><span class="mt-3 text-sm text-muted-foreground">Download the Android app</span></div></div><div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 lg:justify-start"><a class="inline-flex items-center gap-2 font-semibold text-xsto-blue no-underline hover:underline" href="https://apps.apple.com/gb/app/xsto/id6450801251" rel="noopener noreferrer" target="_blank">App Store<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link size-4" aria-hidden="true"><path d="M15 3h6v6" /> <path d="M10 14 21 3" /> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg></a><a class="inline-flex items-center gap-2 font-semibold text-xsto-blue no-underline hover:underline" href="https://play.google.com/store/apps/details?id=uni.UNIB9E0EF5" rel="noopener noreferrer" target="_blank">Google Play<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link size-4" aria-hidden="true"><path d="M15 3h6v6" /> <path d="M10 14 21 3" /> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg></a></div></div><div class="mb-0 flex justify-center lg:justify-end"><img alt="XSTO companion app shown on a smartphone" class="h-auto w-full max-w-[260px] object-contain drop-shadow-2xl md:max-w-[320px]" height="645" loading="lazy" src="{{ 'mr-xsto-app-phone.webp' | asset_url }}" width="435"/></div></div></div></section>
+</div>

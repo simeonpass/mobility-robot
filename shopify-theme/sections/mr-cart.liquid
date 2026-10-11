@@ -1,0 +1,211 @@
+{%- comment -%}
+  Basket page. Prices in the basket exclude VAT; the VAT choice (relief declaration or pay VAT) is made in the
+  box rendered by snippets/mr-vat-cart.liquid, which needs the form id "CartPageForm" and the button named "checkout".
+{%- endcomment -%}
+{{ 'mr-vat-cart.css' | asset_url | stylesheet_tag }}
+<style>
+  .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .mr-cart .mr-vatbox { border: 1px solid var(--color-border, #e5e5e5); }
+  .mr-cart .mr-vatbox h2 { font-weight: 600; }
+  .mr-cart .mr-vatbox fieldset { display: block; }
+  .mr-cart .mr-vatbox .mr-vatbox__choices, .mr-cart .mr-vatbox .mr-vatbox__fields { display: grid; }
+  .mr-cart .mr-vatbox input[type="text"], .mr-cart .mr-vatbox input[type="email"], .mr-cart .mr-vatbox select { background: #fff; }
+</style>
+{%- liquid
+  assign rank = 0
+  assign has_preorder = false
+  for item in cart.items
+    assign product = item.product
+    capture kind
+      render 'mr-product-hidden', handle: product.handle
+    endcapture
+    if kind == 'chair'
+      if product.handle contains 'x12'
+        assign rank = 3
+      elsif rank < 1
+        assign rank = 1
+      endif
+    else
+      include 'mr-accessory-compat'
+      if mr_fits_x12
+        assign has_preorder = true
+      elsif rank < 2
+        assign rank = 2
+      endif
+    endif
+  endfor
+  assign in_stock_eta = 'Delivers in 5–7 working days'
+  if rank == 1
+    assign in_stock_eta = 'Delivers in 3–4 working days'
+  elsif rank == 3
+    assign in_stock_eta = 'Delivers in 10 days'
+  endif
+  assign arrival = 'now' | date: '%s' | plus: 2419200 | date: '%-d %B %Y'
+  if has_preorder and rank > 0
+    assign delivery_headline = 'Split delivery'
+    assign delivery_eta = 'Pre-order accessories arrive around ' | append: arrival
+  elsif has_preorder
+    assign delivery_headline = 'Pre-order'
+    assign delivery_eta = 'Est. arrival around ' | append: arrival
+  else
+    assign delivery_headline = 'In stock'
+    assign delivery_eta = in_stock_eta
+  endif
+-%}
+<div class="mr-cart mx-auto max-w-6xl px-4 py-8 md:py-12">
+  <h1 class="mb-8 text-3xl font-bold text-foreground">Your cart</h1>
+  <section aria-label="Cart page" class="mx-auto max-w-5xl">
+    {%- if cart.item_count == 0 -%}
+      <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="mb-6 flex size-20 items-center justify-center rounded-full bg-secondary">
+          <svg aria-hidden="true" class="size-5 text-gold" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        </div>
+        <h3 class="text-xl font-semibold text-foreground">Your cart is empty</h3>
+        <p class="mt-2 max-w-xs text-sm text-muted-foreground">Add some products to get started with your order.</p>
+        <a class="mt-6 inline-flex rounded-lg bg-gold px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-gold-light" href="{{ routes.root_url }}">Continue shopping</a>
+      </div>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" novalidate id="CartPageForm" class="grid gap-8 lg:grid-cols-[1fr_320px]" style="max-width:none">
+        <div class="min-w-0 space-y-6">
+          <ul class="space-y-4" aria-label="Cart line items">
+            {%- for item in cart.items -%}
+              {%- liquid
+                capture kind
+                  render 'mr-product-hidden', handle: item.product.handle
+                endcapture
+                capture name
+                  render 'mr-display-name', product: item.product
+                endcapture
+                assign prev = item.quantity | minus: 1
+                assign next = item.quantity | plus: 1
+              -%}
+              <li class="list-none">
+                <div class="rounded-lg border border-border/70 bg-card rounded-xl p-4 shadow-sm">
+                  <div class="flex items-start gap-2.5">
+                    {%- if item.image -%}
+                      <a class="relative shrink-0 overflow-hidden rounded-md border border-border/60 bg-background size-24 sm:size-28" href="{{ item.url }}">
+                        <img alt="{{ item.title | escape }}" class="size-full object-contain p-1.5" src="{{ item.image | image_url: width: 224 }}" width="112" height="112" loading="lazy">
+                      </a>
+                    {%- endif -%}
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                          <p class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{% if kind == 'chair' %}{{ item.product.vendor | default: 'XSTO' | escape }}{% else %}Accessory{% endif %}</p>
+                          <a class="mt-0.5 block font-semibold leading-tight text-foreground hover:text-gold text-base sm:text-lg" href="{{ item.url }}">{{ name }}</a>
+                          {%- unless item.product.has_only_default_variant -%}
+                            <p class="mt-0.5 text-xs text-muted-foreground">{{ item.variant.title | escape }}</p>
+                          {%- endunless -%}
+                          {%- if item.quantity > 1 -%}
+                            <div class="mt-0.5 text-xs text-muted-foreground">{{ item.final_price | money }} each</div>
+                          {%- endif -%}
+                        </div>
+                        <div class="shrink-0 text-right">
+                          <p class="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Total</p>
+                          <div class="mt-0.5 text-base font-semibold text-foreground">{{ item.final_line_price | money }}</div>
+                        </div>
+                      </div>
+                      <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                        {%- if item.selling_plan_allocation -%}
+                          <span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-950">{{ item.selling_plan_allocation.selling_plan.name | escape }}</span>
+                        {%- endif -%}
+                        {%- unless item.product.has_only_default_variant -%}
+                          {%- for option in item.options_with_values -%}
+                            {%- unless option.name == 'VAT' -%}
+                              <span class="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">{{ option.name | escape }}: {{ option.value | escape }}</span>
+                            {%- endunless -%}
+                          {%- endfor -%}
+                        {%- endunless -%}
+                        {%- for property in item.properties -%}
+                          {%- assign first_char = property.first | slice: 0 -%}
+                          {%- if property.last != blank and first_char != '_' -%}
+                            <span class="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">{{ property.first | escape }}: {{ property.last | escape }}</span>
+                          {%- endif -%}
+                        {%- endfor -%}
+                        {%- for discount in item.line_level_discount_allocations -%}
+                          <span class="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-foreground">{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</span>
+                        {%- endfor -%}
+                      </div>
+                      <div class="flex items-center justify-between gap-2 border-t border-border/50 mt-4 pt-4">
+                        <div class="flex items-center gap-1.5">
+                          {%- if item.quantity > 1 -%}
+                            <a aria-label="Decrease quantity" class="inline-flex items-center justify-center rounded-md border border-border text-foreground no-underline hover:border-gold hover:no-underline size-9" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity={{ prev }}" rel="nofollow">−</a>
+                          {%- else -%}
+                            <span aria-hidden="true" class="inline-flex items-center justify-center rounded-md border border-border text-foreground opacity-40 size-9">−</span>
+                          {%- endif -%}
+                          <span class="min-w-6 text-center text-sm font-semibold">{{ item.quantity }}</span>
+                          <a aria-label="Increase quantity" class="inline-flex items-center justify-center rounded-md border border-border text-foreground no-underline hover:border-gold hover:no-underline size-9" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity={{ next }}" rel="nofollow">+</a>
+                        </div>
+                        <a class="text-xs text-muted-foreground hover:text-destructive" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" rel="nofollow">Remove</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+          {%- render 'mr-vat-cart' -%}
+        </div>
+
+        <aside aria-labelledby="mr-cart-summary" class="h-fit rounded-xl border border-border bg-card p-6">
+          <h3 class="mb-4 text-lg font-semibold text-foreground" id="mr-cart-summary">Order summary</h3>
+          <div class="space-y-4">
+            <div class="rounded-lg border border-border/60 bg-secondary/40 p-4">
+              <p class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Estimated UK delivery</p>
+              <p class="text-sm font-medium text-foreground">{{ delivery_headline }}</p>
+              <p class="mt-0.5 text-sm text-muted-foreground">{{ delivery_eta }}</p>
+            </div>
+            <div class="rounded-lg border border-border bg-secondary/30 p-3">
+              <p class="text-sm font-medium text-foreground">VAT relief available</p>
+              <p class="mt-0.5 text-xs text-muted-foreground">Prices here exclude VAT. Choose VAT relief or paying VAT in the box on this page before checkout.</p>
+            </div>
+            <div class="space-y-1.5 text-sm">
+              <div class="flex justify-between"><span class="text-muted-foreground">Subtotal (excl. VAT)</span><span class="font-medium text-foreground">{{ cart.items_subtotal_price | money }}</span></div>
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <div class="flex justify-between text-muted-foreground"><span>Discount: {{ discount.title | escape }}</span><span>−{{ discount.total_allocated_amount | money }}</span></div>
+              {%- endfor -%}
+              <div class="flex justify-between"><span class="text-muted-foreground">Shipping</span><span class="font-medium text-foreground">FREE</span></div>
+            </div>
+            <section aria-label="Discount code">
+              <div class="flex gap-2">
+                <label class="sr-only" for="mr-cart-discount">Discount code</label>
+                <input class="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground" id="mr-cart-discount" placeholder="Discount code" type="text" autocomplete="off" data-mr-discount-input>
+                <button class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:border-gold" type="button" data-mr-discount-apply>Apply</button>
+              </div>
+            </section>
+            <div class="flex justify-between border-t border-border pt-4">
+              <span class="text-lg font-semibold text-foreground">Total excl. VAT</span>
+              <span class="text-lg font-semibold text-foreground">{{ cart.total_price | money }}</span>
+            </div>
+            <p class="text-xs text-muted-foreground">Secure Shopify checkout · Full UK warranty &amp; support</p>
+            <button type="submit" name="checkout" class="btn-checkout w-full py-3.5 !text-white"><span class="text-white">Secure checkout</span></button>
+          </div>
+        </aside>
+      </form>
+    {%- endif -%}
+  </section>
+</div>
+<script src="{{ 'mr-vat-core.js' | asset_url }}" defer></script>
+<script src="{{ 'mr-vat-cart.js' | asset_url }}" defer></script>
+<script>
+  (function () {
+    var input = document.querySelector('[data-mr-discount-input]');
+    var button = document.querySelector('[data-mr-discount-apply]');
+    if (!input || !button) return;
+    function apply() {
+      var code = input.value.trim();
+      if (!code) return;
+      window.location.assign('/discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent({{ routes.cart_url | json }}));
+    }
+    button.addEventListener('click', apply);
+    input.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') { event.preventDefault(); apply(); }
+    });
+  })();
+</script>
+{% schema %}
+{
+  "name": "MR basket",
+  "tag": "div",
+  "class": "mr-contents"
+}
+{% endschema %}

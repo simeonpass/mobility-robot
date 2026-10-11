@@ -1,0 +1,100 @@
+{%- comment -%} Search page: products, pages and articles, as on the Hydrogen site. {%- endcomment -%}
+{%- paginate search.results by 50 -%}
+<div class="search">
+  <h1>Search</h1>
+  <form method="get" action="{{ routes.search_url }}">
+    <input value="{{ search.terms | escape }}" name="q" placeholder="Search…" type="search">
+    &nbsp;
+    <button type="submit">Search</button>
+  </form>
+  {%- liquid
+    assign product_count = 0
+    assign page_count = 0
+    assign article_count = 0
+    if search.performed
+      for item in search.results
+        case item.object_type
+          when 'product'
+            capture kind
+              render 'mr-product-hidden', handle: item.handle
+            endcapture
+            unless kind == 'hidden'
+              assign product_count = product_count | plus: 1
+            endunless
+          when 'page'
+            assign page_count = page_count | plus: 1
+          when 'article'
+            assign article_count = article_count | plus: 1
+        endcase
+      endfor
+    endif
+    assign any = product_count | plus: page_count | plus: article_count
+  -%}
+  {%- if any == 0 -%}
+    <p>No results, try a different search.</p>
+  {%- else -%}
+    <div>
+      {%- if product_count > 0 -%}
+        <div class="search-result">
+          <h2>Products</h2>
+          <div>
+            {%- if paginate.previous -%}<div><a href="{{ paginate.previous.url }}"><span>↑ Load previous</span></a></div>{%- endif -%}
+            <div>
+              {%- for item in search.results -%}
+                {%- if item.object_type != 'product' -%}{%- continue -%}{%- endif -%}
+                {%- capture kind -%}{% render 'mr-product-hidden', handle: item.handle %}{%- endcapture -%}
+                {%- if kind == 'hidden' -%}{%- continue -%}{%- endif -%}
+                <div class="search-results-item">
+                  <a href="{{ item.url }}">
+                    {%- if item.featured_image -%}<img src="{{ item.featured_image | image_url: width: 100 }}" alt="{{ item.title | escape }}" width="50" loading="lazy">{%- endif -%}
+                    <div>
+                      <p>{{ item.title | escape }}</p>
+                      <small><div>{{ item.price_min | money }}</div></small>
+                    </div>
+                  </a>
+                </div>
+              {%- endfor -%}
+              <br>
+            </div>
+            {%- if paginate.next -%}<div><a href="{{ paginate.next.url }}"><span>Load more ↓</span></a></div>{%- endif -%}
+          </div>
+          <br>
+        </div>
+      {%- endif -%}
+      {%- if page_count > 0 -%}
+        <div class="search-result">
+          <h2>Pages</h2>
+          <div>
+            {%- for item in search.results -%}
+              {%- if item.object_type == 'page' -%}
+                <div class="search-results-item"><a href="{{ item.url }}">{{ item.title | escape }}</a></div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <br>
+        </div>
+      {%- endif -%}
+      {%- if article_count > 0 -%}
+        <div class="search-result">
+          <h2>Articles</h2>
+          <div>
+            {%- for item in search.results -%}
+              {%- if item.object_type == 'article' -%}
+                <div class="search-results-item"><a href="{{ item.url }}">{{ item.title | escape }}</a></div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <br>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</div>
+{%- endpaginate -%}
+{% schema %}
+{
+  "name": "MR search",
+  "tag": "div",
+  "class": "mr-contents"
+}
+{% endschema %}

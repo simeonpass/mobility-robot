@@ -146,7 +146,7 @@
             "icon": "truck",
             "title": "UK delivery",
             "detail": "Delivery details",
-            "url": "/delivery"
+            "url": "/pages/delivery"
           }
         },
         "item_2": {
@@ -155,7 +155,7 @@
             "icon": "shield-check",
             "title": "Warranty support",
             "detail": "Cover explained",
-            "url": "/warranty"
+            "url": "/pages/warranty"
           }
         },
         "item_3": {
@@ -164,7 +164,7 @@
             "icon": "headphones",
             "title": "Bentech Medical",
             "detail": "Your UK support team",
-            "url": "/support"
+            "url": "/pages/support"
           }
         },
         "item_4": {
@@ -173,7 +173,7 @@
             "icon": "badge-percent",
             "title": "VAT relief",
             "detail": "For eligible purchases",
-            "url": "/vat-relief"
+            "url": "/pages/vat-relief"
           }
         }
       },
@@ -193,7 +193,7 @@
           "settings": {
             "title": "M4 Series",
             "detail": "Everyday freedom",
-            "url": "/series/m4"
+            "url": "/pages/m4-series"
           }
         },
         "range_2": {
@@ -201,7 +201,7 @@
           "settings": {
             "title": "X12 Series",
             "detail": "Stair-climbing capability",
-            "url": "/series/x12"
+            "url": "/pages/x12-series"
           }
         },
         "range_3": {
@@ -319,7 +319,7 @@
         "heading_1": "Your questions, explored.",
         "heading_2": "",
         "link_label": "All buyer guides",
-        "link_url": "/guides"
+        "link_url": "/pages/guides"
       },
       "blocks": {
         "card_1": {
@@ -328,7 +328,7 @@
             "label": "Understanding the technology",
             "title": "Self-levelling wheelchairs, explained.",
             "text": "What the technology does and what to try during a demonstration.",
-            "url": "/guides/self-levelling-wheelchairs"
+            "url": "/pages/self-levelling-wheelchairs"
           }
         },
         "card_2": {
@@ -337,7 +337,7 @@
             "label": "Planning your next move",
             "title": "A guide to stair-climbing wheelchairs.",
             "text": "The questions to ask about stairs, training and your everyday routes.",
-            "url": "/guides/stair-climbing-wheelchairs"
+            "url": "/pages/stair-climbing-wheelchairs"
           }
         },
         "card_3": {
@@ -346,7 +346,7 @@
             "label": "Find your fit",
             "title": "Which XSTO is right for you?",
             "text": "A practical way to compare the M4, M4B, M4 Pro and X12.",
-            "url": "/guides/choosing-an-xsto-wheelchair"
+            "url": "/pages/choosing-an-xsto-wheelchair"
           }
         }
       },

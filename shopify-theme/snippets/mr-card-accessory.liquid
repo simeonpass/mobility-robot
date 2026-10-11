@@ -1,0 +1,37 @@
+{%- comment -%}
+  Accessory card. Params: product, label (compatibility text), fits_x12, style ('shop' for the shop-all page, 'catalog' for the accessories page).
+{%- endcomment -%}
+{%- liquid
+  capture prices
+    render 'mr-price', product: product
+  endcapture
+  assign parts = prices | strip | split: '|'
+  assign inc = parts[0] | plus: 0
+  assign ex = parts[1] | plus: 0
+-%}
+{%- if style == 'catalog' -%}
+<article class="mr-accessory-card group flex h-full flex-col overflow-hidden rounded-xl border border-border/70 bg-card">
+{%- else -%}
+<article class="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-medium">
+{%- endif -%}
+  <a class="flex h-full flex-col no-underline hover:no-underline" href="{{ product.url }}">
+    <div class="{% if style == 'catalog' %}mr-accessory-photo flex aspect-square items-center justify-center bg-gradient-cream p-2{% else %}flex aspect-square items-center justify-center bg-gradient-cream p-5{% endif %}">
+      {%- if product.featured_image -%}
+        {%- render 'mr-image', image: product.featured_image, alt: product.featured_image.alt, class: 'max-h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]', sizes: '(min-width: 1280px) 20vw, (min-width: 640px) 33vw, 90vw' -%}
+      {%- else -%}
+        <span class="text-sm text-muted-foreground">No image</span>
+      {%- endif -%}
+    </div>
+    <div class="flex flex-1 flex-col p-4">
+      <p class="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{{ label }}{% if fits_x12 %} · Pre-order ~4 weeks{% endif %}</p>
+      <h3 class="mt-1.5 text-base font-semibold leading-snug text-foreground">{{ product.title | escape }}</h3>
+      {%- if style == 'catalog' -%}
+        <p class="mt-2 text-lg font-semibold text-navy">From {{ ex | money_without_trailing_zeros }}</p>
+        <p class="mr-accessory-tax">With VAT relief, if eligible<br>{{ inc | money_without_trailing_zeros }} incl. VAT</p>
+      {%- else -%}
+        <p class="mt-2 text-lg font-semibold text-gold">From {{ ex | money_without_trailing_zeros }}</p>
+      {%- endif -%}
+      <span class="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-foreground transition-colors group-hover:text-gold">View details{% render 'mr-icon', name: 'arrow-up-right', stroke: 1.75, class: 'size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5' %}</span>
+    </div>
+  </a>
+</article>

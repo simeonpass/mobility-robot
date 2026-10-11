@@ -635,6 +635,72 @@
     });
   }
 
+  /* ---------- Video library modal ---------- */
+  function initLibraryVideos() {
+    document.addEventListener('click', function (event) {
+      var card = event.target.closest('[data-mr-library-video]');
+      if (!card) return;
+      var type = card.getAttribute('data-type');
+      var src = card.getAttribute('data-src');
+      var title = card.getAttribute('data-title') || '';
+      var modal = document.createElement('div');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('role', 'dialog');
+      modal.className = 'fixed inset-0 z-[70] flex items-center justify-center bg-navy/90 p-4 backdrop-blur-sm';
+      var backdrop = document.createElement('button');
+      backdrop.type = 'button';
+      backdrop.setAttribute('aria-label', 'Close video');
+      backdrop.className = 'absolute inset-0';
+      var frame = document.createElement('div');
+      frame.className = 'relative z-10 aspect-video w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-navy shadow-luxe';
+      var closeButton = document.createElement('button');
+      closeButton.type = 'button';
+      closeButton.setAttribute('aria-label', 'Close');
+      closeButton.className = 'absolute top-3 right-3 z-20 rounded-full border border-white/20 bg-navy/80 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm hover:bg-navy';
+      closeButton.textContent = 'Close';
+      frame.appendChild(closeButton);
+      if (type === 'mp4') {
+        var player = document.createElement('video');
+        player.className = 'size-full object-contain';
+        player.controls = true;
+        player.autoplay = true;
+        player.playsInline = true;
+        player.preload = 'none';
+        player.title = title;
+        player.src = src;
+        frame.appendChild(player);
+      } else {
+        var iframe = document.createElement('iframe');
+        iframe.className = 'size-full border-0';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        iframe.title = title;
+        iframe.src = type === 'vimeo'
+          ? 'https://player.vimeo.com/video/' + encodeURIComponent(src) + '?autoplay=1'
+          : 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(src) + '?autoplay=1&rel=0';
+        frame.appendChild(iframe);
+      }
+      modal.appendChild(backdrop);
+      modal.appendChild(frame);
+      var previousOverflow = document.documentElement.style.overflow;
+      function close() {
+        document.removeEventListener('keydown', onKeyDown);
+        document.documentElement.style.overflow = previousOverflow;
+        modal.remove();
+        if (card.isConnected) card.focus({ preventScroll: true });
+      }
+      function onKeyDown(keyEvent) {
+        if (keyEvent.key === 'Escape') close();
+      }
+      backdrop.addEventListener('click', close);
+      closeButton.addEventListener('click', close);
+      document.addEventListener('keydown', onKeyDown);
+      document.documentElement.style.overflow = 'hidden';
+      document.body.appendChild(modal);
+      closeButton.focus();
+    });
+  }
+
   /* ---------- "Show more reviews" on phones ---------- */
   function initReviewToggle() {
     all(document, '[data-mr-review-toggle]').forEach(function (button) {
@@ -654,9 +720,24 @@
     initDropdown();
     all(document, '[data-mr-turntable]').forEach(initTurntable);
     initVideos();
+    initLibraryVideos();
     initReviewToggle();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+
+  /* ---------- Enquiry forms: ?model=X12 preselects the model ---------- */
+  function initModelPrefill() {
+    var model;
+    try { model = new URLSearchParams(window.location.search).get('model'); } catch (e) { return; }
+    if (!model) return;
+    var select = document.querySelector('select#model');
+    if (!select) return;
+    for (var i = 0; i < select.options.length; i++) {
+      if (select.options[i].value === model && !select.options[i].disabled) { select.selectedIndex = i; break; }
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initModelPrefill);
+  else initModelPrefill();
 })();

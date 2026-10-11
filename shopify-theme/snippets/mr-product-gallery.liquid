@@ -1,0 +1,68 @@
+{%- comment -%}
+  Product gallery: main stage, arrows and thumbnails.
+  videos: extra YouTube videos as "ID|Title" pairs separated by ";;".
+{%- endcomment -%}
+{%- liquid
+  assign images = product.images
+  assign video_list = videos | default: '' | split: ';;'
+  assign video_count = 0
+  for video in video_list
+    if video != ''
+      assign video_count = video_count | plus: 1
+    endif
+  endfor
+  assign total = images.size | plus: video_count
+  assign gallery_id = 'mr-gallery-' | append: product.id
+-%}
+<div class="mr-product-gallery" data-mr-gallery>
+  {%- if total == 0 -%}
+    <div class="aspect-square w-full rounded-lg bg-secondary/60"></div>
+  {%- else -%}
+    <div aria-label="{{ title | escape }} gallery" aria-roledescription="carousel" class="relative min-w-0" id="{{ gallery_id }}" role="region">
+      <div class="mr-product-gallery-stage relative w-full overflow-hidden">
+        {%- for image in images -%}
+          <div class="absolute inset-0" data-mr-gallery-slide data-media-id="{{ image.id }}"{% unless forloop.first %} hidden{% endunless %}>
+            <div class="mr-product-gallery-image flex size-full items-center justify-center">
+              {%- assign image_alt = image.alt | default: title -%}
+              {%- if forloop.first -%}
+                {% render 'mr-image', image: image, alt: image_alt, class: 'max-h-full max-w-full object-contain', sizes: '(min-width: 1440px) 680px, (min-width: 1024px) 52vw, 100vw', loading: 'eager', priority: true %}
+              {%- else -%}
+                {% render 'mr-image', image: image, alt: image_alt, class: 'max-h-full max-w-full object-contain', sizes: '(min-width: 1440px) 680px, (min-width: 1024px) 52vw, 100vw', loading: 'lazy' %}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+        {%- for video in video_list -%}
+          {%- if video == '' -%}{%- continue -%}{%- endif -%}
+          {%- assign parts = video | split: '|' -%}
+          <div class="absolute inset-0" data-mr-gallery-slide data-embed="https://www.youtube-nocookie.com/embed/{{ parts[0] }}?rel=0&amp;modestbranding=1" data-title="{{ parts[1] | escape }}"{% if images.size > 0 or forloop.index0 > 0 %} hidden{% endif %}></div>
+        {%- endfor -%}
+        {%- if total > 1 -%}
+          <button aria-label="Previous product image or video" class="mr-product-gallery-arrow absolute left-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground transition-colors hover:bg-background" type="button" data-mr-gallery-prev>{% render 'mr-icon', name: 'chevron-left', stroke: 1.75, class: 'size-4' %}</button>
+          <button aria-label="Next product image or video" class="mr-product-gallery-arrow absolute right-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground transition-colors hover:bg-background" type="button" data-mr-gallery-next>{% render 'mr-icon', name: 'chevron-right', stroke: 1.75, class: 'size-4' %}</button>
+        {%- endif -%}
+      </div>
+    </div>
+    {%- if total > 1 -%}
+      <ul aria-label="Product thumbnails" class="mr-product-thumbnails scrollbar-hide">
+        {%- for image in images -%}
+          <li class="shrink-0">
+            <button aria-controls="{{ gallery_id }}" aria-label="Show image {{ forloop.index }} of {{ total }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" class="mr-product-thumbnail relative shrink-0 overflow-hidden border transition-colors {% if forloop.first %}is-selected{% endif %}" type="button" data-mr-gallery-thumb>
+              <img alt="" decoding="async" height="76" loading="lazy" sizes="76px" src="{{ image | image_url: width: 76, height: 76, crop: 'center' }}" srcset="{{ image | image_url: width: 76, height: 76, crop: 'center' }} 1x, {{ image | image_url: width: 152, height: 152, crop: 'center' }} 2x, {{ image | image_url: width: 228, height: 228, crop: 'center' }} 3x" width="76" style="aspect-ratio:76/76" class="size-full object-contain">
+            </button>
+          </li>
+        {%- endfor -%}
+        {%- for video in video_list -%}
+          {%- if video == '' -%}{%- continue -%}{%- endif -%}
+          {%- assign parts = video | split: '|' -%}
+          <li class="shrink-0">
+            <button aria-controls="{{ gallery_id }}" aria-label="Play {{ parts[1] | escape }}" aria-pressed="false" class="mr-product-thumbnail relative shrink-0 overflow-hidden border transition-colors " type="button" data-mr-gallery-thumb>
+              <img alt="" decoding="async" height="76" loading="lazy" sizes="76px" src="https://img.youtube.com/vi/{{ parts[0] }}/hqdefault.jpg" width="76" style="aspect-ratio:76/76" class="size-full object-contain">
+              <span aria-hidden="true" class="absolute inset-0 flex items-center justify-center bg-navy/35"><span class="flex size-6 items-center justify-center rounded-full bg-background/95 text-navy">▶</span></span>
+            </button>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {%- endif -%}
+</div>

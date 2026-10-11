@@ -1,0 +1,196 @@
+{%- comment -%}
+  Buy box: price, options, VAT note, accessory add-ons, total, add to basket and reassurance.
+  Parameters:
+    product, variant   the product and the variant to sell
+    title              display name ("XSTO M4")
+    is_chair           true for the wheelchairs
+    delivery_kind      passed to mr-product-delivery
+    addon_handles      compatible accessory handles, separated by "|", in display order
+    x12_fit            handles of add-ons that ship on the X12 pre-order lead time, wrapped in "|"
+    demo_url           link for "Book a demo"
+    badges             trust badges, as "icon:Label" pairs separated by "|"
+  Catalogue prices exclude VAT; the VAT option is chosen in the basket.
+{%- endcomment -%}
+{%- liquid
+  assign ex = variant.price
+  assign inc = ex | times: 1.2 | round
+  assign was = variant.compare_at_price | default: 0
+  assign addon_list = addon_handles | default: '' | split: '|'
+  assign buy_id = 'mr-buy-' | append: product.id
+  assign accessories = collections['accessories'].products
+  assign addon_count = 0
+  for handle in addon_list
+    for item in accessories
+      if item.handle == handle and item.available
+        assign addon_count = addon_count | plus: 1
+      endif
+    endfor
+  endfor
+  assign installment = inc | divided_by: 3.0 | round
+-%}
+<div class="product-buy-box mr-product-buy-box" data-mr-product data-cart-url="{{ routes.cart_url }}" data-cart-add-url="{{ routes.cart_add_url }}" data-is-chair="{{ is_chair }}" data-title="{{ title | escape }}">
+  <script type="application/json" data-mr-product-variants>[{% for v in product.variants %}{"id":{{ v.id }},"options":{{ v.options | json }},"price":{{ v.price }},"compare_at_price":{{ v.compare_at_price | default: 0 }},"available":{{ v.available }}{% if v.featured_media %},"media_id":{{ v.featured_media.id }}{% endif %}}{% unless forloop.last %},{% endunless %}{% endfor %}]</script>
+  <section aria-label="Product price" class="product-price-card">
+    <div class="mr-chair-price">
+      <p class="mr-chair-price-was" data-mr-price-was-wrap{% unless was > ex %} hidden{% endunless %}>Was <s data-mr-price-was>{{ was | money }}</s></p>
+      <strong data-mr-price-ex>{{ ex | money }}</strong>
+      <p>With VAT relief, if eligible</p>
+      <p><span data-mr-price-inc>{{ inc | money }}</span> including VAT</p>
+    </div>
+  </section>
+
+  <div class="mr-product-choices space-y-5" id="choose-options">
+    <div class="mr-product-form space-y-5">
+      {%- for option in product.options_with_values -%}
+        {%- liquid
+          assign option_name = option.name | strip | downcase
+          if option.values.size < 2 or option_name == 'vat' or option_name == 'edition'
+            continue
+          endif
+        -%}
+        <fieldset class="space-y-3" data-mr-option="{{ forloop.index0 }}">
+          <legend class="text-sm font-medium text-foreground">{{ option.name }}</legend>
+          <div class="flex flex-wrap gap-2">
+            {%- for value in option.values -%}
+              {%- assign is_selected = false -%}
+              {%- if variant.options[forloop.parentloop.index0] == value -%}{%- assign is_selected = true -%}{%- endif -%}
+              <button class="inline-flex items-center gap-2 rounded-md border px-3.5 py-2 text-sm transition-colors {% if is_selected %}border-foreground bg-foreground text-background{% else %}border-border bg-background text-foreground hover:border-foreground/40{% endif %}" aria-pressed="{{ is_selected }}" type="button" data-mr-option-value="{{ value | escape }}"><span>{{ value }}</span></button>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endfor -%}
+
+      <section class="mr-product-vat" aria-label="VAT relief">
+        <div>
+          {% render 'mr-icon', name: 'badge-percent', size: 19 %}
+          <span>
+            <strong>Eligible for VAT relief?</strong>
+            <small>Choose VAT relief in your basket to pay the VAT-relief price.</small>
+          </span>
+        </div>
+        <button type="button" data-mr-href="{{ routes.root_url }}pages/vat-relief">How it works</button>
+      </section>
+
+      {%- if addon_count > 0 -%}
+        <section class="mr-addons" aria-labelledby="{{ buy_id }}-addons-title" data-mr-addons>
+          <h2 id="{{ buy_id }}-addons-title">
+            <button type="button" class="mr-addons-trigger" aria-expanded="false" aria-controls="{{ buy_id }}-addons-list" data-mr-addons-trigger>
+              <span>Add accessories <small data-mr-addons-status>Optional</small></span>
+              {% render 'mr-icon', name: 'chevron-down', size: 20 %}
+            </button>
+          </h2>
+          <div id="{{ buy_id }}-addons-list" hidden data-mr-addons-panel>
+            <p class="mr-addons-intro">Compatible with your {{ title }}. Selected extras are added with your chair.</p>
+            <ul class="mr-addons-list">
+              {%- assign shown = 0 -%}
+              {%- for handle in addon_list -%}
+                {%- for item in accessories -%}
+                  {%- if item.handle == handle and item.available -%}
+                    {%- liquid
+                      assign shown = shown | plus: 1
+                      assign addon_variant = item.selected_or_first_available_variant
+                      assign addon_image = addon_variant.featured_image | default: item.featured_image
+                      assign addon_inc = addon_variant.price | times: 1.2 | round
+                    -%}
+                    <li class="mr-addon" data-mr-addon data-price="{{ addon_variant.price }}"{% if shown > 3 %} hidden data-mr-addon-extra{% endif %}>
+                      <label class="mr-addon-select">
+                        <span class="mr-addon-photo" aria-hidden="true">
+                          {%- if addon_image -%}
+                            <img alt="" decoding="async" loading="lazy" sizes="(max-width: 767px) calc(100vw - 64px), 128px" src="{{ addon_image | image_url: width: 256 }}" srcset="{{ addon_image | image_url: width: 200 }} 200w, {{ addon_image | image_url: width: 400 }} 400w, {{ addon_image | image_url: width: 600 }} 600w" style="width:100%;aspect-ratio:auto;height:100%" class="mr-addon-image">
+                          {%- else -%}
+                            <span class="mr-addon-no-image">Image unavailable</span>
+                          {%- endif -%}
+                        </span>
+                        <span class="mr-addon-copy">
+                          <span class="mr-addon-title">{{ item.title }}</span>
+                          <span class="mr-addon-price">+ <span data-mr-addon-price>{{ addon_inc | money }}</span> <small>incl. VAT</small></span>
+                          {%- assign fit_key = '|' | append: item.handle | append: '|' -%}
+                          {%- if x12_fit contains fit_key -%}
+                            <small class="mr-addon-delivery">Pre-order · ~4 weeks</small>
+                          {%- endif -%}
+                        </span>
+                        <input type="checkbox" aria-label="Add {{ item.title | escape }}" value="{{ addon_variant.id }}" data-mr-addon-check>
+                      </label>
+                      {%- if item.variants.size > 1 -%}
+                        <label class="mr-addon-options" hidden data-mr-addon-options>
+                          <span>Choose an option</span>
+                          <select aria-label="Option for {{ item.title | escape }}" data-mr-addon-select>
+                            {%- for v in item.variants -%}
+                              {%- if v.available -%}
+                                <option value="{{ v.id }}" data-price="{{ v.price }}"{% if v.id == addon_variant.id %} selected{% endif %}>{{ v.title }}</option>
+                              {%- endif -%}
+                            {%- endfor -%}
+                          </select>
+                        </label>
+                      {%- endif -%}
+                      <a href="{{ item.url }}" class="mr-addon-details" target="_blank" rel="noopener noreferrer">Details <span class="sr-only">for {{ item.title }} (opens in a new tab)</span></a>
+                      <span class="mr-addon-added" hidden data-mr-addon-added>{% render 'mr-icon', name: 'check', size: 13 %} Added to your selection</span>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            </ul>
+            {%- if addon_count > 3 -%}
+              <button type="button" class="mr-addons-more" data-mr-addons-more data-more="View all {{ addon_count }} compatible accessories" data-fewer="Show fewer accessories">View all {{ addon_count }} compatible accessories</button>
+            {%- endif -%}
+          </div>
+          <p class="mr-addons-collapsed-note" hidden data-mr-addons-note></p>
+        </section>
+      {%- endif -%}
+
+      <div class="mr-purchase-total" aria-live="polite" aria-atomic="true">
+        <div>
+          <strong>Your total</strong>
+          <span data-mr-total-label>{% if is_chair %}Chair only{% else %}{{ title }}{% endif %} · including VAT</span>
+        </div>
+        <strong class="mr-purchase-total-price" data-mr-total>{{ inc | money }}</strong>
+      </div>
+
+      <div data-mr-purchase>
+        {%- form 'product', product, id: buy_id -%}
+          <input type="hidden" name="id" value="{{ variant.id }}" data-mr-variant-id>
+          <button class="btn-atc w-full mr-primary-purchase w-full disabled:cursor-not-allowed disabled:opacity-60" aria-busy="false" type="submit"{% unless variant.available %} disabled{% endunless %} data-mr-add data-label="Add to basket" data-sold-out="Sold out">{% if variant.available %}Add to basket{% else %}Sold out{% endif %}</button>
+          <p class="mr-addon-unavailable" role="alert" hidden data-mr-add-error></p>
+        {%- endform -%}
+      </div>
+    </div>
+
+    {%- if is_chair -%}
+      <a href="{{ demo_url | default: '/pages/demo' }}" class="mr-product-demo" data-enquiry-action="demo" data-enquiry-placement="product_purchase">Prefer to try it first? Book a demo <span aria-hidden="true">↗</span></a>
+    {%- endif -%}
+
+    {% render 'mr-product-delivery', variant: variant, kind: delivery_kind %}
+
+    {%- if badges and badges != '' -%}
+      {%- assign badge_list = badges | split: '|' -%}
+      <ul class="product-trust-strip grid gap-px overflow-hidden rounded-lg border border-border/80 bg-border/80 {% if badge_list.size == 3 %}grid-cols-3{% else %}grid-cols-2{% endif %}">
+        {%- for badge in badge_list -%}
+          {%- assign badge_parts = badge | split: ':' -%}
+          <li class="flex flex-col items-center gap-1.5 bg-background px-2 py-2.5 text-center">
+            {% render 'mr-icon', name: badge_parts[0], stroke: 1.5, class: 'size-3.5 text-navy' %}
+            <span class="text-xs font-semibold leading-snug text-navy">{{ badge_parts[1] }}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <div class="mr-checkout-note">
+      <p>{% render 'mr-icon', name: 'lock', size: 14 %} Secure checkout with Shopify</p>
+      <a href="{{ routes.root_url }}pages/returns">Returns information</a>
+      <details>
+        <summary>Payment options</summary>
+        <p>Klarna Pay in 3: three interest-free payments of <span data-mr-installment>{{ installment | money }}</span>, subject to eligibility and availability at checkout.</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="product-mobile-atc" aria-label="Quick purchase" data-mr-mobile-atc>
+    <div class="mx-auto flex max-w-[1400px] items-center gap-3">
+      <div class="min-w-0 shrink">
+        <p class="truncate font-display text-lg font-semibold tabular-nums leading-none tracking-[-0.03em] text-navy" data-mr-total>{{ inc | money }}</p>
+        <p class="mt-1 text-xs text-slate">Total incl. VAT</p>
+      </div>
+      <button class="btn-atc min-h-12 px-4 text-sm w-full disabled:cursor-not-allowed disabled:opacity-60" type="button"{% unless variant.available %} disabled{% endunless %} data-mr-add-proxy>{% if variant.available %}Add to basket{% else %}Sold out{% endif %}</button>
+    </div>
+  </div>
+</div>

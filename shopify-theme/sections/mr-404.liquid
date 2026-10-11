@@ -1,0 +1,25 @@
+<div class="xsto-container py-8 md:py-12 max-w-2xl text-center">
+  <p class="text-sm font-medium uppercase tracking-wider text-muted-foreground">404</p>
+  <h1 class="mt-2 text-3xl font-bold text-foreground">Page not found</h1>
+  <p class="mt-3 text-muted-foreground">We couldn't find <strong>{{ request.path | escape }}</strong>. Try searching or browse our wheelchairs below.</p>
+  <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <a class="btn-atc" href="{{ routes.root_url }}">Homepage</a>
+    <a class="btn-secondary" href="{{ routes.search_url }}">Search</a>
+  </div>
+  <div class="mt-10 text-left">
+    <h2 class="text-lg font-semibold text-foreground">Popular products</h2>
+    <ul class="mt-4 space-y-2 text-sm">
+      <li><a class="text-gold hover:underline" href="/products/buy-robot-wheelchair">XSTO M4</a></li>
+      <li><a class="text-gold hover:underline" href="/products/xsto-m4-pro">XSTO M4 Pro</a></li>
+      <li><a class="text-gold hover:underline" href="/pages/stockists">Find a stockist</a></li>
+      <li><a class="text-gold hover:underline" href="/pages/faq">FAQ</a></li>
+    </ul>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "MR page not found",
+  "tag": "div",
+  "class": "mr-contents"
+}
+{% endschema %}

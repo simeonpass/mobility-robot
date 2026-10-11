@@ -1,0 +1,111 @@
+{%- comment -%}
+  Collection pages. /collections/all gets the "Shop the XSTO range" layout (wheelchairs first, then accessories);
+  every other collection gets the simple product grid.
+{%- endcomment -%}
+{%- if collection.handle == 'all' -%}
+<div class="shop-all-page bg-background">
+  <div class="relative overflow-hidden border-b border-border/60 bg-navy text-white">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-40" style="background:radial-gradient(ellipse 80% 60% at 15% 20%, hsl(354 73% 47% / 0.22), transparent 55%), radial-gradient(ellipse 70% 50% at 90% 80%, hsl(216 36% 40% / 0.45), transparent 50%)"></div>
+    <div class="xsto-container relative py-12 md:py-16 lg:py-20">
+      <p class="font-display text-xs font-semibold uppercase tracking-[0.2em] text-white/65">Mobility Robot · Official UK distributor for XSTO</p>
+      <h1 class="font-display mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl md:leading-tight">Shop the XSTO range</h1>
+      <p class="mt-4 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">Power chairs first — M4, M4B, M4 Pro and X12 — then accessories for the chair you choose. Free UK delivery from Bentech Medical Ltd.</p>
+      <nav aria-label="On this page" class="mt-8 flex flex-wrap gap-3">
+        <a class="inline-flex min-h-11 items-center rounded-md border border-white/25 bg-white/10 px-4 text-sm font-semibold text-white no-underline backdrop-blur-sm transition-colors hover:bg-white/15 hover:no-underline" href="#power-chairs">Power chairs</a>
+        <a class="inline-flex min-h-11 items-center rounded-md border border-white/25 bg-transparent px-4 text-sm font-semibold text-white/90 no-underline transition-colors hover:bg-white/10 hover:no-underline" href="#accessories">Accessories</a>
+        <a class="inline-flex min-h-11 items-center rounded-md px-4 text-sm font-semibold text-white/80 no-underline underline-offset-4 hover:text-white hover:underline" href="/pages/quote">Need help choosing?</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="xsto-container py-10 md:py-14">
+    <div class="space-y-16 md:space-y-20">
+      <section aria-label="Power chairs" id="power-chairs">
+        {%- render 'mr-section-intro', label: 'Flagship range', title: 'XSTO', accent: 'power chairs', align: 'left', description: 'From self-levelling daily use to stair-climbing all-terrain — ordered from the most accessible price point upward. Free UK delivery on every model.' -%}
+        <ul class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          {%- liquid
+            assign chair_handles = 'buy-robot-wheelchair|xsto-m4b-1|xsto-m4-pro|x12-all-terrain-mobility-robot|xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition' | split: '|'
+            assign chair_names = 'XSTO M4|XSTO M4B|XSTO M4 Pro|XSTO X12|XSTO X12 Pro' | split: '|'
+            assign chair_badges = 'Self-Levelling|New|Customisable|Stair Climber|Stair Climber' | split: '|'
+          -%}
+          {%- for chair_handle in chair_handles -%}
+            {%- assign chair = all_products[chair_handle] -%}
+            {%- if chair and chair.available != nil and chair.handle == chair_handle -%}
+              {%- assign delay = forloop.index0 | times: 70 -%}
+              <li>{% render 'mr-card-chair', product: chair, name: chair_names[forloop.index0], badge: chair_badges[forloop.index0], delay: delay %}</li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </section>
+
+      <section aria-labelledby="shop-all-accessories-heading" class="border-t border-border/70 pt-14 md:pt-16" id="accessories">
+        <div class="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+          <div class="max-w-2xl">
+            <p class="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">Parts &amp; upgrades</p>
+            <h2 class="font-display mt-2.5 text-[1.65rem] font-semibold leading-tight tracking-tight text-foreground sm:mt-3 sm:text-3xl md:text-4xl" id="shop-all-accessories-heading">Chair <span class="text-gold">accessories</span></h2>
+            <p class="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground sm:mt-4 sm:text-base md:text-lg">Bags, batteries, cushions, covers and mounts — organised to fit the XSTO chair you ride.</p>
+          </div>
+          <a class="inline-flex min-h-11 shrink-0 items-center gap-1.5 self-start text-sm font-semibold text-gold underline-offset-4 hover:underline sm:mb-1 sm:self-auto" href="/collections/accessories">Browse by chair{% render 'mr-icon', name: 'arrow-up-right', stroke: 1.75, class: 'size-4' %}</a>
+        </div>
+        {%- assign accessories = collections['accessories'].products | sort: 'title' -%}
+        {%- if accessories.size > 0 -%}
+          <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {%- for product in accessories -%}
+              {%- capture kind -%}{% render 'mr-product-hidden', handle: product.handle %}{%- endcapture -%}
+              {%- if kind != '' -%}{%- continue -%}{%- endif -%}
+              {%- include 'mr-accessory-compat' -%}
+              <li>{% render 'mr-card-accessory', product: product, label: mr_compat_label, fits_x12: mr_fits_x12, style: 'shop' %}</li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <p class="rounded-2xl border border-dashed border-border bg-secondary/20 px-5 py-8 text-sm text-muted-foreground">No accessories listed yet. See <a class="font-medium text-gold underline-offset-2 hover:underline" href="/collections/accessories">accessories by chair</a> or <a class="font-medium text-gold underline-offset-2 hover:underline" href="/pages/contact">contact us</a>.</p>
+        {%- endif -%}
+      </section>
+    </div>
+  </div>
+</div>
+{%- else -%}
+{%- paginate collection.products by 24 -%}
+<div class="collection xsto-container py-8 md:py-12">
+  <h1 class="text-3xl font-bold text-foreground md:text-4xl">{{ collection.title | escape }}</h1>
+  <p class="collection-description">{{ collection.description | strip_html }}</p>
+  <div>
+    {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}"><span><span aria-hidden="true">↑</span> Load previous</span></a>{%- endif -%}
+    <div class="products-grid">
+      {%- for product in collection.products -%}
+        {%- capture kind -%}{% render 'mr-product-hidden', handle: product.handle %}{%- endcapture -%}
+        {%- if kind == 'hidden' -%}{%- continue -%}{%- endif -%}
+        {%- liquid
+          capture prices
+            render 'mr-price', product: product
+          endcapture
+          assign parts = prices | strip | split: '|'
+          assign ex = parts[1] | plus: 0
+          capture name
+            render 'mr-display-name', product: product
+          endcapture
+        -%}
+        <a class="product-item" href="{{ product.url }}">
+          {%- if product.featured_image -%}
+            <div class="flex aspect-square items-center justify-center overflow-hidden">
+              {%- if forloop.index <= 8 -%}{%- assign loading = 'eager' -%}{%- else -%}{%- assign loading = 'lazy' -%}{%- endif -%}
+              {%- render 'mr-image', image: product.featured_image, alt: product.featured_image.alt, class: 'max-h-full object-contain', sizes: '(min-width: 45em) 400px, 100vw', loading: loading -%}
+            </div>
+          {%- endif -%}
+          <h4>{{ name }}</h4>
+          <small><div>{{ ex | money }}</div></small>
+        </a>
+      {%- endfor -%}
+    </div>
+    {%- if paginate.next -%}<a href="{{ paginate.next.url }}"><span>Load more <span aria-hidden="true">↓</span></span></a>{%- endif -%}
+  </div>
+</div>
+{%- endpaginate -%}
+{%- endif -%}
+{% schema %}
+{
+  "name": "MR collection",
+  "tag": "div",
+  "class": "mr-contents"
+}
+{% endschema %}

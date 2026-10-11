@@ -1,0 +1,41 @@
+{%- comment -%}
+  Product page. Each wheelchair has its own generated snippet (specifications, features, FAQs);
+  every other product uses the generic layout. If a wheelchair's handle changes in Shopify, update it here.
+{%- endcomment -%}
+{%- liquid
+  assign mr_variant = product.selected_or_first_available_variant
+  if product.handle == 'x12-all-terrain-mobility-robot'
+    for v in product.variants
+      if v.option1 == 'X12' and v.available
+        assign mr_variant = v
+        break
+      endif
+    endfor
+  endif
+-%}
+{%- include 'mr-promo' -%}
+{%- include 'mr-accessory-compat' -%}
+{%- liquid
+  case product.handle
+    when 'buy-robot-wheelchair'
+      render 'mr-product-m4', product: product, mr_variant: mr_variant, mr_promo: mr_promo
+    when 'xsto-m4b-1'
+      render 'mr-product-m4b', product: product, mr_variant: mr_variant, mr_promo: mr_promo
+    when 'xsto-m4-pro'
+      render 'mr-product-m4-pro', product: product, mr_variant: mr_variant, mr_promo: mr_promo
+    when 'x12-all-terrain-mobility-robot'
+      render 'mr-product-x12', product: product, mr_variant: mr_variant, mr_promo: mr_promo
+    when 'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'
+      render 'mr-product-x12-pro', product: product, mr_variant: mr_variant, mr_promo: mr_promo
+    else
+      render 'mr-product-generic', product: product, mr_variant: mr_variant, mr_slots: mr_slots, mr_compat_label: mr_compat_label, mr_fits_x12: mr_fits_x12
+  endcase
+-%}
+<script src="{{ 'mr-product.js' | asset_url }}" defer></script>
+{% schema %}
+{
+  "name": "MR product page",
+  "tag": "div",
+  "class": "mr-contents"
+}
+{% endschema %}

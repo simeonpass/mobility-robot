@@ -1,0 +1,17 @@
+{%- comment -%} Short display name for a product: the wheelchairs use their model name, everything else its title. {%- endcomment -%}
+{%- liquid
+  case product.handle
+    when 'buy-robot-wheelchair'
+      echo 'XSTO M4'
+    when 'xsto-m4b-1'
+      echo 'XSTO M4B'
+    when 'xsto-m4-pro'
+      echo 'XSTO M4 Pro'
+    when 'x12-all-terrain-mobility-robot'
+      echo 'XSTO X12'
+    when 'xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition'
+      echo 'XSTO X12 Pro'
+    else
+      echo product.title | escape
+  endcase
+-%}

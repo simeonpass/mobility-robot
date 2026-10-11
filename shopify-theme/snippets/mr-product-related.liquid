@@ -1,0 +1,44 @@
+{%- comment -%} "Explore the range": the other wheelchairs, with live prices. {%- endcomment -%}
+{%- assign related_handles = 'buy-robot-wheelchair|xsto-m4-pro|xsto-m4b-1|xsto-x12-pro-ai-stair-climbing-mobility-wheelchair-pro-edition|x12-all-terrain-mobility-robot' | split: '|' -%}
+<section aria-labelledby="related-products-heading" class="mr-product-related">
+  <p class="mr-product-section-eyebrow">Find your fit</p>
+  <h2 class="mr-product-section-heading font-display" id="related-products-heading">Explore the range</h2>
+  <ul class="mr-product-related-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {%- for handle in related_handles -%}
+      {%- liquid
+        if handle == current
+          continue
+        endif
+        assign item = all_products[handle]
+        if item == blank
+          continue
+        endif
+        capture price_data
+          render 'mr-price', product: item
+        endcapture
+        assign price_parts = price_data | strip | split: '|'
+        assign inc = price_parts[0] | plus: 0
+        assign ex = price_parts[1] | plus: 0
+        assign name = item.title
+      -%}
+      <li>
+        <a href="{{ item.url }}" class="mr-product-related-card group block overflow-hidden bg-background">
+          <div class="mr-product-related-image flex aspect-square items-center justify-center overflow-hidden p-6">
+            {%- if item.featured_image -%}
+              {%- assign related_alt = item.featured_image.alt | default: name -%}
+              {% render 'mr-image', image: item.featured_image, alt: related_alt, class: 'max-h-full w-full object-contain transition-transform group-hover:scale-[1.03]', sizes: '(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw' %}
+            {%- endif -%}
+          </div>
+          <div class="border-t border-border/60 px-6 py-5">
+            <h3 class="font-display text-xl font-semibold leading-snug text-navy group-hover:text-primary">{{ name }}</h3>
+            <div class="mt-3 text-sm leading-relaxed text-slate">
+              <p class="text-base font-semibold text-navy">From {{ ex | money }}</p>
+              <p>With VAT relief, if eligible</p>
+              <p>{{ inc | money_without_trailing_zeros }} including VAT</p>
+            </div>
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</section>
